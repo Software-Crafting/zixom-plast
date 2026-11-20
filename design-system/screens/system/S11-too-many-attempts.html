@@ -33,9 +33,9 @@
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
           <h3 data-when="ready requests">Too many tries</h3>
           <h3 data-when="rate">Too many attempts</h3>
-          <p data-when="ready">You entered a wrong code 5 times. For your safety, +91 98250 11410 is locked.</p>
-          <p data-when="requests">You asked for 5 codes in the last hour. You can ask for a new code when the timer ends.</p>
-          <p data-when="rate">Please wait a minute. The button comes back when the timer ends.</p>
+          <p data-when="ready">Wrong code 5 times. +91 98250 11410 is locked.</p>
+          <p data-when="requests">5 codes requested in the last hour.</p>
+          <p data-when="rate">Please wait a minute.</p>
         </div>
         <div class="clock" role="timer" aria-live="off"><span class="sr-only">Try again in </span><span id="clock">15:00</span></div>
       </div>
@@ -61,9 +61,7 @@
   </div>
 </div>
 
-<p class="plate-note">Used for OTP, sign in and server rate limits (EC-08, EC-13). Wrong code 5 times locks the number
-for 15 minutes; more than 5 code requests in an hour also locks. The countdown uses server time and keeps running if
-the app closes. Try again stays disabled until it reaches 0:00.</p>
+<p class="plate-note">OTP, sign in and server rate limits (EC-08, EC-13). The countdown uses server time; Try again stays disabled until 0:00.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

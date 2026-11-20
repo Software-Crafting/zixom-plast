@@ -30,24 +30,24 @@
       <div class="full">
         <div class="state" data-when="ready">
           <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
-          <h3>This is not available to you</h3>
+          <h3>Not available to you</h3>
           <p>This record belongs to another company.</p>
         </div>
         <div class="state" data-when="engineer">
           <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
-          <h3>This is not available to you</h3>
-          <p>This job is not assigned to you. Ask your service manager if you should have it.</p>
+          <h3>Not available to you</h3>
+          <p>This job is not assigned to you.</p>
         </div>
         <div class="state" data-when="changed">
           <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
           <h3>Your access was updated</h3>
-          <p>Something changed in your account while this screen was open. We refreshed the app.</p>
+          <p>We refreshed the app.</p>
         </div>
       </div>
       <div class="footer-bar">
         <div class="stack-sm" data-when="ready">
           <a class="btn btn-primary" href="../customer/C101-home.html">Go back</a>
-          <button class="btn btn-secondary" type="button" data-open="owner">Contact your account owner</button>
+          <button class="btn btn-secondary" type="button" data-open="owner">Contact account owner</button>
         </div>
         <div class="stack-sm" data-when="engineer">
           <a class="btn btn-primary" href="../engineer/E101-today.html">Go back</a>
@@ -63,7 +63,7 @@
     <div class="overlay bottom" id="owner" hidden>
       <div class="action-sheet" role="dialog" aria-label="Contact your account owner">
         <div class="group">
-          <div class="title">Rakesh Mehta, primary contact at Shree Packaging Industries</div>
+          <div class="title">Rakesh Mehta, primary contact</div>
           <button type="button" data-close>Call +91 98250 11410</button>
           <button type="button" data-close>Copy number</button>
         </div>
@@ -82,9 +82,7 @@
   </div>
 </div>
 
-<p class="plate-note">Shown only when someone reaches a screen through a link, a notification or a QR code (EC-21).
-Buttons the role cannot use are hidden everywhere else. Never names or describes the other company. When access
-changes while a screen is open, the app shows Your access was updated, refreshes and returns to Home (EC-19).</p>
+<p class="plate-note">Only when reached through a link, notification or QR code (EC-21); never names the other company. Access changed while open refreshes to Home (EC-19).</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

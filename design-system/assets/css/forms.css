@@ -8,7 +8,7 @@
 .error-text{display:flex; align-items:center; gap:6px; margin:7px 2px 0; font-size:var(--fs-12); font-weight:600; color:var(--red)}
 .counter{float:right; font-weight:500; color:var(--text-faint)}
 
-.input, .textarea, .select{width:100%; min-height:52px; padding:0 16px; border:1.5px solid transparent; border-radius:var(--r-md);
+.input, .textarea, .select{width:100%; min-height:52px; padding:0 16px; border:1.5px solid var(--line); border-radius:var(--r-md);
   background:var(--field); color:var(--slate-900); font:400 var(--fs-16) var(--font-body);
   transition:border-color .14s, background .14s, box-shadow .14s}
 .input.mono{font-family:var(--font-mono); font-size:var(--fs-16)}
@@ -20,7 +20,7 @@
 .input:disabled, .input[readonly]{color:var(--slate-500)}
 
 /* input with a fixed prefix (+91) or an icon */
-.input-group{display:flex; align-items:center; gap:10px; min-height:52px; padding:0 16px; border:1.5px solid transparent;
+.input-group{display:flex; align-items:center; gap:10px; min-height:52px; padding:0 16px; border:1.5px solid var(--line);
   border-radius:var(--r-md); background:var(--field)}
 .input-group:focus-within{background:#fff; border-color:var(--blue); box-shadow:0 0 0 4px var(--blue-50)}
 .input-group .input, .field.has-error .input-group .input{min-height:48px; padding:0; border:0; background:none; box-shadow:none}
@@ -45,7 +45,7 @@
 
 /* one time code */
 .otp{display:grid; grid-template-columns:repeat(6, 1fr); gap:8px}
-.otp input{height:58px; width:100%; text-align:center; border:1.5px solid transparent; border-radius:var(--r-md);
+.otp input{height:58px; width:100%; text-align:center; border:1.5px solid var(--line); border-radius:var(--r-md);
   background:var(--field); font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
 .otp input:focus{outline:0; background:#fff; border-color:var(--blue); box-shadow:0 0 0 4px var(--blue-50)}
 .otp.has-error input{border-color:var(--red); background:#fff}

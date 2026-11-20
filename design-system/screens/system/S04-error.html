@@ -32,25 +32,25 @@
         <div class="state" data-when="ready">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
           <h3>Something went wrong</h3>
-          <p>We could not load this. Please try again in a moment.</p>
+          <p>We could not load this.</p>
           <span class="code mono">ZC-500</span>
         </div>
         <div class="state" data-when="timeout">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
-          <h3>This is taking too long</h3>
-          <p>Check your connection and try again.</p>
+          <h3>Taking too long</h3>
+          <p>Check your connection.</p>
           <span class="code mono">ZC-408</span>
         </div>
         <div class="state" data-when="retries">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
           <h3>Something went wrong</h3>
-          <p>We could not load this. Still not working? Contact support.</p>
+          <p>Still not working? Contact support.</p>
           <span class="code mono">ZC-500</span>
         </div>
         <div class="state" data-when="crash">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
           <h3>The app closed unexpectedly</h3>
-          <p>This happened twice on this screen. Send us a report with the app log so we can fix it.</p>
+          <p>Send a report so we can fix it.</p>
         </div>
       </div>
       <div class="footer-bar">
@@ -73,7 +73,7 @@
     <div class="overlay bottom" id="support" hidden>
       <div class="action-sheet" role="dialog" aria-label="Contact support">
         <div class="group">
-          <div class="title">Zixom support, 24x7. Quote error ZC-500.</div>
+          <div class="title">Quote error ZC-500.</div>
           <button type="button" data-close>Call +91 99919 10097</button>
           <button type="button" data-close>Email info@zixom.in</button>
         </div>
@@ -83,10 +83,7 @@
   </div>
 </div>
 
-<p class="plate-note">Full screen error when a screen's first load fails. Reads retry twice on their own before this
-shows. Server error ZC-500 (EC-07) and timeout after 20 seconds ZC-408 (EC-06). After three failed manual retries the
-text adds Contact support. A crash repeated on the same screen offers Report a problem with logs. The navigation bar
-stays so the person can leave.</p>
+<p class="plate-note">First load failed after 2 automatic retries: ZC-500 (EC-07), ZC-408 after 20 seconds (EC-06). A repeated crash offers Report a problem.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

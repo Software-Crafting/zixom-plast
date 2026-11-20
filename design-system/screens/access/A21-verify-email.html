@@ -29,27 +29,25 @@
       <div class="scroll with-footer">
 
         <div data-when="ready wrong expired">
-          <h2 class="large-title" style="font-size:var(--fs-22)">Check your inbox</h2>
-          <p class="lede">We sent a 6 digit code to <b style="color:var(--slate-900)">rakesh@shreepack.example</b>.</p>
+          <p class="lede" style="margin-top:0">Code sent to <b style="color:var(--slate-900)">rakesh@shreepack.example</b>.</p>
           <div class="field" style="margin-top:20px">
             <div class="otp" data-when="ready expired"><input maxlength="1" inputmode="numeric" value="7" aria-label="Digit 1"><input maxlength="1" inputmode="numeric" value="1" aria-label="Digit 2"><input maxlength="1" inputmode="numeric" value="0" aria-label="Digit 3"><input maxlength="1" inputmode="numeric" aria-label="Digit 4"><input maxlength="1" inputmode="numeric" aria-label="Digit 5"><input maxlength="1" inputmode="numeric" aria-label="Digit 6"></div>
             <div class="otp has-error" data-when="wrong"><input value="7" aria-label="Digit 1"><input value="1" aria-label="Digit 2"><input value="0" aria-label="Digit 3"><input value="4" aria-label="Digit 4"><input value="4" aria-label="Digit 5"><input value="2" aria-label="Digit 6"></div>
             <span class="hint" data-when="ready">Resend code in 0:18</span>
-            <span class="error-text" data-when="wrong"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. Check the code and try again. 4 tries left.</span>
-            <span class="error-text" data-when="expired"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This code has expired. Send a new one.</span>
+            <span class="error-text" data-when="wrong"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. 4 tries left.</span>
+            <span class="error-text" data-when="expired"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Code expired.</span>
           </div>
           <div class="row-flex" style="margin-top:6px">
             <button class="btn btn-text" type="button" style="padding:0" data-when="expired wrong" data-toast="New code sent">Resend code</button>
             <a class="btn btn-text" href="../customer/C1102-profile.html" style="padding:0; margin-left:auto">Change email</a>
           </div>
-          <p class="hint">Not there? Check spam.</p>
         </div>
 
         <div data-when="used">
           <div class="state" style="padding-top:40px">
             <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-envelope-simple"/></svg></span>
-            <h3>This email is used by another account</h3>
-            <p>rakesh@shreepack.example is already on another Zixom Connect account. Use a different email, or ask support to move it.</p>
+            <h3>Email used by another account</h3>
+            <p>Use another email or ask support to move it.</p>
           </div>
         </div>
 
@@ -57,7 +55,7 @@
           <div class="state" style="padding-top:40px">
             <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-seal-check"/></svg></span>
             <h3>Email verified</h3>
-            <p>Invoices, reports and service updates now also arrive at rakesh@shreepack.example.</p>
+            <p>Invoices and updates now go to rakesh@shreepack.example.</p>
           </div>
         </div>
       </div>
@@ -77,9 +75,7 @@
   </div>
 </div>
 
-<p class="plate-note">From Profile after the email is added or changed. Same code rules as the OTP: 6 digits, 5
-minutes, resend after 30 seconds. Email is optional for sign up, but verified email receives invoices and the
-service updates the person chose.</p>
+<p class="plate-note">From Profile after adding or changing the email. Same code rules as the OTP: 6 digits, 5 minutes, resend after 30 seconds.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

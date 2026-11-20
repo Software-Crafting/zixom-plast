@@ -31,9 +31,9 @@
           <span class="disc green" data-when="ok"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>
           <h3 data-when="ready old out">New sign in on iPhone</h3>
           <h3 data-when="ok">Thanks, all good</h3>
-          <p data-when="ready out">Your account was opened on another phone. If this was not you, sign out every other device now.</p>
-          <p data-when="old">This alert is more than 7 days old. Here are the details; to act on devices, open Security.</p>
-          <p data-when="ok">We marked this sign in as yours. Nothing else to do.</p>
+          <p data-when="ready out">Not you? Sign out every other device.</p>
+          <p data-when="old">Older than 7 days. Manage devices in Security.</p>
+          <p data-when="ok">Marked as yours.</p>
         </div>
 
         <div class="card-fill">
@@ -44,7 +44,6 @@
             <div><dt>Account</dt><dd>+91 98250 11410</dd></div>
           </dl>
         </div>
-        <p class="hint" style="text-align:center">The place comes from the network and may be off by a few kilometres.</p>
       </div>
 
       <div class="footer-bar">
@@ -61,7 +60,7 @@
     <div class="overlay bottom" id="confirm-out" hidden>
       <div class="action-sheet" role="dialog" aria-label="Sign out other devices">
         <div class="group">
-          <div class="title">Sign out every device except this phone? Anyone using them will need an OTP to sign in again.</div>
+          <div class="title">Sign out every device except this phone?</div>
           <button class="destructive" type="button" data-close data-toast="Other devices signed out">Sign out all other devices</button>
         </div>
         <button class="cancel" type="button" data-close>Cancel</button>
@@ -70,9 +69,7 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the new sign in notification or email. Shows the device name, time and approximate
-place. This was me closes it; Sign out all other devices asks once. An alert older than 7 days shows the details only.
-If Zixom suspends the account after a report, the person sees <a href="A16-account-suspended.html">A16</a>.</p>
+<p class="plate-note">Opened from the new sign in notification or email; an alert older than 7 days shows details only. A suspension after a report opens <a href="A16-account-suspended.html">A16</a>.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

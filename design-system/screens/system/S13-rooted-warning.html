@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .backdrop{flex:1; display:grid; place-items:center; padding-bottom:220px}
-.backdrop img{width:150px; height:auto}
 </style>
 </head>
 <body class="plate">
@@ -23,7 +22,7 @@
 <div class="device">
   <div class="screen plain" data-state="ready">
     <div class="status on-light"></div>
-    <div class="backdrop"><img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast"></div>
+    <div class="backdrop"></div>
     <span class="home-indicator"></span>
 
     <div class="overlay bottom" id="warn" data-initial>
@@ -32,12 +31,12 @@
         <div class="state" style="padding:4px 0 0">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
           <h3 id="warn-title">This phone may not be secure</h3>
-          <p data-when="ready engineer">This iPhone looks jailbroken. Apps cannot fully protect your data on it.</p>
-          <p data-when="android">This phone looks rooted. Apps cannot fully protect your data on it.</p>
+          <p data-when="ready engineer">This iPhone looks jailbroken.</p>
+          <p data-when="android">This phone looks rooted.</p>
         </div>
         <div class="banner amber" style="margin-top:16px" data-when="engineer">
           <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
-          <div>Your service manager will see a note on your profile that this phone was flagged.</div>
+          <div>Your service manager will be told.</div>
         </div>
         <div class="stack-sm" style="margin-top:20px">
           <button class="btn btn-primary" type="button" data-close>Continue anyway</button>
@@ -48,8 +47,7 @@
   </div>
 </div>
 
-<p class="plate-note">Shown once per 30 days at launch when the phone looks rooted or jailbroken (EC-35). It warns but
-does not block: Continue anyway opens the app. For engineers the flag also goes to the manager.</p>
+<p class="plate-note">Once per 30 days at launch on a rooted or jailbroken phone (EC-35); warns, never blocks. For engineers the flag goes to the manager.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

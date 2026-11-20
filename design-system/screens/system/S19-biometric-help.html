@@ -7,8 +7,6 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.steps{margin:0; padding-left:20px; font-size:var(--fs-14); line-height:1.7; color:var(--text)}
-.steps b{color:var(--slate-900); font-weight:600}
 </style>
 </head>
 <body class="plate">
@@ -32,7 +30,7 @@
         <div class="state" style="padding-top:12px">
           <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg></span>
           <h3>Lock Zixom Connect</h3>
-          <p>Ask for Face ID when the app opens and after 5 minutes away.</p>
+          <p>Face ID at launch and after 5 minutes away.</p>
         </div>
       </div>
     </div>
@@ -47,13 +45,9 @@
           <h3 data-when="android">Set up a fingerprint first</h3>
           <button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button>
         </div>
-        <p class="lede" style="margin-top:0">App lock keeps your machines, invoices and reports private if someone else picks up your phone. This phone has no
-          <span data-when="ready">Face ID</span><span data-when="touch">fingerprint</span><span data-when="android">fingerprint</span> set up yet.</p>
-        <div class="card-fill" style="margin-top:14px">
-          <ol class="steps" data-when="ready"><li>Open <b>Settings</b></li><li>Tap <b>Face ID &amp; Passcode</b></li><li>Tap <b>Set Up Face ID</b>, then come back</li></ol>
-          <ol class="steps" data-when="touch"><li>Open <b>Settings</b></li><li>Tap <b>Touch ID &amp; Passcode</b></li><li>Tap <b>Add a Fingerprint</b>, then come back</li></ol>
-          <ol class="steps" data-when="android"><li>Open <b>Settings</b>, then <b>Security</b></li><li>Tap <b>Fingerprint</b></li><li>Add a fingerprint, then come back</li></ol>
-        </div>
+        <p class="lede" style="margin-top:0" data-when="ready">Settings, Face ID &amp; Passcode, Set Up Face ID</p>
+        <p class="lede" style="margin-top:0" data-when="touch">Settings, Touch ID &amp; Passcode, Add a Fingerprint</p>
+        <p class="lede" style="margin-top:0" data-when="android">Settings, Security, Fingerprint</p>
         <div class="stack-sm" style="margin-top:18px">
           <button class="btn btn-primary" type="button" data-close>Open settings</button>
           <button class="btn btn-secondary" type="button" data-close>Use passcode instead</button>
@@ -63,8 +57,7 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from app lock setup (A13) when biometrics are not enrolled on the phone. Explains why the
-app asks and where to turn it on. Passcode is always the fallback. Engineers must keep an app lock on.</p>
+<p class="plate-note">From app lock setup (A13) when biometrics are not enrolled; passcode is the fallback. Engineers must keep app lock on.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

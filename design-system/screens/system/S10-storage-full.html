@@ -26,15 +26,15 @@
       <div class="scroll with-footer">
         <div class="state" style="padding-top:0">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
-          <h3>Not enough space on your phone</h3>
-          <p data-when="ready">Zixom Connect needs about 150 MB free to save photos and documents.</p>
-          <p data-when="engineer">Photos cannot be saved, so a new visit report cannot start until about 200 MB is free.</p>
+          <h3>Phone storage full</h3>
+          <p data-when="ready">Free about 150 MB to save photos and documents.</p>
+          <p data-when="engineer">Free about 200 MB to start a visit report.</p>
         </div>
         <div class="banner red" data-when="engineer">
           <svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>
-          <div><b>3 items waiting to sync are safe</b>Clearing space never deletes reports or photos that have not reached Zixom.</div>
+          <div><b>3 unsynced items are safe</b></div>
         </div>
-        <p class="list-title">What Zixom Connect uses</p>
+        <p class="list-title">App storage</p>
         <div class="list" data-when="ready">
           <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span><b>Downloaded documents</b><span class="sub">8 manuals and reports</span><span class="end">412 MB</span></div>
           <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg></span><b>Drafts</b><span class="sub">2 drafts older than 30 days</span><span class="end">18 MB</span></div>
@@ -50,7 +50,7 @@
         <div class="stack-sm">
           <button class="btn btn-primary" type="button" data-toast="Freed 412 MB" data-when="ready">Clear downloaded documents</button>
           <button class="btn btn-primary" type="button" data-toast="Freed 530 MB" data-when="engineer">Clear offline manuals</button>
-          <button class="btn btn-secondary" type="button">Open phone storage settings</button>
+          <button class="btn btn-secondary" type="button">Open storage settings</button>
         </div>
       </div>
     </div>
@@ -58,9 +58,7 @@
   </div>
 </div>
 
-<p class="plate-note">Shown when a save fails for lack of space (EC-33). Lists what the app itself uses so the person
-knows what to clear. Closes by itself once space returns. For engineers it blocks starting a report under 200 MB
-(E1014) and never offers to delete unsynced work.</p>
+<p class="plate-note">Shown when a save fails for lack of space (EC-33); closes once space returns. Engineers cannot start a report under 200 MB (E1014) and unsynced work is never offered for deletion.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

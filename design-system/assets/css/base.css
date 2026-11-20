@@ -2,7 +2,7 @@
 
 [hidden]{display:none !important}
 .screen{position:absolute; inset:0; display:flex; flex-direction:column}
-.screen.plain{background:#fff}
+.screen.plain{background:var(--surface)}
 .ic{width:20px; height:20px; flex-shrink:0; fill:none; stroke:currentColor; vertical-align:middle}
 .ic-16{width:16px; height:16px} .ic-18{width:18px; height:18px} .ic-24{width:24px; height:24px}
 .ic-28{width:28px; height:28px} .ic-32{width:32px; height:32px}
@@ -68,7 +68,7 @@
 .btn:active{transform:scale(.98)}
 .btn-primary{background:linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color:#fff; box-shadow:var(--shadow-button)}
 .btn-secondary{background:#fff; color:var(--slate-900); border:1px solid var(--line-strong)}
-.btn-soft{background:var(--slate-100); color:var(--slate-900)}
+.btn-soft{background:var(--wash); color:var(--slate-900)}
 .btn-accent{background:var(--blue); color:#fff; box-shadow:0 8px 18px -10px rgba(64,100,215,.7)}
 .btn-danger{background:var(--red); color:#fff}
 .btn-text{min-height:44px; background:none; color:var(--blue); width:auto; padding:0 6px; font-size:var(--fs-14)}
@@ -87,7 +87,7 @@
 
 /* bar pinned to the bottom of a form or wizard */
 .footer-bar{position:absolute; z-index:20; left:0; right:0; bottom:0; padding:14px var(--gutter) 30px;
-  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 30%)}
+  background:linear-gradient(180deg, rgba(236,236,238,0), var(--surface-bottom) 30%)}
 .footer-bar .total{display:flex; justify-content:space-between; align-items:baseline; margin:0 4px 10px;
   font-size:var(--fs-14); color:var(--text-muted)}
 .footer-bar .total b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
@@ -110,7 +110,7 @@
 
 /* segmented control */
 .segment{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:4px; padding:4px; border-radius:var(--r-pill);
-  background:var(--slate-100)}
+  background:var(--wash)}
 .segment button, .segment a{height:38px; display:grid; place-items:center; border:0; border-radius:var(--r-pill); background:transparent;
   color:var(--slate-600); font:400 var(--fs-14) var(--font-display); text-decoration:none; cursor:pointer}
 .segment [aria-selected="true"]{background:#fff; color:var(--slate-900); box-shadow:var(--shadow-soft)}

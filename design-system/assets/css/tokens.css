@@ -39,9 +39,12 @@
   --line-strong:rgba(24,34,45,.14);
 
   /* surfaces */
-  --surface:var(--white);         /* pushed screens */
-  --field:var(--slate-50);        /* inputs and inner cards, like the cart note in 01 */
+  /* app background: a soft grey gradient, never pure white. Cards and fields are white on top of it */
+  --surface-top:#F8F8F9; --surface-bottom:#ECECEE;
+  --surface:linear-gradient(180deg, var(--surface-top) 0%, #F1F1F3 55%, var(--surface-bottom) 100%);
+  --field:var(--white);           /* inputs and inner cards */
   --card:var(--white);
+  --wash:rgba(24,34,45,.05);      /* quiet fills on the grey: segment track, icon discs, skeletons */
   --header-gradient:linear-gradient(172deg, #5E6F84 0%, #8A99AA 38%, #B9C3CD 72%, #D5DBE1 100%);
 
   /* type */

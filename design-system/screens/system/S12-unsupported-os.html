@@ -8,8 +8,6 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 130px}
-.steps{margin:0; padding-left:20px; font-size:var(--fs-14); line-height:1.7; color:var(--text)}
-.steps b{color:var(--slate-900); font-weight:600}
 </style>
 </head>
 <body class="plate">
@@ -26,22 +24,9 @@
     <div class="full">
       <div class="state">
         <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
-        <h3>Your phone software is too old</h3>
-        <p>Zixom Connect cannot run on this version. Update your phone, then open the app again.</p>
+        <h3>Phone software too old</h3>
+        <p>Update your phone, then open the app again.</p>
       </div>
-      <div class="card-fill">
-        <ol class="steps" data-when="ready">
-          <li>Open <b>Settings</b></li>
-          <li>Tap <b>General</b>, then <b>Software Update</b></li>
-          <li>Install the update and open Zixom Connect</li>
-        </ol>
-        <ol class="steps" data-when="android">
-          <li>Open <b>Settings</b></li>
-          <li>Tap <b>System</b>, then <b>Software update</b></li>
-          <li>Install the update and open Zixom Connect</li>
-        </ol>
-      </div>
-      <p class="hint" style="text-align:center; margin-top:12px">If your phone has no update, the store page lists the phones the app supports.</p>
     </div>
     <div class="footer-bar">
       <button class="btn btn-primary" type="button" data-when="ready">Open App Store page</button>
@@ -51,9 +36,7 @@
   </div>
 </div>
 
-<p class="plate-note">Blocks the app at launch when the phone software is below what the app supports (EC-35). No
-version number is named here; the store page carries the current list. Rooted or jailbroken phones are a separate,
-non-blocking warning, <a href="S13-rooted-warning.html">S13</a>.</p>
+<p class="plate-note">Blocks the app at launch when the phone software is too old (EC-35); the store page lists supported phones. Rooted phones get <a href="S13-rooted-warning.html">S13</a>.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

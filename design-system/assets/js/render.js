@@ -93,8 +93,9 @@ window.ZX = window.ZX || {};
   const thumb = (m, size = '') => `<span class="thumb ${size}" aria-hidden="true">${icon(MACHINE_ICON[m.type] || 'factory')}</span>`;
 
   /* ---------- components ---------- */
-  const openTickets = (serial) => data.tickets.filter((t) => t.machine === serial
-    && !['closed', 'cancelled', 'visit-failed'].includes(t.status)).length;
+  /* a ticket is open until it is closed or cancelled; visit failed waits for a reschedule (spec section 11) */
+  const isOpen = (ticket) => !['closed', 'cancelled'].includes(ticket.status);
+  const openTickets = (serial) => data.tickets.filter((t) => t.machine === serial && isOpen(t)).length;
 
   const machineCard = (m, href = '#') => {
     const open = openTickets(m.serial);
@@ -137,7 +138,7 @@ window.ZX = window.ZX || {};
       <span class="disc">${icon(a.icon)}</span><b>${esc(a.title)}</b>
       <span${a.mono ? ' class="mono"' : ''}>${esc(a.sub)}</span>${icon('caret-right', 'ic-16')}</a>`;
 
-  ZX.render = { esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, totals, balance, machine, engineer, amc,
+  ZX.render = { isOpen, esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, totals, balance, machine, engineer, amc,
     ticketTag, coverageTag, severityTag, warrantyTag, amcTag, stockTag, invoiceTag, thumb,
     machineCard, ticketCard, engineerCard };
 })();

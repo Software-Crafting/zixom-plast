@@ -46,8 +46,8 @@ screens/{access,system,customer,engineer}/<SpecID>-<name>.html
 
 Each screen page draws a phone so it can be judged on a laptop. These parts are scaffolding:
 
-- The top safe area (`.status`, an empty 22 px strip). The OS draws the status bar; in the app it is
-  safe area padding.
+- The status bar (`.status`: 9:41, Dynamic Island, signal, battery). The OS draws it; in the app it is
+  safe area padding. ui.js picks its look: the page colour on pushed screens, white text over the gradient.
 - The home indicator (`.home-indicator`). Leave bottom safe area padding instead.
 - The device frame (`.device`, 390 by 844, 44 px corners). Build fluid layouts.
 - Everything outside the frame: `.plate-label`, `.plate-note`, `.plate-states`.
@@ -56,8 +56,9 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
 
 ## Look
 
-- Base: `inspiration/01-base-cafe-order.png`. Screens sit on a blue grey gradient; content is on a white
-  sheet with 28 px top corners. Tab roots show a header on the gradient; pushed screens start the sheet
+- Base: `inspiration/01-base-cafe-order.png`. Tab roots have a blue grey gradient header over a sheet with
+  28 px top corners. The app background is a soft grey gradient (`--surface`), never pure white; cards and
+  fields are white with a hairline border. Tab roots show a header on the gradient; pushed screens start the sheet
   under the status bar with round back and more buttons.
 - Tab bar: `inspiration/03-car-marketplace-bottom-tab.png`. Floating; the current tab is a dark slate pill
   with icon and label, the others are white circles with a VoiceOver label.

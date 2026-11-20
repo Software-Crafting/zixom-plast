@@ -611,8 +611,7 @@
   const { data } = ZX;
   const $ = (id) => document.getElementById(id);
 
-  const CLOSED = ['closed', 'cancelled', 'visit-failed'];
-  const openRequests = data.tickets.filter((t) => !CLOSED.includes(t.status)).length;
+  const openRequests = data.tickets.filter((t) => R.isOpen(t)).length;
   const warrantyEnding = data.machines.filter((m) => m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0 && R.daysFromToday(m.warrantyEnd) <= 30).length;
   const due = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((sum, i) => sum + R.balance(i), 0);
   const stats = `

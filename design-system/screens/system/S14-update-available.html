@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .news{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px}
-.news li{display:grid; grid-template-columns:36px 1fr; column-gap:12px; align-items:start; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.news li{display:grid; grid-template-columns:36px 1fr; column-gap:12px; align-items:center}
 .news .disc{width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); color:var(--slate-800)}
 .news b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 </style>
@@ -42,11 +42,10 @@
         <span class="grabber"></span>
         <div class="head"><h3 id="up-title">Update available</h3><span class="tag blue">Version 1.1.0</span></div>
         <ul class="news">
-          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span><span><b>Reschedule AMC visits</b>Pick a new window from the visit card.</span></li>
-          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span><span><b>Faster report downloads</b>Service report PDFs open in half the time.</span></li>
-          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-wrench"/></svg></span><span><b>Fixes</b>The cart keeps quantities after you switch company.</span></li>
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span><span><b>Reschedule AMC visits</b></span></li>
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span><span><b>Faster report downloads</b></span></li>
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-wrench"/></svg></span><span><b>Bug fixes</b></span></li>
         </ul>
-        <p class="hint" style="margin-top:16px">This version still works. Later hides this for 7 days.</p>
         <div class="actions">
           <button class="btn btn-secondary btn-inline" type="button" data-close data-toast="We will remind you in 7 days">Later</button>
           <button class="btn btn-primary" type="button" data-close>Update</button>
@@ -56,9 +55,7 @@
   </div>
 </div>
 
-<p class="plate-note">Soft update sheet when a newer version exists but the current one still works. Shows what is new,
-can be dismissed for 7 days and never blocks the app. A version below the minimum gets the blocking
-<a href="S01-force-update.html">S01</a> instead.</p>
+<p class="plate-note">Soft update sheet; Later hides it for 7 days and it never blocks. Below the minimum version gets <a href="S01-force-update.html">S01</a>.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

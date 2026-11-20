@@ -44,9 +44,9 @@
       <div class="alert" role="alertdialog" aria-labelledby="fail-title">
         <span class="disc red"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
         <h3 id="fail-title" data-when="ready">Couldn't share the report</h3>
-        <h3 data-when="offline">This file is not downloaded yet</h3>
-        <p data-when="ready">We could not create the PDF for <span class="mono" style="white-space:nowrap">TKT-2026-0129</span>. Please try again.</p>
-        <p data-when="offline">Connect to the internet to download and share the report. Download it next time to share it offline.</p>
+        <h3 data-when="offline">File not downloaded</h3>
+        <p data-when="ready">PDF for <span class="mono" style="white-space:nowrap">TKT-2026-0129</span> failed.</p>
+        <p data-when="offline">Connect to the internet to share it.</p>
         <div class="actions">
           <button class="btn btn-primary" type="button" data-close data-busy data-when="ready">Retry</button>
           <button class="btn btn-primary" type="button" data-close data-when="offline">OK</button>
@@ -57,8 +57,7 @@
   </div>
 </div>
 
-<p class="plate-note">Alert when a PDF, receipt or ticket summary cannot be created or shared. Offline it explains that
-the file is not on the phone yet. Errors never use a toast.</p>
+<p class="plate-note">Alert when a PDF, receipt or ticket summary cannot be created or shared. Errors never use a toast.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

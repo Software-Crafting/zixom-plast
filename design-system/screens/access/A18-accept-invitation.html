@@ -10,7 +10,7 @@
 .invite{text-align:center; padding:8px 0 4px}
 .invite .company{width:72px; height:72px; margin:0 auto; display:grid; place-items:center; border-radius:24px; background:var(--slate-800); color:#fff}
 .invite .company .ic{width:36px; height:36px}
-.invite h1{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.3}
+.invite h2{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.3}
 .invite p{margin:6px 0 0; font-size:var(--fs-14); color:var(--text)}
 </style>
 </head>
@@ -29,14 +29,14 @@
     <div class="status"></div>
     <div class="sheet">
       <div class="navbar">
-        <a class="icon-btn" href="A02-welcome.html" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a>
+        <a class="icon-btn" href="A02-welcome.html" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a><h1>Invitation</h1><span></span>
       </div>
       <div class="scroll with-footer">
 
         <div data-when="ready mismatch">
           <div class="invite">
             <span class="company"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
-            <h1>Join Shree Packaging Industries</h1>
+            <h2>Join Shree Packaging Industries</h2>
             <p>Rakesh Mehta invited you on 21 Nov 2026</p>
           </div>
           <div class="card-fill" style="margin-top:18px">
@@ -47,20 +47,14 @@
             </dl>
           </div>
           <div class="banner red" style="margin-top:12px" data-when="mismatch"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>You are signed in as +91 98220 43120</b>This invitation is for +91 97140 22321. Sign in with that number to accept it.</div></div>
-          <p class="list-title">You will be able to</p>
-          <div class="list">
-            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>See the company's 6 machines</b><span class="sub">History, warranty, AMC and documents</span></div>
-            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>Raise and follow service requests</b><span class="sub">Approve estimates and sign off visits</span></div>
-            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wallet"/></svg></span><b>Order parts and pay invoices</b><span class="sub">The same as everyone in the company</span></div>
-          </div>
+            <div><b>You are signed in as +91 98220 43120</b>Sign in with +91 97140 22321 to accept.</div></div>
         </div>
 
         <div data-when="expired">
           <div class="state" style="padding-top:40px">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-envelope-simple"/></svg></span>
-            <h3>This invitation is no longer valid</h3>
-            <p>It expired, was used, or Rakesh Mehta withdrew it. Ask the account owner for a new invitation.</p>
+            <h3>Invitation no longer valid</h3>
+            <p>Ask Rakesh Mehta for a new one.</p>
           </div>
         </div>
 
@@ -68,7 +62,7 @@
           <div class="state" style="padding-top:40px">
             <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
             <h3>You are already in this company</h3>
-            <p>Pooja Shah already has access to Shree Packaging Industries. Nothing else to do.</p>
+            <p>Nothing else to do.</p>
           </div>
         </div>
       </div>
@@ -92,9 +86,7 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the invitation link (invite/{code}) or the SMS. Shows who invited the person, the
-invited number and what everyone in a company can do; there is no role to pick. Invitations last 7 days. Accept leads
-to the OTP for the invited number, then terms, profile and Home (flow F11).</p>
+<p class="plate-note">Opened from the invitation link or SMS; invitations last 7 days. Accept leads to the OTP, terms, profile and Home (F11).</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

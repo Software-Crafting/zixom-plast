@@ -24,8 +24,16 @@ body.plate{font-family:var(--font-body); color:var(--text); background:#DDE1E5;
   background:var(--header-gradient);
   box-shadow:0 0 0 10px #12181F, 0 0 0 11px #2B333C, 0 40px 70px -30px rgba(18,24,31,.55)}
 
-/* top safe area: the OS draws the status bar, the prototype leaves the space empty */
-.status{position:relative; z-index:30; height:22px; flex-shrink:0}
+/* iPhone status bar with the Dynamic Island. ui.js fills it and picks its look from the screen:
+   white with dark text on pushed screens, transparent with white text over the gradient on tab roots. */
+.status{position:relative; z-index:30; height:54px; flex-shrink:0; display:flex; align-items:flex-start;
+  justify-content:space-between; padding:17px 32px 0 40px; font:600 16px var(--font-body); color:var(--slate-900)}
+.status::after{content:""; position:absolute; left:50%; top:11px; width:122px; height:36px; transform:translateX(-50%);
+  border-radius:20px; background:#000}
+.status .signals{display:flex; align-items:center; gap:6px; margin-top:2px}
+.status.on-sheet{background:var(--surface-top)}
+.status.on-dark{color:#fff}
+.screen:has(> .status.on-sheet) > .sheet{border-radius:0; box-shadow:none}
 
 .home-indicator{position:absolute; z-index:40; left:50%; bottom:8px; transform:translateX(-50%);
   width:134px; height:5px; border-radius:var(--r-pill); background:var(--slate-900); opacity:.85; pointer-events:none}

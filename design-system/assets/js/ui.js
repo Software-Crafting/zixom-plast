@@ -11,6 +11,18 @@
   const TOAST_MS = 3000;
   const BUSY_MS = 900;
 
+  /* ---------- status bar (prototype chrome): white on pushed screens, over the gradient on tab roots ---------- */
+  const SIGNALS = `<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path fill="currentColor" d="M1 8h2.6v3.4H1zM5.4 5.8H8v5.6H5.4zM9.8 3.4h2.6v8H9.8zM14.2 1h2.6v10.4h-2.6z"/></svg>
+    <svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path fill="currentColor" d="M8 2.6c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .8 10.4 10.4 0 0 0 .8 3.7L2 5c1.6-1.5 3.7-2.4 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.6 6.6 0 0 0 8 4.4a6.6 6.6 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zm0 3.5L10 8a2.9 2.9 0 0 0-4 0z"/></svg>
+    <svg width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><rect x=".6" y=".6" width="22" height="10.8" rx="3.4" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.2" y="2.2" width="17" height="7.6" rx="2" fill="currentColor"/><path d="M24.2 4.2v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".4"/></svg>`;
+  document.querySelectorAll('.status:empty').forEach((bar) => {
+    bar.innerHTML = `<span>9:41</span><span class="signals">${SIGNALS}</span>`;
+    const screen = bar.closest('.screen');
+    if (bar.classList.contains('on-light') || bar.classList.contains('on-dark')) return;
+    if (screen?.querySelector(':scope > .sheet')) bar.classList.add('on-sheet');
+    else if (!screen?.classList.contains('plain')) bar.classList.add('on-dark');
+  });
+
   /* ---------- tab bars ---------- */
   const TABS = {
     customer: [

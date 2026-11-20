@@ -72,10 +72,10 @@
 .state .btn{margin-top:20px; width:auto}
 .state .code{margin-top:12px; font-size:var(--fs-11); color:var(--text-faint)}
 .inline-retry{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:var(--r-md);
-  background:var(--slate-50); font-size:var(--fs-13); color:var(--text)}
+  background:#fff; font-size:var(--fs-13); color:var(--text)}
 
 /* skeleton: same shape as the content, slow shimmer */
-.skeleton{border-radius:var(--r-md); background:linear-gradient(90deg, var(--slate-100) 25%, var(--slate-50) 50%, var(--slate-100) 75%);
+.skeleton{border-radius:var(--r-md); background:linear-gradient(90deg, rgba(24,34,45,.07) 25%, rgba(24,34,45,.03) 50%, rgba(24,34,45,.07) 75%);
   background-size:200% 100%; animation:shimmer 1.6s ease-in-out infinite}
 .sk-line{height:14px; border-radius:var(--r-pill)}
 .sk-card{height:96px; border-radius:var(--r-lg)}
