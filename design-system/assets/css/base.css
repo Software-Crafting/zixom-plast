@@ -1,0 +1,144 @@
+/* Screen shell, navigation, icons, buttons and chips. */
+
+.screen{position:absolute; inset:0; display:flex; flex-direction:column}
+.ic{width:20px; height:20px; flex-shrink:0; fill:currentColor; vertical-align:middle}
+.ic-16{width:16px; height:16px} .ic-18{width:18px; height:18px} .ic-24{width:24px; height:24px}
+.ic-28{width:28px; height:28px} .ic-32{width:32px; height:32px}
+.mono{font-family:var(--font-mono); font-weight:500; font-size:.9em; letter-spacing:0}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* ---------- the white sheet that holds every screen's content (inspiration 01) ---------- */
+.sheet{position:relative; flex:1; min-height:0; display:flex; flex-direction:column; background:var(--surface);
+  border-radius:var(--r-xl) var(--r-xl) 0 0; box-shadow:0 -6px 24px -18px rgba(24,34,45,.5)}
+.scroll{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none;
+  padding:4px var(--gutter) 28px}
+.scroll::-webkit-scrollbar{display:none}
+.scroll.with-tabbar{padding-bottom:var(--tabbar-space)}
+.scroll.with-footer{padding-bottom:132px}
+.stack{display:flex; flex-direction:column; gap:16px}
+.stack-sm{display:flex; flex-direction:column; gap:8px}
+.row-flex{display:flex; align-items:center; gap:10px}
+.grow{flex:1; min-width:0}
+
+/* ---------- tab root header over the gradient ---------- */
+.root-head{flex-shrink:0; padding:6px var(--gutter) 18px; color:#fff}
+.root-bar{display:flex; align-items:center; gap:10px}
+.root-bar .grow{display:flex; flex-direction:column; min-width:0}
+.root-hello{font-size:var(--fs-13); color:rgba(255,255,255,.78)}
+.root-name{font:400 var(--fs-18) var(--font-display); color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.root-switch{display:flex; align-items:center; gap:4px; max-width:100%; border:0; padding:0; background:none; cursor:pointer;
+  font:400 var(--fs-18) var(--font-display); color:#fff; text-align:left}
+.root-switch span{min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.root-title{margin:18px 0 0; font:400 var(--fs-22) var(--font-display); color:#fff; letter-spacing:-.01em}
+
+/* ---------- navigation bar of a pushed screen ---------- */
+.navbar{flex-shrink:0; display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px;
+  padding:14px var(--gutter) 10px}
+.navbar h1{grid-column:2; margin:0; text-align:center; font:400 var(--fs-18) var(--font-display);
+  color:var(--slate-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.navbar > :last-child:not(h1){grid-column:3}
+.large-title{margin:2px 0 4px; font:400 var(--fs-28) var(--font-display); color:var(--slate-900); letter-spacing:-.015em; line-height:1.2}
+.lede{margin:6px 0 0; font-size:var(--fs-14); line-height:1.55; color:var(--text)}
+
+/* ---------- section heading with an optional link ---------- */
+.section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:8px 2px 0}
+.section-head h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.section-head a, .link{display:inline-flex; align-items:center; gap:4px; font-size:var(--fs-14); font-weight:500;
+  color:var(--slate-500); text-decoration:none; white-space:nowrap}
+.link.accent{color:var(--blue)}
+
+/* ---------- round icon buttons ---------- */
+.icon-btn{position:relative; width:44px; height:44px; flex-shrink:0; display:grid; place-items:center;
+  border-radius:var(--r-pill); border:1px solid var(--line-strong); background:#fff; color:var(--slate-900);
+  cursor:pointer; text-decoration:none; transition:transform .14s var(--ease)}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn.glass{border:0; background:rgba(255,255,255,.24); color:#fff;
+  backdrop-filter:blur(12px); box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.icon-btn.dark{border:0; background:var(--slate-800); color:#fff}
+.icon-btn.sm{width:36px; height:36px}
+.count{position:absolute; top:-3px; right:-3px; min-width:19px; height:19px; padding:0 5px; display:grid; place-items:center;
+  border-radius:var(--r-pill); background:var(--red); color:#fff; font:700 10px var(--font-body); border:2px solid #fff}
+
+/* ---------- buttons ---------- */
+.btn{width:100%; min-height:54px; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:0 22px; border:0; border-radius:var(--r-pill); font:400 var(--fs-16) var(--font-display);
+  text-decoration:none; cursor:pointer; transition:transform .14s var(--ease), opacity .14s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color:#fff; box-shadow:var(--shadow-button)}
+.btn-secondary{background:#fff; color:var(--slate-900); border:1px solid var(--line-strong)}
+.btn-soft{background:var(--slate-100); color:var(--slate-900)}
+.btn-accent{background:var(--blue); color:#fff; box-shadow:0 8px 18px -10px rgba(64,100,215,.7)}
+.btn-danger{background:var(--red); color:#fff}
+.btn-text{min-height:44px; background:none; color:var(--blue); width:auto; padding:0 6px; font-size:var(--fs-14)}
+.btn-sm{min-height:40px; padding:0 16px; font-size:var(--fs-14); width:auto}
+.btn-inline{width:auto}
+.btn .lead{width:34px; height:34px; margin-left:-12px; display:grid; place-items:center; border-radius:var(--r-pill);
+  background:rgba(255,255,255,.14)}
+.btn-secondary .lead, .btn-soft .lead{background:var(--slate-800); color:#fff}
+.btn:disabled, .btn[aria-disabled="true"]{opacity:.42; pointer-events:none; box-shadow:none}
+.btn[aria-busy="true"]{color:transparent; pointer-events:none; position:relative}
+.btn[aria-busy="true"]::after{content:""; position:absolute; width:20px; height:20px; border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.35); border-top-color:#fff; animation:spin .8s linear infinite}
+.btn-secondary[aria-busy="true"]::after, .btn-soft[aria-busy="true"]::after{border-color:var(--slate-200); border-top-color:var(--slate-800)}
+.btn-pair{display:grid; grid-template-columns:auto 1fr; gap:10px}
+.btn-pair .icon-btn{width:54px; height:54px}
+
+/* bar pinned to the bottom of a form or wizard */
+.footer-bar{position:absolute; z-index:20; left:0; right:0; bottom:0; padding:14px var(--gutter) 30px;
+  background:linear-gradient(180deg, rgba(255,255,255,0), #fff 30%)}
+.footer-bar .total{display:flex; justify-content:space-between; align-items:baseline; margin:0 4px 10px;
+  font-size:var(--fs-14); color:var(--text-muted)}
+.footer-bar .total b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+
+/* floating action button above the tab bar */
+.fab{position:absolute; z-index:22; right:var(--gutter); bottom:100px; display:inline-flex; align-items:center; gap:8px;
+  height:50px; padding:0 20px 0 14px; border:0; border-radius:var(--r-pill); background:var(--slate-800); color:#fff;
+  font:400 var(--fs-14) var(--font-display); text-decoration:none; box-shadow:var(--shadow-lift); cursor:pointer}
+
+/* ---------- chips ---------- */
+.chips{display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 calc(var(--gutter) * -1); padding:2px var(--gutter)}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border:0;
+  border-radius:var(--r-pill); background:transparent; color:var(--slate-500); font:500 var(--fs-14) var(--font-body);
+  cursor:pointer; white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--slate-800); color:#fff}
+.chip.outline{border:1px solid var(--line-strong); color:var(--slate-700)}
+.chip.outline[aria-pressed="true"]{border-color:var(--slate-800); background:var(--slate-800); color:#fff}
+.chip .x{margin-right:-6px; opacity:.7}
+
+/* segmented control */
+.segment{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:4px; padding:4px; border-radius:var(--r-pill);
+  background:var(--slate-100)}
+.segment button{height:38px; border:0; border-radius:var(--r-pill); background:transparent; color:var(--slate-600);
+  font:400 var(--fs-14) var(--font-display); cursor:pointer}
+.segment button[aria-selected="true"]{background:#fff; color:var(--slate-900); box-shadow:var(--shadow-soft)}
+
+/* status tag. Always text, never colour alone */
+.tag{display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:var(--r-pill);
+  font:600 var(--fs-12) var(--font-body); white-space:nowrap; background:var(--slate-100); color:var(--slate-700)}
+.tag .ic{width:14px; height:14px}
+.tag.green{background:var(--green-50); color:var(--green)}
+.tag.amber{background:var(--amber-50); color:var(--amber)}
+.tag.red{background:var(--red-50); color:var(--red)}
+.tag.blue{background:var(--blue-50); color:var(--blue)}
+.tag.outline{background:#fff; box-shadow:inset 0 0 0 1px var(--line-strong); color:var(--slate-600)}
+
+/* ---------- floating tab bar (inspiration 03) ---------- */
+.tabbar{position:absolute; z-index:25; left:50%; bottom:22px; transform:translateX(-50%); display:flex; align-items:center;
+  gap:6px; padding:6px; border-radius:var(--r-pill); background:rgba(246,247,249,.86); backdrop-filter:blur(18px);
+  box-shadow:var(--shadow-lift), inset 0 0 0 1px rgba(255,255,255,.7)}
+.tab{width:50px; height:50px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff;
+  color:var(--slate-800); text-decoration:none; box-shadow:inset 0 0 0 1px var(--line); transition:transform .14s var(--ease)}
+.tab:active{transform:scale(.94)}
+.tab .ic{width:22px; height:22px}
+.tab[aria-current="page"]{width:auto; display:flex; gap:8px; padding:0 18px 0 5px;
+  background:linear-gradient(180deg, var(--slate-700), var(--slate-900)); color:#fff; box-shadow:var(--shadow-button)}
+.tab[aria-current="page"] .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill);
+  background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.tab .label{display:none; font:400 var(--fs-14) var(--font-display)}
+.tab[aria-current="page"] .label{display:inline}
+
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}

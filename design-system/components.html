@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - Components</title>
+<link rel="icon" href="assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="assets/css/zixom.css">
+<link rel="stylesheet" href="assets/css/docs.css">
+</head>
+<body class="docs">
+
+<header class="docs-head">
+  <img src="assets/brand/zixom-logo.png" alt="Zixom Plast">
+  <h1>Zixom Connect components</h1>
+  <nav aria-label="Sections">
+    <a href="#shell">Shell</a><a href="#foundations">Foundations</a><a href="#buttons">Buttons</a>
+    <a href="#chips">Chips and tags</a><a href="#forms">Forms</a><a href="#cards">Cards</a>
+    <a href="#feedback">Feedback</a><a href="#icons">Icons</a><a href="index.html">Screen map</a>
+  </nav>
+</header>
+
+<main class="docs-main">
+
+<!-- ============================================================ SHELL -->
+<section class="docs-section" id="shell">
+  <h2>Screen shell</h2>
+  <p>Every screen sits on the blue grey gradient. A tab root shows a header on the gradient and its content on a white
+  sheet. A pushed screen starts the white sheet straight under the status bar, with round back and more buttons and a
+  centred title. The floating tab bar shows the current tab as a dark pill with its label; the other tabs are white
+  circles with a VoiceOver label.</p>
+
+  <div class="frames">
+    <!-- tab root, customer -->
+    <div class="frame">
+      <div class="device">
+        <div class="screen">
+          <div class="status"></div>
+          <header class="root-head">
+            <div class="root-bar">
+              <span class="avatar on-dark">RM</span>
+              <div class="grow">
+                <span class="root-hello">Good morning, Rakesh</span>
+                <button class="root-switch" type="button" data-open="company-sheet"><span>Shree Packaging Industries</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+              </div>
+              <a class="icon-btn glass" href="#" aria-label="Search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></a>
+              <a class="icon-btn glass" href="#" aria-label="Notifications, 4 unread"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg><span class="count">4</span></a>
+            </div>
+          </header>
+          <div class="sheet">
+            <div class="scroll with-tabbar">
+              <div class="stack">
+                <div class="stack-sm" style="margin-top:12px">
+                  <a class="alert-card red" href="#">
+                    <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span>
+                    <b>Invoice overdue by 6 days</b><span class="mono">INV-2026-0981, ₹15,340.00</span>
+                    <svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg>
+                  </a>
+                  <a class="alert-card amber" href="#">
+                    <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
+                    <b>Warranty ends in 12 days</b><span>Line 2 former, AFM-1000</span>
+                    <svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg>
+                  </a>
+                </div>
+                <div class="stats" id="shell-stats"></div>
+                <div class="quick">
+                  <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>Raise service</a>
+                  <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>Claim warranty</a>
+                  <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span>Ask a question</a>
+                  <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>Order parts</a>
+                </div>
+                <div class="section-head"><h2>Active request</h2><a href="#">All requests <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-up-right"/></svg></a></div>
+                <div id="shell-ticket"></div>
+              </div>
+            </div>
+          </div>
+          <nav class="tabbar" data-tabs="customer" data-active="home"></nav>
+          <span class="home-indicator"></span>
+
+          <div class="overlay bottom" id="company-sheet" hidden>
+            <div class="bottom-sheet" role="dialog" aria-label="Switch company">
+              <span class="grabber"></span>
+              <div class="head"><h3>Switch company</h3><button class="icon-btn sm" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+              <div class="body" role="radiogroup" aria-label="Companies">
+                <button class="choice" role="radio" aria-checked="true" type="button">
+                  <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+                  <b>Shree Packaging Industries</b><p>Ahmedabad · Primary contact</p><span class="mark"></span>
+                </button>
+                <button class="choice" role="radio" aria-checked="false" type="button">
+                  <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+                  <b>Nova Cups Pvt Ltd</b><p>Pune · Primary contact</p><span class="mark"></span>
+                </button>
+              </div>
+              <button class="btn btn-primary" style="margin-top:16px" data-close>Switch</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Tab root, customer. Gradient header, white sheet, floating tab bar. Tap the company name for a bottom sheet.</p>
+    </div>
+
+    <!-- pushed screen -->
+    <div class="frame">
+      <div class="device">
+        <div class="screen">
+          <div class="status"></div>
+          <div class="sheet">
+            <div class="navbar">
+              <a class="icon-btn" href="#" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+              <h1>Line 2 former</h1>
+              <button class="icon-btn" type="button" data-open="machine-actions" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+            </div>
+            <div class="scroll with-footer">
+              <div class="stack">
+                <span id="pushed-thumb"></span>
+                <div>
+                  <h2 class="large-title" style="font-size:var(--fs-22)">AFM-1000 Twin Station</h2>
+                  <p class="mono" style="margin:4px 0 0; font-size:var(--fs-13); color:var(--slate-600)">ZP-TF-2204</p>
+                  <div class="row-flex" style="margin-top:10px; flex-wrap:wrap" id="pushed-tags"></div>
+                </div>
+                <div class="segment" role="tablist" aria-label="Machine sections">
+                  <button role="tab" aria-selected="true">Overview</button><button role="tab" aria-selected="false">History</button><button role="tab" aria-selected="false">Docs</button>
+                </div>
+                <div class="card-fill">
+                  <dl class="kv" style="margin:0">
+                    <div><dt>Installed on</dt><dd>20 Nov 2025</dd></div>
+                    <div><dt>Commissioned on</dt><dd>5 Dec 2025</dd></div>
+                    <div><dt>Site</dt><dd>Vatva plant</dd></div>
+                    <div><dt>Running hours</dt><dd>6,120 h</dd></div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+            <div class="footer-bar">
+              <div class="btn-pair">
+                <a class="icon-btn" href="#" aria-label="Call Zixom support"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></a>
+                <a class="btn btn-primary" href="#"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg>Raise service</a>
+              </div>
+            </div>
+          </div>
+          <span class="home-indicator"></span>
+
+          <div class="overlay bottom" id="machine-actions" hidden>
+            <div class="action-sheet" role="dialog" aria-label="Machine actions">
+              <div class="group">
+                <div class="title">Line 2 former, ZP-TF-2204</div>
+                <button data-close>Edit details</button><button data-close>Share machine card</button>
+                <button data-close>Update status</button><button class="destructive" data-close>Request transfer</button>
+              </div>
+              <button class="cancel" data-close>Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Pushed screen. Back and more in round outlined buttons, footer bar pinned above the safe area.
+      More opens an action sheet.</p>
+    </div>
+
+    <!-- tab root, engineer -->
+    <div class="frame">
+      <div class="device">
+        <div class="screen">
+          <div class="status"></div>
+          <header class="root-head">
+            <div class="root-bar">
+              <span class="avatar on-dark">SY</span>
+              <div class="grow">
+                <span class="root-hello">Monday, 23 Nov</span>
+                <span class="root-name">Sandeep Yadav</span>
+              </div>
+              <a class="icon-btn glass" href="#" aria-label="3 items waiting to sync"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><span class="count">3</span></a>
+            </div>
+            <h2 class="root-title">5 jobs today</h2>
+          </header>
+          <div class="sheet">
+            <div class="scroll with-tabbar">
+              <div class="stack" style="margin-top:12px">
+                <div class="card-float" style="box-shadow:none; border:1px solid var(--line)">
+                  <div class="row-flex" style="justify-content:space-between">
+                    <span class="tag red"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg>Respond in 18:00</span>
+                    <span class="mono" style="font-size:var(--fs-12); color:var(--text-muted)">TKT-2026-0123</span>
+                  </div>
+                  <h3 class="card-title" style="margin-top:12px">New job: CFM-450 Cup Former</h3>
+                  <p class="card-sub">Shree Packaging, Sanand plant · Tue 24 Nov, 12 to 3 PM</p>
+                  <div class="btn-pair" style="grid-template-columns:1fr 1fr; margin-top:14px">
+                    <button class="btn btn-secondary btn-sm" type="button" style="width:100%">Decline</button>
+                    <button class="btn btn-primary btn-sm" type="button" style="width:100%" data-toast="Job accepted">Accept</button>
+                  </div>
+                </div>
+                <div class="section-head"><h2>Next job</h2></div>
+                <div id="eng-ticket"></div>
+              </div>
+            </div>
+          </div>
+          <nav class="tabbar" data-tabs="engineer" data-active="today"></nav>
+          <span class="home-indicator"></span>
+        </div>
+      </div>
+      <p class="caption">Tab root, engineer. Same shell with the engineer tabs. Accept shows a toast.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FOUNDATIONS -->
+<section class="docs-section" id="foundations">
+  <h2>Foundations</h2>
+  <p>Slate carries primary actions and text. Brand blue from zixom.in marks links, selection and focus. Green, amber and
+  red only mean status, and a status always has text. Titles and buttons use Varela Round, the site font; body text uses
+  Inter. Light mode only for now.</p>
+
+  <h3 class="docs-sub">Colour</h3>
+  <div class="swatches" id="swatches"></div>
+
+  <h3 class="docs-sub">Type</h3>
+  <div class="specimen">
+    <div class="type-row"><code>display 28</code><span style="font:400 28px var(--font-display); color:var(--slate-900)">Machines</span></div>
+    <div class="type-row"><code>display 22</code><span style="font:400 22px var(--font-display); color:var(--slate-900)">AFM-1000 Twin Station</span></div>
+    <div class="type-row"><code>display 18</code><span style="font:400 18px var(--font-display); color:var(--slate-900)">Active request</span></div>
+    <div class="type-row"><code>display 16, buttons</code><span style="font:400 16px var(--font-display); color:var(--slate-900)">Raise service</span></div>
+    <div class="type-row"><code>body 14 / 600</code><span style="font:600 14px var(--font-body); color:var(--slate-900)">Invoice overdue by 6 days</span></div>
+    <div class="type-row"><code>body 14</code><span style="font-size:14px">The engineer collects the faulty part during the visit.</span></div>
+    <div class="type-row"><code>body 12, muted</code><span style="font-size:12px; color:var(--text-muted)">Raised Mon 23 Nov</span></div>
+    <div class="type-row"><code>mono, identifiers</code><span class="mono" style="color:var(--slate-800)">TKT-2026-0123 · ZP-SP-001 · INV-2026-0987</span></div>
+  </div>
+
+  <h3 class="docs-sub">Radius and depth</h3>
+  <div class="demo-row">
+    <div class="specimen" style="border-radius:var(--r-sm)">r-sm 10</div>
+    <div class="specimen" style="border-radius:var(--r-md)">r-md 14, fields</div>
+    <div class="specimen" style="border-radius:var(--r-lg)">r-lg 20, cards</div>
+    <div class="specimen" style="border-radius:var(--r-xl)">r-xl 28, sheets</div>
+    <div class="specimen" style="border-radius:var(--r-pill)">pill, buttons</div>
+    <div class="specimen" style="box-shadow:var(--shadow-lift)">shadow-lift, floating</div>
+  </div>
+</section>
+
+<!-- ============================================================ BUTTONS -->
+<section class="docs-section" id="buttons">
+  <h2>Buttons</h2>
+  <p>Pill shaped. One primary action per screen. Destructive actions are red and sit away from the safe choice. Busy
+  buttons hide their label and block a second tap.</p>
+  <div class="grid">
+    <div class="specimen"><div class="name"><b>Primary</b><code>.btn.btn-primary</code></div>
+      <div class="demo-stack">
+        <button class="btn btn-primary" type="button">Send OTP</button>
+        <button class="btn btn-primary" type="button"><span class="lead"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>Raise service</button>
+        <button class="btn btn-primary" type="button" data-busy>Submit request (tap me)</button>
+        <button class="btn btn-primary" type="button" disabled>Disabled</button>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Secondary, soft, accent, danger</b><code>.btn-secondary .btn-soft .btn-accent .btn-danger</code></div>
+      <div class="demo-stack">
+        <button class="btn btn-secondary" type="button">Request quote</button>
+        <button class="btn btn-soft" type="button">Save draft</button>
+        <button class="btn btn-accent" type="button">Pay ₹4,720.00</button>
+        <button class="btn btn-danger" type="button">Cancel request</button>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Small, text, pair</b><code>.btn-sm .btn-text .btn-pair</code></div>
+      <div class="demo-stack">
+        <div class="demo-row">
+          <button class="btn btn-primary btn-sm" type="button">Explore <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-right"/></svg></button>
+          <button class="btn btn-soft btn-sm" type="button">Sell your part</button>
+          <button class="btn btn-text" type="button">Contact support</button>
+        </div>
+        <div class="btn-pair">
+          <a class="icon-btn" href="#" aria-label="Call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></a>
+          <button class="btn btn-primary" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send estimate</button>
+        </div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Icon buttons</b><code>.icon-btn .glass .dark .sm .count</code></div>
+      <div class="demo-row">
+        <button class="icon-btn" type="button" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></button>
+        <button class="icon-btn" type="button" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+        <button class="icon-btn" type="button" aria-label="Notifications, 4 unread"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg><span class="count">4</span></button>
+        <button class="icon-btn dark" type="button" aria-label="Call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></button>
+        <button class="icon-btn sm" type="button" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button>
+        <span style="display:inline-flex; gap:10px; padding:10px; border-radius:var(--r-pill); background:var(--header-gradient)">
+          <button class="icon-btn glass" type="button" aria-label="Search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></button>
+          <button class="icon-btn glass" type="button" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#ph-list"/></svg></button>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CHIPS -->
+<section class="docs-section" id="chips">
+  <h2>Chips, segments and tags</h2>
+  <p>Filter chips follow inspiration 01: plain until selected, then a slate pill. A segmented control switches sections
+  of one screen. Tags show status and always carry words.</p>
+  <div class="grid">
+    <div class="specimen"><div class="name"><b>Filter chips</b><code>.chips[data-single] .chip</code></div>
+      <div class="chips" data-single>
+        <button class="chip" type="button" aria-pressed="false"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-fire"/></svg>Heaters</button>
+        <button class="chip" type="button" aria-pressed="true"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-timer"/></svg>Timers</button>
+        <button class="chip" type="button" aria-pressed="false"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-nut"/></svg>Chains</button>
+        <button class="chip" type="button" aria-pressed="false"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-thermometer"/></svg>PID</button>
+      </div>
+      <div class="chips" style="margin-top:12px">
+        <button class="chip outline" type="button" aria-pressed="false">Vatva plant <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+        <button class="chip outline" type="button" aria-pressed="false">In warranty <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Segmented control</b><code>.segment[role=tablist]</code></div>
+      <div class="demo-stack">
+        <div class="segment" role="tablist" aria-label="Machines or AMC"><button role="tab" aria-selected="true">Machines</button><button role="tab" aria-selected="false">AMC</button></div>
+        <div class="segment" role="tablist" aria-label="Support"><button role="tab" aria-selected="false">Service</button><button role="tab" aria-selected="true">Warranty</button><button role="tab" aria-selected="false">Questions</button></div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Status tags</b><code>.tag .green .amber .red .blue .outline</code></div>
+      <div class="demo-row" id="tags-demo"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FORMS -->
+<section class="docs-section" id="forms">
+  <h2>Forms</h2>
+  <p>Grey filled fields that turn white with a blue ring on focus. Messages say what to do. On submit an error summary
+  sits at the top and focus moves to the first error.</p>
+  <div class="grid">
+    <div class="specimen"><div class="name"><b>Text fields</b><code>.field .input .input-group</code></div>
+      <div class="field"><label for="f-name">Full name<span class="req">*</span></label><input class="input" id="f-name" value="Rakesh Mehta"></div>
+      <div class="field"><label for="f-mobile">Mobile number<span class="req">*</span></label>
+        <div class="input-group"><span class="prefix">+91</span><input class="input" id="f-mobile" inputmode="numeric" placeholder="98250 11410"></div></div>
+      <div class="field has-error"><label for="f-serial">Machine serial number<span class="req">*</span></label>
+        <input class="input mono" id="f-serial" value="ZP-TF" aria-invalid="true" aria-describedby="f-serial-err">
+        <span class="error-text" id="f-serial-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 6 to 20 letters or digits</span></div>
+    </div>
+    <div class="specimen"><div class="name"><b>Textarea, picker, search</b><code>.textarea .select .search</code></div>
+      <div class="field"><label for="f-desc">What happened<span class="req">*</span><span class="counter">86 / 1000</span></label>
+        <textarea class="textarea" id="f-desc">Chain drive trips with error E-17 on the HMI about 10 minutes after start. Machine stops.</textarea></div>
+      <div class="field"><span class="field-label">Site<span class="req">*</span></span>
+        <button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value">Vatva plant</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+      <div class="field"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+        <input class="input" placeholder="Search model, serial or site" aria-label="Search machines">
+        <button class="icon-btn" type="button" aria-label="Filter"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div></div>
+    </div>
+    <div class="specimen"><div class="name"><b>OTP and error summary</b><code>.otp .error-summary</code></div>
+      <div class="field"><span class="field-label">Enter the code</span>
+        <div class="otp"><input maxlength="1" value="4" aria-label="Digit 1"><input maxlength="1" value="8" aria-label="Digit 2"><input maxlength="1" value="2" aria-label="Digit 3"><input maxlength="1" aria-label="Digit 4"><input maxlength="1" aria-label="Digit 5"><input maxlength="1" aria-label="Digit 6"></div>
+        <span class="hint">Resend code in 0:24</span></div>
+      <div class="field"><div class="otp has-error"><input value="4" aria-label="Digit 1"><input value="8" aria-label="Digit 2"><input value="2" aria-label="Digit 3"><input value="9" aria-label="Digit 4"><input value="1" aria-label="Digit 5"><input value="0" aria-label="Digit 6"></div>
+        <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. 4 tries left.</span></div>
+      <div class="error-summary" role="alert" style="margin-top:16px"><b>Fix 2 things to continue</b>
+        <ul><li><a href="#f-serial">Enter the machine serial number</a></li><li><a href="#f-desc">Describe what happened in at least 20 characters</a></li></ul></div>
+    </div>
+    <div class="specimen"><div class="name"><b>Choice cards</b><code>[role=radiogroup] .choice</code></div>
+      <div role="radiogroup" aria-label="Severity">
+        <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span><b>Machine down</b><p>Production stopped. We aim to reach you within 4 hours.</p><span class="mark"></span></button>
+        <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Production affected</b><p>Running with a problem. Within 1 working day.</p><span class="mark"></span></button>
+        <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>Minor</b><p>No impact on output. Within 3 working days.</p><span class="mark"></span></button>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Checkbox, switch, stepper</b><code>.check .switch .stepper</code></div>
+      <div class="demo-stack">
+        <label class="check"><input type="checkbox" checked>I confirm the machine was used as intended and was not repaired by anyone other than Zixom</label>
+        <div class="list">
+          <label class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Service updates</b><span class="sub">Push and email</span><span class="end"><span class="switch"><input type="checkbox" checked aria-label="Service updates"><span></span></span></span></label>
+          <label class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Payment due</b><span class="sub">Always on</span><span class="end"><span class="switch"><input type="checkbox" checked disabled aria-label="Payment due"><span></span></span></span></label>
+        </div>
+        <div class="demo-row">
+          <span class="stepper"><button type="button" data-step="-1" aria-label="Less"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output value="2">2</output><button type="button" data-step="1" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span>
+          <span class="stepper lg"><button type="button" data-step="-1" aria-label="Less"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output value="1">1</output><button type="button" data-step="1" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span>
+        </div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Wizard, dates, time windows</b><code>.wizard .dates .slots</code></div>
+      <div class="wizard"><div class="meta"><b>Step 4 of 5</b><span>Visit details</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span></span></div></div>
+      <div class="field-label">November 2026</div>
+      <div class="dates" data-single>
+        <button class="date" type="button" disabled><span>Mon</span><b>23</b></button>
+        <button class="date" type="button" aria-pressed="true"><span>Tue</span><b>24</b></button>
+        <button class="date" type="button" aria-pressed="false"><span>Wed</span><b>25</b></button>
+        <button class="date" type="button" aria-pressed="false"><span>Thu</span><b>26</b></button>
+        <button class="date" type="button" aria-pressed="false"><span>Fri</span><b>27</b></button>
+        <button class="date" type="button" aria-pressed="false"><span>Sat</span><b>28</b></button>
+        <button class="date" type="button" disabled><span>Sun</span><b>29</b></button>
+      </div>
+      <div class="field-label" style="margin-top:14px">Time window</div>
+      <div class="slots" data-single>
+        <button class="slot" type="button" aria-pressed="false">9 to 12</button>
+        <button class="slot" type="button" aria-pressed="true">12 to 3</button>
+        <button class="slot" type="button" aria-pressed="false" disabled>3 to 6</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CARDS -->
+<section class="docs-section" id="cards">
+  <h2>Cards and data</h2>
+  <p>Cards on the white sheet are either outlined white or light grey filled, like the cart in inspiration 01. Machine
+  and part images are a tinted block with a line icon until Zixom supplies photos. People show initials.</p>
+  <div class="grid">
+    <div class="specimen"><div class="name"><b>Machine card</b><code>ZX.render.machineCard()</code></div><div class="stack-sm" id="machines-demo"></div></div>
+    <div class="specimen"><div class="name"><b>Service ticket card</b><code>ZX.render.ticketCard()</code></div><div class="stack-sm" id="tickets-demo"></div></div>
+    <div class="specimen"><div class="name"><b>Summary and quick actions</b><code>.stats .quick</code></div>
+      <div class="stack"><div class="stats" id="stats-demo"></div>
+        <div class="quick">
+          <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>Raise service</a>
+          <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>Claim warranty</a>
+          <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span>Ask a question</a>
+          <a href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>Order parts</a>
+        </div></div>
+    </div>
+    <div class="specimen"><div class="name"><b>Grouped list</b><code>.list .list-item</code></div>
+      <p class="list-title" style="margin-top:0">Care</p>
+      <div class="list">
+        <a class="list-item" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span><b>Spare parts and orders</b><span class="sub">2 orders on the way</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+        <a class="list-item" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span><b>Documents</b><span class="sub">Manuals, certificates, reports</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+        <a class="list-item" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span><b>Team members</b><span class="sub">Primary contact only</span><span class="end">3<svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+        <button class="list-item danger" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>Log out</b></button>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Engineer card and timeline</b><code>ZX.render.engineerCard() .timeline</code></div>
+      <div class="card-fill" id="engineer-demo"></div>
+      <ol class="timeline" style="margin-top:18px">
+        <li class="done"><span class="dot"></span><div><b>Request received</b><span>Sun 22 Nov, 10:30 AM</span></div></li>
+        <li class="done"><span class="dot"></span><div><b>Engineer assigned</b><span>Sun 22 Nov, 2:15 PM · Sandeep Yadav</span></div></li>
+        <li class="now"><span class="dot"></span><div><b>Visit on Tue 24 Nov, 12 to 3 PM</b><span>We will tell you when he is on the way</span></div></li>
+        <li class="todo"><span class="dot"></span><div><b>Work and report</b></div></li>
+      </ol>
+    </div>
+    <div class="specimen"><div class="name"><b>Money summary and key values</b><code>.money .kv</code></div>
+      <div class="money" id="money-demo"></div>
+      <dl class="kv" style="margin:12px 0 0">
+        <div><dt>Invoice</dt><dd class="mono">INV-2026-0980</dd></div>
+        <div><dt>Due date</dt><dd>30 Nov 2026</dd></div>
+        <div><dt>Status</dt><dd><span class="tag amber">Due</span></dd></div>
+      </dl>
+    </div>
+    <div class="specimen"><div class="name"><b>Alert cards and meter</b><code>.alert-card .meter</code></div>
+      <div class="stack-sm">
+        <a class="alert-card amber" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Estimate waiting for approval</b><span class="mono">TKT-2026-0122, ₹8,968.00</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+        <a class="alert-card blue" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg></span><b>Zixom needs more information</b><span>Claim WCL-2026-0042, reply by 27 Nov</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+      </div>
+      <div class="card-fill" style="margin-top:12px">
+        <div class="row-flex" style="justify-content:space-between; font-size:var(--fs-13)"><b style="color:var(--slate-900)">AMC visits</b><span>2 of 6 used</span></div>
+        <div class="meter" style="margin-top:10px"><i style="width:33%"></i></div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Uploads</b><code>.uploads .upload</code></div>
+      <div class="uploads">
+        <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><button class="remove" type="button" aria-label="Remove photo"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="bar"><i style="width:60%"></i></span></div>
+        <button class="upload failed" type="button" aria-label="Upload failed, retry"><svg class="ic ic-24" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><span class="state">Retry</span></button>
+        <button class="upload add" type="button" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+      </div>
+      <p class="hint">Done · Uploading 60% · Failed with Retry · Add. Up to 10 photos and one 60 second video.</p>
+    </div>
+    <div class="specimen"><div class="name"><b>Question thread</b><code>.thread .bubble</code></div>
+      <div class="thread">
+        <div class="bubble me">Can we use 0.8 mm PET sheet on the AFM-760 without changing the heater settings?</div>
+        <div class="bubble-meta me">10:12 AM · Read</div>
+        <div class="bubble them">Yes, but raise the top heater by 5 percent and run a trial of 20 sheets first. I have attached the setting chart.</div>
+        <div class="bubble-meta">Neha, Zixom support · 10:40 AM</div>
+        <div class="bubble me">Thanks, will try today.</div>
+        <div class="bubble-meta me failed"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Not sent. Tap to retry</div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Notification rows</b><code>.notif .unread</code></div>
+      <a class="notif unread" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg></span><span><b>Engineer assigned</b><p>Sandeep Yadav visits on Tue 24 Nov, 12 to 3 PM.</p></span><time>2h</time></a>
+      <a class="notif unread" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><span><b>Estimate ready</b><p>TKT-2026-0122 needs your approval.</p></span><time>5h</time></a>
+      <a class="notif" href="#"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-truck"/></svg></span><span><b>Order dispatched</b><p>ORD-2026-0209 is with Blue Dart.</p></span><time>Sat</time></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FEEDBACK -->
+<section class="docs-section" id="feedback">
+  <h2>Feedback and states</h2>
+  <p>Each kind has one job (spec section 6). An alert stops the person with one question. An action sheet chooses between
+  actions. A bottom sheet holds a picker or a short form. A toast confirms something done and never shows an error. A
+  banner stays until the state is fixed.</p>
+  <div class="grid">
+    <div class="specimen"><div class="name"><b>Banners</b><code>.banner .green .amber .red .grey .offline-strip</code></div>
+      <div class="demo-stack">
+        <div class="offline-strip" style="margin:0"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing saved data.</div>
+        <div class="banner green"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg><div><b>Under warranty</b>No charge for covered work.</div></div>
+        <div class="banner"><svg class="ic" aria-hidden="true"><use href="#ph-seal-check"/></svg><div><b>Under AMC</b>No charge for included visits. 4 left.</div></div>
+        <div class="banner grey"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg><div><b>Chargeable</b>Visit fee ₹699.00 plus parts and labour.</div></div>
+        <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg><div>This is taking longer than usual. <button class="link-btn" type="button">Call support</button></div></div>
+        <div class="banner red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>AMC suspended</b>₹42,480.00 is overdue. <a href="#">Pay now</a></div></div>
+      </div>
+    </div>
+    <div class="specimen"><div class="name"><b>Empty, no results, error</b><code>.state</code></div>
+      <div class="state" style="padding-top:8px"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><h3>No machines yet</h3><p>Add a machine to see its history, warranty and service.</p><button class="btn btn-primary" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</button></div>
+      <div class="state" style="border-top:1px solid var(--line)"><span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span><h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p><button class="btn btn-secondary" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button><span class="code mono">ZC-500</span></div>
+    </div>
+    <div class="specimen"><div class="name"><b>Skeleton and inline retry</b><code>.skeleton .inline-retry</code></div>
+      <div class="demo-stack">
+        <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow demo-stack" style="gap:8px"><span class="skeleton sk-line" style="width:70%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+        <span class="skeleton sk-card"></span><span class="skeleton sk-card"></span>
+        <p class="slow-note">Still loading. This is taking longer than usual.</p>
+        <div class="inline-retry">Couldn't load more.<button class="btn btn-text" type="button">Retry</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frames">
+    <div class="frame">
+      <div class="device">
+        <div class="screen">
+          <div class="status"></div>
+          <div class="sheet">
+            <div class="navbar">
+              <a class="icon-btn" href="#" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+              <h1>TKT-2026-0124</h1><span></span>
+            </div>
+            <div class="scroll">
+              <div class="demo-stack">
+                <p class="lede" style="margin-bottom:6px">Open each overlay. They sit inside the phone because they are app UI.</p>
+                <button class="btn btn-secondary" type="button" data-open="ov-alert">Alert: discard changes</button>
+                <button class="btn btn-secondary" type="button" data-open="ov-cancel">Action sheet: cancel request</button>
+                <button class="btn btn-secondary" type="button" data-open="ov-filter">Bottom sheet: filters</button>
+                <button class="btn btn-secondary" type="button" data-open="ov-success">Alert: request submitted</button>
+                <button class="btn btn-secondary" type="button" data-toast="Request saved as a draft">Toast</button>
+              </div>
+            </div>
+          </div>
+          <span class="home-indicator"></span>
+
+          <div class="overlay center" id="ov-alert" hidden>
+            <div class="alert" role="alertdialog" aria-labelledby="ov-alert-t">
+              <h3 id="ov-alert-t">Discard this request?</h3><p>Your changes will be lost.</p>
+              <div class="actions"><button class="btn btn-primary" data-close>Keep editing</button><button class="btn btn-text" style="color:var(--red); width:100%" data-close>Discard</button></div>
+            </div>
+          </div>
+          <div class="overlay bottom" id="ov-cancel" hidden>
+            <div class="action-sheet" role="dialog" aria-label="Cancel request">
+              <div class="group"><div class="title">Cancel TKT-2026-0124? The engineer will be told.</div><button class="destructive" data-close>Cancel request</button></div>
+              <button class="cancel" data-close>Keep request</button>
+            </div>
+          </div>
+          <div class="overlay bottom" id="ov-filter" hidden>
+            <div class="bottom-sheet" role="dialog" aria-label="Filter machines">
+              <span class="grabber"></span>
+              <div class="head"><h3>Filter machines</h3><button class="btn btn-text" type="button">Reset</button></div>
+              <div class="body">
+                <div class="field-label">Site</div>
+                <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">All sites</button><button class="chip outline" type="button" aria-pressed="false">Vatva plant</button><button class="chip outline" type="button" aria-pressed="false">Sanand plant</button></div>
+                <div class="field-label">Warranty</div>
+                <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="false">In warranty</button><button class="chip outline" type="button" aria-pressed="false">Ending soon</button><button class="chip outline" type="button" aria-pressed="true">Any</button></div>
+                <label class="check"><input type="checkbox">Has an open request</label>
+              </div>
+              <button class="btn btn-primary" style="margin-top:18px" data-close>Show 6 machines</button>
+            </div>
+          </div>
+          <div class="overlay center" id="ov-success" hidden>
+            <div class="alert" role="alertdialog" aria-labelledby="ov-success-t">
+              <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+              <h3 id="ov-success-t">Request submitted</h3><p>Your request number is <span class="mono">TKT-2026-0133</span>. We will tell you when an engineer is assigned.</p>
+              <div class="actions"><button class="btn btn-primary" data-close>View request</button><button class="btn btn-text" style="width:100%" data-close>Done</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">Overlays inside the phone. Bottom and action sheets close on the backdrop; alerts need an answer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ ICONS -->
+<section class="docs-section" id="icons">
+  <h2>Icons</h2>
+  <p>Phosphor regular, vendored as a sprite in <code>assets/icons/icons.js</code>. Use
+  <code>&lt;svg class="ic"&gt;&lt;use href="#ph-wrench"/&gt;&lt;/svg&gt;</code>. Add a name in
+  <code>tools/build-icons.mjs</code> and rebuild to get a new one.</p>
+  <div class="icons-grid" id="icons-grid" style="margin-top:20px"></div>
+</section>
+
+</main>
+
+<script src="assets/icons/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  const CLOSED = ['closed', 'cancelled', 'visit-failed'];
+  const openRequests = data.tickets.filter((t) => !CLOSED.includes(t.status)).length;
+  const warrantyEnding = data.machines.filter((m) => m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0 && R.daysFromToday(m.warrantyEnd) <= 30).length;
+  const due = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((sum, i) => sum + i.amount, 0);
+  const stats = `
+    <a class="stat" href="#"><span class="top"><span class="disc">${R.icon('factory')}</span></span><b>${data.machines.length}</b><span>Machines</span></a>
+    <a class="stat" href="#"><span class="top"><span class="disc">${R.icon('wrench')}</span></span><b>${openRequests}</b><span>Open requests</span></a>
+    <a class="stat warn" href="#"><span class="top"><span class="disc">${R.icon('shield-warning')}</span></span><b>${warrantyEnding}</b><span>Warranty ending soon</span></a>
+    <a class="stat bad" href="#"><span class="top"><span class="disc">${R.icon('receipt')}</span></span><b>${R.money(due).replace('.00', '')}</b><span>Payments due</span></a>`;
+  $('shell-stats').innerHTML = stats;
+  $('stats-demo').innerHTML = stats;
+
+  const ticket = (n) => data.tickets.find((t) => t.number === n);
+  $('shell-ticket').innerHTML = R.ticketCard(ticket('TKT-2026-0123'));
+  $('eng-ticket').innerHTML = R.ticketCard(ticket('TKT-2026-0125'));
+  $('tickets-demo').innerHTML = ['TKT-2026-0126', 'TKT-2026-0122'].map((n) => R.ticketCard(ticket(n))).join('');
+
+  const tf2204 = R.machine('ZP-TF-2204');
+  $('pushed-thumb').innerHTML = R.thumb(tf2204, 'lg');
+  $('pushed-tags').innerHTML = R.warrantyTag(tf2204) + R.tag('Under repair', 'amber');
+  $('machines-demo').innerHTML = ['ZP-TF-2310', 'ZP-CF-2011', 'ZP-PC-1805', 'ZP-TF-2501']
+    .map((s) => R.machineCard(R.machine(s))).join('');
+
+  $('engineer-demo').innerHTML = R.engineerCard(R.engineer('sandeep'));
+  $('money-demo').innerHTML = `<div><span>Visit fee</span><span>${R.money(699)}</span></div>
+    <div><span>Labour, 2 hours</span><span>${R.money(1600)}</span></div>
+    <div><span>Timer relay 24 V DC</span><span>${R.money(1240)}</span></div>
+    <div><span>GST 18%</span><span>${R.money(637.02)}</span></div>
+    <div class="total"><span>Total</span><span>${R.money(4176.02)}</span></div>`;
+
+  $('tags-demo').innerHTML = [
+    R.ticketTag('submitted'), R.ticketTag('awaiting-info'), R.ticketTag('closed'), R.ticketTag('visit-failed'),
+    R.ticketTag('cancelled'), R.coverageTag('warranty'), R.coverageTag('amc'), R.coverageTag('chargeable'),
+    R.severityTag('down'), R.severityTag('production'), R.stockTag('in'), R.stockTag('low'), R.stockTag('request'),
+    R.invoiceTag('overdue'), R.tag('Waiting to sync', 'outline', 'cloud-arrow-up'),
+  ].join('');
+
+  const SWATCHES = [
+    ['--slate-900', 'Headings'], ['--slate-800', 'Primary button'], ['--slate-600', 'Secondary text'],
+    ['--text', 'Body text #4B4F58'], ['--slate-200', 'Rules'], ['--slate-50', 'Fields, inner cards'],
+    ['--blue', 'Brand #4064D7'], ['--blue-50', 'Brand wash'], ['--sky', 'Light blue #6EC1E4'],
+    ['--green', 'Good, covered'], ['--amber', 'Attention'], ['--red', 'Overdue, failed, down'],
+  ];
+  const css = getComputedStyle(document.documentElement);
+  $('swatches').innerHTML = SWATCHES.map(([token, use]) => `<div class="swatch"><i style="background:var(${token})"></i>
+    <span><b>${use}</b><br><code>${token} ${css.getPropertyValue(token).trim()}</code></span></div>`).join('')
+    + `<div class="swatch"><i style="background:var(--header-gradient)"></i><span><b>Screen gradient</b><br><code>--header-gradient</code></span></div>`;
+
+  $('icons-grid').innerHTML = [...document.querySelectorAll('symbol')].map((s) => {
+    const name = s.id.replace('ph-', '');
+    return `<div>${R.icon(name)}${name}</div>`;
+  }).join('');
+})();
+</script>
+<script src="assets/js/ui.js"></script>
+</body>
+</html>

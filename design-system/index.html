@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - Screen map</title>
+<link rel="icon" href="assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="assets/css/zixom.css">
+<link rel="stylesheet" href="assets/css/docs.css">
+<style>
+.summary{display:flex; flex-wrap:wrap; gap:12px; margin-top:20px}
+.summary .specimen{min-width:180px; padding:16px 20px}
+.summary b{display:block; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.summary span{font-size:var(--fs-13); color:var(--text-muted)}
+.modules{display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:20px; margin-top:20px; align-items:start}
+.module h3{display:flex; justify-content:space-between; margin:0 0 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.module h3 small{font:500 var(--fs-12) var(--font-body); color:var(--text-muted)}
+.screen-row{display:grid; grid-template-columns:62px 1fr auto; gap:10px; align-items:center; padding:8px 4px;
+  border-top:1px solid var(--line); font-size:var(--fs-13); color:var(--text); text-decoration:none}
+.screen-row .mono{color:var(--slate-500)}
+a.screen-row{color:var(--slate-900)}
+a.screen-row:hover{background:var(--slate-50)}
+a.screen-row .mono{color:var(--blue)}
+</style>
+</head>
+<body class="docs">
+
+<header class="docs-head">
+  <img src="assets/brand/zixom-logo.png" alt="Zixom Plast">
+  <h1>Zixom Connect screen map</h1>
+  <nav aria-label="Pages"><a href="components.html">Components</a></nav>
+</header>
+
+<main class="docs-main">
+  <section class="docs-section" style="margin-top:0">
+    <h2>Every screen in the spec</h2>
+    <p>Spec SCT-SP-APP-ZP draft 2, section 18. A screen with a page is a link. Phase 2 screens are specified but not in
+    the first release. Prototype only: HTML, CSS and sample data, nothing here is app code.</p>
+    <div class="summary" id="summary"></div>
+    <div class="segment" role="tablist" aria-label="Role" style="max-width:520px; margin-top:24px" id="roles">
+      <button role="tab" aria-selected="true" data-role="all">All</button>
+      <button role="tab" aria-selected="false" data-role="shared">Shared</button>
+      <button role="tab" aria-selected="false" data-role="customer">Customer</button>
+      <button role="tab" aria-selected="false" data-role="engineer">Engineer</button>
+    </div>
+    <div class="modules" id="modules"></div>
+  </section>
+</main>
+
+<script src="assets/icons/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="assets/js/screens.js"></script>
+<script>
+(() => {
+  const { esc, tag } = ZX.render;
+  const all = ZX.modules.flatMap((m) => m.screens.map(([id, name, phase = 1]) => ({ id, name, phase, role: m.role })));
+  const built = all.filter((s) => ZX.built[s.id]).length;
+  const phase1 = all.filter((s) => s.phase === 1).length;
+  document.getElementById('summary').innerHTML = [
+    [all.length, 'Screens in the spec'], [phase1, 'In the first release'], [built, 'Pages built'],
+  ].map(([n, label]) => `<div class="specimen"><b>${n}</b><span>${label}</span></div>`).join('');
+
+  const draw = (role) => {
+    document.getElementById('modules').innerHTML = ZX.modules.filter((m) => role === 'all' || m.role === role).map((m) => {
+      const rows = m.screens.map(([id, name, phase = 1]) => {
+        const href = ZX.built[id];
+        const badge = phase === 2 ? tag('Phase 2') : href ? tag('Built', 'green') : '';
+        const inner = `<span class="mono">${id}</span><span>${esc(name)}</span>${badge}`;
+        return href ? `<a class="screen-row" href="${href}">${inner}</a>` : `<div class="screen-row">${inner}</div>`;
+      }).join('');
+      return `<div class="specimen module"><h3>${m.id}. ${esc(m.name)}<small>${m.screens.length} screens</small></h3>${rows}</div>`;
+    }).join('');
+  };
+  draw('all');
+  document.getElementById('roles').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-role]');
+    if (button) draw(button.dataset.role);
+  });
+})();
+</script>
+<script src="assets/js/ui.js"></script>
+</body>
+</html>
