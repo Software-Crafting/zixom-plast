@@ -140,10 +140,52 @@ ZX.data = {
       text: 'Ceramic heaters for the AFM range are now stocked in Ahmedabad and Pune.' },
   ],
 
+  /* GST is 18 percent on every line. amount includes GST; paid is what was received so far */
   invoices: [
-    { number: 'INV-2026-0980', type: 'Service', status: 'due', amount: 4720, due: '2026-11-30', for: 'TKT-2026-0128' },
-    { number: 'INV-2026-0981', type: 'Parts', status: 'overdue', amount: 15340, due: '2026-11-17', for: 'ORD-2026-0208' },
-    { number: 'INV-2026-0982', type: 'AMC', status: 'paid', amount: 42480, due: '2026-04-01', for: 'AMC-2026-0010', receipt: 'RCP-2026-0650' },
-    { number: 'INV-2026-0983', type: 'Service', status: 'processing', amount: 2360, due: '2026-11-25', for: 'TKT-2026-0129' },
+    { number: 'INV-2026-0980', type: 'Service', status: 'due', amount: 4720, issued: '2026-11-16', due: '2026-11-30', for: 'TKT-2026-0118',
+      title: 'Blower motor repair, Scrap grinder', lines: [['Visit fee', 1, 700], ['Labour, hours', 2.5, 800], ['Motor bearing set', 1, 1300]] },
+    { number: 'INV-2026-0981', type: 'Parts', status: 'overdue', amount: 15340, issued: '2026-11-02', due: '2026-11-17', for: 'ORD-2026-0208',
+      title: 'Heater elements and timer relay', lines: [['Ceramic heater element 650 W', 4, 2850], ['Timer relay 24 V DC', 1, 1240], ['Delivery', 1, 360]] },
+    { number: 'INV-2026-0982', type: 'AMC', status: 'paid', amount: 42480, paid: 42480, issued: '2026-03-25', due: '2026-04-01', for: 'AMC-2026-0010',
+      title: 'Preventive Plus AMC, CFM-450, 1 year', receipt: 'RCP-2026-0650', lines: [['Preventive Plus, 1 machine, 1 year', 1, 36000]] },
+    { number: 'INV-2026-0983', type: 'Service', status: 'processing', amount: 2360, issued: '2026-11-18', due: '2026-11-25', for: 'TKT-2026-0117',
+      title: 'Heater zone calibration, Line 1 former', lines: [['Calibration, hours', 2.5, 800]] },
+    { number: 'INV-2026-0984', type: 'Parts', status: 'due', amount: 6962, issued: '2026-11-19', due: '2026-12-03', for: 'ORD-2026-0207',
+      title: 'Vacuum pump service kit', lastAttempt: 'failed', lines: [['Vacuum pump service kit', 1, 5400], ['Delivery', 1, 500]] },
+    { number: 'INV-2026-0985', type: 'Service', status: 'verification', amount: 3540, issued: '2026-11-10', due: '2026-11-24', for: 'TKT-2026-0116',
+      title: 'Chain tensioner replacement, Line 2 former', lines: [['Labour, hours', 2, 800], ['Chain tensioner', 1, 1400]] },
+    { number: 'INV-2026-0986', type: 'AMC', status: 'due', amount: 28320, paid: 14160, issued: '2026-11-01', due: '2026-12-01', for: 'AMC-2026-0011',
+      title: 'Essential AMC renewal, SVF-600, 1 year', lines: [['Essential, 1 machine, 1 year', 1, 24000]] },
+    { number: 'INV-2026-0987', type: 'Service', status: 'paid', amount: 1180, paid: 1180, issued: '2026-10-21', due: '2026-11-04', for: 'TKT-2026-0112',
+      title: 'Sensor cleaning, Tray line', creditNote: 'CN-2026-0012', lines: [['Labour, hours', 1.25, 800]] },
+  ],
+
+  /* estimate for extra work, shared on TKT-2026-0122. Valid 3 days */
+  estimates: [
+    { number: 'QT-2026-0041', ticket: 'TKT-2026-0122', status: 'shared', shared: '2026-11-23T09:30', validUntil: '2026-11-26',
+      by: 'sandeep', note: 'Blade edges are chipped and the shaft key is worn. Replacing the blade set stops the knocking.',
+      lines: [['Crusher blade set, 4 blades', 1, 4800], ['Labour, hours', 2, 800], ['Travel', 1, 1200]] },
+  ],
+
+  payments: [
+    { receipt: 'RCP-2026-0650', invoice: 'INV-2026-0982', amount: 42480, method: 'UPI, PhonePe', txn: 'pay_Nz81kLq2Vx7D', when: '2026-03-28T11:20', status: 'paid' },
+    { receipt: 'RCP-2026-0651', invoice: 'INV-2026-0986', amount: 14160, method: 'Bank transfer, UTR HDFC0026117745', txn: 'UTR HDFC0026117745', when: '2026-11-05T15:02', status: 'paid' },
+    { receipt: 'RCP-2026-0652', invoice: 'INV-2026-0987', amount: 1180, method: 'Card, Visa 4417', txn: 'pay_Ny2QwPq8Ls1A', when: '2026-10-25T10:12', status: 'paid' },
+    { receipt: null, invoice: 'INV-2026-0984', amount: 6962, method: 'Net banking, SBI', txn: 'pay_Oa3ReMv9Kt4B', when: '2026-11-22T18:44', status: 'failed', reason: 'Your bank declined the payment' },
+    { receipt: null, invoice: 'INV-2026-0983', amount: 2360, method: 'UPI, Google Pay', txn: 'pay_Oa9TyHn2Jw6C', when: '2026-11-23T11:30', status: 'processing' },
+  ],
+
+  refunds: [
+    { order: 'ORD-2026-0211', amount: 2950, status: 'initiated', started: '2026-11-21', expected: '2026-11-28', reason: 'Order cancelled before dispatch' },
+  ],
+
+  /* visit reports, customer copy */
+  reports: [
+    { ticket: 'TKT-2026-0128', number: 'SR-2026-0128', date: '2026-11-21', engineer: 'sandeep', timeOnSite: '2 h 40 min',
+      findings: 'Top heater zone 4 element open circuit. Sheet sagged before reaching the forming station.',
+      work: 'Replaced heater element in zone 4, checked all zones with a clamp meter, ran 30 trial sheets.',
+      parts: [['ZP-SP-001', 'Ceramic heater element 650 W', 1, true]], status: 'Running',
+      recommendations: 'Replace zone 3 element at the next AMC visit; it reads 8 percent low.',
+      signedBy: 'Rakesh Mehta, Plant head', signedAt: '2026-11-21T16:52', chargeable: false },
   ],
 };

@@ -7,31 +7,34 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-/* hero: a fanned stack of real app cards, after the stacked order cards in inspiration 01 */
-.slides{flex:1; min-height:0; display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none}
-.slides::-webkit-scrollbar{display:none}
-.slide{flex:0 0 100%; scroll-snap-align:start; display:flex; align-items:center; justify-content:center; padding:0 28px 24px}
-.stack-art{position:relative; width:100%; max-width:310px; height:250px}
-.stack-art .ghost{position:absolute; left:22px; right:22px; height:58px; border-radius:20px; background:rgba(255,255,255,.55);
-  display:flex; align-items:center; gap:8px; padding:0 16px; font:400 var(--fs-13) var(--font-display); color:var(--slate-700);
-  box-shadow:0 10px 24px -18px rgba(24,34,45,.6)}
-.stack-art .ghost.g1{top:6px; transform:rotate(-5deg) scale(.9)}
-.stack-art .ghost.g2{top:30px; left:14px; right:14px; background:rgba(255,255,255,.75); transform:rotate(-2.5deg) scale(.95)}
-.stack-art .front{position:absolute; left:0; right:0; top:66px; padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-lift)}
-.front .row-flex{justify-content:space-between}
-.front h3{margin:10px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
-.front .meta{display:flex; gap:12px; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
-.front .meta span{display:inline-flex; align-items:center; gap:4px}
-.front .btn{margin-top:14px; min-height:44px; font-size:var(--fs-14)}
+/* card deck: a loose pile of portrait cards. Drag or flick the top one to throw it under the pile. */
+.stage{flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:44px 0 20px}
+.deck{position:relative; width:236px; aspect-ratio:4 / 5; touch-action:pan-y; outline:none}
+.deck-card{position:absolute; inset:0; overflow:hidden; display:flex; flex-direction:column; border-radius:24px; background:#fff;
+  box-shadow:0 1px 2px rgba(24,34,45,.1), 0 18px 34px -14px rgba(24,34,45,.45); will-change:transform; user-select:none; -webkit-user-select:none}
+.deck-card.top{cursor:grab}
+.deck-card.top:active{cursor:grabbing}
+.deck-card .shade{position:absolute; inset:0; background:var(--slate-900); pointer-events:none; transition:opacity .4s ease}
+.deck-card .art{position:relative; flex:1; display:grid; place-items:center; margin:8px 8px 0; border-radius:18px}
+.deck-card .art > .ic{width:64px; height:64px; stroke-width:1.4}
+.deck-card .art .tag{position:absolute; left:10px; top:10px}
+.deck-card .info{padding:12px 16px 16px}
+.deck-card h3{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.deck-card .meta{display:flex; justify-content:space-between; gap:8px; margin-top:4px; font-size:var(--fs-12); color:var(--text-muted)}
+.art.machine{background:linear-gradient(150deg, var(--blue-50), var(--slate-100)); color:var(--slate-600)}
+.art.service{background:linear-gradient(150deg, #E6EEFB, #DCE4F9); color:var(--blue)}
+.art.money{background:linear-gradient(150deg, var(--amber-50), #F7EBD5); color:var(--amber)}
 
 .intro{flex-shrink:0; padding:26px 22px 40px; border-radius:var(--r-xl) var(--r-xl) 0 0; background:#fff; text-align:center}
-.intro img{height:52px; width:auto}
-.intro h1{margin:14px 0 0; font:400 26px var(--font-display); color:var(--slate-900); line-height:1.2; letter-spacing:-.01em}
-.intro p{margin:10px auto 0; max-width:300px; font-size:var(--fs-14); line-height:1.55; color:var(--text)}
-.dots{display:flex; justify-content:center; gap:6px; margin:18px 0 22px}
-.dots button{width:8px; height:8px; padding:0; border:0; border-radius:var(--r-pill); background:var(--slate-300); cursor:pointer; transition:width .2s var(--ease)}
-.dots button[aria-current="true"]{width:28px; background:var(--slate-800)}
-.intro .stack-sm{text-align:left}
+/* fixed height so every slide's text takes the same room and nothing moves */
+.copy{height:76px; overflow:hidden; margin-bottom:22px}
+.copy h1{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.copy p{margin:8px auto 0; max-width:290px; font-size:var(--fs-14); line-height:1.45; color:var(--text);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.copy > *{animation:zx-settle .6s var(--ease) both}
+.copy p{animation-delay:.05s}
+.counter{display:block; margin-top:8px; font:500 var(--fs-12) var(--font-body); color:var(--text-faint); letter-spacing:.08em}
+.counter b{color:var(--slate-800)}
 </style>
 </head>
 <body class="plate">
@@ -42,54 +45,28 @@
   <div class="screen">
     <div class="status"></div>
 
-    <div class="slides" id="slides" aria-roledescription="carousel" aria-label="What Zixom Connect does">
-      <section class="slide" aria-roledescription="slide" aria-label="1 of 3">
-        <div class="stack-art" aria-hidden="true">
-          <div class="ghost g1"><svg class="ic ic-18"><use href="#ph-cube"/></svg>CFM-450 Cup Former</div>
-          <div class="ghost g2"><svg class="ic ic-18"><use href="#ph-stack"/></svg>SVF-600 Vacuum Former</div>
-          <div class="front">
-            <div class="row-flex"><span class="thumb sm"><svg class="ic"><use href="#ph-factory"/></svg></span><span class="tag green"><svg class="ic"><use href="#ph-shield-check"/></svg>In warranty, 210 days left</span></div>
-            <h3>AFM-760 Single Station</h3>
-            <div class="meta"><span class="mono">ZP-TF-2310</span><span><svg class="ic ic-16"><use href="#ph-map-pin"/></svg>Vatva plant</span></div>
-            <div class="meter" style="margin-top:14px"><i style="width:58%"></i></div>
-            <div class="meta"><span>Next AMC visit</span><span style="margin-left:auto; color:var(--slate-800)">12 Dec 2026</span></div>
-          </div>
-        </div>
-      </section>
-      <section class="slide" aria-roledescription="slide" aria-label="2 of 3">
-        <div class="stack-art" aria-hidden="true">
-          <div class="ghost g1"><svg class="ic ic-18"><use href="#ph-shield-check"/></svg>Warranty claim approved</div>
-          <div class="ghost g2"><svg class="ic ic-18"><use href="#ph-calendar-check"/></svg>Visit Tue 24 Nov, 12 to 3 PM</div>
-          <div class="front">
-            <div class="row-flex"><span class="mono" style="font-size:var(--fs-12); color:var(--text-muted)">TKT-2026-0125</span><span class="tag blue">Engineer on the way</span></div>
-            <h3>Reaching you in about 35 minutes</h3>
-            <div class="person" style="margin-top:12px"><span class="avatar">SY</span><span class="grow"><b>Sandeep Yadav</b><span>Senior service engineer</span></span><span class="icon-btn dark sm"><svg class="ic ic-18"><use href="#ph-phone"/></svg></span></div>
-          </div>
-        </div>
-      </section>
-      <section class="slide" aria-roledescription="slide" aria-label="3 of 3">
-        <div class="stack-art" aria-hidden="true">
-          <div class="ghost g1"><svg class="ic ic-18"><use href="#ph-truck"/></svg>ORD-2026-0209 dispatched</div>
-          <div class="ghost g2"><svg class="ic ic-18"><use href="#ph-package"/></svg>Ceramic heater element 650 W</div>
-          <div class="front">
-            <div class="row-flex"><span class="mono" style="font-size:var(--fs-12); color:var(--text-muted)">INV-2026-0980</span><span class="tag amber">Due 30 Nov</span></div>
-            <h3>₹4,720.00</h3>
-            <div class="meta"><span>Service, Line 1 former</span><span>GST included</span></div>
-            <span class="btn btn-primary">Pay now</span>
-          </div>
-        </div>
-      </section>
+    <div class="stage">
+      <div class="deck" id="deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="What Zixom Connect does">
+        <article class="deck-card" aria-roledescription="slide" aria-label="1 of 3">
+          <div class="art machine"><span class="tag green"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg>In warranty</span><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></div>
+          <div class="info"><h3>AFM-760 Single Station</h3><div class="meta"><span class="mono">ZP-TF-2310</span><span>Vatva plant</span></div></div>
+          <span class="shade"></span>
+        </article>
+        <article class="deck-card" aria-roledescription="slide" aria-label="2 of 3">
+          <div class="art service"><span class="tag blue">On the way</span><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg></div>
+          <div class="info"><h3>Sandeep, in 35 min</h3><div class="meta"><span class="mono">TKT-2026-0125</span><span>Tray line</span></div></div>
+          <span class="shade"></span>
+        </article>
+        <article class="deck-card" aria-roledescription="slide" aria-label="3 of 3">
+          <div class="art money"><span class="tag amber">Due 30 Nov</span><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></div>
+          <div class="info"><h3>₹4,720.00</h3><div class="meta"><span class="mono">INV-2026-0980</span><span>Service</span></div></div>
+          <span class="shade"></span>
+        </article>
+      </div>
     </div>
 
     <section class="intro">
-      <img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
-      <h1 id="intro-title">Every Zixom machine in one place</h1>
-      <p id="intro-text">See warranty, AMC and the full service history of each machine.</p>
-      <div class="dots" role="tablist" aria-label="Slides" id="dots">
-        <button type="button" role="tab" aria-label="Slide 1" aria-current="true"></button>
-        <button type="button" role="tab" aria-label="Slide 2" aria-current="false"></button>
-        <button type="button" role="tab" aria-label="Slide 3" aria-current="false"></button>
-      </div>
+      <div class="copy" id="copy" aria-live="polite"></div>
       <div class="stack-sm">
         <a class="btn btn-primary" href="A03-sign-in.html">Sign in</a>
         <a class="btn btn-secondary" href="A05-sign-up.html">Sign up</a>
@@ -99,28 +76,119 @@
   </div>
 </div>
 
-<p class="plate-note">Welcome, shown only before the first sign in. Three short slides on what the app does, swipe or
-tap the dots. No skip: the two buttons are the only way on. Hero art is built from real app cards, not photos.</p>
+<p class="plate-note">Shown once before the first sign in. Drag or flick the top card; arrow keys work and it plays by itself every 5 seconds.</p>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
 <script src="../../assets/js/render.js"></script>
 <script src="../../assets/js/ui.js"></script>
 <script>
+/* Ported from the card deck on the T Covenants site: same poses, throw rules and timings. */
 (() => {
   const COPY = [
-    ['Every Zixom machine in one place', 'See warranty, AMC and the full service history of each machine.'],
-    ['Service without the phone calls', 'Raise a request, follow the engineer and sign off the visit.'],
-    ['Parts and payments, sorted', 'Order spare parts, pay invoices and keep every GST receipt.'],
+    ['All your machines', 'Warranty, AMC and service history at a glance.'],
+    ['Service, tracked live', 'Raise a request and follow the engineer.'],
+    ['Parts and payments', 'Order parts, pay invoices, keep every receipt.'],
   ];
-  const slides = document.getElementById('slides');
-  const dots = [...document.querySelectorAll('#dots button')];
-  const show = (index) => {
-    dots.forEach((d, i) => d.setAttribute('aria-current', String(i === index)));
-    [document.getElementById('intro-title').textContent, document.getElementById('intro-text').textContent] = COPY[index];
+  const AUTOPLAY_MS = 5000;
+  const SCATTER_DEG = 7;
+  const DEPTH = { RISE_PX: 16, SHRINK: 0.055, SHADE: 0.1, VISIBLE: 3 };
+  const THROW = { DISTANCE: 0.28, SPEED: 0.55, MIN_FLICK: 24 };
+  const FLIGHT = { DISTANCE: 1.25, RISE_PX: 40, ROTATION: 16, DRAG_ROTATION: 0.05 };
+  const THROW_MS = 430;
+  const REST = 'transform 600ms var(--ease), opacity 400ms ease';
+  const FLY = 'transform 450ms cubic-bezier(.3, .5, .3, 1), opacity 450ms ease';
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const deck = document.getElementById('deck');
+  const copy = document.getElementById('copy');
+  const cards = [...deck.querySelectorAll('.deck-card')];
+  const count = cards.length;
+  const wrap = (i) => ((i % count) + count) % count;
+  const tilt = (i) => (((((i + 1) * 2654435761) >>> 0) / 4294967296) * 2 - 1) * SCATTER_DEG;
+  let top = 0;
+  let busy = false;
+
+  const pose = () => cards.forEach((card, i) => {
+    const depth = wrap(i - top);
+    const shown = Math.min(depth, DEPTH.VISIBLE);
+    card.style.transition = REST;
+    card.style.zIndex = count - depth;
+    card.style.opacity = depth > DEPTH.VISIBLE ? 0 : 1;
+    card.style.transform = `translateY(${-shown * DEPTH.RISE_PX}px) scale(${1 - shown * DEPTH.SHRINK}) rotate(${depth && !reduceMotion ? tilt(i) : 0}deg)`;
+    card.querySelector('.shade').style.opacity = shown * DEPTH.SHADE;
+    card.classList.toggle('top', depth === 0);
+    card.setAttribute('aria-hidden', String(depth !== 0));
+  });
+  const caption = () => {
+    const [title, text] = COPY[top];
+    copy.innerHTML = `<h1>${title}</h1><p>${text}</p><span class="counter"><b>0${top + 1}</b> / 0${count}</span>`;
   };
-  slides.addEventListener('scroll', () => show(Math.round(slides.scrollLeft / slides.clientWidth)), { passive: true });
-  dots.forEach((dot, i) => dot.addEventListener('click', () => slides.scrollTo({ left: i * slides.clientWidth, behavior: 'smooth' })));
+
+  const throwTop = (side = 1, fromX = 0, fromY = 0) => {
+    if (busy) return;
+    busy = true;
+    const card = cards[top];
+    card.style.transition = FLY;
+    card.style.zIndex = count + 1;
+    card.style.transform = `translate(${fromX + side * deck.offsetWidth * FLIGHT.DISTANCE}px, ${fromY * 0.4 - FLIGHT.RISE_PX}px) rotate(${side * FLIGHT.ROTATION}deg)`;
+    window.setTimeout(() => { top = wrap(top + 1); pose(); caption(); busy = false; restart(); }, THROW_MS);
+  };
+  const pullBack = () => {
+    if (busy) return;
+    busy = true;
+    const index = wrap(top - 1);
+    const card = cards[index];
+    card.style.transition = 'none';
+    card.style.zIndex = count + 1;
+    card.style.opacity = 1;
+    card.style.transform = `translate(${-deck.offsetWidth * FLIGHT.DISTANCE}px, ${-FLIGHT.RISE_PX}px) rotate(${-FLIGHT.ROTATION}deg)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      card.style.transition = FLY;
+      card.style.transform = 'none';
+      window.setTimeout(() => { top = index; pose(); caption(); busy = false; restart(); }, THROW_MS);
+    }));
+  };
+
+  let timer;
+  const restart = () => {
+    window.clearTimeout(timer);
+    if (!reduceMotion) timer = window.setTimeout(() => !document.hidden && throwTop(1), AUTOPLAY_MS);
+  };
+
+  let drag = null;
+  deck.addEventListener('pointerdown', (e) => {
+    const card = e.target.closest('.deck-card.top');
+    if (!card || busy) return;
+    card.setPointerCapture(e.pointerId);
+    drag = { card, x: e.clientX, y: e.clientY, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
+    window.clearTimeout(timer);
+  });
+  deck.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dt = Math.max(1, e.timeStamp - drag.lastT);
+    drag.v = 0.8 * ((e.clientX - drag.lastX) / dt) + 0.2 * drag.v;
+    drag.lastX = e.clientX; drag.lastT = e.timeStamp;
+    const dx = e.clientX - drag.x;
+    drag.card.style.transition = 'none';
+    drag.card.style.transform = `translate(${dx}px, ${e.clientY - drag.y}px) rotate(${reduceMotion ? 0 : dx * FLIGHT.DRAG_ROTATION}deg)`;
+  });
+  const release = (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    const isThrow = Math.abs(dx) > deck.offsetWidth * THROW.DISTANCE || (Math.abs(drag.v) > THROW.SPEED && Math.abs(dx) > THROW.MIN_FLICK);
+    drag = null;
+    if (isThrow) throwTop(Math.sign(dx) || 1, dx, dy); else { pose(); restart(); }
+  };
+  deck.addEventListener('pointerup', release);
+  deck.addEventListener('pointercancel', release);
+  deck.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); throwTop(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); pullBack(); }
+  });
+
+  pose(); caption(); restart();
 })();
 </script>
 </body>

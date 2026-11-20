@@ -26,6 +26,14 @@ window.ZX = window.ZX || {};
     if (days === 1) return 'Yesterday';
     return days < 7 ? DAYS[toDate(isoDateTime).getDay()] : dayDate(isoDateTime);
   };
+  /* invoice and estimate maths: lines are [description, quantity, rate before GST] */
+  const GST_RATE = 0.18;
+  const totals = (lines) => {
+    const subtotal = lines.reduce((sum, [, quantity, rate]) => sum + quantity * rate, 0);
+    const gst = Math.round(subtotal * GST_RATE * 100) / 100;
+    return { subtotal, gst, total: subtotal + gst };
+  };
+  const balance = (invoice) => invoice.amount - (invoice.paid || 0);
   const money = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   const count = (n) => (n > 99 ? '99+' : String(n));
 
@@ -129,7 +137,7 @@ window.ZX = window.ZX || {};
       <span class="disc">${icon(a.icon)}</span><b>${esc(a.title)}</b>
       <span${a.mono ? ' class="mono"' : ''}>${esc(a.sub)}</span>${icon('caret-right', 'ic-16')}</a>`;
 
-  ZX.render = { esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, machine, engineer, amc,
+  ZX.render = { esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, totals, balance, machine, engineer, amc,
     ticketTag, coverageTag, severityTag, warrantyTag, amcTag, stockTag, invoiceTag, thumb,
     machineCard, ticketCard, engineerCard };
 })();

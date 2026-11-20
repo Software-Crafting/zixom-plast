@@ -3,7 +3,7 @@
 [hidden]{display:none !important}
 .screen{position:absolute; inset:0; display:flex; flex-direction:column}
 .screen.plain{background:#fff}
-.ic{width:20px; height:20px; flex-shrink:0; fill:currentColor; vertical-align:middle}
+.ic{width:20px; height:20px; flex-shrink:0; fill:none; stroke:currentColor; vertical-align:middle}
 .ic-16{width:16px; height:16px} .ic-18{width:18px; height:18px} .ic-24{width:24px; height:24px}
 .ic-28{width:28px; height:28px} .ic-32{width:32px; height:32px}
 .mono{font-family:var(--font-mono); font-weight:500; font-size:.9em; letter-spacing:0}
@@ -103,7 +103,7 @@
 .chip{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border:0;
   border-radius:var(--r-pill); background:transparent; color:var(--slate-500); font:500 var(--fs-14) var(--font-body);
   cursor:pointer; white-space:nowrap}
-.chip[aria-pressed="true"]{background:var(--slate-800); color:#fff}
+.chip[aria-pressed="true"], .chip[aria-selected="true"]{background:var(--slate-800); color:#fff}
 .chip.outline{border:1px solid var(--line-strong); color:var(--slate-700)}
 .chip.outline[aria-pressed="true"]{border-color:var(--slate-800); background:var(--slate-800); color:#fff}
 .chip .x{margin-right:-6px; opacity:.7}
@@ -144,3 +144,9 @@
 
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+/* tab root: header and sheet scroll together, the header is not sticky */
+.root-scroll{flex:1; min-height:0; display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none}
+.root-scroll::-webkit-scrollbar{display:none}
+.root-scroll > .sheet{flex:1 0 auto}
+.root-scroll .scroll{flex:none; overflow:visible}

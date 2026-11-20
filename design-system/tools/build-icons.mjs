@@ -1,50 +1,70 @@
-// Builds assets/icons/icons.js: a Phosphor SVG sprite that inserts itself into the page.
+// Builds assets/icons/icons.js: an SVG sprite of Lucide icons that inserts itself into the page.
 // A script works over file:// where an external <use href="icons.svg#..."> does not.
 //
 // Usage:
-//   npm pack @phosphor-icons/core@2 && tar xzf phosphor-icons-core-*.tgz
-//   node design-system/tools/build-icons.mjs package/assets
+//   npm pack lucide-static@0.460.0 && tar xzf lucide-static-*.tgz
+//   node design-system/tools/build-icons.mjs package/icons
 //
-// Add a name to ICONS, re-run, commit the regenerated icons.js.
+// Pages use our own names (<use href="#ph-NAME"/>); ICONS maps each to a Lucide file.
+// arrow-left renders as a chevron so every back button is a plain "<".
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ICONS = [
-  'house', 'wrench', 'gear-six', 'bell', 'magnifying-glass', 'sliders-horizontal',
-  'arrow-left', 'arrow-right', 'arrow-up-right', 'caret-right', 'caret-down', 'caret-left', 'caret-up',
-  'dots-three', 'plus', 'minus', 'x', 'check', 'check-circle', 'warning', 'warning-circle', 'info', 'question',
-  'chat-circle-dots', 'chat-text', 'phone', 'whatsapp-logo', 'envelope-simple', 'map-pin', 'map-trifold',
-  'calendar-blank', 'calendar-check', 'clock', 'clock-countdown', 'user', 'user-circle', 'users', 'buildings',
-  'factory', 'credit-card', 'receipt', 'file-text', 'file-pdf', 'download-simple', 'upload-simple',
-  'share-network', 'camera', 'image', 'video-camera', 'microphone', 'qr-code', 'barcode', 'shield-check',
-  'shield-warning', 'seal-check', 'certificate', 'toolbox', 'package', 'shopping-cart', 'truck', 'currency-inr',
-  'wallet', 'bank', 'list-checks', 'clipboard-text', 'note-pencil', 'pencil-simple', 'trash', 'lock-simple',
-  'fingerprint', 'wifi-slash', 'cloud-arrow-up', 'arrows-clockwise', 'siren', 'first-aid', 'lightning', 'fire',
-  'thermometer', 'gauge', 'timer', 'hourglass', 'star', 'funnel', 'sort-ascending', 'navigation-arrow',
-  'sign-out', 'globe', 'headset', 'megaphone', 'book-open', 'cpu', 'circuitry', 'nut', 'hard-hat', 'hammer',
-  'paper-plane-tilt', 'paperclip', 'eye', 'eye-slash', 'copy', 'briefcase', 'signature', 'list', 'squares-four',
-  'tag', 'percent', 'device-mobile', 'cube', 'lifebuoy', 'path', 'car-profile', 'stack', 'handshake',
-  'chart-line-up', 'storefront', 'tray', 'identification-card', 'thumbs-up', 'smiley-sad',
-];
+const STROKE_WIDTH = 1.75;
 
-const assetsDir = process.argv[2];
-if (!assetsDir) {
-  console.error('Pass the Phosphor assets directory, for example: package/assets');
+const ICONS = {
+  'house': 'house', 'wrench': 'wrench', 'gear-six': 'settings', 'bell': 'bell', 'magnifying-glass': 'search',
+  'sliders-horizontal': 'sliders-horizontal', 'arrow-left': 'chevron-left', 'arrow-right': 'arrow-right',
+  'arrow-up-right': 'arrow-up-right', 'caret-right': 'chevron-right', 'caret-down': 'chevron-down',
+  'caret-left': 'chevron-left', 'caret-up': 'chevron-up', 'dots-three': 'ellipsis', 'plus': 'plus', 'minus': 'minus',
+  'x': 'x', 'check': 'check', 'check-circle': 'circle-check', 'warning': 'triangle-alert', 'warning-circle': 'circle-alert',
+  'info': 'info', 'question': 'circle-help', 'chat-circle-dots': 'message-circle-more', 'chat-text': 'message-square-text',
+  'phone': 'phone', 'whatsapp-logo': 'message-circle', 'envelope-simple': 'mail', 'map-pin': 'map-pin', 'map-trifold': 'map',
+  'calendar-blank': 'calendar', 'calendar-check': 'calendar-check', 'clock': 'clock', 'clock-countdown': 'timer',
+  'user': 'user', 'user-circle': 'circle-user', 'users': 'users', 'buildings': 'building-2', 'factory': 'factory',
+  'credit-card': 'credit-card', 'receipt': 'receipt', 'file-text': 'file-text', 'file-pdf': 'file-text',
+  'download-simple': 'download', 'upload-simple': 'upload', 'share-network': 'share-2', 'camera': 'camera',
+  'image': 'image', 'video-camera': 'video', 'microphone': 'mic', 'qr-code': 'qr-code', 'barcode': 'scan-barcode',
+  'shield-check': 'shield-check', 'shield-warning': 'shield-alert', 'seal-check': 'badge-check', 'certificate': 'award',
+  'toolbox': 'briefcase', 'package': 'package', 'shopping-cart': 'shopping-cart', 'truck': 'truck',
+  'currency-inr': 'indian-rupee', 'wallet': 'wallet', 'bank': 'landmark', 'list-checks': 'list-checks',
+  'clipboard-text': 'clipboard-list', 'note-pencil': 'notebook-pen', 'pencil-simple': 'pencil', 'trash': 'trash-2',
+  'lock-simple': 'lock', 'fingerprint': 'fingerprint', 'wifi-slash': 'wifi-off', 'cloud-arrow-up': 'cloud-upload',
+  'arrows-clockwise': 'refresh-cw', 'siren': 'siren', 'first-aid': 'cross', 'lightning': 'zap', 'fire': 'flame',
+  'thermometer': 'thermometer', 'gauge': 'gauge', 'timer': 'timer', 'hourglass': 'hourglass', 'star': 'star',
+  'funnel': 'filter', 'sort-ascending': 'arrow-down-wide-narrow', 'navigation-arrow': 'navigation', 'sign-out': 'log-out',
+  'globe': 'globe', 'headset': 'headset', 'megaphone': 'megaphone', 'book-open': 'book-open', 'cpu': 'cpu',
+  'circuitry': 'circuit-board', 'nut': 'nut', 'hard-hat': 'hard-hat', 'hammer': 'hammer', 'paper-plane-tilt': 'send',
+  'paperclip': 'paperclip', 'eye': 'eye', 'eye-slash': 'eye-off', 'copy': 'copy', 'briefcase': 'briefcase',
+  'signature': 'signature', 'list': 'menu', 'squares-four': 'layout-grid', 'tag': 'tag', 'percent': 'percent',
+  'device-mobile': 'smartphone', 'cube': 'box', 'lifebuoy': 'life-buoy', 'path': 'route', 'car-profile': 'car',
+  'stack': 'layers', 'handshake': 'handshake', 'chart-line-up': 'trending-up', 'storefront': 'store', 'tray': 'inbox',
+  'identification-card': 'id-card', 'thumbs-up': 'thumbs-up', 'smiley-sad': 'frown',
+  /* upload states */
+  'pause': 'pause', 'play': 'play', 'file-x': 'file-x', 'circle-x': 'circle-x', 'file-search': 'file-search',
+  'image-off': 'image-off', 'rotate-ccw': 'rotate-ccw', 'files': 'files', 'file-check': 'file-check',
+};
+
+const iconsDir = process.argv[2];
+if (!iconsDir) {
+  console.error('Pass the Lucide icons directory, for example: package/icons');
   process.exit(1);
 }
 
-const symbol = (name) => {
-  const svg = readFileSync(join(assetsDir, 'regular', `${name}.svg`), 'utf8');
-  const inner = svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
-  return `<symbol id="ph-${name}" viewBox="0 0 256 256">${inner}</symbol>`;
+const symbol = ([name, file]) => {
+  const svg = readFileSync(join(iconsDir, `${file}.svg`), 'utf8');
+  const inner = svg.replace(/<!--.*?-->/s, '').replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
+    .replace(/\s*\n\s*/g, '');
+  return `<symbol id="ph-${name}" viewBox="0 0 24 24" stroke-width="${STROKE_WIDTH}" `
+    + `stroke-linecap="round" stroke-linejoin="round">${inner}</symbol>`;
 };
 
-const sprite = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:none">${ICONS.map(symbol).join('')}</svg>`;
-const out = `/* Generated by tools/build-icons.mjs from @phosphor-icons/core (MIT). Do not edit by hand. */
+const sprite = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:none">${Object.entries(ICONS).map(symbol).join('')}</svg>`;
+const out = `/* Generated by tools/build-icons.mjs from lucide-static (ISC). Do not edit by hand. */
 document.body.insertAdjacentHTML('afterbegin', ${JSON.stringify(sprite)});
 `;
 
 const target = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'icons', 'icons.js');
 writeFileSync(target, out);
-console.log(`Wrote ${ICONS.length} icons to ${target}`);
+console.log(`Wrote ${Object.keys(ICONS).length} icons to ${target}`);

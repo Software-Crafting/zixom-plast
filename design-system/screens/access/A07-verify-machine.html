@@ -31,12 +31,10 @@
     <div class="status"></div>
     <div class="sheet">
       <div class="navbar">
-        <a class="icon-btn" href="A06-find-company.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <a class="icon-btn" href="A06-find-company.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Verify your machine</h1><span></span>
       </div>
       <div class="scroll with-footer">
-        <h1 class="large-title">Tell us about your machine</h1>
-        <p class="lede">We could not match your number. A Zixom machine serial and its invoice or your GSTIN prove you are a
-          customer. Our team checks within 1 working day.</p>
+        <p class="lede">We could not match your number. Add a machine serial to verify.</p>
 
         <div class="error-summary" role="alert" style="margin-top:18px" data-when="errors">
           <b>Fix 2 things to continue</b>
@@ -55,7 +53,7 @@
               <input class="input mono" id="serial" autocapitalize="characters" value="ZP-TF-2501">
               <a class="icon-btn" href="../customer/C205-scan-qr.html" aria-label="Scan the nameplate QR code"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></a>
             </div>
-            <span class="hint">On the nameplate, usually near the main panel. 6 to 20 letters or digits.</span>
+            <span class="hint">On the nameplate. 6 to 20 letters or digits.</span>
           </div>
           <div class="field has-error" data-when="errors">
             <label for="serial-bad">Machine serial number<span class="req">*</span></label>
@@ -79,7 +77,7 @@
           <div class="field" data-when="ready notfound other submitting">
             <label for="proof">Invoice number or GSTIN<span class="req">*</span></label>
             <input class="input mono" id="proof" autocapitalize="characters" value="24AAAAA0000A1Z5">
-            <span class="hint">Either one. GSTIN is 15 characters.</span>
+            <span class="hint">Either one</span>
           </div>
           <div class="field has-error" data-when="errors">
             <label for="proof-bad">Invoice number or GSTIN<span class="req">*</span></label>

@@ -47,7 +47,13 @@
   });
 
   /* ---------- overlays: alert, action sheet, bottom sheet ---------- */
-  const close = (overlay) => { overlay.hidden = true; };
+  /* leave on the spring, then hide (motion.css animates .closing) */
+  const EXIT_MS = 330;
+  const close = (overlay) => {
+    if (!overlay || overlay.hidden || overlay.classList.contains('closing')) return;
+    overlay.classList.add('closing');
+    window.setTimeout(() => { overlay.hidden = true; overlay.classList.remove('closing'); }, EXIT_MS);
+  };
   document.addEventListener('click', (event) => {
     const opener = event.target.closest('[data-open]');
     if (opener) {
@@ -73,7 +79,8 @@
     device.querySelector('.toast')?.remove();
     device.insertAdjacentHTML('beforeend', `<div class="toast" role="status">${icon('check-circle')}${ZX.render.esc(trigger.dataset.toast)}</div>`);
     const toast = device.querySelector('.toast');
-    window.setTimeout(() => toast.remove(), TOAST_MS);
+    window.setTimeout(() => toast.classList.add('closing'), TOAST_MS);
+    window.setTimeout(() => toast.remove(), TOAST_MS + 330);
   });
 
   /* ---------- busy button ---------- */
@@ -117,6 +124,58 @@
     output.textContent = next;
   });
 
+  /* ---------- upload rows: pause, resume, retry, remove (prototype behaviour) ---------- */
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('.file [data-file]');
+    if (!button) return;
+    const file = button.closest('.file');
+    const meta = file.querySelector('.file-meta');
+    const actions = file.querySelector('.actions');
+    const action = button.dataset.file;
+    if (action === 'remove') { file.remove(); return; }
+    const set = (status, text, buttons) => {
+      file.dataset.status = status;
+      meta.innerHTML = text;
+      actions.innerHTML = buttons;
+    };
+    const pause = `<button class="icon-btn" type="button" data-file="pause" aria-label="Pause">${icon('pause')}</button>`;
+    const resume = `<button class="icon-btn" type="button" data-file="resume" aria-label="Resume">${icon('play')}</button>`;
+    const remove = `<button class="icon-btn" type="button" data-file="remove" aria-label="Remove">${icon('x')}</button>`;
+    if (action === 'pause') set('paused', `Paused at ${file.dataset.progress || 40}%`, resume + remove);
+    if (action === 'resume' || action === 'retry') {
+      set('uploading', 'Uploading', pause + remove);
+      const bar = file.querySelector('.progress i');
+      let progress = Number(file.dataset.progress || 40);
+      const tick = window.setInterval(() => {
+        if (file.dataset.status !== 'uploading') { window.clearInterval(tick); return; }
+        progress = Math.min(100, progress + 12);
+        file.dataset.progress = progress;
+        if (bar) bar.style.width = `${progress}%`;
+        meta.textContent = `Uploading ${progress}%`;
+        if (progress === 100) {
+          window.clearInterval(tick);
+          set('done', `${icon('check-circle')}Uploaded`, remove);
+        }
+      }, 350);
+    }
+  });
+
+  /* ---------- page transitions: tell motion.css which way the next screen moves ----------
+     Back links and the browser back button slide left to right, tab links crossfade,
+     everything else pushes from the right. */
+  const NAV_KEY = 'zx-nav';
+  const root = document.documentElement;
+  try { root.dataset.nav = sessionStorage.getItem(NAV_KEY) || 'push'; sessionStorage.removeItem(NAV_KEY); } catch { root.dataset.nav = 'push'; }
+  window.addEventListener('pagereveal', () => {
+    if (window.navigation?.activation?.navigationType === 'traverse') root.dataset.nav = 'back';
+  });
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || link.getAttribute('href').startsWith('#')) return;
+    const nav = link.matches('[aria-label^="Back"], [data-back]') ? 'back' : link.classList.contains('tab') ? 'tab' : 'push';
+    try { sessionStorage.setItem(NAV_KEY, nav); } catch { /* storage blocked: default push */ }
+  });
+
   /* ---------- prototype only: the state switch above the frame ----------
      .screen[data-state] holds the current state; an element with data-when="ready offline"
      shows only in those states. */
@@ -125,7 +184,7 @@
     screen.dataset.state = state;
     screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes(state); });
     screen.querySelectorAll('.overlay').forEach((overlay) => { overlay.hidden = true; });
-    screen.querySelector('.scroll')?.scrollTo({ top: 0 });
+    screen.querySelector('.root-scroll, .scroll')?.scrollTo({ top: 0 });
   };
   if (screen) {
     /* an overlay marked data-initial starts open, for screens that are a sheet or prompt */

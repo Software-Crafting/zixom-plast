@@ -36,7 +36,8 @@
       <div class="device">
         <div class="screen">
           <div class="status"></div>
-          <header class="root-head">
+          <div class="root-scroll">
+<header class="root-head">
             <div class="root-bar">
               <span class="avatar on-dark">RM</span>
               <div class="grow">
@@ -73,7 +74,8 @@
                 <div id="shell-ticket"></div>
               </div>
             </div>
-          </div>
+          </div></div>
+
           <nav class="tabbar" data-tabs="customer" data-active="home"></nav>
           <span class="home-indicator"></span>
 
@@ -161,7 +163,8 @@
       <div class="device">
         <div class="screen">
           <div class="status"></div>
-          <header class="root-head">
+          <div class="root-scroll">
+<header class="root-head">
             <div class="root-bar">
               <span class="avatar on-dark">SY</span>
               <div class="grow">
@@ -191,7 +194,8 @@
                 <div id="eng-ticket"></div>
               </div>
             </div>
-          </div>
+          </div></div>
+
           <nav class="tabbar" data-tabs="engineer" data-active="today"></nav>
           <span class="home-indicator"></span>
         </div>
@@ -451,6 +455,30 @@
       </div>
       <p class="hint">Done · Uploading 60% · Failed with Retry · Add. Up to 10 photos and one 60 second video.</p>
     </div>
+    <div class="specimen"><div class="name"><b>File uploads, every state</b><code>.files .file[data-status]</code></div>
+      <div class="files">
+        <div class="files-head"><span><b>4 of 9 uploaded</b> · 3 need attention</span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Retry all</button></div>
+        <div class="file" data-status="uploading" data-progress="64"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+          <div class="file-body"><b>fault-left-mould.jpg</b><span class="file-meta">Uploading 64% · 1.8 MB</span><span class="progress"><i style="width:64%"></i></span></div><span class="actions"><button class="icon-btn " type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="paused" data-progress="30"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg></span>
+          <div class="file-body"><b>heater-noise.mp4</b><span class="file-meta">Paused at 30% · Wi-Fi only</span><span class="progress"><i style="width:30%"></i></span></div><span class="actions"><button class="icon-btn " type="button" data-file="resume" aria-label="Resume"><svg class="ic" aria-hidden="true"><use href="#ph-play"/></svg></button><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="queued"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+          <div class="file-body"><b>nameplate.jpg</b><span class="file-meta">Waiting · 2.1 MB</span></div><span class="actions"><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+          <div class="file-body"><b>invoice-2025.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 640 KB</span></div><span class="actions"><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+          <div class="file-body"><b>panel-error.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed. Tap to retry</span></div><span class="actions"><button class="icon-btn " type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+          <div class="file-body"><b>line-walkthrough.mov</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 50 MB. Trim it</span></div><span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="wrong-type"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+          <div class="file-body"><b>service-log.xlsx</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Use PDF, JPG or PNG</span></div><span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="duplicate"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg></span>
+          <div class="file-body"><b>fault-left-mould.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>Already added</span></div><span class="actions"><button class="icon-btn " type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+        <div class="file" data-status="missing"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+          <div class="file-body"><b>IMG_2041.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>No longer on this phone</span></div><span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+      </div>
+      <div class="banner" style="margin-top:12px"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><div><b>Uploads resumed</b>2 files continued after the app was closed.</div></div>
+    </div>
     <div class="specimen"><div class="name"><b>Question thread</b><code>.thread .bubble</code></div>
       <div class="thread">
         <div class="bubble me">Can we use 0.8 mm PET sheet on the AFM-760 without changing the heater settings?</div>
@@ -566,7 +594,7 @@
 <!-- ============================================================ ICONS -->
 <section class="docs-section" id="icons">
   <h2>Icons</h2>
-  <p>Phosphor regular, vendored as a sprite in <code>assets/icons/icons.js</code>. Use
+  <p>Lucide, 1.75 stroke, vendored as a sprite in <code>assets/icons/icons.js</code>. Use
   <code>&lt;svg class="ic"&gt;&lt;use href="#ph-wrench"/&gt;&lt;/svg&gt;</code>. Add a name in
   <code>tools/build-icons.mjs</code> and rebuild to get a new one.</p>
   <div class="icons-grid" id="icons-grid" style="margin-top:20px"></div>
@@ -586,12 +614,12 @@
   const CLOSED = ['closed', 'cancelled', 'visit-failed'];
   const openRequests = data.tickets.filter((t) => !CLOSED.includes(t.status)).length;
   const warrantyEnding = data.machines.filter((m) => m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0 && R.daysFromToday(m.warrantyEnd) <= 30).length;
-  const due = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((sum, i) => sum + i.amount, 0);
+  const due = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((sum, i) => sum + R.balance(i), 0);
   const stats = `
-    <a class="stat" href="#"><span class="top"><span class="disc">${R.icon('factory')}</span></span><b>${data.machines.length}</b><span>Machines</span></a>
-    <a class="stat" href="#"><span class="top"><span class="disc">${R.icon('wrench')}</span></span><b>${openRequests}</b><span>Open requests</span></a>
-    <a class="stat warn" href="#"><span class="top"><span class="disc">${R.icon('shield-warning')}</span></span><b>${warrantyEnding}</b><span>Warranty ending soon</span></a>
-    <a class="stat bad" href="#"><span class="top"><span class="disc">${R.icon('receipt')}</span></span><b>${R.money(due).replace('.00', '')}</b><span>Payments due</span></a>`;
+    <a class="stat" href="#"><b>${data.machines.length}</b><span>Machines</span></a>
+    <a class="stat" href="#"><b>${openRequests}</b><span>Open requests</span></a>
+    <a class="stat warn" href="#"><b>${warrantyEnding}</b><span>Warranty ending soon</span></a>
+    <a class="stat bad" href="#"><b>${R.money(due).replace('.00', '')}</b><span>Payments due</span></a>`;
   $('shell-stats').innerHTML = stats;
   $('stats-demo').innerHTML = stats;
 

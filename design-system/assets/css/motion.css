@@ -1,0 +1,66 @@
+/* Motion. Things arrive, respond and leave on a spring (--ease); leaving is a little faster.
+   Kept small on purpose: press, overlays, toasts, page and tab transitions. */
+
+/* ---------- press: shrink quickly, spring back ---------- */
+.btn, .icon-btn, .tab, .chip, .choice, .date, .slot, .quick a, .stat, .machine, .ticket, .list-item,
+.alert-card, .segment button, .segment a, .fab, .upload, .file .icon-btn, .root-switch{
+  transition:transform .45s var(--ease), background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .25s ease}
+.btn:active, .fab:active{transform:scale(.97); transition-duration:var(--dur-press)}
+.icon-btn:active, .tab:active, .chip:active, .date:active, .slot:active{transform:scale(.92); transition-duration:var(--dur-press)}
+.choice:active, .quick a:active, .stat:active, .machine:active, .ticket:active, .list-item:active,
+.alert-card:active, .upload:active{transform:scale(.985); transition-duration:var(--dur-press)}
+
+/* ---------- overlays: enter on the spring, leave quickly (.closing is set by ui.js) ---------- */
+.overlay:not([hidden]){animation:zx-fade-in .3s ease-out both}
+.overlay.closing{animation:zx-fade-out .3s ease-in both}
+.overlay .bottom-sheet, .overlay .action-sheet{animation:zx-sheet-in var(--dur-enter) var(--ease) both}
+.overlay.closing .bottom-sheet, .overlay.closing .action-sheet{animation:zx-sheet-out .34s var(--ease) both}
+.overlay .alert{animation:zx-pop-in .42s var(--ease) both}
+.overlay.closing .alert{animation:zx-pop-out .3s var(--ease) both}
+
+.toast{animation:zx-toast-in .45s var(--ease) both}
+.toast.closing{animation:zx-toast-out .32s var(--ease) both}
+
+/* state panes switched in place get a short settle */
+[data-when]:not([hidden]), [role="tabpanel"]:not([hidden]){animation:zx-settle .4s var(--ease) both}
+
+@keyframes zx-fade-in{from{opacity:0}}
+@keyframes zx-fade-out{to{opacity:0}}
+@keyframes zx-sheet-in{from{transform:translateY(100%)}}
+@keyframes zx-sheet-out{to{transform:translateY(100%)}}
+@keyframes zx-pop-in{from{transform:scale(.9); opacity:0}}
+@keyframes zx-pop-out{to{transform:scale(.9); opacity:0}}
+@keyframes zx-toast-in{from{transform:translate(-50%, 28px) scale(.96); opacity:0}}
+@keyframes zx-toast-out{to{transform:translate(-50%, 16px); opacity:0}}
+@keyframes zx-settle{from{transform:translateY(6px); opacity:0}}
+
+/* ---------- page transitions between screens (cross document view transitions) ----------
+   Only the phone screen moves. Push slides in from the right, back slides out to the right,
+   switching tabs crossfades and the tab pill glides to its new place. ui.js sets html[data-nav]. */
+@view-transition{navigation:auto}
+::view-transition-group(root), ::view-transition-old(root), ::view-transition-new(root){animation:none}
+.device .screen{view-transition-name:screen}
+.device .status{view-transition-name:status}
+.device .tabbar{view-transition-name:tabbar}
+.device .tab[aria-current="page"]{view-transition-name:tab-active}
+::view-transition-image-pair(screen){overflow:hidden; border-radius:44px}
+::view-transition-group(status), ::view-transition-old(status), ::view-transition-new(status){animation:none}
+
+::view-transition-old(screen){animation:zx-push-out .42s var(--ease) both}
+::view-transition-new(screen){animation:zx-push-in .5s var(--ease) both; box-shadow:-12px 0 30px -12px rgba(18,24,31,.4)}
+html[data-nav="back"]::view-transition-old(screen){animation:zx-back-out .36s var(--ease-exit) both; z-index:2;
+  box-shadow:-12px 0 30px -12px rgba(18,24,31,.4)}
+html[data-nav="back"]::view-transition-new(screen){animation:zx-back-in .45s var(--ease) both; box-shadow:none}
+html[data-nav="tab"]::view-transition-old(screen){animation:zx-fade-out .18s ease-out both}
+html[data-nav="tab"]::view-transition-new(screen){animation:zx-fade-in .26s ease-in both; box-shadow:none}
+::view-transition-group(tab-active){animation-duration:.5s; animation-timing-function:var(--ease)}
+::view-transition-group(tabbar){animation:none}
+
+@keyframes zx-push-in{from{transform:translateX(100%)}}
+@keyframes zx-push-out{to{transform:translateX(-28%); filter:brightness(.92)}}
+@keyframes zx-back-in{from{transform:translateX(-28%); filter:brightness(.92)}}
+@keyframes zx-back-out{to{transform:translateX(100%)}}
+
+@media (prefers-reduced-motion:reduce){
+  *, ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*){animation:none !important; transition:none !important}
+}

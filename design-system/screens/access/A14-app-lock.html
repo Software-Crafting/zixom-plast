@@ -35,12 +35,12 @@
   <div class="screen plain" data-state="prompt">
     <div class="status on-light"></div>
     <div class="lock">
-      <img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
+      <span class="disc" style="width:72px; height:72px; margin:0 auto 18px; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); color:var(--slate-800)"><svg class="ic ic-32" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
       <h1 data-when="prompt locked failed">Zixom Connect is locked</h1>
       <h1 data-when="toomany">Sign in again</h1>
       <p data-when="prompt locked">Unlock with Face ID to continue.</p>
-      <p data-when="failed" style="color:var(--red)">Face ID did not recognise you. 3 tries left, then you sign in again with an OTP.</p>
-      <p data-when="toomany">Face ID failed 5 times. For your security sign in with your mobile number and a code.</p>
+      <p data-when="failed" style="color:var(--red)">Not recognised. 3 tries left.</p>
+      <p data-when="toomany">Face ID failed 5 times. Sign in with an OTP.</p>
       <div class="who"><span class="avatar" style="width:36px; height:36px; font-size:var(--fs-14)">RM</span><b>Rakesh Mehta</b></div>
     </div>
     <div class="lock-foot">

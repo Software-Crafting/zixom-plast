@@ -7,7 +7,6 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.brand-small{height:44px; width:auto; display:block; margin:4px 0 18px}
 .alt{margin-top:14px; text-align:center; font-size:var(--fs-14); color:var(--text)}
 .alt a{color:var(--blue); font-weight:600; text-decoration:none}
 </style>
@@ -32,15 +31,13 @@
     <div class="status"></div>
     <div class="sheet">
       <div class="navbar">
-        <a class="icon-btn" href="A02-welcome.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <a class="icon-btn" href="A02-welcome.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Sign in</h1><span></span>
       </div>
       <div class="scroll with-footer">
         <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to sign in.</div>
-        <img class="brand-small" src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
-        <h1 class="large-title">Sign in</h1>
-        <p class="lede">Enter the mobile number Zixom has for you. We will send a 6 digit code.</p>
+        <p class="lede">Enter your mobile number. We will send a 6 digit code.</p>
 
-        <div class="field" style="margin-top:22px" data-when="ready sending unknown offline">
+        <div class="field" style="margin-top:20px" data-when="ready sending unknown offline">
           <label for="mobile">Mobile number</label>
           <div class="input-group"><span class="prefix">+91</span>
             <input class="input" id="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98250 11410" value="98250 11410"></div>
@@ -51,7 +48,6 @@
             <input class="input" id="mobile-bad" type="tel" inputmode="numeric" value="98250 114" aria-invalid="true" aria-describedby="mobile-err"></div>
           <span class="error-text" id="mobile-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span>
         </div>
-        <span class="hint">Engineers sign in here too, with the number Zixom has on file.</span>
       </div>
 
       <div class="footer-bar">
