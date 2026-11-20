@@ -57,7 +57,9 @@
 .bottom-sheet .grabber{width:40px; height:5px; margin:0 auto 14px; border-radius:var(--r-pill); background:var(--slate-300)}
 .bottom-sheet .head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
 .bottom-sheet .head h3{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
-.bottom-sheet .body{overflow-y:auto; scrollbar-width:none}
+.bottom-sheet .body{overflow-y:auto; overflow-x:hidden; scrollbar-width:none}
+/* chips inside a sheet wrap; no edge bleed, so the sheet never scrolls sideways */
+.bottom-sheet .chips{flex-wrap:wrap; overflow:visible; margin:0; padding:2px 0}
 .bottom-sheet .actions{display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:center; margin-top:16px}
 
 /* whole screen or block state: empty, no results, error, not found */
