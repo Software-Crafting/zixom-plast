@@ -7,8 +7,6 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.tools{display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center}
-.tools .icon-btn{width:50px; height:50px}
 .count-line{display:flex; justify-content:space-between; align-items:center; margin:2px 4px 0; font-size:var(--fs-13); color:var(--text-muted)}
 .count-line b{color:var(--slate-900); font-weight:600}
 </style>
@@ -121,7 +119,7 @@
     <div class="overlay bottom" id="sort" hidden>
       <div class="action-sheet" role="dialog" aria-label="Sort machines">
         <div class="group"><div class="title">Sort machines</div>
-          <button type="button" data-close>Name ✓</button><button type="button" data-close>Installed date, newest</button><button type="button" data-close>Warranty ending soonest</button></div>
+          <button type="button" role="menuitemradio" aria-checked="true" data-close>Name</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Installed date, newest</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Warranty ending soonest</button></div>
         <button class="cancel" type="button" data-close>Cancel</button>
       </div>
     </div>

@@ -48,6 +48,13 @@
               <a role="tab" aria-selected="false" href="C601-questions.html">Questions<span class="n" id="n-questions"></span></a>
             </nav>
 
+            <div class="tools" data-when="ready offline">
+              <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+                <input class="input" type="search" placeholder="Ticket, machine or issue" aria-label="Search"></div>
+              <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
+              <button class="icon-btn" type="button" data-open="sort" aria-label="Sort"><svg class="ic" aria-hidden="true"><use href="#ph-sort-ascending"/></svg></button>
+            </div>
+
             <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
 
             <div class="summary" id="summary" data-when="ready offline"></div>
@@ -91,6 +98,30 @@
     <nav class="tabbar" data-tabs="customer" data-active="support"></nav>
     <span class="home-indicator"></span>
 
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sf-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="sf-title">Filter requests</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Status</div>
+          <div class="chips" style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">Waiting for you</button><button class="chip outline" type="button" aria-pressed="false">Scheduled</button><button class="chip outline" type="button" aria-pressed="false">In progress</button><button class="chip outline" type="button" aria-pressed="false">On hold</button></div>
+          <div class="field-label">Coverage</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">Any</button><button class="chip outline" type="button" aria-pressed="false">Warranty</button><button class="chip outline" type="button" aria-pressed="false">AMC</button><button class="chip outline" type="button" aria-pressed="false">Chargeable</button></div>
+          <div class="field-label">Machine</div>
+          <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">All machines</button><button class="chip outline" type="button" aria-pressed="false">Line 1 former</button><button class="chip outline" type="button" aria-pressed="false">Line 2 former</button><button class="chip outline" type="button" aria-pressed="false">Tray line</button></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close>Show requests</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="sort" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Sort requests">
+        <div class="group"><div class="title">Sort requests</div>
+          <button type="button" role="menuitemradio" aria-checked="true" data-close>Needs you first</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Newest first</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Severity, highest</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
     <div class="overlay bottom" id="call" hidden>
       <div class="action-sheet" role="dialog" aria-label="Contact support">
         <div class="group"><div class="title" id="call-title"></div>

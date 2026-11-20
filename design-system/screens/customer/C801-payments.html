@@ -84,10 +84,16 @@
               <button role="tab" aria-selected="false" aria-controls="p-est" id="t-est">Estimates</button>
             </div>
 
+            <div class="tools" data-when="ready filtered offline">
+              <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+                <input class="input" type="search" placeholder="Invoice number or type" aria-label="Search"></div>
+              <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
+              <button class="icon-btn" type="button" data-open="sort" aria-label="Sort"><svg class="ic" aria-hidden="true"><use href="#ph-sort-ascending"/></svg></button>
+            </div>
+
             <div data-when="ready filtered offline">
               <div id="p-due" class="stack-sm">
-                <p class="count-line" data-when="ready offline"><span><b id="due-count"></b> · by due date</span>
-                  <button class="btn btn-text" type="button" data-open="filter"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg>Filter</button></p>
+                <p class="count-line" data-when="ready offline"><span><b id="due-count"></b> · by due date</span></p>
                 <div data-when="filtered">
                   <div class="chips" style="margin-bottom:6px"><button class="chip outline" type="button" aria-pressed="false">Parts <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
                   <p class="count-line"><span><b id="filtered-count"></b></span><button class="btn btn-text" type="button">Clear filters</button></p>
@@ -148,6 +154,14 @@
       </div>
     </div>
 
+
+    <div class="overlay bottom" id="sort" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Sort invoices">
+        <div class="group"><div class="title">Sort invoices</div>
+          <button type="button" role="menuitemradio" aria-checked="true" data-close>Due date, soonest</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Amount, highest</button><button type="button" role="menuitemradio" aria-checked="false" data-close>Newest first</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
     <div class="overlay bottom" id="filter" hidden>
       <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
         <span class="grabber"></span>

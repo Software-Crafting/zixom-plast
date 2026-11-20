@@ -132,3 +132,8 @@
 .error-summary b{display:block; margin-bottom:6px; font-weight:700}
 .error-summary ul{margin:0; padding-left:18px}
 .error-summary a{color:inherit}
+
+/* search with filter and sort on one row */
+.tools{display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center}
+.tools.two{grid-template-columns:1fr auto}
+.tools .icon-btn{width:50px; height:50px}
