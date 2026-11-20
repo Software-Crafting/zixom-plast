@@ -87,12 +87,12 @@
 .rating .ic{width:13px; height:13px; fill:currentColor}
 
 /* alert card on Home */
-.alert-card{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 14px;
+.alert-card{display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center; padding:12px 14px;
   border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); color:inherit; text-decoration:none}
 .alert-card .disc{grid-row:1 / span 2; width:38px; height:38px; display:grid; place-items:center; border-radius:var(--r-pill)}
 .alert-card b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .alert-card > span:not(.disc){grid-column:2; font-size:var(--fs-12); color:var(--text-muted); margin-top:2px}
-.alert-card > .ic{grid-column:3; grid-row:1 / span 2; color:var(--slate-400)}
+.alert-card > .ic{display:none} /* cards carry no chevron */
 .alert-card.amber .disc{background:var(--amber-50); color:var(--amber)}
 .alert-card.red .disc{background:var(--red-50); color:var(--red)}
 .alert-card.blue .disc{background:var(--blue-50); color:var(--blue)}

@@ -17,6 +17,7 @@
 .scroll::-webkit-scrollbar{display:none}
 .scroll.with-tabbar{padding-bottom:var(--tabbar-space)}
 .scroll.with-footer{padding-bottom:190px}
+.screen:has(.fab) .scroll.with-tabbar{padding-bottom:calc(var(--tabbar-space) + 64px)}
 .stack{display:flex; flex-direction:column; gap:16px}
 .stack-sm{display:flex; flex-direction:column; gap:8px}
 .row-flex{display:flex; align-items:center; gap:10px}

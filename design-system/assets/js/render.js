@@ -136,7 +136,7 @@ window.ZX = window.ZX || {};
 
   const alertCard = (a) => `<a class="alert-card ${a.tone}" href="${esc(a.href)}">
       <span class="disc">${icon(a.icon)}</span><b>${esc(a.title)}</b>
-      <span${a.mono ? ' class="mono"' : ''}>${esc(a.sub)}</span>${icon('caret-right', 'ic-16')}</a>`;
+      <span${a.mono ? ' class="mono"' : ''}>${esc(a.sub)}</span></a>`;
 
   ZX.render = { isOpen, esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, totals, balance, machine, engineer, amc,
     ticketTag, coverageTag, severityTag, warrantyTag, amcTag, stockTag, invoiceTag, thumb,
