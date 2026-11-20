@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C301 Warranty list</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* same segment counters as C501 */
+.segment .n{display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:var(--r-pill);
+  background:var(--slate-200); color:var(--slate-700); font:700 var(--fs-11) var(--font-body)}
+.segment [aria-selected="true"] .n{background:var(--slate-800); color:#fff}
+.segment a, .segment button{display:flex; align-items:center; justify-content:center}
+/* this page */
+.list-item .thumb{grid-row:1 / span 2}
+.list-item .sub .tag{margin-top:2px}
+.claims-head{display:flex; align-items:center; justify-content:space-between; margin:8px 2px 10px}
+.claims-head h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px 10px; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C301 Warranty list</b><span>Support tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">no claims</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <h1 class="root-title" style="margin:0; flex:1">Support</h1>
+          <button class="icon-btn glass" type="button" data-open="call" aria-label="Call Zixom support"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></button>
+        </div>
+      </header>
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="stack" style="margin-top:16px">
+            <nav class="segment" role="tablist" aria-label="Support sections">
+              <a role="tab" aria-selected="false" href="C501-support.html">Service<span class="n" id="n-service"></span></a>
+              <a role="tab" aria-selected="true" href="#">Warranty<span class="n" id="n-warranty"></span></a>
+              <a role="tab" aria-selected="false" href="C601-questions.html">Questions<span class="n" id="n-questions"></span></a>
+            </nav>
+
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+            <div data-when="ready filtered empty offline">
+              <div class="section-head" style="margin-bottom:10px"><h2>Coverage</h2></div>
+              <div class="list" id="coverage"></div>
+            </div>
+
+            <div data-when="ready offline">
+              <div class="claims-head"><h2>Claims</h2></div>
+              <div class="tools two" style="margin-bottom:10px"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg><input class="input" type="search" placeholder="Claim number or machine" aria-label="Search"></div><button class="icon-btn" type="button" data-open="filter" aria-label="Filter claims"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div>
+              <div class="segment" role="tablist" aria-label="Open or closed claims">
+                <button role="tab" type="button" aria-selected="true" aria-controls="tab-open" id="tab-open-btn">Open</button>
+                <button role="tab" type="button" aria-selected="false" aria-controls="tab-closed" id="tab-closed-btn">Closed</button>
+              </div>
+              <div class="stack-sm" id="tab-open" style="margin-top:12px"></div>
+              <div class="stack-sm" id="tab-closed" style="margin-top:12px" hidden></div>
+            </div>
+
+            <div data-when="filtered">
+              <div class="claims-head"><h2>Claims</h2></div>
+              <div class="tools two" style="margin-bottom:10px"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg><input class="input" type="search" placeholder="Claim number or machine" aria-label="Search"></div><button class="icon-btn" type="button" data-open="filter" aria-label="Filter claims"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div>
+              <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+              <div class="stack-sm" id="filtered"></div>
+            </div>
+
+            <div class="state" data-when="empty" style="padding-top:20px">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>
+              <h3>No warranty claims</h3>
+              <p>Claims you raise will show here.</p>
+            </div>
+
+            <div class="stack" data-when="loading">
+              <span class="skeleton sk-line" style="width:35%; margin:4px"></span>
+              <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+            </div>
+
+            <div class="state" data-when="error" style="padding-top:40px">
+              <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+              <h3>Something went wrong</h3>
+              <p>We could not load your warranty.</p>
+              <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+              <span class="code mono">ZC-500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab" href="C303-claim-machine.html" data-when="ready filtered empty offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New claim</a>
+    <nav class="tabbar" data-tabs="customer" data-active="support"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter claims</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Machine</div>
+          <div class="chips" data-single style="margin-bottom:14px" id="f-machines"></div>
+          <div class="field-label">Status</div>
+          <div class="chips" style="flex-wrap:wrap; overflow:visible" id="f-status"></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close id="f-apply">Show claims</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="call" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group"><div class="title" id="call-title"></div>
+          <button type="button" data-close id="call-phone"></button>
+          <button type="button" data-close id="call-email"></button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Support tab, Warranty segment. Coverage per machine with days left, then the company's claims,
+Open and Closed, filterable by machine or status.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ENDED_TICKETS = ['closed', 'cancelled'];
+  const OPEN_QUESTIONS = 2; /* same as C501: QRY-2026-0030 open, 0033 complaint */
+  const FILTER_MACHINE = 'ZP-TF-2310';
+
+  /* Sample data not in data.js yet (move there): warranty claims, spec section 16. Same list in C308 */
+  const CLAIMS = [
+    { number: 'WCL-2026-0040', status: 'submitted', machine: 'ZP-TF-2310', category: 'Heating', submitted: '2026-11-22T15:10', summary: 'Heater zone 3 does not reach the set temperature.' },
+    { number: 'WCL-2026-0041', status: 'under-review', machine: 'ZP-TF-2310', category: 'Mechanical', submitted: '2026-11-20T11:30', summary: 'Mould clamp does not lock fully on the right side.' },
+    { number: 'WCL-2026-0042', status: 'info-requested', machine: 'ZP-TF-2204', category: 'Vacuum or pneumatic', submitted: '2026-11-18T09:40', deadline: '2026-11-27', summary: 'Vacuum drops at the forming station. Corners do not form fully.' },
+    { number: 'WCL-2026-0043', status: 'approved', machine: 'ZP-TF-2204', category: 'Mechanical', submitted: '2026-11-22T18:30', ticket: 'TKT-2026-0126', summary: 'Chain drive trips with error E-17 on the HMI.' },
+    { number: 'WCL-2026-0044', status: 'rejected', machine: 'ZP-TF-2310', category: 'Electrical', submitted: '2026-11-16T14:05', summary: 'Main motor fuse blew twice in one shift.' },
+    { number: 'WCL-2026-0045', status: 'resolved', machine: 'ZP-TF-2310', category: 'Heating', submitted: '2026-11-16T09:20', ticket: 'TKT-2026-0128', summary: 'Sheet sags before the forming station.' },
+    { number: 'WCL-2026-0046', status: 'cancelled', machine: 'ZP-TF-2204', category: 'Control or PLC', submitted: '2026-11-10T10:00', summary: 'HMI freezes on recipe change.' },
+  ];
+  const CLAIM_STATUS = {
+    'submitted': ['Submitted', 'blue'], 'under-review': ['Under review', 'blue'], 'info-requested': ['Information requested', 'amber'],
+    'approved': ['Approved', 'green'], 'rejected': ['Rejected', 'red'], 'resolved': ['Resolved', 'green'],
+    'closed': ['Closed', ''], 'cancelled': ['Cancelled', ''],
+  };
+  const OPEN = ['submitted', 'under-review', 'info-requested', 'approved'];
+
+  /* claim card reuses the ticket card look */
+  const claimCard = (c) => {
+    const m = R.machine(c.machine);
+    const foot = c.status === 'info-requested' ? `<span>${R.icon('clock')}Reply by ${R.dayDate(c.deadline)}</span>`
+      : c.ticket ? `<span class="mono">${R.icon('wrench')}${c.ticket}</span>` : '';
+    return `<a class="ticket" href="C308-claim.html?claim=${c.number}">
+      <span class="top"><span class="num mono">${c.number}</span>${R.tag(...CLAIM_STATUS[c.status])}</span>
+      <h3>${R.esc(m.nickname || m.model)}</h3>
+      <p>${R.esc(c.summary)}</p>
+      <span class="foot"><span>${R.icon('calendar-blank')}Submitted ${R.dayDate(c.submitted)}</span>${foot}</span>
+    </a>`;
+  };
+
+  const newest = [...CLAIMS].sort((a, b) => b.submitted.localeCompare(a.submitted));
+  /* the claim waiting for the customer goes first */
+  const open = newest.filter((c) => OPEN.includes(c.status)).sort((a, b) => (b.status === 'info-requested') - (a.status === 'info-requested'));
+  const closed = newest.filter((c) => !OPEN.includes(c.status));
+  $('tab-open-btn').textContent = `Open, ${open.length}`;
+  $('tab-closed-btn').textContent = `Closed, ${closed.length}`;
+  $('tab-open').innerHTML = open.map(claimCard).join('');
+  $('tab-closed').innerHTML = closed.map(claimCard).join('');
+
+  $('n-service').textContent = R.count(data.tickets.filter((t) => !ENDED_TICKETS.includes(t.status)).length);
+  $('n-warranty').textContent = R.count(open.length);
+  $('n-questions').textContent = R.count(OPEN_QUESTIONS);
+
+  /* coverage: machines with a warranty, longest left first; pending machines have none yet */
+  const covered = data.machines.filter((m) => m.warrantyEnd).sort((a, b) => b.warrantyEnd.localeCompare(a.warrantyEnd));
+  $('coverage').innerHTML = covered.map((m) => `<a class="list-item" href="C302-warranty-details.html?serial=${m.serial}">
+    ${R.thumb(m, 'sm')}<b>${R.esc(m.nickname || m.model)}</b><span class="sub">${R.warrantyTag(m)}</span>
+    <span class="end">${R.icon('caret-right')}</span></a>`).join('');
+
+  const filtered = newest.filter((c) => c.machine === FILTER_MACHINE);
+  $('filtered').innerHTML = filtered.map(claimCard).join('');
+  $('filtered-count').innerHTML = `<b>${filtered.length} of ${CLAIMS.length} claims</b> · ${R.esc(R.machine(FILTER_MACHINE).nickname)}`;
+  $('f-machines').innerHTML = `<button class="chip outline" type="button" aria-pressed="false">All machines</button>`
+    + [...new Set(CLAIMS.map((c) => c.machine))].map((serial) => `<button class="chip outline" type="button"
+      aria-pressed="${serial === FILTER_MACHINE}">${R.esc(R.machine(serial).nickname || R.machine(serial).model)}</button>`).join('');
+  $('f-status').innerHTML = Object.keys(CLAIM_STATUS).filter((s) => s !== 'closed').map((s) => `<button class="chip outline" type="button"
+    aria-pressed="false">${CLAIM_STATUS[s][0]}</button>`).join('');
+  $('f-apply').textContent = `Show ${filtered.length} claims`;
+
+  const s = data.support;
+  $('call-title').textContent = `Zixom support, ${s.hours}`;
+  $('call-phone').textContent = `Call ${s.phone}`;
+  $('call-email').textContent = `Email ${s.email}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

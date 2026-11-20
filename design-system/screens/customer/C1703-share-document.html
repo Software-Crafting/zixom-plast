@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1703 Share document</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.page{aspect-ratio:1 / 1.414; display:flex; flex-direction:column; gap:9px; margin:4px 6px 0; padding:26px 22px; border-radius:6px; background:#fff;
+  box-shadow:0 1px 2px rgba(24,34,45,.08), 0 6px 18px rgba(24,34,45,.06)}
+.page i{display:block; height:6px; border-radius:3px; background:var(--slate-200)}
+.page .fig{height:150px; margin:6px 0; border-radius:4px; background:linear-gradient(145deg, var(--slate-100), var(--blue-50))}
+.doc{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.doc .disc{width:44px; height:44px; flex-shrink:0; display:grid; place-items:center; border-radius:var(--r-md); background:var(--red-50); color:var(--red)}
+.doc b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.doc span span{font-size:var(--fs-12); color:var(--text-muted)}
+.choice:disabled{opacity:.55; cursor:not-allowed}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1703 Share document</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="share">ready</button>
+  <button type="button" data-state="confidential" aria-pressed="false" data-open="share">confidential</button>
+  <button type="button" data-state="failed" aria-pressed="false" data-open="share">share failed</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="share">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C902-document-viewer.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 class="doc-title"></h1>
+        <button class="icon-btn" type="button" data-open="share" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+      </div>
+      <div class="scroll">
+        <div class="page" aria-hidden="true"><i style="width:60%; height:10px"></i><i></i><i style="width:92%"></i><i style="width:70%"></i><span class="fig"></span><i></i><i style="width:86%"></i><i style="width:96%"></i><i style="width:50%"></i></div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="share" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sh-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="sh-t">Share</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Sharing needs the internet.</div>
+        <div class="doc"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span><span><b class="doc-title"></b><span id="doc-size"></span></span></div>
+        <div class="body" role="radiogroup" aria-label="What to share">
+          <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span><b>Share the file</b><p id="file-sub"></p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button" data-when="ready failed offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-globe"/></svg></span><b>Share a link</b><p>Opens for 7 days</p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button" disabled data-when="confidential"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span><b>Share a link</b><p>Off for quotations and invoices</p><span class="mark"></span></button>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-close data-toast="Shared" data-when="ready confidential">Share</button>
+        <a class="btn btn-primary" href="../system/S17-share-failed.html" style="margin-top:16px; width:100%" data-when="failed">Share</a>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" disabled data-when="offline">Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from Share in the viewer, via <code>?doc=</code>. Quotations and invoices share only the file;
+a failed share opens <a href="../system/S17-share-failed.html">S17</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  /* sample only (same documents as C902): an open manual and a confidential quotation */
+  const DOCS = [
+    { id: 'afm760-manual', title: 'AFM-760 operating manual', size: '48 MB' },
+    { id: 'quote-0041', title: 'Quotation QT-2026-0041', size: '300 KB', confidential: true },
+  ];
+  const id = new URLSearchParams(location.search).get('doc');
+  const screen = document.querySelector('.screen');
+  const show = (doc) => {
+    document.querySelectorAll('.doc-title').forEach((el) => { el.textContent = doc.title; });
+    document.getElementById('doc-size').textContent = `PDF · ${doc.size}`;
+    document.getElementById('file-sub').textContent = `PDF, ${doc.size}`;
+    document.getElementById('back').href = `C902-document-viewer.html?doc=${doc.id}`;
+  };
+  const start = DOCS.find((d) => d.id === id) || DOCS[0];
+  if (start.confidential) screen.dataset.state = 'confidential';
+  show(start);
+  /* the confidential state shows the quotation, the others the manual */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => show(DOCS[b.dataset.state === 'confidential' ? 1 : 0])));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1110 Delete or deactivate account</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+.otp-to{margin:0 0 14px; font-size:var(--fs-14); color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1110 Delete or deactivate account</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="blocked" aria-pressed="true">blocked by dues and tickets</button>
+  <button type="button" data-state="ready" aria-pressed="false">nothing open</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="otp">confirm with OTP</button>
+  <button type="button" data-state="otpwrong" aria-pressed="false" data-open="otp">wrong code</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="blocked">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Delete account</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send a request.</div>
+
+        <div data-when="blocked">
+          <div class="state" style="padding:12px 20px 20px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Clear these first</h3><p>Pay dues and close open requests, then ask again.</p>
+          </div>
+          <div class="stack-sm" id="blockers"></div>
+        </div>
+
+        <div data-when="ready otpwrong offline">
+          <p class="list-title" style="margin-top:8px">What happens</p>
+          <div class="list">
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>You are signed out everywhere</b></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg></span><b>Your profile is removed</b><span class="sub">Name, photo, email</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Business records are kept</b><span class="sub">Invoices and machine history, as required</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span><b>Zixom processes it in 7 working days</b></div>
+          </div>
+          <p class="hint" style="text-align:center; margin-top:12px">Your company and its machines stay with your team.</p>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-circle" style="width:76px; height:76px; margin:12px auto"></span>
+          <span class="skeleton" style="height:72px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:72px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="blocked ready otpwrong offline">
+        <button class="btn btn-danger" type="button" data-open="otp" data-when="ready otpwrong">Request deletion</button>
+        <button class="btn btn-danger" type="button" disabled data-when="blocked offline">Request deletion</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="otp" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="otp-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="otp-title">Confirm deletion</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <p class="otp-to">Enter the code sent to <b id="otp-mobile"></b>.</p>
+          <div class="field" data-when="ready">
+            <div class="otp"><input maxlength="1" value="4" aria-label="Digit 1"><input maxlength="1" value="8" aria-label="Digit 2"><input maxlength="1" value="2" aria-label="Digit 3"><input maxlength="1" value="9" aria-label="Digit 4"><input maxlength="1" aria-label="Digit 5"><input maxlength="1" aria-label="Digit 6"></div>
+            <span class="hint">Resend code in 0:24</span></div>
+          <div class="field" data-when="otpwrong">
+            <div class="otp has-error"><input value="4" aria-label="Digit 1"><input value="8" aria-label="Digit 2"><input value="2" aria-label="Digit 3"><input value="9" aria-label="Digit 4"><input value="1" aria-label="Digit 5"><input value="0" aria-label="Digit 6"></div>
+            <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. 4 tries left.</span></div>
+        </div>
+        <a class="btn btn-danger" href="../access/A24-deletion-requested.html" style="margin-top:18px">Delete my account</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Deletion is a request Zixom processes, confirmed with an OTP. Open requests and unpaid invoices block
+it and are listed (EC-67); the request then shows in <a href="../access/A24-deletion-requested.html">A24</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const me = data.users.find((u) => u.id === 'rakesh');
+  const mask = (mobile) => mobile.slice(0, 4) + mobile.slice(4).replace(/\d(?=(?:\D*\d){4})/g, '•');
+  document.getElementById('otp-mobile').textContent = mask(me.mobile);
+
+  const unpaid = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status))
+    .sort((a, b) => (b.status === 'overdue') - (a.status === 'overdue') || a.due.localeCompare(b.due));
+  const open = data.tickets.filter(R.isOpen);
+  const invoiceCard = (i) => `<a class="alert-card ${i.status === 'overdue' ? 'red' : 'amber'}" href="C802-invoice-detail.html?invoice=${i.number}">
+      <span class="disc">${R.icon('receipt')}</span><b>Invoice ${i.status === 'overdue' ? 'overdue' : 'due'}</b>
+      <span class="mono">${i.number}, ${R.money(R.balance(i))}</span>${R.icon('caret-right', 'ic-16')}</a>`;
+  const names = [...new Set(open.map((t) => { const m = R.machine(t.machine); return m.nickname || m.model; }))];
+  const ticketsCard = `<a class="alert-card blue" href="C502-requests.html">
+      <span class="disc">${R.icon('wrench')}</span><b>${open.length} open service requests</b>
+      <span>${R.esc(names.slice(0, 2).join(', '))} and others</span>${R.icon('caret-right', 'ic-16')}</a>`;
+  document.getElementById('blockers').innerHTML = unpaid.map(invoiceCard).join('') + ticketsCard;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

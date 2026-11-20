@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C602 Ask a question</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.wrap{flex-wrap:wrap; overflow:visible}
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+.suggest{margin-top:10px}
+.suggest .list-title{margin:0 4px 8px}
+.files{margin-bottom:8px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C602 Ask a question</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="suggest" aria-pressed="false">typing, related answers</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="complaint" aria-pressed="false">complaint, no reference</button>
+  <button type="button" data-state="uploading" aria-pressed="false">uploading, one failed</button>
+  <button type="button" data-state="badfile" aria-pressed="false">too large, wrong type</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="duplicate">same subject in 60 s</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C601-questions.html" aria-label="Back" data-toast="Draft saved"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Ask a question</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Kept as a draft.</div>
+        <div class="error-summary" role="alert" style="margin-bottom:16px" data-when="errors">
+          <b>Fix 3 things to send</b>
+          <ul><li><a href="#cat-bad">Choose a category</a></li><li><a href="#subject-bad">Subject: enter 5 to 100 characters</a></li><li><a href="#details-bad">Details: at least 20 characters</a></li></ul>
+        </div>
+        <div class="banner amber" style="margin-bottom:16px" data-when="complaint"><svg class="ic" aria-hidden="true"><use href="#ph-megaphone"/></svg>
+          <div id="complaint-note"></div></div>
+
+        <div class="field" data-when="ready suggest errors uploading badfile sending offline">
+          <span class="field-label">Related to<span class="counter">Optional</span></span>
+          <button class="select" type="button" data-open="related"><span class="ic-slot" id="related-icon"></span><span class="value" id="related-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+        </div>
+        <div class="field has-error" data-when="complaint">
+          <span class="field-label" id="ref-bad">Ticket or order<span class="req">*</span></span>
+          <button class="select" type="button" data-open="related"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg><span class="value placeholder">Choose a ticket or order</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>A complaint needs a ticket or order</span>
+        </div>
+
+        <div class="field" data-when="ready suggest uploading badfile sending offline complaint">
+          <span class="field-label">Category<span class="req">*</span></span>
+          <div class="chips wrap" data-single id="cats"></div>
+        </div>
+        <div class="field has-error" data-when="errors">
+          <span class="field-label" id="cat-bad">Category<span class="req">*</span></span>
+          <div class="chips wrap" data-single id="cats-bad"></div>
+          <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a category</span>
+        </div>
+
+        <div class="field" data-when="ready uploading badfile sending offline complaint">
+          <label for="subject">Subject<span class="req">*</span><span class="counter" id="subject-count"></span></label>
+          <input class="input" id="subject" maxlength="100">
+        </div>
+        <div class="field" data-when="suggest">
+          <label for="subject-typing">Subject<span class="req">*</span><span class="counter">14 / 100</span></label>
+          <input class="input" id="subject-typing" value="Cup rims uneve" maxlength="100">
+          <div class="suggest">
+            <p class="list-title">Does this answer your question?</p>
+            <div class="list" id="suggestions"></div>
+          </div>
+        </div>
+        <div class="field has-error" data-when="errors">
+          <label for="subject-bad">Subject<span class="req">*</span><span class="counter">3 / 100</span></label>
+          <input class="input" id="subject-bad" value="Rim" aria-invalid="true" aria-describedby="subject-err">
+          <span class="error-text" id="subject-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 5 to 100 characters</span>
+        </div>
+
+        <div class="field" data-when="ready uploading badfile sending offline complaint">
+          <label for="details">Details<span class="req">*</span><span class="counter" id="details-count"></span></label>
+          <textarea class="textarea" id="details" maxlength="2000"></textarea>
+        </div>
+        <div class="field" data-when="suggest">
+          <label for="details-empty">Details<span class="req">*</span><span class="counter">0 / 2000</span></label>
+          <textarea class="textarea" id="details-empty" placeholder="What happened, since when, what you tried"></textarea>
+        </div>
+        <div class="field has-error" data-when="errors">
+          <label for="details-bad">Details<span class="req">*</span><span class="counter">0 / 2000</span></label>
+          <textarea class="textarea" id="details-bad" aria-invalid="true" aria-describedby="details-err" placeholder="What happened, since when, what you tried"></textarea>
+          <span class="error-text" id="details-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe it in at least 20 characters</span>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Attachments<span class="counter">Up to 5</span></span>
+          <div class="files" data-when="ready sending offline complaint">
+            <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>left-mould-rims.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 2.4 MB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="uploading">
+            <div class="file" data-status="uploading" data-progress="58"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg></span>
+              <div class="file-body"><b>rim-check.mp4</b><span class="file-meta">Uploading 58% · 8.6 MB</span><span class="progress"><i style="width:58%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>left-mould-rims.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="badfile">
+            <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>line-walkthrough.mov</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB. Trim it</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="wrong-type"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>settings.xlsx</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Use a photo, video or PDF</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <button class="add-file" type="button" data-open="attach">
+            <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-paperclip"/></svg></span>
+            <span class="grow"><b>Add photo, video or PDF</b><span>10 MB each</span></span>
+            <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="btn-pair" style="grid-template-columns:1fr 1.6fr">
+          <a class="btn btn-secondary" href="C601-questions.html" data-toast="Draft saved">Save draft</a>
+          <a class="btn btn-primary" href="#" id="send" data-when="ready uploading badfile"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send</a>
+          <button class="btn btn-primary" type="button" data-when="suggest errors complaint" onclick="document.querySelector('.plate-states [data-state=errors]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send</button>
+          <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Send</button>
+          <button class="btn btn-primary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="related" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="related-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="related-t">Related to</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" id="related-list"></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="attach" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add attachment">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo or video</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Choose a PDF</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="duplicate" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="dup-t">
+        <h3 id="dup-t">You just sent this</h3><p>A question with the same subject was sent a moment ago.</p>
+        <div class="actions"><a class="btn btn-primary" href="#" id="dup-link">View that question</a><button class="btn btn-text" type="button" style="width:100%" data-close>Edit subject</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from Support, a machine, invoice, estimate, order or FAQ; that record is preselected
+(<code>?machine=</code>, <code>?invoice=</code>, <code>?ticket=</code>). Send opens the new thread in <a href="C603-thread.html">C603</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  /* Sample data not in data.js yet (move there): the next question number, orders, and FAQ questions from C604 shown while typing */
+  const NEW_QUESTION = 'QRY-2026-0034';
+  const LAST_QUESTION = 'QRY-2026-0030';
+  const ORDERS = [['ORD-2026-0209', 'Dispatched'], ['ORD-2026-0208', 'Paid and packed']];
+  const SUGGESTIONS = [['factory', 'Parts form unevenly. What should I check?'], ['clock', 'How fast will an engineer come?'],
+    ['calendar-check', 'Can I change or cancel a visit?']];
+  const CATEGORIES = ['Technical or operation', 'Spare parts and price', 'Warranty or AMC', 'Billing or invoice', 'Training', 'Complaint', 'Other'];
+  const FILLED = { category: 'Technical or operation', subject: 'Cup rims uneven on the left mould',
+    details: 'Left mould rims are 1 mm lower than the right since the heater was replaced. What should we check?' };
+
+  /* preselected record from the screen it was opened on; default is the cup former */
+  const params = new URLSearchParams(location.search);
+  const machine = R.machine(params.get('machine') || (params.toString() ? '' : 'ZP-CF-2011'));
+  const related = machine ? ['factory', machine.nickname || machine.model]
+    : params.get('invoice') ? ['receipt', params.get('invoice')]
+    : params.get('ticket') ? ['wrench', params.get('ticket')] : null;
+  $('related-icon').outerHTML = related ? R.icon(related[0]) : R.icon('paperclip');
+  $('related-value').textContent = related ? related[1] : 'Machine, request, order or invoice';
+  $('related-value').classList.toggle('placeholder', !related);
+
+  const chips = (selected) => CATEGORIES.map((c) => `<button class="chip outline" type="button" aria-pressed="${c === selected}">${c}</button>`).join('');
+  $('cats').innerHTML = chips(FILLED.category);
+  $('cats-bad').innerHTML = chips('');
+  document.querySelector('[data-state="complaint"]').addEventListener('click', () => { $('cats').innerHTML = chips('Complaint'); });
+  document.querySelectorAll('.plate-states [data-state]:not([data-state="complaint"])').forEach((b) => b.addEventListener('click', () => { $('cats').innerHTML = chips(FILLED.category); }));
+
+  $('subject').value = FILLED.subject;
+  $('details').value = FILLED.details;
+  $('subject-count').textContent = `${FILLED.subject.length} / 100`;
+  $('details-count').textContent = `${FILLED.details.length} / 2000`;
+  $('complaint-note').innerHTML = `<b>Your complaint goes to the service manager</b>${R.esc(data.support.manager)} reviews it.`;
+  $('suggestions').innerHTML = SUGGESTIONS.map(([iconName, title]) => `<a class="list-item" href="C604-faq.html">
+    <span class="disc">${R.icon(iconName)}</span><b>${title}</b><span class="end">${R.icon('caret-right')}</span></a>`).join('');
+  $('send').href = `C603-thread.html?q=${NEW_QUESTION}`;
+  $('dup-link').href = `C603-thread.html?q=${LAST_QUESTION}`;
+
+  /* related record picker: machines, open requests, orders, unpaid invoices */
+  const ENDED = ['closed', 'cancelled'];
+  const option = (iconName, title, sub, checked = false) => `<button class="choice" role="radio" aria-checked="${checked}" type="button" data-close>
+    <span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+  const group = (title, items) => `<p class="list-title" style="margin-top:6px">${title}</p><div role="radiogroup" aria-label="${title}">${items.join('')}</div>`;
+  $('related-list').innerHTML = [
+    group('Machines', data.machines.filter((m) => m.status !== 'pending').map((m) => option('factory', m.nickname || m.model, m.serial, m === machine))),
+    group('Service requests', data.tickets.filter((t) => !ENDED.includes(t.status)).slice(0, 4).map((t) => option('wrench', t.number, R.machine(t.machine).nickname || t.type))),
+    group('Orders', ORDERS.map(([number, status]) => option('package', number, status))),
+    group('Invoices', data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).map((i) => option('receipt', i.number, `${R.money(R.balance(i))} · ${i.type}`))),
+  ].join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

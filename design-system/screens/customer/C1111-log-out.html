@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1111 Log out</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.me{display:flex; align-items:center; gap:14px; margin-top:16px; padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-lift)}
+.me b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.me .sub{display:block; margin-top:3px; font-size:var(--fs-13); color:var(--text-muted)}
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+.action-sheet .title{text-align:center}
+.action-sheet button.destructive{justify-content:center}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1111 Log out</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="logout">ready</button>
+  <button type="button" data-state="drafts" aria-pressed="false" data-open="logout">unsent drafts</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar"><h1 class="root-title" style="margin:0; flex:1">More</h1>
+          <span class="icon-btn glass"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span></div>
+        <div class="me"><span class="avatar lg" id="initials"></span><span class="grow"><b id="name"></b><span class="sub" id="role"></span></span></div>
+      </header>
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <p class="list-title">Account</p>
+          <div class="list">
+            <span class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span><b>Security</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+            <span class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></span><b>Settings</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+          </div>
+          <div class="list" style="margin-top:22px">
+            <span class="list-item danger"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Delete account</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+            <span class="list-item danger"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>Log out</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="more"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="logout" data-initial>
+      <div class="action-sheet" role="dialog" aria-labelledby="lo-title">
+        <div class="group">
+          <div class="title" id="lo-title" data-when="ready">Sign out?<small>You will need an OTP to sign in again.</small></div>
+          <div class="title" data-when="drafts">You have 2 unsent drafts<small>They stay on this phone for 30 days.</small></div>
+          <button class="destructive" type="button" data-href="../access/A03-sign-in.html">Sign out</button>
+        </div>
+        <button class="cancel" type="button" data-href="C1101-more.html">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Confirmation sheet from Log out in <a href="C1101-more.html">More</a>. Unsent drafts are named before
+signing out; they stay on the phone for 30 days.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const { data } = ZX;
+  const me = data.users.find((u) => u.id === 'rakesh');
+  const company = data.companies.find((c) => c.id === 'shree');
+  document.getElementById('initials').textContent = me.initials;
+  document.getElementById('name').textContent = me.name;
+  document.getElementById('role').textContent = `${me.designation} · ${company.name}`;
+  document.querySelectorAll('[data-href]').forEach((b) => b.addEventListener('click', () => { window.location.href = b.dataset.href; }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

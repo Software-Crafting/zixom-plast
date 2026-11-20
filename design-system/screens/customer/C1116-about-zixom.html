@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1116 About Zixom</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.intro h2{margin:4px 2px 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.intro p{margin:6px 2px 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.unit{margin-top:16px}
+.unit .row-flex{align-items:flex-start}
+.unit .disc{width:38px; height:38px; display:grid; place-items:center; flex-shrink:0; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.unit b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.unit p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.unit .btn{margin-top:14px}
+.ranges{display:flex; flex-wrap:wrap; gap:8px}
+.ranges .tag{height:30px; padding:0 12px; font-size:var(--fs-13); font-weight:500}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1116 About Zixom</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="web-offline">website offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>About Zixom</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Calls still work.</div>
+        <div class="intro">
+          <h2>Zixom Plast</h2>
+          <p>Makers and exporters of thermoforming and vacuum forming machines, moulds and turnkey plants.</p>
+        </div>
+
+        <div class="card unit">
+          <div class="row-flex"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span>
+            <span class="grow"><b>Manufacturing unit</b><p id="address"></p></span></div>
+          <a class="btn btn-secondary btn-sm" style="width:100%" id="maps" target="_blank" rel="noopener"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-map-trifold"/></svg>Open in Maps</a>
+        </div>
+
+        <p class="list-title">Contact</p>
+        <div class="list">
+          <a class="list-item" id="call"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></span><b>Call</b><span class="sub" id="phone"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          <a class="list-item" id="mail"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-envelope-simple"/></svg></span><b>Email</b><span class="sub" id="email"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          <a class="list-item" href="https://www.zixom.in" target="_blank" rel="noopener" data-when="ready"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-globe"/></svg></span><b>Website</b><span class="sub">zixom.in</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          <button class="list-item" type="button" data-open="web-offline" data-when="offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-globe"/></svg></span><b>Website</b><span class="sub">zixom.in</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></button>
+        </div>
+
+        <p class="list-title">Product ranges</p>
+        <div class="ranges" id="ranges"></div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="web-offline" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="wo-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+        <h3 id="wo-title">You are offline</h3><p>Connect to open the website.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>OK</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Who Zixom is, the manufacturing unit with Open in Maps, and how to reach them. The website can't open
+offline; calling still works.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const { support } = ZX.data;
+  const $ = (id) => document.getElementById(id);
+  /* not in data.js: the unit address and product ranges from zixom.in (spec section 3) */
+  const UNIT = '30/16/3 Shahpur Road, Sec-145, Seekri, Ballabhgarh, Faridabad 121004, Haryana';
+  const RANGES = ['Thermoforming machines', 'Vacuum forming machines', 'Skin packing machines', 'Blister sealing machines',
+    'Special purpose machines', 'Blister cards', 'Plastic disposable products', 'Moulds'];
+  $('address').textContent = UNIT;
+  $('maps').href = `https://maps.google.com/?q=${encodeURIComponent(UNIT)}`;
+  $('phone').textContent = `${support.phone} · ${support.hours}`;
+  $('call').href = `tel:${support.phone.replace(/\s/g, '')}`;
+  $('email').textContent = support.email;
+  $('mail').href = `mailto:${support.email}`;
+  $('ranges').innerHTML = RANGES.map((r) => ZX.render.tag(r, 'outline')).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

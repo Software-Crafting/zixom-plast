@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C404 Buy AMC</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.choice .thumb{grid-row:1 / span 2}
+.choice .tags{grid-column:2; display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; font-size:var(--fs-13)}
+.choice .tags a{color:var(--blue); font-weight:600; text-decoration:none}
+.choice[role="checkbox"] .mark{border-radius:7px}
+.choice[role="checkbox"][aria-checked="true"] .mark{border:0; background:var(--slate-800) center / 14px no-repeat
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
+div.choice{cursor:default}
+div.choice > :not(.tags){opacity:.55}
+.terms-chips{margin:0; padding:0}
+.rcard{padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff}
+.rcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px}
+.rcard h2{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.rcard .top a, .rcard .top button{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none; background:none; border:0; padding:0; cursor:pointer}
+.rcard .kv div{padding:8px 0}
+.footer-bar .total span{display:flex; flex-direction:column}
+.footer-bar .total small{font-size:var(--fs-12); color:var(--text-faint)}
+.terms{margin:0 4px; text-align:center; font-size:var(--fs-12); color:var(--text-muted)}
+.terms a{color:var(--blue); font-weight:600; text-decoration:none}
+.price-change{display:flex; justify-content:space-between; align-items:baseline; padding:10px 0; font-size:var(--fs-14)}
+.price-change s{color:var(--text-muted)}
+.price-change b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C404 Buy AMC</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>step</span>
+  <button type="button" data-state="machines" aria-pressed="true">1 machines</button>
+  <button type="button" data-state="plan" aria-pressed="false">2 plan and term</button>
+  <button type="button" data-state="site" aria-pressed="false">3 site and start</button>
+  <button type="button" data-state="review" aria-pressed="false">4 review</button>
+</div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="loading" aria-pressed="false">price loading</button>
+  <button type="button" data-state="removed" aria-pressed="false">machine removed</button>
+  <button type="button" data-state="review" data-open="changed" aria-pressed="false">price changed</button>
+  <button type="button" data-state="nobilling" aria-pressed="false">billing missing</button>
+  <button type="button" data-state="review" data-open="done" aria-pressed="false">quote requested</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="modes"><span>flow</span>
+  <button type="button" data-mode="quote" aria-pressed="true">first purchase</button>
+  <button type="button" data-mode="pay" aria-pressed="false">renewal or priced plan</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="machines">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C401-amc.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Buy AMC</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard" data-when="machines removed loading"><div class="meta"><b>Step 1 of 4</b><span>Machines</span></div><div class="bars"><span class="now"></span><span></span><span></span><span></span></div></div>
+        <div class="wizard" data-when="plan"><div class="meta"><b>Step 2 of 4</b><span>Plan and term</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
+        <div class="wizard" data-when="site"><div class="meta"><b>Step 3 of 4</b><span>Site and start date</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span><span></span></div></div>
+        <div class="wizard" data-when="review nobilling offline"><div class="meta"><b>Step 4 of 4</b><span>Review</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span></div></div>
+
+        <!-- step 1 -->
+        <div class="stack" data-when="machines removed loading">
+          <div class="banner amber" data-when="removed"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Line 2 former was removed</b>It is no longer eligible for this plan.</div></div>
+          <div class="field-label" style="margin:0 2px">Machines to cover</div>
+          <div role="group" aria-label="Machines" id="machines"></div>
+        </div>
+
+        <!-- step 2 -->
+        <div class="stack" data-when="plan">
+          <div>
+            <div class="field-label">Plan <span style="font-weight:400; color:var(--text-muted)">· sample, before GST</span></div>
+            <div role="radiogroup" aria-label="Plan" id="plans"></div>
+          </div>
+          <div>
+            <div class="field-label">Term</div>
+            <div class="chips terms-chips" data-single id="term">
+              <button class="chip outline" type="button" aria-pressed="true" data-years="1">1 year</button>
+              <button class="chip outline" type="button" aria-pressed="false" data-years="2">2 years</button>
+              <button class="chip outline" type="button" aria-pressed="false" data-years="3">3 years</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- step 3 -->
+        <div class="stack" data-when="site">
+          <div>
+            <div class="field-label">Site</div>
+            <div role="radiogroup" aria-label="Site" id="sites"></div>
+          </div>
+          <div>
+            <div class="field-label">Start date · December 2026</div>
+            <div class="dates" data-single id="dates"></div>
+          </div>
+        </div>
+
+        <!-- step 4 -->
+        <div class="stack" data-when="review nobilling offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to submit.</div>
+          <div class="banner red" data-when="nobilling"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Billing details missing</b><a href="C811-billing-details.html">Add billing details</a></div></div>
+          <div class="rcard"><div class="top"><h2>Machines</h2><button type="button" data-goto="machines">Edit</button></div><dl class="kv" style="margin:0" id="r-machines"></dl></div>
+          <div class="rcard"><div class="top"><h2>Plan and term</h2><button type="button" data-goto="plan">Edit</button></div><dl class="kv" style="margin:0" id="r-plan"></dl></div>
+          <div class="rcard"><div class="top"><h2>Site and start</h2><button type="button" data-goto="site">Edit</button></div><dl class="kv" style="margin:0" id="r-site"></dl></div>
+          <div class="rcard" data-when="review offline"><div class="top"><h2>Billing</h2><a href="C811-billing-details.html">Edit</a></div><dl class="kv" style="margin:0" id="r-billing"></dl></div>
+          <div class="money" id="r-money"></div>
+          <p class="terms">By continuing you agree to the <a href="C1109-legal.html">AMC terms</a></p>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load prices. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="machines removed plan site review nobilling offline loading">
+        <div class="total" data-when="machines removed plan site review nobilling offline"><span><span class="sum-label"></span><small>incl. 18% GST</small></span><b class="sum-total"></b></div>
+        <div class="total" data-when="loading"><span class="skeleton sk-line" style="width:120px"></span><span class="skeleton" style="width:110px; height:26px"></span></div>
+        <button class="btn btn-primary" type="button" data-goto="plan" data-when="machines removed" id="next-1">Next</button>
+        <button class="btn btn-primary" type="button" disabled data-when="loading">Next</button>
+        <button class="btn btn-primary" type="button" data-goto="site" data-when="plan">Next</button>
+        <button class="btn btn-primary" type="button" data-goto="review" data-when="site">Next</button>
+        <div data-when="review">
+          <button class="btn btn-primary" type="button" data-open="done" id="go-quote">Request quotation</button>
+          <a class="btn btn-primary" href="C803-pay-method.html?invoice=INV-2026-0991" id="go-pay">Pay now</a>
+        </div>
+        <button class="btn btn-primary" type="button" disabled data-when="nobilling offline">Continue</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="changed" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ch-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ch-title">The price changed</h3></div>
+        <div class="body">
+          <p class="card-sub" style="margin:0 0 6px">Zixom updated the plan price since you started.</p>
+          <div class="price-change"><s id="ch-old"></s><b id="ch-new"></b></div>
+        </div>
+        <div class="stack-sm" style="margin-top:14px">
+          <button class="btn btn-primary" type="button" data-close>Continue with new price</button>
+          <button class="btn btn-text" type="button" data-close data-goto="plan">Go back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="done" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ok-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="ok-title">Quotation requested</h3>
+        <p>Request <span class="mono">AMC-2026-0016</span>. We will send the quotation by notification and email.</p>
+        <div class="actions"><a class="btn btn-primary" href="C401-amc.html">Back to AMC</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Four steps with the price bar fixed at the bottom. A first purchase ends in Request quotation;
+a renewal or priced plan ends in Pay now (C803). Price changed is EC-44. Offline keeps the wizard and disables submit.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const GRACE_DAYS = 7;
+  const STEPS = ['machines', 'plan', 'site', 'review'];
+  /* sample only: Q12 default plans, per machine per year before GST */
+  const PLANS = [['Essential', 24000, '4 visits · 48 h response · 5% off parts'], ['Preventive Plus', 36000, '6 visits · 24 h response · 10% off parts'],
+    ['Comprehensive', 54000, '12 visits · 8 h response · wear parts included']];
+  /* sample only: the price before Zixom changed it (EC-44) */
+  const OLD_PRICE_FACTOR = 0.95;
+  const START_DATES = ['2026-12-01', '2026-12-02', '2026-12-03', '2026-12-04', '2026-12-05', '2026-12-07', '2026-12-08'];
+
+  const company = data.companies.find((c) => c.id === 'shree');
+  const state = { machines: new Set(['ZP-TF-2310', 'ZP-TF-2204']),
+    plan: new URLSearchParams(location.search).get('plan') || 'Preventive Plus', years: 1, site: 'vatva', start: START_DATES[0], mode: 'quote' };
+
+  /* step 1: eligible machines can be picked; the rest show why not */
+  const blocker = (m) => {
+    if (m.status === 'pending') return `${R.tag('Not eligible')}<a href="C602-ask.html">Ask a question</a>`;
+    if (!m.amc) return '';
+    const contract = R.amc(m.amc);
+    const graceLeft = GRACE_DAYS + R.daysFromToday(contract.end);
+    if (contract.status === 'expired') return graceLeft > 0 ? `${R.tag(`AMC expired, renew within ${graceLeft} days`, 'red')}<a href="C405-renew-amc.html?amc=${contract.number}">Renew</a>` : '';
+    return `${R.tag(`Under AMC until ${R.date(contract.end)}`, 'blue')}<a href="C405-renew-amc.html?amc=${contract.number}">Extend</a>`;
+  };
+  $('machines').innerHTML = data.machines.map((m) => {
+    const why = blocker(m);
+    const inner = `${R.thumb(m, 'sm')}<b>${R.esc(m.nickname || m.model)}</b><p class="mono">${m.serial}</p><span class="mark"></span>`;
+    return why ? `<div class="choice" aria-disabled="true">${inner}<span class="tags">${why}</span></div>`
+      : `<button class="choice" role="checkbox" type="button" data-serial="${m.serial}" aria-checked="${state.machines.has(m.serial)}">${inner}</button>`;
+  }).join('');
+  $('machines').addEventListener('click', (event) => {
+    const box = event.target.closest('[data-serial]');
+    if (!box) return;
+    const on = !state.machines.has(box.dataset.serial);
+    state.machines[on ? 'add' : 'delete'](box.dataset.serial);
+    box.setAttribute('aria-checked', String(on));
+    update();
+  });
+
+  /* step 2 */
+  $('plans').innerHTML = PLANS.map(([name, price, facts]) => `<button class="choice" role="radio" type="button" data-plan="${name}" aria-checked="${name === state.plan}">
+      <span class="disc">${R.icon('seal-check')}</span><b>${name} · ${R.money(price).replace('.00', '')}</b><p>${facts}</p><span class="mark"></span></button>`).join('');
+  $('plans').addEventListener('click', (event) => { const b = event.target.closest('[data-plan]'); if (b) { state.plan = b.dataset.plan; update(); } });
+  $('term').addEventListener('click', (event) => { const b = event.target.closest('[data-years]'); if (b) { state.years = Number(b.dataset.years); update(); } });
+
+  /* step 3 */
+  $('sites').innerHTML = company.sites.map((s) => `<button class="choice" role="radio" type="button" data-site="${s.id}" aria-checked="${s.id === state.site}">
+      <span class="disc">${R.icon('map-pin')}</span><b>${R.esc(s.name)}</b><p>${R.esc(s.address)}</p><span class="mark"></span></button>`).join('');
+  $('sites').addEventListener('click', (event) => { const b = event.target.closest('[data-site]'); if (b) { state.site = b.dataset.site; update(); } });
+  $('dates').innerHTML = START_DATES.map((d) => { const [day, num] = R.dayDate(d).split(' ');
+    return `<button class="date" type="button" data-date="${d}" aria-pressed="${d === state.start}"><span>${day}</span><b>${num}</b></button>`; }).join('');
+  $('dates').addEventListener('click', (event) => { const b = event.target.closest('[data-date]'); if (b) { state.start = b.dataset.date; update(); } });
+
+  /* price bar and review */
+  const kv = (rows) => rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  const update = () => {
+    const [, price] = PLANS.find(([name]) => name === state.plan);
+    const count = state.machines.size;
+    const lines = [[`${state.plan}, ${count} machine${count === 1 ? '' : 's'}, ${state.years} year${state.years === 1 ? '' : 's'}`, count * state.years, price]];
+    const { subtotal, gst, total } = R.totals(lines);
+    document.querySelector('.sum-label').textContent = `${state.mode === 'quote' ? 'Estimated total' : 'Total'}, ${count} machine${count === 1 ? '' : 's'} · ${state.years} yr`;
+    document.querySelector('.sum-total').textContent = R.money(total);
+    const site = company.sites.find((s) => s.id === state.site);
+    const end = new Date(`${state.start}T00:00:00`);
+    end.setFullYear(end.getFullYear() + state.years);
+    end.setDate(end.getDate() - 1);
+    const endIso = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`;
+    $('r-machines').innerHTML = kv([...state.machines].map((s) => { const m = R.machine(s); return [R.esc(m.nickname || m.model), `<span class="mono">${s}</span>`]; }));
+    $('r-plan').innerHTML = kv([['Plan', state.plan], ['Term', `${state.years} year${state.years === 1 ? '' : 's'}`]]);
+    $('r-site').innerHTML = kv([['Site', R.esc(site.name)], ['Cover', `${R.date(state.start)} to ${R.date(endIso)}`]]);
+    $('r-billing').innerHTML = kv([['Name', R.esc(company.name)], ['GSTIN', `<span class="mono">${company.gstin}</span>`]]);
+    $('r-money').innerHTML = `<div><span>${R.esc(lines[0][0])}</span><span>${R.money(subtotal)}</span></div>
+      <div><span>GST 18%</span><span>${R.money(gst)}</span></div>
+      <div class="total"><span>${state.mode === 'quote' ? 'Estimated total' : 'Total'}</span><span>${R.money(total)}</span></div>`;
+    $('ch-old').textContent = R.money(Math.round(total * OLD_PRICE_FACTOR));
+    $('ch-new').textContent = R.money(total);
+    $('next-1').disabled = count === 0;
+    $('go-quote').hidden = state.mode !== 'quote';
+    $('go-pay').hidden = state.mode !== 'pay';
+    $('go-pay').textContent = `Pay ${R.money(total)}`;
+  };
+
+  /* prototype only: buttons inside the phone move between steps */
+  const goto = (step) => document.querySelector(`.plate-states [data-state="${step}"]:not([data-open])`).click();
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) goto(go.dataset.goto);
+  });
+  $('back').addEventListener('click', (event) => {
+    const i = STEPS.indexOf(document.querySelector('.screen').dataset.state);
+    if (i > 0) { event.preventDefault(); goto(STEPS[i - 1]); }
+  });
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.state !== 'removed') return;
+    state.machines.delete('ZP-TF-2204');
+    document.querySelector('[data-serial="ZP-TF-2204"]').setAttribute('aria-checked', 'false');
+    update();
+  }));
+  document.querySelectorAll('#modes [data-mode]').forEach((b) => b.addEventListener('click', () => {
+    state.mode = b.dataset.mode;
+    document.querySelectorAll('#modes [data-mode]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    update();
+  }));
+  update();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

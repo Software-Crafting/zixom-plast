@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1411 Update machine status</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.hero{display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center}
+.hero .thumb{width:88px; height:88px; border-radius:22px}
+.hero .thumb .ic{width:40px; height:40px}
+.hero h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.2}
+.hero .serial{margin:6px 0 0; font-size:var(--fs-13); color:var(--slate-700)}
+.choice:disabled{opacity:.55}
+.reason{margin-top:14px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1411 Update machine status</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="status">ready, decommission blocked</button>
+  <button type="button" data-state="idle" aria-pressed="false" data-open="status">idle with reason</button>
+  <button type="button" data-state="decommission" aria-pressed="false" data-open="status">no open requests</button>
+  <button type="button" data-state="confirm" aria-pressed="false" data-open="confirm">confirm decommission</button>
+  <button type="button" data-state="saving" aria-pressed="false" data-open="status">saving</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="status">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C202-machine-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="nav-title">Machine</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="hero" id="hero"></div>
+          <div class="row-flex" style="flex-wrap:wrap" id="chips"></div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="status" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="st-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="st-title">Machine status</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 10px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved when you are back online.</div>
+        <div class="body">
+          <div role="radiogroup" aria-label="Status" id="choices"></div>
+          <div class="field reason" data-when="idle decommission">
+            <label for="reason">Reason<span class="req">*</span></label>
+            <input class="input" id="reason">
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-when="ready idle offline" data-close data-toast="Status updated">Save</button>
+        <button class="btn btn-danger" type="button" style="margin-top:16px; width:100%" data-when="decommission" data-open="confirm">Decommission</button>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-when="saving" aria-busy="true">Save</button>
+      </div>
+    </div>
+    <div class="overlay center" id="confirm" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="confirm-t">
+        <h3 id="confirm-t"></h3><p>Service, warranty claims and parts orders turn off for this machine.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep in service</button>
+          <a class="btn btn-text" id="confirm-yes" href="C202-machine-detail.html" style="color:var(--red); width:100%">Decommission</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Bottom sheet from More on <a href="C202-machine-detail.html">C202</a>. Idle and Decommissioned need a
+reason; Decommissioned asks to confirm and is blocked while the machine has open requests.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const STATUS = { running: ['Running', 'green'], repair: ['Under repair', 'amber'], idle: ['Idle', ''], pending: ['Pending verification', ''] };
+  const OPTIONS = [['running', 'Running', 'check-circle', 'In production'], ['idle', 'Idle', 'pause', 'Not in use for now'],
+    ['repair', 'Under repair', 'wrench', 'Stopped for repair'], ['decommissioned', 'Decommissioned', 'circle-x', 'Out of service for good']];
+  const REASONS = { idle: 'No orders until the first week of December', decommission: 'Replaced by the new AFM-1000 line' };
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const name = m.nickname || m.model;
+  const open = data.tickets.filter((t) => t.machine === serial && R.isOpen(t));
+  $('back').href += `?serial=${serial}`;
+  $('confirm-yes').href += `?serial=${serial}`;
+  $('nav-title').textContent = name;
+  $('hero').innerHTML = `${R.thumb(m)}<div><h2>${R.esc(m.model)}</h2><p class="serial mono">${serial}</p></div>`;
+  $('chips').innerHTML = R.tag(...STATUS[m.status]) + R.warrantyTag(m) + R.amcTag(m);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  $('facts').innerHTML = `<div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>${m.installed ? `<div><dt>Installed on</dt><dd>${R.date(m.installed)}</dd></div>` : ''}
+    ${m.runningHours ? `<div><dt>Running hours</dt><dd>${m.runningHours.toLocaleString('en-IN')} h</dd></div>` : ''}`;
+  $('confirm-t').textContent = `Decommission ${name}?`;
+
+  const render = (state) => {
+    const selected = { idle: 'idle', decommission: 'decommissioned', confirm: 'decommissioned' }[state] || m.status;
+    const blocked = open.length && !['decommission', 'confirm'].includes(state);
+    $('choices').innerHTML = OPTIONS.map(([key, label, iconName, hint]) => {
+      const off = key === 'decommissioned' && blocked;
+      const sub = off ? `Close ${open.length} open requests first` : key === m.status ? `${hint} · Current` : hint;
+      return `<button class="choice" role="radio" type="button" aria-checked="${key === selected}"${off ? ' disabled' : ''}>
+        <span class="disc">${R.icon(iconName)}</span><b>${label}</b><p>${sub}</p><span class="mark"></span></button>`;
+    }).join('');
+    $('reason').value = REASONS[state] || '';
+  };
+  render('ready');
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => render(b.dataset.state)));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

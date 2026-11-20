@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C702 Part list for a machine</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.for{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.pgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.pcard{position:relative; display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.pcard .thumb{width:100%; height:92px; margin-bottom:6px}
+.pcard > .tag{position:absolute; top:16px; left:16px; background:#fff}
+.pcard a{color:var(--slate-900); text-decoration:none; font-size:var(--fs-14); font-weight:600; line-height:1.3;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.pcard a::before{content:""; position:absolute; inset:0; border-radius:inherit}
+.pcard .mono{font-size:var(--fs-11); color:var(--text-muted)}
+.pcard .foot{display:flex; align-items:center; justify-content:space-between; gap:6px; min-height:36px; margin-top:auto; padding-top:6px}
+.pcard .price{font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.pcard .price.ask{font:500 var(--fs-12) var(--font-body); color:var(--text-muted)}
+.pcard .icon-btn{position:relative; z-index:1; width:36px; height:36px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C702 Part list for a machine</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="more" aria-pressed="false">load more failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="pick"><span>open for</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C701-parts.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Parts</h1>
+        <a class="icon-btn" href="C704-cart.html" id="cart" aria-label="Cart"><svg class="ic" aria-hidden="true"><use href="#ph-shopping-cart"/></svg></a>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Add to cart needs the internet.</div>
+          <p class="for" id="for" data-when="ready noresults more offline"></p>
+          <div class="tools two" data-when="ready noresults more offline" style="margin-bottom:0"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg><input class="input" type="search" placeholder="Part name or number" aria-label="Search"></div><button class="icon-btn" type="button" data-open="filter" aria-label="Filter by stock"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div>
+          <div class="chips" data-single id="cats" data-when="ready noresults more offline"></div>
+          <div class="pgrid" id="grid" data-when="ready more offline"></div>
+          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <a class="btn btn-secondary" href="C706-request-part.html" data-when="ready more offline"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>Can't find it? Request a part</a>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No parts match these filters</h3><p>Try another category or stock.</p>
+            <button class="btn btn-secondary" type="button" onclick="document.querySelector('[data-state=ready]').click()">Clear filters</button>
+          </div>
+          <div class="state" data-when="empty" style="padding-top:60px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+            <h3>No parts listed yet</h3><p>Ask Zixom and we will quote.</p>
+            <a class="btn btn-primary" href="C706-request-part.html">Request a part</a>
+          </div>
+          <div class="pgrid" data-when="loading">
+            <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:200px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:60px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter parts</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Stock</div>
+          <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">Any</button><button class="chip outline" type="button" aria-pressed="false">In stock</button><button class="chip outline" type="button" aria-pressed="false">Low stock</button><button class="chip outline" type="button" aria-pressed="false">On request</button></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close>Show parts</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Parts that fit the machine's model, via <code>?serial=</code>, or one category via <code>?category=</code>.
+Category chips filter the grid; plus adds to the cart.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (move to data.js): more catalogue parts and which model families each part fits */
+  const EXTRA_PARTS = [
+    { number: 'ZP-SP-006', name: 'Digital vacuum gauge', category: 'Others', price: 1450, stock: 'in' },
+    { number: 'ZP-SP-007', name: 'Vacuum pump service kit', category: 'Others', price: 5400, stock: 'in' },
+    { number: 'ZP-SP-008', name: 'Thermocouple, J type', category: 'Heaters', price: 1050, stock: 'in' },
+    { number: 'ZP-SP-009', name: 'Crusher blade set, 4 blades', category: 'Others', price: 4800, stock: 'low' },
+    { number: 'ZP-SP-010', name: 'Solid state relay 40 A', category: 'Timers', price: 1680, stock: 'in' },
+  ];
+  const FITS = { 'ZP-SP-001': 'AFM CFM SVF', 'ZP-SP-002': 'AFM CFM SVF PCR', 'ZP-SP-003': 'AFM', 'ZP-SP-004': 'AFM CFM SVF',
+    'ZP-SP-005': 'AFM SVF', 'ZP-SP-006': 'AFM SVF', 'ZP-SP-007': 'AFM SVF', 'ZP-SP-008': 'AFM CFM SVF', 'ZP-SP-009': 'PCR', 'ZP-SP-010': 'AFM CFM PCR' };
+  const CART_COUNT = 3;
+  const CATEGORIES = ['Heaters', 'Industrial chains', 'Timers', 'PID controllers', 'Others'];
+  const DEFAULT_SERIAL = 'ZP-TF-2310';
+
+  const params = new URLSearchParams(location.search);
+  const category = params.get('category');
+  const machine = !category && R.machine(params.get('serial') || DEFAULT_SERIAL);
+  const catalogue = [...data.parts, ...EXTRA_PARTS];
+  const family = machine && machine.model.split('-')[0];
+  const parts = category ? catalogue.filter((p) => p.category === category) : catalogue.filter((p) => FITS[p.number].split(' ').includes(family));
+
+  $('pick').insertAdjacentHTML('beforeend', ['ZP-TF-2310', 'ZP-CF-2011', 'ZP-PC-1805'].map((s) =>
+    `<button type="button" data-q="serial=${s}" aria-pressed="${machine && machine.serial === s}">${s}</button>`).join('')
+    + `<button type="button" data-q="category=Heaters" aria-pressed="${category === 'Heaters'}">Heaters</button>`);
+  $('pick').addEventListener('click', (e) => { const b = e.target.closest('[data-q]'); if (b) location.search = `?${b.dataset.q}`; });
+
+  $('title').textContent = category || machine.nickname || machine.model;
+  $('for').innerHTML = category ? `${parts.length} parts` : `${parts.length} parts fit ${R.esc(machine.model)} · <span class="mono">${machine.serial}</span>`;
+  $('cart').setAttribute('aria-label', `Cart, ${CART_COUNT} items`);
+  $('cart').insertAdjacentHTML('beforeend', `<span class="count">${CART_COUNT}</span>`);
+
+  const shown = category ? [] : CATEGORIES.filter((c) => parts.some((p) => p.category === c));
+  $('cats').innerHTML = shown.length > 1 ? ['All', ...shown].map((c, i) =>
+    `<button class="chip" type="button" data-cat="${c}" aria-pressed="${i === 0}">${c}</button>`).join('') : '';
+
+  const action = (p) => {
+    if (p.price && ['in', 'low'].includes(p.stock)) {
+      return `<button class="icon-btn dark" type="button" aria-label="Add ${R.esc(p.name)} to cart" data-toast="Added to cart" data-when="ready more">${R.icon('plus')}</button>
+        <button class="icon-btn dark" type="button" disabled aria-label="Add to cart" data-when="offline">${R.icon('plus')}</button>`;
+    }
+    return '';
+  };
+  $('grid').innerHTML = parts.map((p) => `<div class="pcard" data-cat="${R.esc(p.category)}">
+      <span class="thumb">${R.icon('package')}</span>${R.stockTag(p.stock)}
+      <a href="C703-part-detail.html?part=${p.number}">${R.esc(p.name)}</a>
+      <span class="mono">${p.number}</span>
+      <span class="foot">${p.price ? `<span class="price">${R.money(p.price)}</span>` : '<span class="price ask">Price on request</span>'}${action(p)}</span>
+    </div>`).join('');
+
+  $('cats').addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-cat]');
+    if (!chip) return;
+    document.querySelectorAll('.pcard').forEach((card) => {
+      card.hidden = chip.dataset.cat !== 'All' && card.dataset.cat !== chip.dataset.cat;
+    });
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

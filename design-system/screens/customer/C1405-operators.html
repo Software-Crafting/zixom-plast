@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1405 Machine operators</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.op{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 2px}
+.op + .op{border-top:1px solid var(--line)}
+.op button.op-who{all:unset; display:grid; grid-column:2; cursor:pointer}
+.op b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.op .sub{margin-top:3px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1405 Machine operators</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="actions">operator actions</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="remove">remove</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C202-machine-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Operators</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <p class="card-sub" style="margin:0" id="machine-line"></p>
+          <div id="ops"></div>
+        </div>
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span>
+          <h3>No operators added</h3><p>Engineers use this list to reach the right person on site.</p>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-line" style="width:45%"></span>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:55%"></span><span class="skeleton sk-line" style="width:35%"></span></div></div>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready offline empty">
+        <a class="btn btn-primary" id="add" href="C1406-edit-operator.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add operator</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="actions" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Operator actions">
+        <div class="group"><div class="title" id="actions-title"></div>
+          <button type="button" data-close id="call">Call</button>
+          <button type="button" data-close id="edit">Edit</button>
+          <button type="button" class="destructive" data-open="remove" onclick="this.closest('.overlay').hidden = true">Remove</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="remove" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="remove-t">
+        <h3 id="remove-t"></h3><p>Engineers will no longer see this contact.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep</button>
+          <button class="btn btn-text" type="button" style="color:var(--red); width:100%" data-close data-toast="Operator removed">Remove</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">People who run one machine via <code>?serial=</code>, shown to engineers on the job. Tap a person for
+Call, Edit and Remove.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* sample operators; C1406 uses the same list */
+  const OPERATORS = [
+    { name: 'Mahesh Patel', initials: 'MP', mobile: '+91 98790 41236', shift: 'Morning' },
+    { name: 'Suresh Rathod', initials: 'SR', mobile: '+91 99250 67784', shift: 'Evening' },
+    { name: 'Dinesh Solanki', initials: 'DS', mobile: '+91 90990 15502', shift: 'Night' },
+  ];
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const q = `?serial=${serial}`;
+  $('back').href += q;
+  $('add').href += q;
+  $('machine-line').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${serial}</span>`;
+
+  const tel = (o) => `tel:${o.mobile.replace(/\s/g, '')}`;
+  $('ops').innerHTML = OPERATORS.map((o, i) => `<div class="op"><span class="avatar">${o.initials}</span>
+    <button class="op-who" type="button" data-open="actions" data-i="${i}"><b>${R.esc(o.name)}</b><span class="sub">${o.shift} shift · ${o.mobile}</span></button>
+    <a class="icon-btn dark" href="${tel(o)}" aria-label="Call ${R.esc(o.name)}">${R.icon('phone')}</a></div>`).join('');
+
+  const pick = (i) => {
+    const o = OPERATORS[i];
+    $('actions-title').textContent = `${o.name}, ${o.shift} shift`;
+    $('remove-t').textContent = `Remove ${o.name}?`;
+    $('call').onclick = () => { location.href = tel(o); };
+    $('edit').onclick = () => { location.href = `C1406-edit-operator.html${q}&operator=${i}`; };
+  };
+  pick(0);
+  document.addEventListener('click', (ev) => { const row = ev.target.closest('[data-i]'); if (row) pick(Number(row.dataset.i)); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1105 Team members</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px 8px; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.member{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 10px 12px 14px}
+.member + .member{border-top:1px solid var(--line)}
+.member b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.member .sub{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.member .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.member .icon-btn{width:36px; height:36px; border:0; background:var(--slate-100)}
+.member.off .avatar{background:var(--slate-100); color:var(--slate-500)}
+.prompt{padding:20px 18px; border-radius:var(--r-lg); background:#fff; border:1px dashed var(--slate-300); text-align:center}
+.prompt h3{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.prompt p{margin:6px 0 14px; font-size:var(--fs-13); color:var(--text-muted)}
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1105 Team members</b><span>primary contact only</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="invite">invite</button>
+  <button type="button" data-state="taken" aria-pressed="false" data-open="invite">number in another company</button>
+  <button type="button" data-state="engineer" aria-pressed="false" data-open="invite">engineer number</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="cant-disable">disable primary blocked</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="remove">remove</button>
+  <button type="button" data-state="limit" aria-pressed="false">limit of 25</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty team</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Team members</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+        <div class="banner amber" data-when="limit" style="margin-bottom:12px"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg>
+          <div><b>25 of 25 people</b>Disable or remove someone to invite more.</div></div>
+
+        <div data-when="ready taken engineer limit offline">
+          <p class="count-line"><span><b id="count"></b> of 25 people</span></p>
+          <div class="list" id="members"></div>
+          <div class="list" style="margin-top:16px">
+            <a class="list-item" href="C1114-change-primary.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span><b>Change primary contact</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+        </div>
+
+        <div class="stack" data-when="empty">
+          <div class="list" id="only-me"></div>
+          <div class="prompt">
+            <h3>Invite your colleagues</h3><p>They can raise service, pay and order parts.</p>
+            <button class="btn btn-primary" type="button" data-open="invite"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
+          </div>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <span class="skeleton" style="height:300px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready taken engineer limit offline">
+        <button class="btn btn-primary" type="button" data-open="invite" data-when="ready taken engineer"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
+        <button class="btn btn-primary" type="button" disabled data-when="limit offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <!-- row menus, one per status -->
+    <div class="overlay bottom" id="act-primary" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Primary contact actions">
+        <div class="group"><div class="title" data-name="primary"></div>
+          <button type="button" data-href="C1114-change-primary.html"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg>Change primary contact</button>
+          <button class="destructive" type="button" data-open="cant-disable"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Disable</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="act-active" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Member actions">
+        <div class="group"><div class="title" data-name="active"></div>
+          <button type="button" data-close data-toast="Disabled. They are signed out."><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Disable</button>
+          <button class="destructive" type="button" data-open="remove"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg>Remove</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="act-invited" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Invitation actions">
+        <div class="group"><div class="title" data-name="invited"></div>
+          <button type="button" data-close data-toast="Invite sent again"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Resend invite</button>
+          <button type="button" data-close data-toast="Link copied"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg>Share invite link</button>
+          <button class="destructive" type="button" data-close data-toast="Invite revoked"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Revoke invite</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="act-disabled" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Disabled member actions">
+        <div class="group"><div class="title" data-name="disabled"></div>
+          <button type="button" data-close data-toast="Enabled"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg>Enable</button>
+          <button class="destructive" type="button" data-open="remove"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg>Remove</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="invite" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="inv-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="inv-title">Invite person</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="i-name">Full name<span class="req">*</span></label><input class="input" id="i-name" maxlength="60" value="Amit Patel"></div>
+          <div class="field" data-when="ready"><label for="i-mobile">Mobile number<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile" inputmode="numeric" maxlength="11" value="99251 33876"></div></div>
+          <div class="field has-error" data-when="taken"><label for="i-mobile-t">Mobile number<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile-t" inputmode="numeric" value="98220 43120" aria-invalid="true" aria-describedby="taken-err"></div>
+            <span class="error-text" id="taken-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number is registered with another company.</span></div>
+          <div class="field has-error" data-when="engineer"><label for="i-mobile-e">Mobile number<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile-e" inputmode="numeric" value="99090 33114" aria-invalid="true" aria-describedby="eng-err"></div>
+            <span class="error-text" id="eng-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number belongs to a Zixom engineer.</span></div>
+          <span class="hint">We send an SMS with a link. It expires in 7 days.</span>
+        </div>
+        <a class="btn btn-primary" href="C1117-invite-sent.html" style="margin-top:18px" data-when="ready">Send invite</a>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" disabled data-when="taken engineer">Send invite</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="cant-disable" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="cd-title">
+        <h3 id="cd-title">Can't disable the primary contact</h3><p>Make someone else the primary contact first.</p>
+        <div class="actions"><a class="btn btn-primary" href="C1114-change-primary.html">Change primary contact</a><button class="btn btn-text" style="width:100%" type="button" data-close>Close</button></div>
+      </div>
+    </div>
+    <div class="overlay center" id="remove" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="rm-title">
+        <h3 id="rm-title" data-remove></h3><p>They lose access to this company right away.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep</button><button class="btn btn-text" style="color:var(--red); width:100%" type="button" data-close data-toast="Removed">Remove</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Everyone in the company, with masked mobile and status. Invite by name and mobile, then resend, revoke,
+disable, enable or remove from the row menu. Up to 25 people.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const company = data.companies.find((c) => c.id === 'shree');
+  /* not in data.js: one pending invitation and one disabled member */
+  const EXTRA_PEOPLE = [
+    { name: 'Amit Patel', initials: 'AP', mobile: '+91 99251 33876', status: 'invited', invited: '2026-11-20' },
+    { name: 'Kiran Joshi', initials: 'KJ', mobile: '+91 98794 55120', status: 'disabled' },
+  ];
+  const INVITE_DAYS = 7;
+  const STATUS = { active: ['Active', 'green'], invited: ['Invited', 'blue'], disabled: ['Disabled', ''] };
+
+  const people = [
+    ...data.users.filter((u) => u.companies.some((c) => c.id === company.id)).map((u) => ({
+      ...u, status: 'active', primary: u.companies.find((c) => c.id === company.id).primary })),
+    ...EXTRA_PEOPLE,
+  ];
+  const mask = (mobile) => mobile.slice(0, 4) + mobile.slice(4).replace(/\d(?=(?:\D*\d){4})/g, '•');
+  const sub = (p) => {
+    if (p.status !== 'invited') return mask(p.mobile);
+    const left = INVITE_DAYS + R.daysFromToday(p.invited);
+    return `${mask(p.mobile)} · Expires in ${left} days`;
+  };
+  const menu = (p) => (p.primary ? 'act-primary' : `act-${p.status}`);
+  const row = (p) => `<div class="member${p.status === 'disabled' ? ' off' : ''}">
+      <span class="avatar">${R.esc(p.initials)}</span>
+      <span class="grow"><b>${R.esc(p.name)}</b><span class="sub">${sub(p)}</span>
+        <span class="tags">${R.tag(...STATUS[p.status])}${p.primary ? R.tag('Primary contact', 'outline') : ''}</span></span>
+      <button class="icon-btn" type="button" data-open="${menu(p)}" aria-label="${R.esc(p.name)} actions">${R.icon('dots-three', 'ic-18')}</button>
+    </div>`;
+
+  $('members').innerHTML = people.map(row).join('');
+  $('only-me').innerHTML = row(people.find((p) => p.primary));
+  $('count').textContent = people.length;
+
+  const byStatus = { primary: people.find((p) => p.primary), active: people.find((p) => p.status === 'active' && !p.primary),
+    invited: people.find((p) => p.status === 'invited'), disabled: people.find((p) => p.status === 'disabled') };
+  document.querySelectorAll('[data-name]').forEach((el) => { el.textContent = byStatus[el.dataset.name].name; });
+  document.querySelector('[data-remove]').textContent = `Remove ${byStatus.active.name}?`;
+
+  /* an action that opens another overlay or page replaces the action sheet */
+  document.querySelectorAll('.action-sheet [data-open]').forEach((b) => b.addEventListener('click', () => { b.closest('.overlay').hidden = true; }));
+  document.querySelectorAll('[data-href]').forEach((b) => b.addEventListener('click', () => { window.location.href = b.dataset.href; }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

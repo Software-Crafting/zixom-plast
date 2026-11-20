@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C408 Do not renew</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.prev{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+.prev h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.prev .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.prev p{margin:6px 0 0; font-size:var(--fs-13); color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C408 Do not renew</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="done" aria-pressed="false">sent</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C402-amc-contract.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Do not renew</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready sending offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send.</div>
+          <div class="card prev" id="prev"></div>
+          <div class="banner green"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg><div class="active-until"></div></div>
+          <div>
+            <div class="field-label">Why are you not renewing? <span style="font-weight:400; color:var(--text-muted)">Optional</span></div>
+            <div role="radiogroup" aria-label="Reason">
+              <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span><b>Price is too high</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>Machine sold or retired</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span><b>We did not use the visits</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-smiley-sad"/></svg></span><b>Not happy with the service</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-handshake"/></svg></span><b>Moving to another provider</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></span><b>Other</b><span class="mark"></span></button>
+            </div>
+          </div>
+          <div class="field"><label for="note">Comment<span class="counter">0 / 300</span></label>
+            <textarea class="textarea" id="note" placeholder="Optional" style="min-height:84px"></textarea></div>
+        </div>
+
+        <div class="state" data-when="done" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Thanks for telling us</h3>
+          <p class="active-until-plain"></p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:56px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:50%"></span>
+          <span class="skeleton" style="height:66px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:66px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:66px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready">
+          <button class="btn btn-primary" type="button" data-goto="sending">Submit</button>
+          <button class="btn btn-text" type="button" data-goto="done">Skip</button>
+        </div>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Submit</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit</button>
+        <div class="stack-sm" data-when="done">
+          <a class="btn btn-primary contract-link" href="C402-amc-contract.html">View contract</a>
+          <a class="btn btn-text renew-link" href="C405-renew-amc.html">Changed your mind? Renew</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Optional feedback when a customer will not renew. The contract stays active until its end date and
+renewal reminders stop. Skip sends the choice without a reason.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const number = new URLSearchParams(location.search).get('amc') || 'AMC-2026-0011';
+  const c = R.amc(number) || R.amc('AMC-2026-0011');
+  const names = c.machines.map((s) => { const m = R.machine(s); return R.esc(m.nickname || m.model); }).join(', ');
+
+  $('prev').innerHTML = `<div><h2>${R.esc(c.plan)}</h2><span class="mono">${c.number}</span><p>${names}</p></div>
+    ${R.tag(`Ends ${R.date(c.end)}`, c.status === 'expiring' ? 'amber' : '')}`;
+  document.querySelector('.active-until').innerHTML = `<b>Cover stays until ${R.date(c.end)}</b>Visits and discounts apply until then.`;
+  document.querySelector('.active-until-plain').textContent = `Your AMC stays active until ${R.date(c.end)}. We will stop renewal reminders.`;
+  $('back').href = `C402-amc-contract.html?amc=${c.number}`;
+  document.querySelector('.contract-link').href = `C402-amc-contract.html?amc=${c.number}`;
+  document.querySelector('.renew-link').href = `C405-renew-amc.html?amc=${c.number}`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+    if (go.dataset.goto === 'sending') window.setTimeout(() => document.querySelector('.plate-states [data-state="done"]').click(), 900);
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

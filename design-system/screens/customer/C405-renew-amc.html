@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C405 Renew AMC</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.prev{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+.prev h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.prev .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.prev p{margin:6px 0 0; font-size:var(--fs-13); color:var(--text)}
+.choice .thumb{grid-row:1 / span 2}
+.choice[role="checkbox"] .mark{border-radius:7px}
+.choice[role="checkbox"][aria-checked="true"] .mark{border:0; background:var(--slate-800) center / 14px no-repeat
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
+.choice b .tag{margin-left:6px; vertical-align:2px}
+.add-row{display:flex; align-items:center; gap:10px; margin-top:8px; padding:14px; border-radius:var(--r-lg); border:1.5px dashed var(--line-strong);
+  font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.terms-chips{margin:0; padding:0}
+.footer-bar .total span{display:flex; flex-direction:column}
+.footer-bar .total small{font-size:var(--fs-12); color:var(--text-faint)}
+.sub-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+.sub-actions .btn{min-height:40px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C405 Renew AMC</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>contract</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="notopen" aria-pressed="false">window not open</button>
+  <button type="button" data-state="lapsed" aria-pressed="false">grace over</button>
+  <button type="button" data-state="ready" data-open="quoted" aria-pressed="false">quote requested</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C402-amc-contract.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Renew AMC</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready notopen lapsed offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to renew.</div>
+          <div class="card prev" id="prev"></div>
+          <div data-when="ready offline" id="window-banner"></div>
+          <div class="banner grey" data-when="notopen"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg>
+            <div><b class="open-title"></b>We will remind you 60, 30 and 7 days before the end.</div></div>
+          <div class="banner grey" data-when="lapsed"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+            <div><b>The 7 day grace period is over</b>Buy a new AMC to restart cover.</div></div>
+
+          <div class="stack" data-when="ready offline">
+            <div id="increase"></div>
+            <div>
+              <div class="field-label">Machines</div>
+              <div role="group" aria-label="Machines" id="machines"></div>
+              <a class="add-row" href="C404-buy-amc.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add a machine</a>
+            </div>
+            <div>
+              <div class="field-label">Plan <span style="font-weight:400; color:var(--text-muted)">· sample, before GST</span></div>
+              <div role="radiogroup" aria-label="Plan" id="plans"></div>
+            </div>
+            <div>
+              <div class="field-label">Term</div>
+              <div class="chips terms-chips" data-single id="term">
+                <button class="chip outline" type="button" aria-pressed="true" data-years="1">1 year</button>
+                <button class="chip outline" type="button" aria-pressed="false" data-years="2">2 years</button>
+                <button class="chip outline" type="button" aria-pressed="false" data-years="3">3 years</button>
+              </div>
+            </div>
+            <div class="money" id="money"></div>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:60px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load the renewal price. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="ready notopen lapsed offline">
+        <div data-when="ready offline">
+          <div class="total"><span><span class="sum-label"></span><small>incl. 18% GST</small></span><b class="sum-total"></b></div>
+          <a class="btn btn-primary pay-btn" href="C803-pay-method.html?invoice=INV-2026-0990" data-when="ready"></a>
+          <button class="btn btn-primary pay-btn" type="button" disabled data-when="offline"></button>
+          <div class="sub-actions">
+            <button class="btn btn-text" type="button" data-open="quoted">Request quote</button>
+            <a class="btn btn-text" href="C408-do-not-renew.html" id="no-renew">Do not renew</a>
+          </div>
+        </div>
+        <a class="btn btn-secondary" href="C402-amc-contract.html" data-when="notopen" id="view">View contract</a>
+        <a class="btn btn-primary" href="C404-buy-amc.html" data-when="lapsed">Buy AMC</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="quoted" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="q-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="q-title">Quote requested</h3>
+        <p>We will send the renewal quote by notification and email.</p>
+        <div class="actions"><a class="btn btn-primary" href="C401-amc.html">Back to AMC</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Renew with the same or another plan and add or remove machines. Renewal opens 60 days before the end;
+within 7 days after expiry it keeps the same contract with no gap, after that it needs a new AMC (F5).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const GRACE_DAYS = 7;
+  const WINDOW_DAYS = 60;
+  /* sample only: Q12 default plans, per machine per year before GST; was = last year's price */
+  const PLANS = [['Essential', 24000, '4 visits · 48 h response · 5% off parts', 22000],
+    ['Preventive Plus', 36000, '6 visits · 24 h response · 10% off parts', 36000],
+    ['Comprehensive', 54000, '12 visits · 8 h response · wear parts included', 54000]];
+
+  const number = new URLSearchParams(location.search).get('amc') || 'AMC-2026-0014';
+  const c = R.amc(number) || R.amc('AMC-2026-0014');
+  const left = R.daysFromToday(c.end);
+  const graceLeft = GRACE_DAYS + left;
+  const state = { machines: new Set(c.machines), plan: c.plan, years: 1 };
+
+  $('pick').insertAdjacentHTML('beforeend', data.amc.map((x) =>
+    `<button type="button" aria-pressed="${x.number === c.number}" onclick="location.search='?amc=${x.number}'">${x.number.slice(-4)} ${x.status}</button>`).join(''));
+  ['back', 'view'].forEach((id) => { $(id).href = `C402-amc-contract.html?amc=${c.number}`; });
+  $('no-renew').href = `C408-do-not-renew.html?amc=${c.number}`;
+
+  /* the state that fits this contract on first open */
+  const screen = document.querySelector('.screen');
+  if (left > WINDOW_DAYS) screen.dataset.state = 'notopen';
+  if (graceLeft <= 0) screen.dataset.state = 'lapsed';
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === screen.dataset.state && !b.dataset.open)));
+
+  const status = c.status === 'expired' ? R.tag(`Expired ${-left} days ago`, 'red') : c.status === 'expiring' ? R.tag(`Ends in ${left} days`, 'amber') : R.tag('Active', 'green');
+  $('prev').innerHTML = `<div><h2>${R.esc(c.plan)}</h2><span class="mono">${c.number}</span>
+    <p>${R.date(c.start)} to ${R.date(c.end)}</p></div>${status}`;
+  $('window-banner').innerHTML = c.status === 'expired'
+    ? `<div class="banner red">${R.icon('clock')}<div><b>Renew within ${graceLeft} days to keep your AMC</b>Same contract, no gap in cover.</div></div>`
+    : `<div class="banner amber">${R.icon('clock')}<div><b>Ends on ${R.date(c.end)}</b>Renew now; the new term starts the next day.</div></div>`;
+  const opens = new Date(`${c.end}T00:00:00`);
+  opens.setDate(opens.getDate() - WINDOW_DAYS);
+  document.querySelector('.open-title').textContent = `Renewal opens on ${opens.getDate()} ${opens.toLocaleString('en-GB', { month: 'short' })} ${opens.getFullYear()}`;
+
+  $('machines').innerHTML = c.machines.map((s) => { const m = R.machine(s);
+    return `<button class="choice" role="checkbox" type="button" data-serial="${s}" aria-checked="true">${R.thumb(m, 'sm')}
+      <b>${R.esc(m.nickname || m.model)}</b><p class="mono">${s}</p><span class="mark"></span></button>`; }).join('');
+  $('machines').addEventListener('click', (event) => {
+    const box = event.target.closest('[data-serial]');
+    if (!box) return;
+    const on = !state.machines.has(box.dataset.serial);
+    state.machines[on ? 'add' : 'delete'](box.dataset.serial);
+    box.setAttribute('aria-checked', String(on));
+    update();
+  });
+
+  $('plans').innerHTML = PLANS.map(([name, price, facts]) => `<button class="choice" role="radio" type="button" data-plan="${name}" aria-checked="${name === c.plan}">
+      <span class="disc">${R.icon('seal-check')}</span><b>${name}${name === c.plan ? R.tag('Current') : ''}</b>
+      <p>${R.money(price).replace('.00', '')} · ${facts}</p><span class="mark"></span></button>`).join('');
+  $('plans').addEventListener('click', (event) => { const b = event.target.closest('[data-plan]'); if (b) { state.plan = b.dataset.plan; update(); } });
+  $('term').addEventListener('click', (event) => { const b = event.target.closest('[data-years]'); if (b) { state.years = Number(b.dataset.years); update(); } });
+
+  const update = () => {
+    const [, price, , was] = PLANS.find(([name]) => name === state.plan);
+    const count = state.machines.size;
+    const label = `${state.plan}, ${count} machine${count === 1 ? '' : 's'}, ${state.years} year${state.years === 1 ? '' : 's'}`;
+    const { subtotal, gst, total } = R.totals([[label, count * state.years, price]]);
+    $('increase').innerHTML = price > was ? `<div class="banner amber">${R.icon('currency-inr')}<div><b>Price increased</b>${state.plan} is now ${R.money(price).replace('.00', '')} per machine per year, was ${R.money(was).replace('.00', '')}.</div></div>` : '';
+    $('money').innerHTML = `<div><span>${R.esc(label)}</span><span>${R.money(subtotal)}</span></div>
+      <div><span>GST 18%</span><span>${R.money(gst)}</span></div>
+      <div class="total"><span>Total</span><span>${R.money(total)}</span></div>`;
+    document.querySelector('.sum-label').textContent = `${count} machine${count === 1 ? '' : 's'} · ${state.years} yr`;
+    document.querySelector('.sum-total').textContent = R.money(total);
+    document.querySelectorAll(".pay-btn").forEach((b) => { b.textContent = `Pay ${R.money(total)}`; });
+  };
+  update();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

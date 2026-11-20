@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1507 Add site</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1507 Add site</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="add">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false" data-open="add">errors on save</button>
+  <button type="button" data-state="noservice" aria-pressed="false" data-open="add">pincode not serviceable</button>
+  <button type="button" data-state="duplicate" aria-pressed="false" data-open="add">duplicate address</button>
+  <button type="button" data-state="saving" aria-pressed="false" data-open="add">saving</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="add">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C505-raise-media.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 4 of 5</b><span>Visit details</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span></span></div></div>
+        <div class="field"><span class="field-label">Site<span class="req">*</span></span>
+          <a class="select" href="C1506-site-picker.html"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value placeholder">Choose a site</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></a></div>
+      </div>
+      <div class="footer-bar"><button class="btn btn-primary" type="button" disabled>Next</button></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="add" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="add-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="add-title">Add site</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved when you are back online.</div>
+        <div class="error-summary" role="alert" style="margin:0 0 14px" data-when="errors"><b>Fix 2 things to continue</b>
+          <ul><li><a href="#pin-bad">Enter a 6 digit pincode</a></li><li><a href="#phone-bad">Enter a 10 digit mobile number</a></li></ul></div>
+        <div class="banner amber" style="margin:0 0 14px" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg>
+          <div><b id="dup-title"></b>Same address. <a href="C1506-site-picker.html">Use that site</a></div></div>
+        <div class="body">
+          <div class="field"><label for="name">Site name<span class="req">*</span></label><input class="input" id="name"></div>
+          <div class="field"><label for="addr">Address<span class="req">*</span></label><input class="input" id="addr"></div>
+          <div class="field" data-when="ready duplicate saving offline"><label for="pin">Pincode<span class="req">*</span></label><input class="input" id="pin" inputmode="numeric" maxlength="6">
+            <span class="hint" id="pin-hint"></span></div>
+          <div class="field has-error" data-when="errors"><label for="pin-bad">Pincode<span class="req">*</span></label><input class="input" id="pin-bad" inputmode="numeric" value="38211" aria-invalid="true" aria-describedby="pin-err">
+            <span class="error-text" id="pin-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 6 digit pincode</span></div>
+          <div class="field has-error" data-when="noservice"><label for="pin-ns">Pincode<span class="req">*</span></label><input class="input" id="pin-ns" inputmode="numeric" aria-invalid="true" aria-describedby="ns-err">
+            <span class="error-text" id="ns-err"></span></div>
+          <div class="field"><label for="contact">Site contact<span class="req">*</span></label><input class="input" id="contact"></div>
+          <div class="field" data-when="ready noservice duplicate saving offline"><label for="phone">Contact mobile<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="phone" inputmode="numeric"></div></div>
+          <div class="field has-error" data-when="errors"><label for="phone-bad">Contact mobile<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="phone-bad" inputmode="numeric" value="98250 114" aria-invalid="true" aria-describedby="phone-err"></div>
+            <span class="error-text" id="phone-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span></div>
+          <div class="field"><label for="access">Access notes<span class="counter">Optional</span></label><input class="input" id="access" placeholder="Gate, parking, security"></div>
+        </div>
+        <a class="btn btn-primary" href="C1506-site-picker.html" style="margin-top:16px" data-when="ready offline">Save site</a>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" disabled data-when="errors noservice duplicate">Save site</button>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" aria-busy="true" data-when="saving">Save site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Quick add from the site picker (<a href="C1506-site-picker.html">C1506</a>), same fields as
+<a href="C1104-sites.html">C1104</a>. Saving selects the new site.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* what the customer typed; the duplicate state reuses an existing site's address */
+  const NEW_SITE = { name: 'Naroda warehouse', address: 'Plot 88, GIDC Naroda, Ahmedabad', pincode: '382330', area: 'Ahmedabad, Gujarat',
+    contact: 'Pooja Shah', phone: '97140 22321' };
+  const NOT_SERVICED = '370201';
+  const company = data.companies.find((c) => c.id === 'shree');
+  const existing = company.sites[0];
+
+  const fill = (site) => {
+    $('name').value = site.name;
+    $('addr').value = site.address;
+    $('pin').value = site.pincode;
+  };
+  fill(NEW_SITE);
+  $('pin-hint').textContent = NEW_SITE.area;
+  $('contact').value = NEW_SITE.contact;
+  $('phone').value = NEW_SITE.phone;
+  $('pin-ns').value = NOT_SERVICED;
+  $('ns-err').innerHTML = `${R.icon('warning-circle', 'ic-16')}We do not service ${NOT_SERVICED} yet. Call ${R.esc(data.support.phone)}`;
+  $('dup-title').textContent = `Matches ${existing.name}`;
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    fill(b.dataset.state === 'duplicate' ? { ...existing, name: 'Vatva new shed' } : NEW_SITE);
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

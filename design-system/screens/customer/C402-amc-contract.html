@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C402 AMC contract detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.c-head h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.c-head .row-flex{margin-top:8px}
+.c-head .mono{font-size:var(--fs-13); color:var(--slate-600)}
+.c-head p{margin:8px 0 0; font-size:var(--fs-14); color:var(--text)}
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:10px 0; color:inherit; text-decoration:none}
+.mrow + .mrow{border-top:1px solid var(--line)}
+.mrow b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mrow .mono{font-size:var(--fs-12); color:var(--text-muted)}
+.mrow.removed{opacity:.6}
+.panel-title{margin:0 2px 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.excl{margin:0; padding:0 0 0 18px; font-size:var(--fs-14); line-height:1.7; color:var(--text)}
+.visits .big{margin:0; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.visits .big small{font:400 var(--fs-14) var(--font-body); color:var(--text-muted)}
+.visits .next{display:block; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); font-size:var(--fs-14); color:var(--slate-900); text-decoration:none}
+.visits .next span{display:block; font-size:var(--fs-12); color:var(--text-muted)}
+.inv{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:12px 0; color:inherit; text-decoration:none}
+.inv + .inv{border-top:1px solid var(--line)}
+.inv b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.inv .amt{font:400 var(--fs-14) var(--font-display); color:var(--slate-900); text-align:right}
+.inv .sub{font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C402 AMC contract detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>contract</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="used" aria-pressed="false">all visits used</button>
+  <button type="button" data-state="removed" aria-pressed="false">machine removed</button>
+  <button type="button" data-state="nopdf" aria-pressed="false">PDF not ready</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C401-amc.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>AMC contract</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More actions"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready used removed nopdf offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+          <div class="c-head" id="head"></div>
+          <div id="banner"></div>
+          <div class="banner amber" data-when="used"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>All visits used</b><span class="used-text"></span> <a href="C503-raise-machine.html">Raise paid service</a></div></div>
+
+          <div class="card"><h3 class="panel-title">Covered machines</h3><div id="machines"></div></div>
+          <div class="card"><h3 class="panel-title">What is included</h3><dl class="kv" style="margin:0" id="included"></dl></div>
+          <div class="card"><h3 class="panel-title">Exclusions</h3><ul class="excl" id="exclusions"></ul></div>
+          <div class="card visits" id="visits"></div>
+          <div class="card"><h3 class="panel-title">Invoices</h3><div id="invoices"></div></div>
+
+          <div class="list" data-when="ready used removed offline">
+            <a class="list-item" href="C902-document-viewer.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
+              <b>Download contract</b><span class="sub">PDF, 0.6 MB</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span></a>
+          </div>
+          <div class="banner grey" data-when="nopdf"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>
+            <div><b>Contract PDF not available yet</b><a href="C602-ask.html">Ask a question</a></div></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:55%; height:22px"></span><span class="skeleton sk-line" style="width:70%"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:170px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this contract. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready used removed nopdf offline" id="footer"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contract actions">
+        <div class="group"><div class="title mono" id="more-title"></div>
+          <button type="button" data-close data-toast="Contract saved to Downloads">Download contract</button>
+          <button type="button" data-close onclick="location.href='C406-amc-visits.html'">Visit schedule</button>
+          <button type="button" data-close onclick="location.href='C407-reschedule-amc-visit.html'">Reschedule a visit</button>
+          <button type="button" data-close onclick="location.href='C602-ask.html'">Ask a question</button>
+          <button type="button" class="destructive" data-close id="no-renew">Do not renew</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Any contract via <code>?amc=</code>; pick one above for each status. The main button follows the status:
+Raise breakdown request, Renew or Pay now. All visits used shows the chargeable option (EC-48).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const GRACE_DAYS = 7;
+  /* sample only (spec section 16), not in data.js yet: the other contract statuses */
+  const EXTRA = [
+    { number: 'AMC-2026-0012', plan: 'Preventive Plus', status: 'pending', start: '2026-12-06', end: '2027-12-05', machines: ['ZP-TF-2204'], visitsIncluded: 6, visitsUsed: 0, due: 42480 },
+    { number: 'AMC-2026-0013', plan: 'Essential', status: 'suspended', start: '2026-07-01', end: '2027-06-30', machines: ['ZP-TF-2310'], visitsIncluded: 4, visitsUsed: 1, due: 14160 },
+    { number: 'AMC-2026-0015', plan: 'Comprehensive', status: 'quote', start: '2027-04-01', end: '2029-03-31', machines: ['ZP-CF-2011', 'ZP-VF-1908'], visitsIncluded: 24, visitsUsed: 0, requested: '2026-11-20' },
+  ];
+  /* sample only: Q12 default plan terms */
+  const PLANS = {
+    'Essential': { visits: 4, response: '48 hours', parts: '5% off', discount: 5 },
+    'Preventive Plus': { visits: 6, response: '24 hours', parts: '10% off', discount: 10 },
+    'Comprehensive': { visits: 12, response: '8 hours', parts: 'Wear parts included', discount: 15 },
+  };
+  const EXCLUSIONS = ['Moulds, tooling and sheet material', 'Damage from misuse, fire or power surges', 'Parts outside the plan terms'];
+  const NEXT_VISIT = { 'AMC-2026-0010': ['2026-12-12', '9 to 12 AM'], 'AMC-2026-0011': ['2026-11-30', '9 to 12 AM'] };
+  const REMOVED_SAMPLE = { model: 'AFM-500 Single Station', serial: 'ZP-TF-1702', on: '2026-09-14' };
+  const PAY_HREF = 'C803-pay-method.html?invoice=' + ({ 'AMC-2026-0012': 'INV-2026-0988', 'AMC-2026-0013': 'INV-2026-0989' }[new URLSearchParams(location.search).get('amc') || new URLSearchParams(location.search).get('contract')] || 'INV-2026-0990');
+
+  const contracts = [...data.amc, ...EXTRA];
+  const params = new URLSearchParams(location.search);
+  const number = params.get('amc') || params.get('contract') || 'AMC-2026-0010';
+  const c = contracts.find((x) => x.number === number) || contracts[0];
+  const plan = PLANS[c.plan];
+  const left = R.daysFromToday(c.end);
+  const graceLeft = GRACE_DAYS + left;
+  const visitsLeft = c.visitsIncluded - c.visitsUsed;
+  const firstMachine = c.machines[0];
+
+  $('pick').insertAdjacentHTML('beforeend', contracts.map((x) =>
+    `<button type="button" aria-pressed="${x.number === c.number}" onclick="location.search='?amc=${x.number}'">${x.number.slice(-4)} ${x.status}</button>`).join(''));
+
+  const TAGS = { active: ['Active', 'green'], expiring: [`Ends in ${left} days`, 'amber'], expired: ['Expired', 'red'],
+    pending: ['Pending payment', 'amber'], suspended: ['Suspended', 'red'], quote: ['Quote requested', 'blue'] };
+  const validity = c.status === 'expired' ? `Ended ${R.date(c.end)}`
+    : c.status === 'quote' ? `Proposed ${R.date(c.start)} to ${R.date(c.end)}`
+    : `${R.date(c.start)} to ${R.date(c.end)}${left >= 0 && ['active', 'expiring'].includes(c.status) ? ` · ${left} days left` : ''}`;
+  $('head').innerHTML = `<h2>${R.esc(c.plan)}</h2>
+    <div class="row-flex"><span class="mono">${c.number}</span>${R.tag(...TAGS[c.status])}</div><p>${validity}</p>`;
+  $('more-title').textContent = c.number;
+
+  const BANNERS = {
+    suspended: () => `<div class="banner red">${R.icon('warning-circle')}<div><b>AMC suspended</b>${R.money(c.due)} is overdue. <a href="${PAY_HREF}">Pay now</a></div></div>`,
+    expired: () => (graceLeft > 0
+      ? `<div class="banner red">${R.icon('clock')}<div><b>Renew within ${graceLeft} days to keep your AMC</b>Same plan, no gap in cover.</div></div>`
+      : `<div class="banner grey">${R.icon('info')}<div><b>Contract ended</b>Buy a new AMC to restart cover.</div></div>`),
+    expiring: () => `<div class="banner amber">${R.icon('clock')}<div><b>Ends on ${R.date(c.end)}</b>Renew to keep visits and discounts.</div></div>`,
+    pending: () => `<div class="banner amber">${R.icon('hourglass')}<div><b>Payment pending</b>Cover starts once ${R.money(c.due)} is paid.</div></div>`,
+    quote: () => `<div class="banner">${R.icon('hourglass')}<div><b>Waiting for Zixom's quotation</b>Requested ${R.dayDate(c.requested)}.</div></div>`,
+  };
+  if (BANNERS[c.status]) $('banner').innerHTML = BANNERS[c.status](); else $('banner').remove();
+  document.querySelector('.used-text').textContent = `Extra visits are chargeable with ${plan.discount}% off parts.`;
+
+  const mrow = (m) => `<a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+    <span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span></a>`;
+  $('machines').innerHTML = c.machines.map((s) => mrow(R.machine(s))).join('')
+    + `<div class="mrow removed" data-when="removed"><span class="thumb sm" aria-hidden="true">${R.icon('factory')}</span>
+      <span><b>${REMOVED_SAMPLE.model}</b><span class="mono">${REMOVED_SAMPLE.serial}</span> ${R.tag(`Removed ${R.date(REMOVED_SAMPLE.on)}`)}</span></div>`;
+
+  $('included').innerHTML = [['Preventive visits', `${plan.visits} a year`],
+    ['Breakdown response', plan.response], ['Breakdown visits', 'No charge'], ['Parts', plan.parts]]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  $('exclusions').innerHTML = EXCLUSIONS.map((e) => `<li>${e}</li>`).join('');
+
+  const next = NEXT_VISIT[c.number];
+  $('visits').innerHTML = `<h3 class="panel-title">Visits</h3>
+    <p class="big">${visitsLeft} <small>of ${c.visitsIncluded} left</small></p>
+    <div class="meter" style="margin-top:10px"><i style="width:${(c.visitsUsed / c.visitsIncluded) * 100}%"></i></div>
+    <a class="next" href="C406-amc-visits.html">${next ? `Next visit ${R.dayDate(next[0])}, ${next[1]}` : 'Visit schedule'}
+      <span>${next ? 'Planned by Zixom' : 'No visit planned'}</span></a>`;
+
+  const invoices = data.invoices.filter((i) => i.for === c.number);
+  $('invoices').innerHTML = invoices.length ? invoices.map((i) => `<a class="inv" href="C802-invoice-detail.html?invoice=${i.number}">
+      <b class="mono">${i.number}</b><span class="amt">${R.money(i.amount)}</span>
+      <span class="sub">${R.esc(i.title)}</span><span>${R.invoiceTag(i.status)}</span></a>`).join('')
+    : '<p class="card-sub" style="margin:0">No invoices yet.</p>';
+
+  /* main button by status (spec C402) */
+  const FOOTER = {
+    active: `<a class="btn btn-primary" href="C503-raise-machine.html?machine=${firstMachine}">${R.icon('wrench')}Raise breakdown request</a>`,
+    expiring: `<a class="btn btn-primary" href="C405-renew-amc.html?amc=${c.number}">Renew</a>`,
+    expired: graceLeft > 0 ? `<a class="btn btn-primary" href="C405-renew-amc.html?amc=${c.number}">Renew</a>` : '<a class="btn btn-primary" href="C404-buy-amc.html">Buy AMC</a>',
+    suspended: `<a class="btn btn-primary" href="${PAY_HREF}">Pay ${R.money(c.due)}</a>`,
+    pending: `<a class="btn btn-primary" href="${PAY_HREF}">Pay ${R.money(c.due)}</a>`,
+    quote: '<a class="btn btn-secondary" href="C602-ask.html">Ask about this quote</a>',
+  };
+  $('footer').innerHTML = FOOTER[c.status];
+  $('no-renew').hidden = !['active', 'expiring'].includes(c.status);
+  $('no-renew').addEventListener('click', () => { location.href = `C408-do-not-renew.html?amc=${c.number}`; });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

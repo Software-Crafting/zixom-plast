@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C406 AMC visit schedule</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.visit{padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.visit .row{display:grid; grid-template-columns:52px 1fr; gap:12px; align-items:center}
+.visit .day{display:flex; flex-direction:column; align-items:center; justify-content:center; height:56px; border-radius:var(--r-md); background:var(--field)}
+.visit .day b{font:400 var(--fs-20) var(--font-display); color:var(--slate-900); line-height:1}
+.visit .day span{font-size:var(--fs-11); color:var(--text-muted); text-transform:uppercase}
+.visit .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.visit h3{margin:0; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.visit p{margin:3px 0 0; font-size:var(--fs-12); color:var(--text-muted)}
+.visit .why{margin:10px 0 0; font-size:var(--fs-13); color:var(--text)}
+.visit .actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px}
+.visit .actions.one{grid-template-columns:1fr}
+.cal-head{display:flex; justify-content:space-between; align-items:center}
+.cal-head b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.cal{display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; margin-top:12px; text-align:center}
+.cal .dow{font-size:var(--fs-11); color:var(--text-muted); padding-bottom:4px}
+.cal button{position:relative; height:40px; border:0; border-radius:var(--r-md); background:none; font:500 var(--fs-14) var(--font-body); color:var(--slate-900); cursor:pointer}
+.cal button.out{color:var(--text-faint)}
+.cal button.has::after{content:""; position:absolute; left:50%; bottom:5px; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--blue)}
+.cal button.today{box-shadow:inset 0 0 0 1.5px var(--slate-300)}
+.cal button[aria-pressed="true"]{background:var(--slate-800); color:#fff}
+.cal button[aria-pressed="true"]::after{background:#fff}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C406 AMC visit schedule</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">no visits yet</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C402-amc-contract.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Visit schedule</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+          <nav class="segment" role="tablist" aria-label="View">
+            <button role="tab" type="button" aria-selected="true" aria-controls="p-list">List</button>
+            <button role="tab" type="button" aria-selected="false" aria-controls="p-cal">Calendar</button>
+          </nav>
+          <div class="chips" data-single id="filter"></div>
+          <section id="p-list" class="stack"></section>
+          <section id="p-cal" class="stack" hidden>
+            <div class="card">
+              <div class="cal-head"><button class="icon-btn sm" type="button" aria-label="Previous month"><svg class="ic" aria-hidden="true"><use href="#ph-caret-left"/></svg></button>
+                <b>December 2026</b><button class="icon-btn sm" type="button" aria-label="Next month"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></button></div>
+              <div class="cal" id="cal"></div>
+            </div>
+            <div id="cal-visit"></div>
+          </section>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+          <h3>No visits scheduled yet</h3>
+          <p>Zixom plans your preventive visits and lets you know.</p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:44px; border-radius:var(--r-pill)"></span>
+          <span class="skeleton sk-line" style="width:35%"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:84px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load your visits. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Preventive visits planned by Zixom for every AMC contract. Confirm or ask to reschedule a planned
+visit; a missed visit says why and offers a new date. Reminders arrive 7 days and 1 day before.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only, not in data.js yet: the visit plan of the running contracts (used counts match data.amc) */
+  const VISITS = [
+    { amc: 'AMC-2026-0011', date: '2026-02-18', status: 'done' },
+    { amc: 'AMC-2026-0011', date: '2026-05-20', status: 'done' },
+    { amc: 'AMC-2026-0011', date: '2026-10-28', status: 'done', ticket: 'TKT-2026-0129' },
+    { amc: 'AMC-2026-0011', date: '2026-11-30', status: 'confirmed', slot: '9 to 12 AM', engineer: 'sandeep' },
+    { amc: 'AMC-2026-0010', date: '2026-06-10', status: 'done' },
+    { amc: 'AMC-2026-0010', date: '2026-08-12', status: 'done' },
+    { amc: 'AMC-2026-0010', date: '2026-10-14', status: 'missed', why: 'Machine was not free on the day.' },
+    { amc: 'AMC-2026-0010', date: '2026-12-12', status: 'planned', slot: '9 to 12 AM', engineer: 'sandeep' },
+    { amc: 'AMC-2026-0010', date: '2027-02-10', status: 'planned', slot: '9 to 12 AM' },
+    { amc: 'AMC-2026-0010', date: '2027-03-17', status: 'planned', slot: '9 to 12 AM' },
+  ];
+  const STATUS = { planned: ['Planned', 'blue'], confirmed: ['Confirmed', 'green'], done: ['Done', ''], missed: ['Missed', 'red'] };
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const machineOf = (v) => R.machine(R.amc(v.amc).machines[0]);
+  let filter = 'all';
+
+  const actions = (v) => {
+    if (v.status === 'planned') return `<div class="actions"><button class="btn btn-secondary btn-sm" type="button" data-toast="Visit confirmed">Confirm</button>
+      <a class="btn btn-secondary btn-sm" href="C407-reschedule-amc-visit.html">Reschedule</a></div>`;
+    if (v.status === 'confirmed') return `<div class="actions one"><a class="btn btn-secondary btn-sm" href="C407-reschedule-amc-visit.html">Request reschedule</a></div>`;
+    if (v.status === 'missed') return `<p class="why">${v.why} Zixom will offer a new date.</p>
+      <div class="actions one"><a class="btn btn-secondary btn-sm" href="C407-reschedule-amc-visit.html">Ask for a new date</a></div>`;
+    return v.ticket ? `<div class="actions one"><a class="btn btn-secondary btn-sm" href="C512-service-report.html">Open report</a></div>` : '';
+  };
+  const card = (v) => {
+    const m = machineOf(v);
+    const d = new Date(`${v.date}T00:00:00`);
+    const eng = v.engineer ? R.engineer(v.engineer).name : (['planned', 'confirmed'].includes(v.status) ? 'Engineer not assigned yet' : '');
+    return `<article class="visit"><div class="row">
+        <span class="day"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></span>
+        <span><span class="top"><h3>${R.esc(m.nickname || m.model)}</h3>${R.tag(...STATUS[v.status])}</span>
+          <p>${R.dayDate(v.date)}${d.getFullYear() !== 2026 ? ` ${d.getFullYear()}` : ''}${v.slot ? `, ${v.slot}` : ''}</p>
+          ${eng ? `<p>${R.esc(eng)}</p>` : ''}</span></div>${actions(v)}</article>`;
+  };
+
+  const contracts = [...new Set(VISITS.map((v) => v.amc))];
+  $('filter').innerHTML = `<button class="chip outline" type="button" aria-pressed="true" data-amc="all">All</button>`
+    + contracts.map((n) => { const m = R.machine(R.amc(n).machines[0]); return `<button class="chip outline" type="button" aria-pressed="false" data-amc="${n}">${R.esc(m.nickname || m.model)}</button>`; }).join('');
+  $('filter').addEventListener('click', (event) => { const b = event.target.closest('[data-amc]'); if (b) { filter = b.dataset.amc; renderList(); } });
+
+  const renderList = () => {
+    const shown = VISITS.filter((v) => filter === 'all' || v.amc === filter);
+    const upcoming = shown.filter((v) => v.date >= data.today).sort((a, b) => a.date.localeCompare(b.date));
+    const past = shown.filter((v) => v.date < data.today).sort((a, b) => b.date.localeCompare(a.date));
+    $('p-list').innerHTML = `<div class="section-head" style="margin-top:0"><h2>Upcoming</h2></div>${upcoming.map(card).join('')}
+      <div class="section-head"><h2>Past</h2></div>${past.map(card).join('')}`;
+  };
+  renderList();
+
+  /* calendar: December 2026, weeks start on Monday */
+  const first = new Date('2026-12-01T00:00:00');
+  const lead = (first.getDay() + 6) % 7;
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const cells = Array.from({ length: 35 }, (_, i) => { const d = new Date(first); d.setDate(1 - lead + i); return d; });
+  const selected = '2026-12-12';
+  $('cal').innerHTML = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x) => `<span class="dow">${x}</span>`).join('')
+    + cells.map((d) => { const key = iso(d); const has = VISITS.some((v) => v.date === key);
+      return `<button type="button" data-day="${key}" class="${d.getMonth() !== 11 ? 'out' : ''}${has ? ' has' : ''}${key === data.today ? ' today' : ''}" aria-pressed="${key === selected}">${d.getDate()}</button>`; }).join('');
+  const showDay = (key) => {
+    const v = VISITS.find((x) => x.date === key);
+    $('cal-visit').innerHTML = v ? card(v) : `<p class="card-sub" style="text-align:center">No visit on ${R.dayDate(key)}</p>`;
+  };
+  $('cal').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-day]');
+    if (!b) return;
+    $('cal').querySelectorAll('[data-day]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    showDay(b.dataset.day);
+  });
+  showDay(selected);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1503 Service history</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.month{margin:6px 2px 0; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1503 Service history</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="more" aria-pressed="false">load more failed</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="export">export</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C501-support.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Service history</h1>
+        <span></span>
+      </div>
+      <div class="scroll">
+        <div class="tools two" style="margin-bottom:12px"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg><input class="input" type="search" placeholder="Ticket, machine or issue" aria-label="Search"></div><button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="stats" id="stats" data-when="ready more offline filtered"></div>
+          <div class="chips" data-when="filtered noresults">
+            <button class="chip outline" type="button" aria-pressed="false" data-when="filtered">Line 1 former <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+            <button class="chip outline" type="button" aria-pressed="false" data-when="noresults">Scrap grinder <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+            <button class="chip outline" type="button" aria-pressed="false" data-when="noresults">Resolved <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+          </div>
+          <div class="stack-sm" id="all" data-when="ready more offline"></div>
+          <div class="stack-sm" id="filtered" data-when="filtered"></div>
+          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <button class="btn btn-secondary" type="button" data-open="export" data-when="ready filtered"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Export as PDF</button>
+          <button class="btn btn-secondary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Export as PDF</button>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3><p>Try a different word or clear the filters.</p>
+            <button class="btn btn-secondary" type="button">Clear filters</button>
+          </div>
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+            <h3>No service history</h3><p>Visits and repairs on all your machines show here.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <div class="stats"><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton sk-card"></span><span class="skeleton sk-card"></span><span class="skeleton sk-card" style="opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter history</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Machine</div>
+          <div class="chips" data-single style="margin-bottom:14px" id="f-machines"></div>
+          <div class="field-label">Status</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">All</button><button class="chip outline" type="button" aria-pressed="false">Open</button><button class="chip outline" type="button" aria-pressed="false">Resolved</button><button class="chip outline" type="button" aria-pressed="false">Cancelled</button></div>
+          <div class="field-label">Date</div>
+          <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">Any time</button><button class="chip outline" type="button" aria-pressed="false">This year</button><button class="chip outline" type="button" aria-pressed="false">Last 3 months</button></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px; width:100%" data-close>Show results</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="export" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Export service history">
+        <div class="group"><div class="title">Export the list as a PDF</div>
+          <button type="button" data-close data-toast="Service history saved to Downloads">Download PDF</button>
+          <button type="button" data-close>Share PDF</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Open and closed requests across all machines, newest first, 20 at a time. A card opens
+<a href="C508-request-detail.html">C508</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  /* sample: hours from raised to resolved for resolved or completed requests */
+  const HOURS_TO_RESOLVE = { 'TKT-2026-0129': 50, 'TKT-2026-0128': 104 };
+  const FILTER_SERIAL = 'ZP-TF-2310';
+
+  const year = data.today.slice(0, 4);
+  const visits = data.tickets.filter((t) => t.engineer && t.created.startsWith(year)).length;
+  const resolved = Object.values(HOURS_TO_RESOLVE);
+  const avgDays = resolved.reduce((a, b) => a + b, 0) / resolved.length / 24;
+  $('stats').innerHTML = `<div class="stat"><b>${visits}</b><span>Visits this year</span></div>
+    <div class="stat"><b>${avgDays.toFixed(1)} days</b><span>Average time to resolve</span></div>`;
+
+  const grouped = (tickets) => {
+    let month = '';
+    return [...tickets].sort((a, b) => b.created.localeCompare(a.created)).map((t) => {
+      const key = t.created.slice(0, 7);
+      const head = key !== month ? `<p class="month">${MONTHS[Number(key.slice(5)) - 1]} ${key.slice(0, 4)}</p>` : '';
+      month = key;
+      return head + R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`);
+    }).join('');
+  };
+  $('all').innerHTML = grouped(data.tickets);
+  $('filtered').innerHTML = grouped(data.tickets.filter((t) => t.machine === FILTER_SERIAL));
+  $('f-machines').innerHTML = `<button class="chip outline" type="button" aria-pressed="true">All machines</button>`
+    + data.machines.filter((m) => data.tickets.some((t) => t.machine === m.serial))
+      .map((m) => `<button class="chip outline" type="button" aria-pressed="false">${R.esc(m.nickname || m.model)}</button>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

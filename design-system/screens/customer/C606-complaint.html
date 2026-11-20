@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C606 Complaint or escalation</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.wrap{flex-wrap:wrap; overflow:visible}
+.sent{padding-top:64px}
+.sent .card-fill{width:100%; margin-top:24px; text-align:left}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C606 Complaint or escalation</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="lowrating" aria-pressed="false">after a low rating</button>
+  <button type="button" data-state="missed" aria-pressed="false">response time missed</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="already" aria-pressed="false">escalation already open</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="#" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Complaint</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready lowrating missed errors already submitting offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your text is kept.</div>
+          <div class="banner amber" data-when="lowrating"><svg class="ic" aria-hidden="true"><use href="#ph-smiley-sad"/></svg><div><b>Sorry the visit did not go well</b>Tell the service manager what happened.</div></div>
+          <div class="banner red" data-when="missed"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg><div id="missed-text"></div></div>
+          <div class="banner amber" data-when="already"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div id="already-text"></div></div>
+          <div class="error-summary" role="alert" data-when="errors">
+            <b>Fix 2 things to submit</b>
+            <ul><li><a href="#issue-bad">Describe the issue in at least 20 characters</a></li><li><a href="#outcome-bad">Choose what you want</a></li></ul>
+          </div>
+
+          <div>
+            <div class="field">
+              <span class="field-label">Ticket or order<span class="req">*</span></span>
+              <button class="select" type="button" data-open="pick"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg><span class="value" id="ref-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+            </div>
+
+            <div class="field" data-when="ready lowrating missed already submitting offline">
+              <label for="issue">What went wrong<span class="req">*</span><span class="counter" id="issue-count"></span></label>
+              <textarea class="textarea" id="issue" maxlength="1000"></textarea>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <label for="issue-bad">What went wrong<span class="req">*</span><span class="counter">9 / 1000</span></label>
+              <textarea class="textarea" id="issue-bad" aria-invalid="true" aria-describedby="issue-err">Too slow.</textarea>
+              <span class="error-text" id="issue-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe it in at least 20 characters</span>
+            </div>
+
+            <div class="field" data-when="ready lowrating missed already submitting offline">
+              <span class="field-label">What you want<span class="req">*</span></span>
+              <div class="chips wrap" data-single id="outcomes"></div>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <span class="field-label" id="outcome-bad">What you want<span class="req">*</span></span>
+              <div class="chips wrap" data-single id="outcomes-bad"></div>
+              <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose one</span>
+            </div>
+          </div>
+
+          <div class="banner grey"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg><div id="goes-to"></div></div>
+        </div>
+
+        <div class="state sent" data-when="sent">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Complaint sent</h3>
+          <p id="sent-text"></p>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="sent-kv"></dl></div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready lowrating missed errors" onclick="document.querySelector('.plate-states [data-state=submitting]').click()">Submit</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit</button>
+        <a class="btn btn-primary" href="C603-thread.html?q=QRY-2026-0033" data-when="already">View open complaint</a>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit</button>
+        <a class="btn btn-primary" href="C601-questions.html" data-when="sent">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="pick" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="pick-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="pick-t">Ticket or order</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" id="pick-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened after a 1 or 2 star rating or from a ticket whose response time was missed. Goes to the service
+manager; one open escalation per ticket.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  /* Sample data not in data.js yet (move there): orders, the open complaint QRY-2026-0033 and the new reference */
+  const ORDERS = [['ORD-2026-0209', 'Dispatched'], ['ORD-2026-0208', 'Paid and packed']];
+  const OPEN_COMPLAINT = { number: 'QRY-2026-0033', ticket: 'TKT-2026-0130' };
+  const NEW_REFERENCE = 'QRY-2026-0034';
+  const OUTCOMES = ['Visit soon', 'Call from the manager', 'Refund or credit', 'Other'];
+  const ISSUE = 'Waiting for the PID controller since 16 Nov. Zone 3 still runs hot and we lose cups every shift.';
+  const PER_STATE = { lowrating: 'TKT-2026-0128', already: OPEN_COMPLAINT.ticket };
+
+  const params = new URLSearchParams(location.search);
+  const defaultTicket = params.get('ticket') || 'TKT-2026-0127';
+  const ticket = (n) => data.tickets.find((t) => t.number === n);
+  const label = (t) => `<span class="mono">${t.number}</span> · ${R.esc(R.machine(t.machine).nickname || R.machine(t.machine).model)}`;
+  const show = (n) => { $('ref-value').innerHTML = label(ticket(n)); };
+  show(defaultTicket);
+  $('back').href = `C508-request-detail.html?ticket=${defaultTicket}`;
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => show(PER_STATE[b.dataset.state] || defaultTicket)));
+
+  $('issue').value = ISSUE;
+  $('issue-count').textContent = `${ISSUE.length} / 1000`;
+  const chips = (selected) => OUTCOMES.map((o) => `<button class="chip outline" type="button" aria-pressed="${o === selected}">${o}</button>`).join('');
+  $('outcomes').innerHTML = chips('Visit soon');
+  $('outcomes-bad').innerHTML = chips('');
+
+  const { support } = data;
+  const { manager } = support;
+  $('goes-to').innerHTML = `<b>Goes to ${R.esc(manager)}, service manager</b>Then to management if not resolved.`;
+  $('missed-text').innerHTML = `<b>Response time missed</b><span class="mono">${defaultTicket}</span> passed its target.`;
+  $('already-text').innerHTML = `<b>Already escalated</b><span class="mono">${OPEN_COMPLAINT.number}</span> is open for this ticket.`;
+  $('sent-text').textContent = `${manager} will contact you. Track it in Questions.`;
+  $('sent-kv').innerHTML = `<div><dt>Reference</dt><dd class="mono">${NEW_REFERENCE}</dd></div>
+    <div><dt>Ticket</dt><dd class="mono">${defaultTicket}</dd></div><div><dt>Support</dt><dd>${support.phone}</dd></div>`;
+
+  const ENDED = ['cancelled'];
+  const option = (iconName, title, sub, checked) => `<button class="choice" role="radio" aria-checked="${checked}" type="button" data-close>
+    <span class="disc">${R.icon(iconName)}</span><b class="mono">${title}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+  $('pick-list').innerHTML = `<p class="list-title" style="margin-top:0">Service requests</p><div role="radiogroup" aria-label="Service requests">
+    ${data.tickets.filter((t) => t.engineer && !ENDED.includes(t.status)).map((t) => option('wrench', t.number, R.machine(t.machine).nickname || t.type, t.number === defaultTicket)).join('')}</div>
+    <p class="list-title">Orders</p><div role="radiogroup" aria-label="Orders">${ORDERS.map(([n, s]) => option('package', n, s, false)).join('')}</div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

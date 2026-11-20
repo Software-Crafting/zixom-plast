@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C707 Orders and requests</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.order{position:relative; display:flex; flex-direction:column; gap:8px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.order .top{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.order .num{font-size:var(--fs-12); color:var(--text-muted)}
+.order a{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); text-decoration:none; line-height:1.3}
+.order a::before{content:""; position:absolute; inset:0; border-radius:inherit}
+.order .foot{display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:10px; border-top:1px dashed var(--line-strong);
+  font-size:var(--fs-12); color:var(--text-muted)}
+.order .foot b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.order .btn{position:relative; z-index:1}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C707 Orders and requests</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C701-parts.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Orders and requests</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="search" data-when="ready noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" id="q" placeholder="Order number or part" aria-label="Search orders"></div>
+          <div class="segment" role="tablist" aria-label="Orders" data-when="ready offline">
+            <button role="tab" aria-selected="true" aria-controls="open" id="open-tab"></button><button role="tab" aria-selected="false" aria-controls="closed" id="closed-tab"></button>
+          </div>
+          <div data-when="ready offline">
+            <div class="stack-sm" id="open"></div>
+            <div class="stack-sm" id="closed" hidden></div>
+          </div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3><p>Nothing matches "ORD-2025".</p>
+          </div>
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+            <h3>No orders yet</h3><p>Parts you order or request show here.</p>
+            <a class="btn btn-primary" href="C701-parts.html">Browse parts</a>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:50px; border-radius:var(--r-pill)"></span>
+            <span class="skeleton" style="height:128px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:128px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:128px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Orders and part requests, newest first, in Open and Closed. A card opens
+<a href="C708-order-detail.html">C708</a>; Reorder puts the same parts in the cart.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (same orders as C708): [number, status, request, created, items as [part, qty, rate], delivery] */
+  const EXTRA_PARTS = { 'ZP-SP-006': 'Digital vacuum gauge', 'ZP-SP-007': 'Vacuum pump service kit', 'ZP-SP-008': 'Thermocouple, J type', 'ZP-SP-010': 'Solid state relay 40 A' };
+  const ORDERS = [
+    ['ORD-2026-0205', 'submitted', true, '2026-11-23T10:15', [['ZP-SP-004', 2, null]], 0],
+    ['ORD-2026-0206', 'quoted', true, '2026-11-19T15:30', [['ZP-SP-003', 1, 6400]], 600],
+    ['ORD-2026-0207', 'approved', true, '2026-11-17T12:05', [['ZP-SP-007', 1, 5400]], 500],
+    ['ORD-2026-0208', 'packed', false, '2026-11-02T09:40', [['ZP-SP-001', 4, 2850], ['ZP-SP-002', 1, 1240]], 360],
+    ['ORD-2026-0209', 'dispatched', false, '2026-11-16T11:00', [['ZP-SP-008', 4, 1050], ['ZP-SP-010', 2, 1680]], 360],
+    ['ORD-2026-0210', 'delivered', false, '2026-11-10T14:20', [['ZP-SP-002', 2, 1240], ['ZP-SP-006', 1, 1450]], 360],
+    ['ORD-2026-0211', 'cancelled', false, '2026-11-19T09:00', [['ZP-SP-008', 2, 1050]], 400],
+    ['ORD-2026-0212', 'return', false, '2026-11-04T10:00', [['ZP-SP-005', 1, 980]], 300],
+  ];
+  const STATUS = { submitted: ['Submitted', 'blue'], quoted: ['Quote ready', 'amber'], approved: ['Pending payment', 'amber'], packed: ['Packed', 'blue'],
+    dispatched: ['Dispatched', 'blue'], delivered: ['Delivered', 'green'], cancelled: ['Cancelled', ''], return: ['Return requested', 'amber'] };
+  const CLOSED = ['delivered', 'cancelled'];
+  const partName = (n) => data.parts.find((p) => p.number === n)?.name || EXTRA_PARTS[n];
+
+  const card = ([number, status, request, created, items, delivery]) => {
+    const priced = items.every(([, , rate]) => rate !== null);
+    const total = priced ? R.money(R.totals([...items, ['Delivery', 1, delivery]]).total) : 'Price on request';
+    const title = partName(items[0][0]) + (items.length > 1 ? ` + ${items.length - 1} more` : '');
+    return `<div class="order">
+      <span class="top"><span class="num mono">${number}</span>${R.tag(...STATUS[status])}</span>
+      <a href="C708-order-detail.html?order=${number}">${R.esc(title)}</a>
+      <span class="foot"><span>${request ? 'Part request' : 'Order'} · ${R.dayDate(created)}</span>
+        <span class="row-flex"><b>${total}</b>${CLOSED.includes(status) ? `<button class="btn btn-soft btn-sm" type="button" data-toast="Added to cart">Reorder</button>` : ''}</span></span>
+    </div>`;
+  };
+  const sorted = [...ORDERS].sort((a, b) => b[3].localeCompare(a[3]));
+  const open = sorted.filter((o) => !CLOSED.includes(o[1]));
+  const closed = sorted.filter((o) => CLOSED.includes(o[1]));
+  $('open').innerHTML = open.map(card).join('');
+  $('closed').innerHTML = closed.map(card).join('');
+  $('open-tab').textContent = `Open ${open.length}`;
+  $('closed-tab').textContent = `Closed ${closed.length}`;
+
+  const setQuery = (state) => { $('q').value = state === 'noresults' ? 'ORD-2025' : ''; };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => setQuery(b.dataset.state)));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

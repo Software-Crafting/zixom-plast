@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1115 Data and privacy</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+.banner{margin-bottom:4px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1115 Data and privacy</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="copy">request a copy</button>
+  <button type="button" data-state="copypending" aria-pressed="false">copy request open</button>
+  <button type="button" data-state="delpending" aria-pressed="false">deletion request open</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Data and privacy</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 8px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send a request.</div>
+        <div class="banner" data-when="copypending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+          <div><b>Copy of your data requested</b><span class="mono">DATA-2026-0003</span> · Sent Fri 20 Nov. We email it to you.</div></div>
+        <div class="banner amber" data-when="delpending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+          <div><b>Deletion requested</b><span class="mono">DEL-2026-0007</span>. <a href="../access/A24-deletion-requested.html">View status</a></div></div>
+
+        <div data-when="ready copypending delpending offline">
+          <p class="list-title" style="margin-top:8px">What we store</p>
+          <div class="list">
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg></span><b>Your profile</b><span class="sub">Name, mobile, email, photo</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Company and sites</b><span class="sub">GSTIN, addresses, contacts</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>Machines and service</b><span class="sub">Requests, reports, photos, messages</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Payments</b><span class="sub">Invoices and receipts. No card numbers</span></div>
+          </div>
+
+          <p class="list-title">How long we keep it</p>
+          <div class="card-fill"><dl class="kv" style="margin:0">
+            <div><dt>Machine records</dt><dd>Life of the machine</dd></div>
+            <div><dt>Invoices and payments</dt><dd>As required by law</dd></div>
+            <div><dt>Drafts on this phone</dt><dd>30 days</dd></div>
+          </dl></div>
+
+          <p class="list-title">Your options</p>
+          <div class="list">
+            <button class="list-item" type="button" data-open="copy" data-when="ready"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Request a copy of my data</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></button>
+            <div class="list-item" style="cursor:default; opacity:.5" data-when="copypending delpending offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Request a copy of my data</b><span class="sub" data-when="copypending delpending">A request is already open</span><span class="sub" data-when="offline">Needs the internet</span></div>
+            <a class="list-item danger" href="C1110-delete-account.html" data-when="ready copypending offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Request deletion</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+          <a class="link accent" href="C1109-legal.html" style="margin:14px 4px 0">Privacy policy</a>
+        </div>
+
+        <div class="stack-sm" data-when="loading" style="margin-top:12px">
+          <span class="skeleton" style="height:240px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="copy" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="cp-title">
+        <h3 id="cp-title">Request a copy of your data?</h3><p id="cp-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close data-toast="Request sent">Send request</button><button class="btn btn-text" style="width:100%" type="button" data-close>Cancel</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">What the app stores and for how long, with requests for a copy or for deletion. An open request shows
+its status and blocks a second one.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const me = ZX.data.users.find((u) => u.id === 'rakesh');
+  document.getElementById('cp-text').textContent = `We email it to ${me.email}.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C703 Part detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.dots{display:flex; justify-content:center; gap:6px; margin-top:10px}
+.dots i{width:6px; height:6px; border-radius:50%; background:var(--slate-300)}
+.dots i:first-child{width:18px; border-radius:3px; background:var(--slate-800)}
+.phead h2{margin:10px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.25}
+.phead .mono{display:block; margin-top:4px; font-size:var(--fs-13); color:var(--slate-600)}
+.price{display:flex; align-items:baseline; gap:8px; margin-top:14px}
+.price b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.price span{font-size:var(--fs-13); color:var(--text-muted)}
+.eta{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:var(--fs-13); color:var(--text)}
+.eta .ic{width:18px; height:18px; color:var(--slate-500)}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.desc{margin:0 2px; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:10px 0; color:inherit; text-decoration:none}
+.mrow + .mrow{border-top:1px solid var(--line)}
+.mrow b{display:block; font:400 var(--fs-15, 15px) var(--font-display); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.also{margin:8px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.similar{display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; margin:0 calc(var(--gutter) * -1); padding:2px var(--gutter)}
+.similar::-webkit-scrollbar{display:none}
+.similar a{flex:0 0 140px; display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:var(--r-lg); background:#fff;
+  border:1px solid var(--line); color:inherit; text-decoration:none}
+.similar .thumb{width:100%; height:70px; margin-bottom:4px}
+.similar b{font-size:var(--fs-13); font-weight:600; color:var(--slate-900); line-height:1.3}
+.similar span{font:400 var(--fs-13) var(--font-display); color:var(--slate-800)}
+.buy{display:flex; gap:10px; align-items:center}
+.buy .btn{flex:1}
+.thumb.lg.failed{background:var(--slate-100); color:var(--slate-400)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C703 Part detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="nofit" aria-pressed="false">does not fit</button>
+  <button type="button" data-state="imgfail" aria-pressed="false">image failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="pick"><span>part</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C702-machine-parts.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Part</h1>
+        <button class="icon-btn" type="button" data-toast="Opening share sheet" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body" data-when="ready nofit imgfail offline"></div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:70%"></span><span class="skeleton sk-line" style="width:35%"></span>
+          <span class="skeleton sk-line" style="width:45%; height:28px"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+          <h3>We cannot find this part</h3><p>It may have been removed from the catalogue.</p>
+          <a class="btn btn-secondary" href="C706-request-part.html">Request a part</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="footer" data-when="ready nofit imgfail offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="anyway" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="anyway-t">
+        <h3 id="anyway-t">Add a part that does not fit?</h3><p>It does not match any of your machines.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close data-toast="Added to cart">Add anyway</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Cancel</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Any part via <code>?part=</code>; pick one above for in stock, low, out of stock, price on request and
+discontinued. Request quote opens <a href="C706-request-part.html">C706</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (move to data.js): more catalogue parts, fit by model family, descriptions and specifications */
+  const EXTRA_PARTS = [
+    { number: 'ZP-SP-006', name: 'Digital vacuum gauge', category: 'Others', price: 1450, stock: 'in' },
+    { number: 'ZP-SP-008', name: 'Thermocouple, J type', category: 'Heaters', price: 1050, stock: 'in' },
+    { number: 'ZP-SP-010', name: 'Solid state relay 40 A', category: 'Timers', price: 1680, stock: 'in' },
+  ];
+  const FITS = { 'ZP-SP-001': 'AFM CFM SVF', 'ZP-SP-002': 'AFM CFM SVF PCR', 'ZP-SP-003': 'AFM', 'ZP-SP-004': 'AFM CFM SVF',
+    'ZP-SP-005': 'AFM SVF', 'ZP-SP-006': 'AFM SVF', 'ZP-SP-008': 'AFM CFM SVF', 'ZP-SP-010': 'AFM CFM PCR' };
+  const INFO = {
+    'ZP-SP-001': ['Ceramic infrared element for the top and bottom heater banks.', [['Power', '650 W'], ['Voltage', '230 V AC'], ['Size', '245 × 60 mm'], ['Warranty', '6 months']]],
+    'ZP-SP-002': ['Multi range on delay relay for forming and cooling cycles.', [['Supply', '24 V DC'], ['Range', '0.1 s to 10 min'], ['Contacts', '2 changeover'], ['Mount', 'DIN rail']]],
+    'ZP-SP-003': ['Duplex roller chain for the sheet transport drive.', [['Pitch', '19.05 mm, 12B'], ['Length', '5 m with connector'], ['Material', 'Alloy steel'], ['Warranty', '3 months']]],
+    'ZP-SP-004': ['Single loop controller for one heater zone.', [['Input', 'J or K thermocouple'], ['Output', 'SSR drive'], ['Size', '48 × 48 mm'], ['Supply', '230 V AC']]],
+    'ZP-SP-005': ['Dial gauge for the vacuum line.', [['Range', '0 to −1 bar'], ['Dial', '63 mm'], ['Connection', '¼ inch BSP']]],
+    'ZP-SP-006': ['Digital gauge with backlit display for the vacuum line.', [['Range', '0 to −1 bar'], ['Accuracy', '±1 percent'], ['Connection', '¼ inch BSP'], ['Supply', '2 × AA']]],
+  };
+  const DELIVERY = { in: 'Delivery in 2 to 4 days', low: 'Delivery in 2 to 4 days · Only 3 left', out: 'Back in stock in about 3 weeks',
+    request: 'Zixom quotes within 1 working day', discontinued: 'No longer made' };
+  const DEFAULT = 'ZP-SP-001';
+
+  const catalogue = [...data.parts, ...EXTRA_PARTS];
+  const number = new URLSearchParams(location.search).get('part') || DEFAULT;
+  const p = catalogue.find((x) => x.number === number);
+
+  $('pick').insertAdjacentHTML('beforeend', catalogue.slice(0, 6).map((x) =>
+    `<button type="button" data-part="${x.number}" aria-pressed="${x.number === number}">${x.number.slice(-3)} ${x.stock}</button>`).join(''));
+  $('pick').addEventListener('click', (e) => { const b = e.target.closest('[data-part]'); if (b) location.search = `?part=${b.dataset.part}`; });
+
+  if (!p) { document.querySelector('.screen').dataset.state = 'notfound'; return; }
+
+  const [desc, specs] = INFO[p.number] || ['', []];
+  const families = FITS[p.number].split(' ');
+  const mine = data.machines.filter((m) => m.company === 'shree' && m.status !== 'pending' && families.includes(m.model.split('-')[0]));
+  const replacement = p.replacedBy && catalogue.find((x) => x.number === p.replacedBy);
+  const similar = catalogue.filter((x) => x.number !== p.number && x.price && FITS[x.number].split(' ').some((f) => families.includes(f))).slice(0, 4);
+
+  const banner = (tone, icon, title, text) => `<div class="banner ${tone}">${R.icon(icon)}<div><b>${title}</b>${text}</div></div>`;
+  $('body').innerHTML = `
+    <div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Showing a saved copy.</div>
+    <div>
+      <span class="thumb lg" data-when="ready nofit offline">${R.icon('package')}</span>
+      <span class="thumb lg failed" data-when="imgfail">${R.icon('image-off')}</span>
+      <div class="dots" aria-label="Image 1 of 3"><i></i><i></i><i></i></div>
+    </div>
+    <div class="phead">
+      ${R.stockTag(p.stock)}
+      <h2>${R.esc(p.name)}</h2><span class="mono">${p.number}</span>
+      ${p.stock === 'discontinued' ? '' : `<div class="price">${p.price ? `<b>${R.money(p.price)}</b><span>+ GST 18%</span>` : '<b style="font-size:var(--fs-22)">Price on request</b>'}</div>`}
+      <div class="eta">${R.icon(p.stock === 'discontinued' ? 'info' : 'truck')}${DELIVERY[p.stock]}</div>
+    </div>
+    ${replacement ? banner('amber', 'arrows-clockwise', 'Replaced by a newer part', `${R.esc(replacement.name)}, <span class="mono">${replacement.number}</span>. <a href="C703-part-detail.html?part=${replacement.number}">View part</a>`) : ''}
+    <div data-when="nofit">${banner('amber', 'warning', 'This part does not match your machines', 'Check the model before you order.')}</div>
+    ${desc ? `<div class="sec"><h2>About</h2><p class="desc">${R.esc(desc)}</p></div>` : ''}
+    ${specs.length ? `<div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">${specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${R.esc(v)}</dd></div>`).join('')}</dl></div>` : ''}
+    <div class="sec" data-when="ready imgfail offline"><h2>Fits your machines</h2>
+      ${mine.map((m) => `<a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+        <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)} · <span class="mono" style="display:inline; white-space:nowrap">${m.serial}</span></span></span></a>`).join('')}
+      <p class="also">Also fits other ${families.join(', ')} models.</p></div>
+    ${similar.length ? `<div class="sec"><h2>Similar parts</h2><div class="similar">${similar.map((x) => `<a href="C703-part-detail.html?part=${x.number}">
+        <span class="thumb">${R.icon('package')}</span><b>${R.esc(x.name)}</b><span>${R.money(x.price)}</span></a>`).join('')}</div></div>` : ''}`;
+
+  const quote = `C706-request-part.html?part=${p.number}`;
+  const stepper = `<span class="stepper lg"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button><output value="1">1</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span>`;
+  const offline = (label) => `<button class="btn btn-primary" type="button" disabled data-when="offline">${label}</button>`;
+  const FOOTER = {
+    in: `<div class="buy">${stepper}<button class="btn btn-primary" type="button" data-toast="Added to cart" data-when="ready imgfail">Add to cart</button>
+      <button class="btn btn-primary" type="button" data-open="anyway" data-when="nofit">Add to cart</button>${offline('Add to cart')}</div>`,
+    out: `<div class="btn-pair" style="grid-template-columns:1fr 1fr"><button class="btn btn-secondary" type="button" data-toast="We will tell you when it is back">${R.icon('bell', 'ic-18')}Notify me</button>
+      <a class="btn btn-primary" href="${quote}">Request quote</a></div>`,
+    request: `<a class="btn btn-primary" href="${quote}" data-when="ready nofit imgfail">Request quote</a>${offline('Request quote')}`,
+    discontinued: replacement ? `<a class="btn btn-primary" href="C703-part-detail.html?part=${replacement.number}">View replacement</a>` : '',
+  };
+  $('footer').innerHTML = FOOTER[p.stock === 'low' ? 'in' : p.stock];
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

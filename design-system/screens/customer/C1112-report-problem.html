@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1112 Report a problem</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+.files + .add-file{margin-top:8px}
+.attach{margin-top:16px}
+.attach .kv{margin:10px 0 0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1112 Report a problem</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="uploading" aria-pressed="false">screenshot uploading, one failed</button>
+  <button type="button" data-state="errors" aria-pressed="false">nothing typed</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, sent later</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Report a problem</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div data-when="ready uploading errors offline">
+          <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. We send it when you are back.</div>
+
+          <div class="field" data-when="ready uploading offline"><label for="what">What went wrong<span class="req">*</span><span class="counter">96 / 1000</span></label>
+            <textarea class="textarea" id="what" rows="4">The invoice PDF for INV-2026-0981 opens blank. It worked last week. Happens on Wi-Fi and mobile data.</textarea></div>
+          <div class="field has-error" data-when="errors"><label for="what-e">What went wrong<span class="req">*</span><span class="counter">0 / 1000</span></label>
+            <textarea class="textarea" id="what-e" rows="4" placeholder="Tell us what happened" aria-invalid="true" aria-describedby="what-err"></textarea>
+            <span class="error-text" id="what-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe the problem in at least 10 characters</span></div>
+
+          <div class="field"><span class="field-label">Screenshot</span>
+            <div class="files" data-when="ready offline errors">
+              <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+                <div class="file-body"><b>screenshot-invoice.png</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 420 KB</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="files" data-when="uploading">
+              <div class="file" data-status="uploading" data-progress="64"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>screenshot-invoice.png</b><span class="file-meta">Uploading 64% · 420 KB</span><span class="progress"><i style="width:64%"></i></span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>screenshot-error.png</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed. Tap to retry</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+                <div class="file-body"><b>screen-recording.mov</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB</span></div>
+                <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <button class="add-file" type="button" data-open="pick">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <span class="grow"><b>Add a screenshot</b><span>JPG or PNG, up to 10 MB</span></span>
+              <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+            </button>
+          </div>
+
+          <div class="card-fill attach">
+            <label class="check"><input type="checkbox" checked>Attach device and app info</label>
+            <dl class="kv" id="info"></dl>
+          </div>
+        </div>
+
+        <div class="state" data-when="sent" style="padding-top:80px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+          <h3>Thanks, we got it</h3><p>Reference <span class="mono">FB-2026-0318</span>. We reply by email if we need more.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-busy data-when="ready errors">Send</button>
+        <button class="btn btn-primary" type="button" disabled data-when="uploading">Send</button>
+        <button class="btn btn-primary" type="button" data-toast="Saved. We send it when you are back online" data-when="offline">Send later</button>
+        <a class="btn btn-primary" href="C1101-more.html" data-when="sent">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="pick" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a screenshot">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Free text with an optional screenshot; device and app info is attached. Offline, the report is kept on
+the phone and sent when the connection is back.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const company = ZX.data.companies.find((c) => c.id === 'shree');
+  /* the same device details as S09 About */
+  const INFO = [['App version', '<span class="mono">1.0.0 (104)</span>'], ['Device', 'iPhone 15'], ['Phone software', 'iOS 18.1'],
+    ['Customer code', `<span class="mono">${company.code}</span>`]];
+  document.getElementById('info').innerHTML = INFO.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

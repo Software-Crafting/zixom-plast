@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1412 Share machine card</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.hero{display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center}
+.hero .thumb{width:88px; height:88px; border-radius:22px}
+.hero .thumb .ic{width:40px; height:40px}
+.hero h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.2}
+.hero .serial{margin:6px 0 0; font-size:var(--fs-13); color:var(--slate-700)}
+.mcard{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); box-shadow:var(--shadow-lift)}
+.mcard .top{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.mcard h4{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.mcard .mono{display:block; margin-top:3px; font-size:var(--fs-12); color:var(--slate-600)}
+.mcard .row-flex{flex-wrap:wrap; margin-top:12px}
+.mcard .kv{margin:10px 0 0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1412 Share machine card</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="share">image</button>
+  <button type="button" data-state="pdf" aria-pressed="false" data-open="share">PDF</button>
+  <button type="button" data-state="loading" aria-pressed="false" data-open="share">preparing</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="share">offline, saved</button>
+  <button type="button" data-state="unsaved" aria-pressed="false" data-open="share">offline, not saved</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C202-machine-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="nav-title">Machine</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="hero" id="hero"></div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="share" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sh-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="sh-title">Share machine card</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Card from saved data.</div>
+        <div class="banner grey" style="margin-bottom:12px" data-when="unsaved"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg><div><b>Sharing needs the internet</b>This machine is not saved on the phone yet.</div></div>
+        <div class="body">
+          <div class="mcard" id="card" data-when="ready pdf offline"></div>
+          <span class="skeleton" style="display:block; height:190px; border-radius:var(--r-lg)" data-when="loading unsaved"></span>
+          <div class="segment" role="tablist" aria-label="Format" style="margin-top:14px">
+            <button role="tab" aria-selected="true" id="fmt-image">Image</button><button role="tab" aria-selected="false" id="fmt-pdf">PDF</button>
+          </div>
+        </div>
+        <div class="btn-pair" style="margin-top:16px">
+          <button class="icon-btn" type="button" aria-label="Copy details" data-toast="Copied" data-when="ready pdf offline"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="Copy details" disabled data-when="loading unsaved"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg></button>
+          <button class="btn btn-primary" type="button" data-close data-when="ready pdf offline"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg>Share</button>
+          <button class="btn btn-primary" type="button" aria-busy="true" data-when="loading">Share</button>
+          <button class="btn btn-primary" type="button" disabled data-when="unsaved"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg>Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Sheet from More on <a href="C202-machine-detail.html">C202</a>: model, serial, warranty, AMC and site
+as an image or PDF, for colleagues or a service provider.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const contract = m.amc ? R.amc(m.amc) : null;
+  $('back').href += `?serial=${serial}`;
+  $('nav-title').textContent = m.nickname || m.model;
+  $('hero').innerHTML = `${R.thumb(m)}<div><h2>${R.esc(m.model)}</h2><p class="serial mono">${serial}</p></div>`;
+  $('facts').innerHTML = `<div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>${m.installed ? `<div><dt>Installed on</dt><dd>${R.date(m.installed)}</dd></div>` : ''}`;
+
+  $('card').innerHTML = `<div class="top">${R.thumb(m, 'sm')}<div><h4>${R.esc(m.model)}</h4><span class="mono">${serial}</span></div></div>
+    <div class="row-flex">${R.warrantyTag(m)}${R.amcTag(m) || R.tag('No AMC')}</div>
+    <dl class="kv"><div><dt>Type</dt><dd>${R.esc(m.type)}</dd></div>
+      ${m.warrantyEnd ? `<div><dt>Warranty until</dt><dd>${R.date(m.warrantyEnd)}</dd></div>` : ''}
+      ${contract ? `<div><dt>AMC</dt><dd>${R.esc(contract.plan)}, to ${R.date(contract.end)}</dd></div>` : ''}
+      <div><dt>Site</dt><dd>${R.esc(site.name)}, ${R.esc(company.city)}</dd></div></dl>`;
+
+  /* the PDF state also selects the PDF segment */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    const pdf = b.dataset.state === 'pdf';
+    $('fmt-pdf').setAttribute('aria-selected', String(pdf));
+    $('fmt-image').setAttribute('aria-selected', String(!pdf));
+    $('fmt-pdf').parentElement.style.setProperty('--i', pdf ? 1 : 0);
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1102 Profile</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.photo{display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0 4px}
+.photo .avatar{width:88px; height:88px; font-size:var(--fs-28)}
+.photo .btn-text{min-height:32px}
+.locked{display:flex; align-items:center; gap:10px; min-height:52px; padding:0 6px 0 14px; border-radius:var(--r-md);
+  background:var(--field); border:1.5px solid var(--line); font-size:var(--fs-16); color:var(--slate-500)}
+.locked .grow{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.locked .btn-text{min-height:40px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1102 Profile</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="unverified" aria-pressed="false">email not verified</button>
+  <button type="button" data-state="taken" aria-pressed="false">email already used</button>
+  <button type="button" data-state="photofail" aria-pressed="false">photo upload failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Profile</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 8px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes need the internet.</div>
+
+        <div data-when="ready unverified taken photofail offline">
+          <div class="photo">
+            <span class="avatar" id="initials"></span>
+            <button class="btn btn-text" type="button" data-open="photo-sheet" data-when="ready unverified taken photofail">Change photo</button>
+          </div>
+          <div class="files" data-when="photofail" style="margin-top:8px">
+            <div class="file" data-status="failed" data-progress="30"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>profile-photo.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed. Tap to retry</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+
+          <div class="field" style="margin-top:16px"><label for="name">Full name<span class="req">*</span></label><input class="input" id="name"></div>
+
+          <div class="field"><span class="field-label">Mobile number</span>
+            <div class="locked"><span class="grow" id="mobile"></span><a class="btn btn-text" href="../access/A19-change-mobile.html" data-when="ready unverified taken photofail">Change</a></div>
+            <span class="hint">Changing it needs an OTP.</span></div>
+
+          <div class="field" data-when="ready photofail offline"><label for="email">Email<span class="tag green" style="margin-left:8px; height:20px">Verified</span></label>
+            <input class="input" id="email" type="email"></div>
+          <div class="field" data-when="unverified"><label for="email-u">Email<span class="tag amber" style="margin-left:8px; height:20px">Not verified</span></label>
+            <input class="input" id="email-u" type="email" value="rakesh.mehta@shreepack.example">
+            <span class="hint">We sent a link. <a class="link accent" href="../access/A21-verify-email.html" style="font-size:inherit">Verify now</a></span></div>
+          <div class="field has-error" data-when="taken"><label for="email-t">Email</label>
+            <input class="input" id="email-t" type="email" value="pooja@shreepack.example" aria-invalid="true" aria-describedby="email-err">
+            <span class="error-text" id="email-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This email is used by another account.</span></div>
+
+          <div class="field"><label for="designation">Designation</label><input class="input" id="designation"></div>
+        </div>
+
+        <div class="stack" data-when="loading" style="margin-top:8px">
+          <span class="skeleton sk-circle" style="width:88px; height:88px; margin:0 auto"></span>
+          <span class="skeleton" style="height:52px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:52px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:52px; border-radius:var(--r-md)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready unverified taken photofail offline">
+        <button class="btn btn-primary" type="button" data-busy data-toast="Profile saved" data-when="ready unverified photofail">Save</button>
+        <button class="btn btn-primary" type="button" disabled data-when="taken offline">Save</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="photo-sheet" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Profile photo">
+        <div class="group">
+          <div class="title">Profile photo</div>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button class="destructive" type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg>Remove photo</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Name, photo, email and designation are edited here. Mobile changes go through OTP in
+<a href="../access/A19-change-mobile.html">A19</a>; a new email is verified in <a href="../access/A21-verify-email.html">A21</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const me = ZX.data.users.find((u) => u.id === 'rakesh');
+  const $ = (id) => document.getElementById(id);
+  $('initials').textContent = me.initials;
+  $('name').value = me.name;
+  $('mobile').textContent = me.mobile;
+  $('email').value = me.email;
+  $('designation').value = me.designation;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

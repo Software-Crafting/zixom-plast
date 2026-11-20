@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1701 Downloads</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item .end .icon-btn{width:36px; height:36px; background:var(--red-50); border:0; color:var(--red)}
+.list-item .end .icon-btn .ic{width:18px; height:18px; color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1701 Downloads</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="edit" aria-pressed="false">remove</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="remove-all">remove all</button>
+  <button type="button" data-state="storage" aria-pressed="false">storage low</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C901-documents.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Downloads</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More" data-when="ready storage offline"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready edit storage offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Downloads still open.</div>
+          <div class="banner amber" data-when="storage"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div><b>Phone storage is low</b><a href="../system/S10-storage-full.html">Free up space</a></div></div>
+          <div class="stats" id="stats"></div>
+          <div class="list" id="list"></div>
+        </div>
+        <div class="state" data-when="empty" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span>
+          <h3>Nothing downloaded</h3><p>Download a document to open it offline.</p>
+          <a class="btn btn-secondary" href="C901-documents.html">Browse documents</a>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="edit">
+        <button class="btn btn-secondary" type="button" onclick="document.querySelector('[data-state=ready]').click()">Done</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Downloads">
+        <div class="group">
+          <button type="button" data-close onclick="document.querySelector('[data-state=edit]').click()">Remove downloads</button>
+          <button class="destructive" type="button" data-open="remove-all">Remove all</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="remove-all" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ra-t">
+        <h3 id="ra-t">Remove all downloads?</h3><p id="ra-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep</button>
+          <button class="btn btn-text" type="button" style="width:100%; color:var(--red)" data-close onclick="document.querySelector('[data-state=empty]').click()">Remove all</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Documents saved on this phone for offline use. A newer version shows Update and opens the
+version list (<a href="C1702-document-versions.html">C1702</a>).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: documents saved on this phone (see C901), with the date each copy was saved */
+  const SAVED = [
+    { id: 'afm760-manual', title: 'AFM-760 operating manual', icon: 'book-open', machine: 'ZP-TF-2310', mb: 48, saved: '2026-09-14', update: true },
+    { id: 'amc-0010', title: 'AMC contract AMC-2026-0010', icon: 'seal-check', machine: 'ZP-CF-2011', mb: 0.6, saved: '2026-04-02' },
+    { id: 'afm1000-warranty', title: 'Warranty certificate', icon: 'certificate', machine: 'ZP-TF-2204', mb: 0.4, saved: '2025-12-08' },
+  ];
+  const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
+  const total = SAVED.reduce((sum, d) => sum + d.mb, 0);
+
+  $('stats').innerHTML = `<div class="stat"><b>${SAVED.length}</b><span>Documents</span></div><div class="stat"><b>${Math.round(total)} MB</b><span>On this phone</span></div>`;
+  $('ra-text').textContent = `Frees ${Math.round(total)} MB. You can download them again.`;
+  $('list').innerHTML = SAVED.map((d) => {
+    const m = R.machine(d.machine);
+    const href = d.update ? `C1702-document-versions.html?doc=${d.id}` : `C902-document-viewer.html?doc=${d.id}`;
+    return `<a class="list-item" href="${href}" data-when="ready storage offline"><span class="disc">${R.icon(d.icon)}</span><b>${R.esc(d.title)}</b>
+        <span class="sub">${R.esc(m.nickname || m.model)} · ${size(d.mb)} · ${R.date(d.saved)}</span>
+        <span class="end">${d.update ? R.tag('Update', 'blue') : ''}${R.icon('caret-right')}</span></a>
+      <div class="list-item" data-when="edit" style="cursor:default"><span class="disc">${R.icon(d.icon)}</span><b>${R.esc(d.title)}</b>
+        <span class="sub">${size(d.mb)}</span>
+        <span class="end"><button class="icon-btn" type="button" aria-label="Remove ${R.esc(d.title)}" data-toast="Download removed" onclick="this.closest('.list-item').remove()">${R.icon('trash')}</button></span></div>`;
+  }).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

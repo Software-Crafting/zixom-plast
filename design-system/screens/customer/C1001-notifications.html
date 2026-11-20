@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1001 Notification inbox</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.inbox{padding:0 12px 0 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.inbox .notif.unread .disc{background:var(--blue-50); color:var(--blue)}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.count-line .btn{min-height:0; padding:0}
+.group .list-title{margin:0 4px 8px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1001 Notification inbox</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" id="filtered-state">filtered</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="gone">record deleted</button>
+  <button type="button" data-state="morefail" aria-pressed="false">load more failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C101-home.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Notifications</h1>
+        <a class="icon-btn" href="C1002-notification-settings.html" aria-label="Notification settings"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></a>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+          <div class="chips" data-single id="types" data-when="ready morefail offline"></div>
+          <p class="count-line" data-when="ready morefail offline"><span id="unread-line"></span>
+            <button class="btn btn-text" type="button" id="mark-all" data-toast="All marked as read">Mark all as read</button></p>
+
+          <div class="stack" id="groups" data-when="ready morefail offline"></div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+
+          <div class="state" data-when="empty" style="padding-top:100px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
+            <h3>You are all caught up</h3>
+            <p>New updates will appear here.</p>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:38px; width:85%; border-radius:var(--r-pill)"></span>
+            <span class="skeleton sk-line" style="width:30%; margin:8px 4px"></span>
+            <span class="skeleton" style="height:300px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:200px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="gone" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="gone-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+        <h3 id="gone-t">We cannot find this</h3><p>It may have been removed or you may not have access.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Go back</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every notification opens the screen it is about; tap one to follow it. Filter by type, or mark all as
+read. Settings opens <a href="C1002-notification-settings.html">C1002</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  const TYPES = [['all', 'All'], ['service', 'Service'], ['payments', 'Payments'], ['warranty', 'Warranty and AMC'],
+    ['orders', 'Orders'], ['questions', 'Questions'], ['news', 'Zixom news']];
+  /* where each event in ZX.data.activity opens (spec section 12) */
+  const ACTIVITY = {
+    'Engineer on the way': ['service', 'C516-track.html', true],
+    'Estimate shared': ['service', 'C509-estimate.html', true],
+    'Engineer assigned': ['service', 'C508-request-detail.html?ticket=TKT-2026-0123', false],
+    'Order dispatched': ['orders', 'C708-order-detail.html', false],
+    'Payment received': ['payments', 'C805-payment-success.html', false],
+  };
+  const overdue = data.invoices.find((i) => i.status === 'overdue');
+  const expired = data.amc.find((a) => a.status === 'expired');
+  const expiring = data.amc.find((a) => a.status === 'expiring');
+  const name = (serial) => { const m = R.machine(serial); return m.nickname || m.model; };
+  const notice = data.announcements[0];
+
+  /* Sample data not in data.js yet (move there): the rest of the inbox, spec section 16 asks for 12 or more, 4 unread, one older than 30 days */
+  const EXTRA = [
+    { icon: 'receipt', title: 'Payment overdue', sub: `${overdue.number} · ${R.money(R.balance(overdue))}`, when: '2026-11-23T09:00', type: 'payments', href: `C802-invoice-detail.html?invoice=${overdue.number}`, unread: true },
+    { icon: 'tray', title: 'Request received', sub: 'TKT-2026-0120 · Line 1 former', when: '2026-11-23T09:12', type: 'service', href: 'C508-request-detail.html?ticket=TKT-2026-0120' },
+    { icon: 'chat-text', title: `${data.support.agent} replied`, sub: 'QRY-2026-0031 · GSTIN missing on invoice', when: '2026-11-23T08:40', type: 'questions', href: 'C603-thread.html?q=QRY-2026-0031', unread: true },
+    { icon: 'check-circle', title: 'Work completed, please confirm', sub: 'TKT-2026-0128 · Line 1 former', when: '2026-11-21T16:55', type: 'service', href: 'C513-confirm-completion.html' },
+    { icon: 'seal-check', title: 'AMC expired', sub: `${expired.number} · ${name(expired.machines[0])}`, when: '2026-11-20T09:00', type: 'warranty', href: 'C405-renew-amc.html' },
+    { icon: 'info', title: 'Claim needs more information', sub: 'WCL-2026-0042 · Reply by 27 Nov', when: '2026-11-20T15:30', type: 'warranty', href: 'C308-claim.html' },
+    { icon: 'megaphone', title: notice.title, sub: 'Zixom news', when: `${notice.when}T10:00`, type: 'news', href: 'C1303-announcement.html' },
+    { icon: 'shield-warning', title: 'Warranty ends in 30 days', sub: `${name('ZP-TF-2204')} · AFM-1000`, when: '2026-11-05T09:00', type: 'warranty', href: 'C302-warranty-details.html' },
+    { icon: 'calendar-check', title: 'AMC visit tomorrow', sub: `${name(expiring.machines[0])} · ${expiring.number}`, when: '2026-10-19T09:00', type: 'warranty', href: 'C406-amc-visits.html' },
+  ];
+  const items = [
+    ...data.activity.map((a) => ({ ...a, type: ACTIVITY[a.title][0], href: ACTIVITY[a.title][1], unread: ACTIVITY[a.title][2] })),
+    ...EXTRA,
+  ].sort((a, b) => b.when.localeCompare(a.when));
+
+  const row = (n) => `<a class="notif${n.unread ? ' unread' : ''}" href="${n.href}" data-type="${n.type}">
+    <span class="disc">${R.icon(n.icon)}</span><span><b>${R.esc(n.title)}</b><p>${R.esc(n.sub)}</p></span><time>${R.ago(n.when)}</time></a>`;
+  const group = (title, list) => `<div class="group"><p class="list-title">${title}</p><div class="inbox">${list.map(row).join('')}</div></div>`;
+  $('groups').innerHTML = group('Today', items.filter((n) => n.when.startsWith(data.today)))
+    + group('Earlier', items.filter((n) => !n.when.startsWith(data.today)));
+
+  const unreadLine = () => {
+    const n = document.querySelectorAll('#groups .notif.unread').length;
+    $('unread-line').innerHTML = n ? `<b>${n} unread</b>` : 'All read';
+    $('mark-all').hidden = !n;
+  };
+  unreadLine();
+  $('mark-all').addEventListener('click', () => {
+    document.querySelectorAll('#groups .notif.unread').forEach((el) => el.classList.remove('unread'));
+    unreadLine();
+  });
+
+  $('types').innerHTML = TYPES.map(([key, label], i) => `<button class="chip outline" type="button" data-type="${key}" aria-pressed="${i === 0}">${label}</button>`).join('');
+  const filter = (type) => {
+    document.querySelectorAll('#groups .notif').forEach((el) => { el.hidden = type !== 'all' && el.dataset.type !== type; });
+    document.querySelectorAll('#groups .group').forEach((g) => { g.hidden = !g.querySelector('.notif:not([hidden])'); });
+  };
+  $('types').addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-type]');
+    if (chip) filter(chip.dataset.type);
+  });
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    const type = b.id === 'filtered-state' ? 'payments' : 'all';
+    $('types').querySelector(`[data-type="${type}"]`).click();
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

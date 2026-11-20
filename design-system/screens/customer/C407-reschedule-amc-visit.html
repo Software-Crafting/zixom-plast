@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C407 Reschedule an AMC visit</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.visit{display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:center; padding:14px; border-radius:var(--r-lg); background:var(--field)}
+.visit .disc{grid-row:1 / span 2; width:44px; height:44px; display:grid; place-items:center; border-radius:50%; background:#fff; color:var(--slate-800)}
+.visit b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.visit span{font-size:var(--fs-12); color:var(--text-muted)}
+.reasons{flex-wrap:wrap; overflow:visible; margin:0; padding:0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C407 Reschedule an AMC visit</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="pending" aria-pressed="false">pending approval</button>
+  <button type="button" data-state="close" aria-pressed="false">date too close</button>
+  <button type="button" data-state="noslots" aria-pressed="false">no slots</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C406-amc-visits.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Reschedule visit</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready sending pending close noslots offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send.</div>
+          <div class="visit">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+            <b id="visit-when"></b><span id="visit-meta"></span>
+          </div>
+
+          <div class="banner green" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+            <div><b>Waiting for Zixom to approve</b><span id="pending-text"></span></div></div>
+          <div class="banner amber" data-when="close"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>Too close to the visit</b>Changes need 48 hours notice. Call Zixom.</div></div>
+          <div class="banner amber" data-when="noslots"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg>
+            <div><b>No free slots in the next 2 weeks</b>Ask Zixom to propose a date.</div></div>
+
+          <div data-when="ready sending offline">
+            <div class="field-label">New date · December 2026</div>
+            <div class="dates" data-single id="dates"></div>
+            <div class="field-label" style="margin-top:14px">Time window</div>
+            <div class="slots" data-single>
+              <button class="slot" type="button" aria-pressed="true">9 to 12</button>
+              <button class="slot" type="button" aria-pressed="false">12 to 3</button>
+              <button class="slot" type="button" aria-pressed="false" disabled>3 to 6</button>
+            </div>
+          </div>
+
+          <div data-when="ready sending offline noslots">
+            <div class="field-label">Reason</div>
+            <div class="chips reasons" data-single>
+              <button class="chip outline" type="button" aria-pressed="true">Production run</button>
+              <button class="chip outline" type="button" aria-pressed="false">Plant closed</button>
+              <button class="chip outline" type="button" aria-pressed="false">Contact not available</button>
+              <button class="chip outline" type="button" aria-pressed="false">Other</button>
+            </div>
+            <div class="field" style="margin-top:14px"><label for="note">Note for Zixom<span class="counter">0 / 300</span></label>
+              <textarea class="textarea" id="note" placeholder="Optional" style="min-height:84px"></textarea></div>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:72px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:45%"></span>
+          <span class="skeleton" style="height:64px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton" style="height:48px"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton" style="height:84px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load free slots. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready" data-goto="sending">Send request</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Send request</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Send request</button>
+        <a class="btn btn-primary" href="C406-amc-visits.html" data-when="pending">View schedule</a>
+        <a class="btn btn-primary" href="tel:+919991910097" data-when="close"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom 24x7</a>
+        <button class="btn btn-primary" type="button" data-when="noslots" data-goto="pending">Ask Zixom to propose</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Ask to move a planned preventive visit. Needs 48 hours notice; the old date stays until Zixom approves.
+With no free slots, Zixom proposes a date.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: the planned visit being moved (C406) and the free dates offered */
+  const VISIT = { amc: 'AMC-2026-0010', date: '2026-12-12', slot: '9 to 12 AM', engineer: 'sandeep' };
+  const DATES = ['2026-12-14', '2026-12-15', '2026-12-16', '2026-12-17', '2026-12-18', '2026-12-19', '2026-12-20'];
+  const PICKED = '2026-12-15';
+  const m = R.machine(R.amc(VISIT.amc).machines[0]);
+
+  $('visit-when').textContent = `${R.dayDate(VISIT.date)}, ${VISIT.slot}`;
+  $('visit-meta').innerHTML = `${R.esc(m.nickname || m.model)} · ${R.esc(R.engineer(VISIT.engineer).name)}`;
+  $('pending-text').textContent = `You asked for ${R.dayDate(PICKED)}, 9 to 12. The current visit stays until then.`;
+  $('dates').innerHTML = DATES.map((d) => { const [day, num] = R.dayDate(d).split(' ');
+    return `<button class="date" type="button" aria-pressed="${d === PICKED}"${day === 'Sun' ? ' disabled' : ''}><span>${day}</span><b>${num}</b></button>`; }).join('');
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+    if (go.dataset.goto === 'sending') window.setTimeout(() => document.querySelector('.plate-states [data-state="pending"]').click(), 900);
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

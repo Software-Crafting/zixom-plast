@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1002 Notification settings</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-title:first-child{margin-top:0}
+.list label.list-item{cursor:default}
+.banner .btn{display:flex; width:fit-content; margin-top:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1002 Notification settings</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="permoff" aria-pressed="false">phone permission off</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1001-notifications.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Notification settings</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div data-when="ready permoff offline">
+          <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes need the internet.</div>
+          <div class="banner amber" style="margin-bottom:14px" data-when="permoff"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+            <div><b>Notifications are off</b>Turn them on to hear about engineer visits and payments.
+              <button class="btn btn-primary btn-sm" type="button" data-toast="Opening Settings">Open Settings</button></div></div>
+
+          <p class="list-title">Send to</p>
+          <div class="list" id="channels"></div>
+
+          <p class="list-title">Updates</p>
+          <div class="list" id="categories"></div>
+
+          <p class="list-title">Always on</p>
+          <div class="list" id="critical"></div>
+
+          <p class="list-title">Quiet hours</p>
+          <div class="list" id="quiet"></div>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-line" style="width:25%; margin:4px"></span>
+          <span class="skeleton" style="height:122px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:25%; margin:14px 4px 4px"></span>
+          <span class="skeleton" style="height:300px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Push and email, by category. Payment due and safety alerts cannot be turned off. Quiet hours hold
+customer notifications from 9 PM to 7 AM, except Machine down updates.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const me = data.users.find((u) => u.id === 'rakesh');
+
+  /* rows are [icon, title, sub, on, locked] */
+  const CHANNELS = [['device-mobile', 'Push', 'This phone', true], ['envelope-simple', 'Email', me.email, true]];
+  const CATEGORIES = [
+    ['wrench', 'Service updates', 'Requests, visits, estimates', true],
+    ['shield-check', 'Warranty and AMC reminders', '60, 30 and 7 days before', true],
+    ['wallet', 'Payments', 'Receipts and failed payments', true],
+    ['package', 'Orders', 'Dispatch and delivery', true],
+    ['chat-text', 'Question replies', 'From Zixom support', true],
+    ['megaphone', 'Announcements', 'News from Zixom', false],
+  ];
+  const CRITICAL = [['receipt', 'Payment due', 'Before and on the due date', true, true], ['warning', 'Safety alerts', 'Notices about your machines', true, true]];
+  const QUIET = [['clock', 'Quiet hours', '9 PM to 7 AM. Machine down updates still come', true]];
+
+  const row = ([iconName, title, sub, on, locked]) => `<label class="list-item"><span class="disc">${R.icon(iconName)}</span>
+    <b>${R.esc(title)}</b><span class="sub">${R.esc(locked ? `${sub} · Always on` : sub)}</span>
+    <span class="end"><span class="switch"><input type="checkbox"${on ? ' checked' : ''}${locked ? ' disabled' : ''} aria-label="${R.esc(title)}"><span></span></span></span></label>`;
+  $('channels').innerHTML = CHANNELS.map(row).join('');
+  $('categories').innerHTML = CATEGORIES.map(row).join('');
+  $('critical').innerHTML = CRITICAL.map(row).join('');
+  $('quiet').innerHTML = QUIET.map(row).join('');
+
+  /* offline: switches are read only */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.switch input').forEach((input) => {
+      const locked = CRITICAL.some(([, title]) => input.getAttribute('aria-label') === title);
+      input.disabled = locked || b.dataset.state === 'offline';
+    });
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

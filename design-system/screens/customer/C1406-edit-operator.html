@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1406 Add or edit operator</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1406 Add or edit operator</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="modes"><span>mode</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="invalid" aria-pressed="false">invalid mobile</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">mobile already added</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="discard">unsaved changes</button>
+  <button type="button" data-state="changed" aria-pressed="false">changed by someone else</button>
+  <button type="button" data-state="saving" aria-pressed="false">saving</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <button class="icon-btn" type="button" data-open="discard" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></button>
+        <h1 id="nav-title">Add operator</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved when you are back online.</div>
+        <div class="banner amber" style="margin-bottom:16px" data-when="changed"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>
+          <div><b>This was updated</b>Refresh to see the latest. <button class="link-btn" type="button" data-toast="Showing the latest version">Refresh</button></div></div>
+        <p class="card-sub" style="margin:0 0 16px" id="machine-line"></p>
+
+        <div class="field">
+          <label for="name">Full name<span class="req">*</span></label>
+          <input class="input" id="name" autocomplete="name">
+        </div>
+        <div class="field" data-when="ready changed saving offline">
+          <label for="mobile">Mobile number<span class="req">*</span></label>
+          <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile" inputmode="numeric" maxlength="11"></div>
+        </div>
+        <div class="field has-error" data-when="invalid duplicate">
+          <label for="mobile-bad">Mobile number<span class="req">*</span></label>
+          <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile-bad" inputmode="numeric" aria-invalid="true" aria-describedby="mobile-err"></div>
+          <span class="error-text" id="mobile-err"></span>
+        </div>
+        <div class="field">
+          <span class="field-label">Shift<span class="req">*</span></span>
+          <div class="chips" data-single id="shifts"></div>
+        </div>
+        <div class="field">
+          <label for="notes">Notes<span class="counter">Optional</span></label>
+          <textarea class="textarea" id="notes" rows="3" maxlength="300" placeholder="For example, speaks Gujarati and Hindi"></textarea>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready changed offline" data-toast="Operator saved" id="save">Save</button>
+        <button class="btn btn-primary" type="button" data-when="invalid duplicate" disabled>Save</button>
+        <button class="btn btn-primary" type="button" data-when="saving" aria-busy="true">Save</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="discard" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="discard-t">
+        <h3 id="discard-t">Discard this form?</h3><p>Your changes will be lost.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep editing</button>
+          <a class="btn btn-text" id="discard-yes" href="C1405-operators.html" style="color:var(--red); width:100%">Discard</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Add, or edit with <code>?operator=</code>. A mobile number can be listed once per machine.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* the sample operators from C1405 */
+  const OPERATORS = [
+    { name: 'Mahesh Patel', mobile: '98790 41236', shift: 'Morning', notes: 'Shift lead. Knows the mould change routine.' },
+    { name: 'Suresh Rathod', mobile: '99250 67784', shift: 'Evening', notes: '' },
+    { name: 'Dinesh Solanki', mobile: '90990 15502', shift: 'Night', notes: '' },
+  ];
+  const SHIFTS = ['Morning', 'Evening', 'Night', 'General'];
+  const NEW = { name: 'Kiran Desai', mobile: '97277 30418', shift: 'General', notes: '' };
+
+  const params = new URLSearchParams(location.search);
+  const serial = params.get('serial') || 'ZP-TF-2310';
+  const op = params.has('operator') ? OPERATORS[Number(params.get('operator'))] : null;
+  const m = R.machine(serial);
+  const q = `?serial=${serial}`;
+  const form = op || NEW;
+  $('discard-yes').href += q;
+  $('save').addEventListener('click', () => setTimeout(() => { location.href = `C1405-operators.html${q}`; }, 900));
+  $('machine-line').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${serial}</span>`;
+  $('modes').insertAdjacentHTML('beforeend', `<button type="button" aria-pressed="${!op}" onclick="location.search='${q}'">add</button>
+    <button type="button" aria-pressed="${Boolean(op)}" onclick="location.search='${q}&operator=0'">edit</button>`);
+
+  $('nav-title').textContent = op ? 'Edit operator' : 'Add operator';
+  $('name').value = form.name;
+  $('mobile').value = form.mobile;
+  $('notes').value = form.notes;
+  $('shifts').innerHTML = SHIFTS.map((s) => `<button class="chip outline" type="button" aria-pressed="${s === form.shift}">${s}</button>`).join('');
+
+  const err = (text) => `${R.icon('warning-circle', 'ic-16')}${text}`;
+  const states = {
+    invalid: ['97277 304', err('Enter a 10 digit mobile number')],
+    duplicate: [OPERATORS[1].mobile, err(`Already added for this machine as ${OPERATORS[1].name}`)],
+  };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    const s = states[b.dataset.state];
+    if (!s) return;
+    [$('mobile-bad').value, $('mobile-err').innerHTML] = s;
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

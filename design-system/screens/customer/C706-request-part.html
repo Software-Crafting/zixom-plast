@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C706 Request a part</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+.qty{display:flex; align-items:center; justify-content:space-between}
+.sent{padding-top:56px}
+.sent .card-fill{width:100%; margin-top:20px; padding:2px 16px; text-align:left}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C706 Request a part</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">duplicate</button>
+  <button type="button" data-state="uploading" aria-pressed="false">uploading</button>
+  <button type="button" data-state="draft" aria-pressed="false">draft saved</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="submitted" aria-pressed="false">sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C701-parts.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Request a part</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div data-when="ready errors duplicate uploading draft submitting offline">
+          <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your form is kept.</div>
+          <div class="banner grey" style="margin-bottom:14px" data-when="draft"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg><div><b>Draft saved</b>Pick up where you left off.</div></div>
+          <div class="banner amber" style="margin-bottom:14px" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg>
+            <div><b>You already asked for this part</b><span id="dup"></span></div></div>
+          <div class="error-summary" role="alert" style="margin-bottom:14px" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#part-bad">Enter the part name or number</a></li><li><a href="#site-bad">Choose a delivery address</a></li></ul></div>
+
+          <div class="field"><span class="field-label">Machine<span class="req">*</span></span>
+            <button class="select" type="button" data-open="machine"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg><span class="value" id="machine-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+
+          <div class="field" data-when="ready duplicate uploading draft submitting offline"><label for="part">Part name or number<span class="req">*</span></label>
+            <input class="input" id="part"></div>
+          <div class="field has-error" data-when="errors"><label for="part-bad">Part name or number<span class="req">*</span></label>
+            <input class="input" id="part-bad" aria-invalid="true" aria-describedby="part-err">
+            <span class="error-text" id="part-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the part name or number</span></div>
+
+          <div class="field"><span class="field-label">Photo of the old part<span class="counter">Recommended</span></span>
+            <div class="files" data-when="ready duplicate draft submitting offline">
+              <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>old-pid-controller.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 1.6 MB</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="files" data-when="uploading">
+              <div class="file" data-status="uploading" data-progress="58"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>old-pid-controller.jpg</b><span class="file-meta">Uploading 58% · 1.6 MB</span><span class="progress"><i style="width:58%"></i></span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+                <div class="file-body"><b>nameplate.HEIC</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB. Choose a smaller file</span></div>
+                <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <button class="add-file" type="button" data-open="photo" data-when="errors">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+              <span class="grow"><b>Add a photo</b><span>Helps Zixom find the right part</span></span>
+              <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg></button>
+          </div>
+
+          <div class="field qty"><span class="field-label" style="margin:0">Quantity<span class="req">*</span></span>
+            <span class="stepper"><button type="button" data-step="-1" aria-label="Less"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output value="2" id="qty">2</output><button type="button" data-step="1" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span></div>
+
+          <div class="field"><span class="field-label">Urgency<span class="req">*</span></span>
+            <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">Normal</button><button class="chip outline" type="button" aria-pressed="false">Urgent</button><button class="chip outline" type="button" aria-pressed="false">Machine down</button></div></div>
+
+          <div class="field" data-when="ready duplicate uploading draft submitting offline"><span class="field-label">Delivery address<span class="req">*</span></span>
+            <button class="select" type="button" data-open="site"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value" id="site-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+          <div class="field has-error" data-when="errors"><span class="field-label" id="site-bad">Delivery address<span class="req">*</span></span>
+            <button class="select" type="button" data-open="site" aria-invalid="true"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value placeholder">Choose an address</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+            <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a delivery address</span></div>
+        </div>
+
+        <div class="state sent" data-when="submitted">
+          <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Request sent</h3>
+          <p>Zixom quotes within 1 working day.</p>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="sent"></dl></div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="#" data-when="ready draft errors" onclick="document.querySelector('[data-state=submitting]').click()">Submit request</a>
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr" data-when="duplicate">
+          <a class="btn btn-secondary" id="dup-open" href="C708-order-detail.html">View request</a>
+          <button class="btn btn-primary" type="button" onclick="document.querySelector('[data-state=submitting]').click()">Send anyway</button></div>
+        <button class="btn btn-primary" type="button" disabled data-when="uploading offline">Submit request</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit request</button>
+        <a class="btn btn-primary" id="view" href="C708-order-detail.html" data-when="submitted">View request</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="machine" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="m-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="m-t">Machine</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Machines" id="machines"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="site" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="s-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="s-t">Delivery address</h3><a class="btn btn-text" href="C1507-add-site.html">Add site</a></div>
+        <div class="body" role="radiogroup" aria-label="Sites" id="sites"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a photo">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">For parts with no price or not in the catalogue; opened from a part with <code>?part=</code>. Leaving
+keeps a draft; the same part asked twice shows the earlier request.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: this request becomes ORD-2026-0205 (Submitted) in C707 and C708 */
+  const REQUEST = { number: 'ORD-2026-0205', machine: 'ZP-CF-2011', sent: '2026-11-23T10:15' };
+  const DEFAULT_PART = 'ZP-SP-004';
+
+  const p = data.parts.find((x) => x.number === (new URLSearchParams(location.search).get('part') || DEFAULT_PART));
+  const m = R.machine(REQUEST.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const choice = (lead, title, sub, checked) => `<button class="choice" role="radio" aria-checked="${checked}" type="button" data-close>
+    <span class="disc">${lead}</span><b>${R.esc(title)}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+
+  $('part').value = p ? `${p.name}, ${p.number}` : '';
+  $('machine-value').textContent = m.nickname || m.model;
+  $('site-value').textContent = site.name;
+  $('machines').innerHTML = data.machines.filter((x) => x.company === company.id && x.status !== 'pending')
+    .map((x) => choice(R.icon('factory'), x.nickname || x.model, x.serial, x.serial === m.serial)).join('');
+  $('sites').innerHTML = company.sites.map((s) => choice(R.icon('map-pin'), s.name, `${s.address} ${s.pincode}`, s.id === site.id)).join('');
+  $('dup').innerHTML = `<span class="mono">${REQUEST.number}</span>, sent ${R.dayDate(REQUEST.sent)}.`;
+  $('dup-open').href = `C708-order-detail.html?order=${REQUEST.number}`;
+  $('view').href = `C708-order-detail.html?order=${REQUEST.number}`;
+  $('sent').innerHTML = `<div><dt>Request</dt><dd class="mono">${REQUEST.number}</dd></div>
+    <div><dt>Part</dt><dd>${R.esc(p ? p.name : '')}</dd></div><div><dt>Quantity</dt><dd>${$('qty').value}</dd></div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C302 Warranty details</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; color:inherit; text-decoration:none}
+.mrow b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.cover{padding:16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
+.cover .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.cover h3{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.cover .big{margin:10px 0 2px; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.cover .big small{font:400 var(--fs-14) var(--font-body); color:var(--text-muted)}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.ticks{margin:0; padding:0; list-style:none}
+.ticks li{display:flex; gap:10px; align-items:flex-start; padding:7px 0; font-size:var(--fs-14); line-height:1.4; color:var(--text)}
+.ticks .ic{width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--green)}
+.ticks.no .ic{color:var(--red)}
+.list-item .disc.pdf{background:var(--red-50); color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C302 Warranty details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machine-switch"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="notactive" aria-pressed="false">not yet activated</button>
+  <button type="button" data-state="nocert" aria-pressed="false">certificate missing</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C301-warranty.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Warranty</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body" data-when="ready notactive nocert offline"></div>
+
+        <div class="stack" data-when="loading">
+          <div class="row-flex"><span class="skeleton" style="width:44px; height:44px"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <span class="skeleton" style="height:170px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load the warranty.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" id="actions" data-when="ready nocert offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Warranty of one machine: dates, what is and is not covered, certificate and its claims. Open with
+<code>?serial=ZP-TF-2204</code>; an expired warranty offers a paid service request instead of a claim.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_SERIAL = 'ZP-TF-2204';
+
+  /* Sample data not in data.js yet (move there): warranty terms (spec section 2 placeholder rules) and claims */
+  const WARRANTY = { type: 'Standard', months: 12, cover: 'Parts and labour' };
+  const COVERED = ['Parts with a manufacturing defect', 'Engineer visits and labour', 'Heaters, PID controllers and timers', 'Chain drive, vacuum pump, PLC and HMI'];
+  const NOT_COVERED = ['Misuse or running outside the manual', 'Consumables: moulds, blades, belts, filters', 'Damage from the power supply', 'Repairs by anyone other than Zixom'];
+  const CLAIMS = [
+    { number: 'WCL-2026-0040', status: 'submitted', machine: 'ZP-TF-2310', submitted: '2026-11-22T15:10' },
+    { number: 'WCL-2026-0041', status: 'under-review', machine: 'ZP-TF-2310', submitted: '2026-11-20T11:30' },
+    { number: 'WCL-2026-0042', status: 'info-requested', machine: 'ZP-TF-2204', submitted: '2026-11-18T09:40' },
+    { number: 'WCL-2026-0043', status: 'approved', machine: 'ZP-TF-2204', submitted: '2026-11-22T18:30' },
+    { number: 'WCL-2026-0044', status: 'rejected', machine: 'ZP-TF-2310', submitted: '2026-11-16T14:05' },
+    { number: 'WCL-2026-0045', status: 'resolved', machine: 'ZP-TF-2310', submitted: '2026-11-16T09:20' },
+    { number: 'WCL-2026-0046', status: 'cancelled', machine: 'ZP-TF-2204', submitted: '2026-11-10T10:00' },
+  ];
+  const CLAIM_STATUS = {
+    'submitted': ['Submitted', 'blue'], 'under-review': ['Under review', 'blue'], 'info-requested': ['Information requested', 'amber'],
+    'approved': ['Approved', 'green'], 'rejected': ['Rejected', 'red'], 'resolved': ['Resolved', 'green'], 'cancelled': ['Cancelled', ''],
+  };
+
+  const serial = new URLSearchParams(location.search).get('serial') || DEFAULT_SERIAL;
+  const withWarranty = data.machines.filter((x) => x.warrantyEnd);
+  $('machine-switch').insertAdjacentHTML('beforeend', withWarranty.map((x) => `<button type="button" data-serial="${x.serial}"
+    aria-pressed="${x.serial === serial}">${R.esc(x.nickname || x.model)}</button>`).join(''));
+  $('machine-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-serial]');
+    if (b) location.search = `?serial=${b.dataset.serial}`;
+  });
+
+  const m = R.machine(serial);
+  const left = R.daysFromToday(m.warrantyEnd);
+  const active = left >= 0;
+  const ok = 'ready nocert offline';
+
+  const head = `<a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+      <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)} · <span class="mono" style="display:inline">${m.serial}</span></span></span></a>`;
+
+  const banners = `<div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>
+    ${active ? '' : `<div class="banner grey" data-when="${ok}">${R.icon('shield-warning')}<div><b>Warranty ended on ${R.date(m.warrantyEnd)}</b>Repairs are chargeable. ${m.amc && R.amc(m.amc).status !== 'expired' ? 'Covered visits come from your AMC.' : ''}</div></div>`}
+    <div class="banner" data-when="notactive">${R.icon('hourglass')}<div><b>Warranty not active yet</b>It starts on the commissioning date, after installation.</div></div>`;
+
+  const cover = `<div class="cover" data-when="${ok}">
+      <div class="top"><h3>${WARRANTY.type} warranty</h3>${R.warrantyTag(m)}</div>
+      <p class="big">${active ? `${left} <small>days left</small>` : `<small>Ended on</small> ${R.date(m.warrantyEnd)}`}</p>
+      <dl class="kv" style="margin:0">
+        <div><dt>Starts</dt><dd>${R.date(m.commissioned)}</dd></div>
+        <div><dt>Ends</dt><dd>${R.date(m.warrantyEnd)}</dd></div>
+        <div><dt>Covers</dt><dd>${WARRANTY.cover}</dd></div>
+      </dl></div>
+    <div class="cover" data-when="notactive">
+      <div class="top"><h3>${WARRANTY.type} warranty</h3>${R.tag('Not active', '', 'hourglass')}</div>
+      <dl class="kv" style="margin:8px 0 0"><div><dt>Length</dt><dd>${WARRANTY.months} months</dd></div><div><dt>Covers</dt><dd>${WARRANTY.cover}</dd></div></dl></div>`;
+
+  const ticks = (items, icon, cls = '') => `<ul class="ticks ${cls}">${items.map((t) => `<li>${R.icon(icon)}${R.esc(t)}</li>`).join('')}</ul>`;
+  const coverage = `<div class="sec"><h2>Covered</h2>${ticks(COVERED, 'check-circle')}</div>
+    <div class="sec"><h2>Not covered</h2>${ticks(NOT_COVERED, 'circle-x', 'no')}</div>`;
+
+  const docs = `<div class="sec"><h2>Documents</h2><div class="list">
+      <a class="list-item" href="#" data-toast="Downloading certificate" data-when="ready offline"><span class="disc pdf">${R.icon('certificate')}</span>
+        <b>Warranty certificate</b><span class="sub">PDF · 180 KB</span><span class="end">${R.icon('download-simple')}</span></a>
+      <div class="list-item" style="cursor:default" data-when="nocert notactive"><span class="disc">${R.icon('file-x')}</span>
+        <b>Certificate not available yet</b><span class="sub">Zixom is preparing it</span></div>
+      <a class="list-item" href="C1109-legal.html"><span class="disc">${R.icon('file-text')}</span><b>Warranty terms</b><span class="end">${R.icon('caret-right')}</span></a>
+    </div></div>`;
+
+  const mine = CLAIMS.filter((c) => c.machine === m.serial).sort((a, b) => b.submitted.localeCompare(a.submitted));
+  const claims = mine.length ? `<div class="sec" data-when="${ok}"><h2>Claims</h2><div class="list">${mine.map((c) => `<a class="list-item" href="C308-claim.html?claim=${c.number}">
+      <span class="disc">${R.icon('shield-check')}</span><b class="mono">${c.number}</b><span class="sub">${R.tag(...CLAIM_STATUS[c.status])} · ${R.dayDate(c.submitted)}</span>
+      <span class="end">${R.icon('caret-right')}</span></a>`).join('')}</div></div>` : '';
+
+  $('body').innerHTML = head + banners + cover + coverage + docs + claims;
+  $('actions').innerHTML = active
+    ? `<a class="btn btn-primary" href="C303-claim-machine.html?machine=${m.serial}">${R.icon('shield-check')}Claim warranty</a>`
+    : `<a class="btn btn-primary" href="C503-raise-machine.html?machine=${m.serial}">${R.icon('wrench')}Raise paid service</a>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

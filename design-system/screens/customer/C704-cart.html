@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C704 Cart</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.citem{display:grid; grid-template-columns:44px 1fr auto; column-gap:12px; row-gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.citem.warn{border-color:rgba(168,100,0,.35); background:#FFFCF6}
+.citem a{display:block; color:var(--slate-900); text-decoration:none; font-size:var(--fs-14); font-weight:600; line-height:1.3}
+.citem .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.citem .amt{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap}
+.citem .controls{grid-column:1 / -1; display:flex; align-items:center; gap:8px}
+.citem .controls .btn-text{margin-left:auto; min-height:0; padding:0 4px; font-size:var(--fs-13)}
+.citem .note{grid-column:1 / -1; display:flex; align-items:center; gap:8px; margin:0; font-size:var(--fs-13); color:var(--amber)}
+.citem .note .btn{margin-left:auto}
+.citem .error-text{grid-column:1 / -1; margin:0}
+.money small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C704 Cart</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="changed" aria-pressed="false">price changed</button>
+  <button type="button" data-state="limit" aria-pressed="false">above stock</button>
+  <button type="button" data-state="removed" aria-pressed="false">item removed</button>
+  <button type="button" data-state="cleared" aria-pressed="false">cleared after 30 days</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C701-parts.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Cart</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready changed limit removed offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Checkout needs the internet.</div>
+          <div class="banner grey" data-when="removed"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div><b>1 item removed</b><span id="removed-text"></span></div></div>
+          <div class="stack-sm" id="items"></div>
+          <div class="money" id="summary"></div>
+          <div>
+            <p class="list-title">Saved for later</p>
+            <div class="stack-sm" id="saved"></div>
+          </div>
+        </div>
+
+        <div class="banner grey" data-when="cleared" style="margin-bottom:8px"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg><div>Your cart was cleared after 30 days.</div></div>
+        <div class="state" data-when="empty cleared" style="padding-top:70px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shopping-cart"/></svg></span>
+          <h3>Your cart is empty</h3><p>Parts you add show here.</p>
+          <a class="btn btn-primary" href="C701-parts.html">Browse parts</a>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load your cart. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready changed limit removed offline">
+        <a class="btn btn-primary" href="C705-checkout.html" data-when="ready removed">Checkout</a>
+        <button class="btn btn-primary" type="button" disabled data-when="changed limit offline">Checkout</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Saved per company. A changed price or stock blocks Checkout until the row is updated (EC-44);
+parts with price on request go to a quote, never the cart.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: the cart (part, quantity), a newer price for the relay and a part that left the catalogue */
+  const DIGITAL_GAUGE = { number: 'ZP-SP-006', name: 'Digital vacuum gauge', price: 1450, stock: 'in' };
+  const CART = [['ZP-SP-001', 2], ['ZP-SP-002', 1]];
+  const SAVED = ['ZP-SP-003'];
+  const NEW_PRICE = { 'ZP-SP-002': 1310 };
+  const STOCK_LEFT = 3;
+  const part = (n) => (n === DIGITAL_GAUGE.number ? DIGITAL_GAUGE : data.parts.find((p) => p.number === n));
+
+  $('removed-text').textContent = `${DIGITAL_GAUGE.name} is no longer available.`;
+  const stepper = (qty) => `<span class="stepper"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button><output value="${qty}">${qty}</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span>`;
+  const remove = `<button class="icon-btn sm" type="button" aria-label="Remove" data-toast="Removed from cart">${R.icon('trash', 'ic-18')}</button>`;
+
+  const lines = [...CART, [DIGITAL_GAUGE.number, 1]];
+  $('items').innerHTML = lines.map(([n, qty]) => {
+    const p = part(n);
+    const changed = NEW_PRICE[n];
+    const when = n === DIGITAL_GAUGE.number ? 'ready changed limit offline' : 'ready changed limit removed offline';
+    return `<div class="citem" data-when="${when}" data-part="${n}" data-rate="${p.price}">
+        <span class="thumb sm">${R.icon('package')}</span>
+        <span><a href="C703-part-detail.html?part=${n}">${R.esc(p.name)}</a><span class="mono">${n}</span></span>
+        <span class="amt">${R.money(p.price * qty)}</span>
+        <div class="controls">${stepper(qty)}<button class="btn btn-text" type="button" data-toast="Saved for later">Save for later</button>${remove}</div>
+        ${changed ? `<p class="note" data-when="changed">${R.icon('warning', 'ic-16')}Now ${R.money(changed)} each<button class="btn btn-soft btn-sm" type="button" data-toast="Price updated">Update</button></p>
+          <span class="error-text" data-when="limit">${R.icon('warning-circle', 'ic-16')}Only ${STOCK_LEFT} available</span>` : ''}
+      </div>`;
+  }).join('');
+
+  $('saved').innerHTML = SAVED.map(part).map((p) => `<div class="citem">
+      <span class="thumb sm">${R.icon('package')}</span>
+      <span><a href="C703-part-detail.html?part=${p.number}">${R.esc(p.name)}</a><span class="mono">${p.number}</span></span>
+      ${R.stockTag(p.stock)}
+      <div class="controls"><button class="btn btn-soft btn-sm" type="button" disabled>Move to cart</button>${remove}</div></div>`).join('');
+
+  /* totals follow the steppers; ui.js changes the value after this handler, so read it on the next tick */
+  const screen = document.querySelector('.screen');
+  const update = () => {
+    const shown = [...document.querySelectorAll('#items .citem')].filter((row) => !row.hidden);
+    const rows = shown.map((row) => {
+      const qty = Number(row.querySelector('output').value);
+      const rate = Number(row.dataset.rate);
+      row.querySelector('.amt').textContent = R.money(qty * rate);
+      return [row.dataset.part, qty, rate];
+    });
+    const t = R.totals(rows);
+    const count = rows.reduce((sum, [, qty]) => sum + qty, 0);
+    $('summary').innerHTML = `<div><span>Subtotal<small>${count} items</small></span><span>${R.money(t.subtotal)}</span></div>
+      <div><span>GST 18%</span><span>${R.money(t.gst)}</span></div>
+      <div><span>Delivery</span><span>At checkout</span></div>
+      <div class="total"><span>Total</span><span>${R.money(t.total)}</span></div>`;
+  };
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.stepper button, .plate-states button')) setTimeout(update);
+  });
+  setTimeout(update);
+  new MutationObserver(() => {
+    const relay = $('items').querySelector('[data-part="ZP-SP-002"]');
+    relay.classList.toggle('warn', ['changed', 'limit'].includes(screen.dataset.state));
+    const qty = relay.querySelector('output');
+    qty.value = screen.dataset.state === 'limit' ? 5 : 1;
+    qty.textContent = qty.value;
+  }).observe(screen, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

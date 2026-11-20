@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C310 Appeal a rejected claim</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.mrow-sm{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r-lg); background:var(--field)}
+.mrow-sm b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mrow-sm .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.reason h2{margin:0 0 6px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.reason p{margin:0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.reason .when{margin-top:8px; font-size:var(--fs-12); color:var(--text-muted)}
+.media-head{display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 8px}
+.media-head b{font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.media-head span{font-size:var(--fs-12); color:var(--text-muted)}
+.files + .btn{margin-top:10px}
+.footer-bar .btn-text{width:100%; margin-top:4px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C310 Appeal a rejected claim</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="ready" data-open="sent" aria-pressed="false">appeal sent</button>
+  <button type="button" data-state="expired" aria-pressed="false">window expired</button>
+  <button type="button" data-state="appealed" aria-pressed="false">already appealed</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C308-claim.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Appeal claim</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. You can send when back online.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 1 thing to continue</b>
+            <ul><li><a href="#why">Explain in at least 20 characters</a></li></ul></div>
+          <div class="mrow-sm" id="mrow"></div>
+
+          <div class="card reason">
+            <h2>Reason for rejection</h2>
+            <p id="reason"></p>
+            <p class="when" id="decided"></p>
+          </div>
+
+          <div class="banner amber" data-when="ready errors submitting offline"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg><div id="window"></div></div>
+          <div class="banner red" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg><div id="expired"></div></div>
+          <div class="banner grey" data-when="appealed"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div><b>You already appealed this claim</b>A claim can be appealed once.</div></div>
+
+          <div data-when="ready errors submitting offline">
+            <div class="field" id="why-field" style="margin-top:0">
+              <label for="why">Why should we look again?<span class="req">*</span><span class="counter" id="count"></span></label>
+              <textarea class="textarea" id="why" maxlength="1000"></textarea>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Explain in at least 20 characters</span>
+            </div>
+
+            <div style="margin-top:20px">
+              <div class="media-head"><b>Extra evidence</b><span>Up to 5 · PDF, JPG, PNG</span></div>
+              <div class="files">
+                <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+                  <div class="file-body"><b>stabiliser-log-15-nov.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 420 KB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+                <div class="file" data-status="uploading" data-progress="52"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>panel-wiring.jpg</b><span class="file-meta">Uploading 52% · 2.6 MB</span><span class="progress"><i style="width:52%"></i></span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+              <button class="btn btn-secondary btn-sm" type="button" data-open="picker"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-paperclip"/></svg>Add file</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-open="sent" data-when="ready">Submit appeal</button>
+        <button class="btn btn-primary" type="button" data-when="errors">Submit appeal</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Sending...</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit appeal</button>
+        <a class="btn btn-primary" id="convert-main" href="C503-raise-machine.html" data-when="expired appealed">Convert to paid service request</a>
+        <a class="btn btn-text" id="convert" href="C503-raise-machine.html" data-when="ready errors submitting offline">Convert to paid service request</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="picker" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add file">
+        <div class="group">
+          <button type="button" data-close>Take photo</button>
+          <button type="button" data-close>Choose from library</button>
+          <button type="button" data-close>Choose a file</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="sent" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="sent-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="sent-title">Appeal sent</h3>
+        <p>We will reply within 2 working days.</p>
+        <div class="actions"><a class="btn btn-primary" id="view-claim" href="C308-claim.html">View claim</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Appeal a rejected claim once, within 7 days of the decision, with an explanation and extra
+evidence. After the window or a used appeal only the paid service request is left.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const APPEAL_DAYS = 7;
+  /* Sample data not in data.js yet (move there): the rejected claim WCL-2026-0044 (same as C308) and the draft appeal */
+  const CLAIM = { number: 'WCL-2026-0044', machine: 'ZP-TF-2310', decided: '2026-11-18T16:30',
+    reason: 'The burnt supply cable shows a voltage surge from outside the machine. Damage from the power supply is not covered.' };
+  const EXPLANATION = 'Our line has a servo stabiliser. Its log shows no surge on 15 Nov. The cable burnt at the motor terminal.';
+  const SHORT_EXPLANATION = 'No surge';
+
+  const m = R.machine(CLAIM.machine);
+  const addDays = (iso, days) => {
+    const d = new Date(`${iso.slice(0, 10)}T12:00:00`);
+    d.setDate(d.getDate() + days);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const deadline = addDays(CLAIM.decided, APPEAL_DAYS);
+  const left = R.daysFromToday(deadline);
+  $('back').href = `C308-claim.html?claim=${CLAIM.number}`;
+  $('view-claim').href = `C308-claim.html?claim=${CLAIM.number}`;
+  $('convert').href = $('convert-main').href = `C503-raise-machine.html?machine=${m.serial}`;
+  $('mrow').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${CLAIM.number}</span></span>`;
+  $('reason').textContent = CLAIM.reason;
+  $('decided').textContent = `Rejected ${R.dayDate(CLAIM.decided)} by Zixom service manager`;
+  $('window').innerHTML = `<b>Appeal by ${R.dayDate(deadline)}, ${left} days left</b>You can appeal once.`;
+  $('expired').innerHTML = `<b>The appeal window closed on ${R.dayDate(deadline)}</b>You can still raise a paid service request.`;
+
+  const why = $('why');
+  const count = () => { $('count').textContent = `${why.value.trim().length} / 1000`; };
+  why.addEventListener('input', count);
+  const fill = (state) => {
+    why.value = state === 'errors' ? SHORT_EXPLANATION : EXPLANATION;
+    $('why-field').classList.toggle('has-error', state === 'errors');
+    count();
+  };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => fill(b.dataset.state)));
+  fill('ready');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C902 Document viewer</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.pages{display:flex; flex-direction:column; gap:14px; padding:4px 6px 0}
+.page{aspect-ratio:1 / 1.414; display:flex; flex-direction:column; gap:9px; padding:26px 22px; border-radius:6px; background:#fff;
+  box-shadow:0 1px 2px rgba(24,34,45,.08), 0 6px 18px rgba(24,34,45,.06)}
+.page h4{margin:0 0 6px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.page .meta{margin:-4px 0 8px; font-size:var(--fs-11); color:var(--text-muted)}
+.page i{display:block; height:6px; border-radius:3px; background:var(--slate-200)}
+.page .fig{flex:1; max-height:38%; margin:6px 0; border-radius:4px; background:linear-gradient(145deg, var(--slate-100), var(--blue-50)); display:grid; place-items:center; color:var(--slate-400)}
+.page .fig .ic{width:40px; height:40px}
+.pager{position:absolute; z-index:21; left:50%; bottom:112px; transform:translateX(-50%); display:flex; align-items:center; gap:4px; padding:4px;
+  border-radius:var(--r-pill); background:rgba(24,34,45,.86); color:#fff; font-size:var(--fs-13); white-space:nowrap}
+.pager button{width:32px; height:32px; display:grid; place-items:center; border:0; border-radius:50%; background:none; color:#fff; cursor:pointer}
+.pager span{padding:0 6px}
+.dl{display:flex; align-items:center; gap:10px}
+.dl .grow b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.dl .grow span{font-size:var(--fs-12); color:var(--text-muted)}
+.dl .progress{display:block; height:6px; margin-top:8px; border-radius:3px; background:var(--slate-200); overflow:hidden}
+.dl .progress i{display:block; height:100%; background:var(--blue)}
+.saved-badge{display:inline-flex; align-items:center; gap:6px; font-size:var(--fs-13); font-weight:600; color:var(--green)}
+.saved-badge .ic{width:18px; height:18px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C902 Document viewer</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="downloading" aria-pressed="false">downloading</button>
+  <button type="button" data-state="saved" aria-pressed="false">offline copy</button>
+  <button type="button" data-state="newer" aria-pressed="false">new version</button>
+  <button type="button" data-state="mobiledata" aria-pressed="false">large file, mobile data</button>
+  <button type="button" data-state="failed" aria-pressed="false">download failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="removed" aria-pressed="false">removed</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, not saved</button>
+</div>
+<div class="plate-states" id="pick"><span>document</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C901-documents.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Document</h1>
+        <a class="icon-btn" id="share" href="C1703-share-document.html" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack-sm" style="margin-bottom:12px" data-when="newer failed ready mobiledata downloading saved">
+          <div class="banner" data-when="newer"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><div><b>A new version is available</b><a id="latest" href="C1702-document-versions.html">Open latest</a></div></div>
+          <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>Download failed</b><button class="link-btn" type="button" data-busy>Retry</button></div></div>
+          <div class="banner grey" id="confidential" hidden><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg><div><b>Confidential</b>Only the file can be shared.</div></div>
+        </div>
+        <div class="pages" id="pages" data-when="ready downloading saved newer mobiledata failed"></div>
+
+        <div class="pages" data-when="loading"><span class="skeleton" style="aspect-ratio:1 / 1.414; border-radius:6px"></span></div>
+        <div class="state" data-when="removed" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+          <h3>This document is no longer available</h3><p>Zixom removed it.</p>
+          <a class="btn btn-secondary" href="C901-documents.html">Back to documents</a>
+        </div>
+        <div class="state" data-when="offline" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+          <h3>Connect to open this document</h3><p>It is not saved on this phone.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+        </div>
+      </div>
+      <div class="pager" data-when="ready downloading saved newer mobiledata failed" aria-label="Page navigation">
+        <button type="button" aria-label="Previous page"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-up"/></svg></button>
+        <span id="pager"></span>
+        <button type="button" aria-label="Next page"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+      </div>
+      <div class="footer-bar" data-when="ready downloading saved newer mobiledata failed">
+        <button class="btn btn-secondary" type="button" data-when="ready newer failed" onclick="document.querySelector('[data-state=downloading]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg><span class="dl-label"></span></button>
+        <a class="btn btn-secondary" href="../system/S15-mobile-data.html" data-when="mobiledata"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg><span class="dl-label"></span></a>
+        <div class="dl" data-when="downloading">
+          <div class="grow"><b>Downloading 64%</b><span id="dl-size"></span><span class="progress"><i style="width:64%"></i></span></div>
+          <button class="icon-btn" type="button" aria-label="Cancel download" onclick="document.querySelector('[data-state=ready]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+        </div>
+        <div class="dl" data-when="saved">
+          <span class="grow"><span class="saved-badge"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Saved for offline</span></span>
+          <button class="btn btn-secondary btn-sm" type="button" data-toast="Opening in another app">Open in</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Any document via <code>?doc=</code>. A large file on mobile data asks first
+(<a href="../system/S15-mobile-data.html">S15</a>); low storage opens <a href="../system/S10-storage-full.html">S10</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (same documents as C901): pages and whether link sharing is blocked */
+  const DOCS = [
+    { id: 'afm760-manual', title: 'AFM-760 operating manual', machine: 'ZP-TF-2310', mb: 48, pages: 212, date: '2026-11-20', icon: 'book-open' },
+    { id: 'afm1000-wiring', title: 'AFM-1000 wiring diagram', machine: 'ZP-TF-2204', mb: 6, pages: 18, date: '2026-02-10', icon: 'circuitry' },
+    { id: 'afm1000-warranty', title: 'Warranty certificate', machine: 'ZP-TF-2204', mb: 0.4, pages: 2, date: '2025-12-05', icon: 'certificate' },
+    { id: 'sr-0128', title: 'Service report SR-2026-0128', machine: 'ZP-TF-2310', mb: 0.8, pages: 3, date: '2026-11-21', icon: 'file-text' },
+    { id: 'quote-0041', title: 'Quotation QT-2026-0041', machine: 'ZP-PC-1805', mb: 0.3, pages: 2, date: '2026-11-23', icon: 'currency-inr', confidential: true },
+    { id: 'inv-0981', title: 'Invoice INV-2026-0981', machine: null, mb: 0.2, pages: 1, date: '2026-11-02', icon: 'receipt', confidential: true },
+  ];
+  const id = new URLSearchParams(location.search).get('doc') || DOCS[0].id;
+  const doc = DOCS.find((d) => d.id === id);
+
+  $('pick').insertAdjacentHTML('beforeend', DOCS.map((d) => `<button type="button" data-doc="${d.id}" aria-pressed="${d.id === id}">${R.esc(d.title.split(' ').slice(0, 2).join(' '))}</button>`).join(''));
+  $('pick').addEventListener('click', (e) => { const b = e.target.closest('[data-doc]'); if (b) location.search = `?doc=${b.dataset.doc}`; });
+  if (!doc) { document.querySelector('.screen').dataset.state = 'removed'; return; }
+
+  const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
+  const m = doc.machine && R.machine(doc.machine);
+  $('title').textContent = doc.title;
+  $('share').href = `C1703-share-document.html?doc=${doc.id}`;
+  $('latest').href = `C1702-document-versions.html?doc=${doc.id}`;
+  $('confidential').hidden = !doc.confidential;
+  $('pager').textContent = `Page 1 of ${doc.pages}`;
+  $('dl-size').textContent = `${size(Math.round(doc.mb * 0.64 * 10) / 10)} of ${size(doc.mb)}`;
+  document.querySelectorAll('.dl-label').forEach((el) => { el.textContent = `Download, ${size(doc.mb)}`; });
+
+  const lines = (widths) => widths.map((w) => `<i style="width:${w}%"></i>`).join('');
+  $('pages').innerHTML = `<div class="page" role="img" aria-label="Page 1">
+      <h4>${R.esc(doc.title)}</h4><p class="meta">${m ? `${R.esc(m.model)} · ${m.serial} · ` : ''}${R.date(doc.date)}</p>
+      ${lines([100, 94, 98, 62])}<span class="fig">${R.icon(doc.icon)}</span>${lines([100, 88, 96, 70, 100, 54])}</div>
+    ${doc.pages > 1 ? `<div class="page" role="img" aria-label="Page 2">${lines([40])}${lines([100, 96, 92, 100, 66, 100, 90, 98, 44, 100, 94, 72])}</div>` : ''}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

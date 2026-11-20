@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C708 Order or request detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.ohead{text-align:center; padding:4px 0 2px}
+.ohead .row-flex{justify-content:center}
+.ohead .amount{display:block; margin-top:12px; font:400 32px var(--font-display); color:var(--slate-900)}
+.ohead p{margin:6px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.money small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.ship{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.ship + .ship{margin-top:10px}
+.ship .top{display:flex; align-items:center; gap:12px}
+.ship .disc{width:42px; height:42px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.ship .top b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.ship .top span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.ship .track{display:flex; align-items:center; gap:8px; margin-top:12px; padding:10px 6px 10px 12px; border-radius:var(--r-md); background:var(--field)}
+.ship .track .mono{flex:1; font-size:var(--fs-14); color:var(--slate-900)}
+.ship .track .icon-btn{width:36px; height:36px}
+.ship .items{margin:10px 0 0; font-size:var(--fs-13); color:var(--text)}
+.ship .btn{width:100%; margin-top:12px}
+.addr{margin:0; padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line); font-size:var(--fs-14); line-height:1.45; color:var(--text)}
+.addr b{display:block; color:var(--slate-900); font-weight:600}
+.acts{display:flex; gap:10px}
+.acts .btn{flex:1; padding:0 12px}
+.acts .icon-btn{width:54px; height:54px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C708 Order or request detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>order</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C707-orders.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Order</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body" data-when="ready offline"></div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:110px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:220px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:160px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+          <h3>We cannot find this order</h3><p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="C707-orders.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="actions" data-when="ready offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Order actions">
+        <div class="group"><div class="title mono" id="more-title"></div>
+          <button type="button" data-close data-toast="Copied">Copy order number</button>
+          <button type="button" data-close data-toast="Opening share sheet">Share summary</button>
+          <button type="button" onclick="location.href='C602-ask.html'">Ask a question</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="approve" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="approve-t">
+        <h3 id="approve-t">Approve this quote?</h3><p id="approve-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close data-toast="Quote approved">Approve</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Not now</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Any order via <code>?order=</code>; pick one above for each status. Actions follow the status:
+Approve, Pay (<a href="C803-pay-method.html">C803</a>), Cancel (<a href="C709-cancel-order.html">C709</a>), Report a problem (<a href="C710-delivery-problem.html">C710</a>).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (move to data.js): orders ORD-2026-0205 to 0212 from spec section 16, items as [part, qty, rate before GST] */
+  const EXTRA_PARTS = { 'ZP-SP-006': 'Digital vacuum gauge', 'ZP-SP-007': 'Vacuum pump service kit', 'ZP-SP-008': 'Thermocouple, J type', 'ZP-SP-010': 'Solid state relay 40 A' };
+  const ORDERS = [
+    { number: 'ORD-2026-0205', status: 'submitted', request: true, created: '2026-11-23T10:15', items: [['ZP-SP-004', 2, null]] },
+    { number: 'ORD-2026-0206', status: 'quoted', request: true, created: '2026-11-19T15:30', quoted: '2026-11-20T11:00', validUntil: '2026-11-26', items: [['ZP-SP-003', 1, 6400]], delivery: 600 },
+    { number: 'ORD-2026-0207', status: 'approved', request: true, created: '2026-11-17T12:05', quoted: '2026-11-18T10:00', approved: '2026-11-19T10:20', invoice: 'INV-2026-0984', items: [['ZP-SP-007', 1, 5400]], delivery: 500 },
+    { number: 'ORD-2026-0208', status: 'packed', created: '2026-11-02T09:40', paid: '2026-11-02T09:46', packed: '2026-11-22T16:30', items: [['ZP-SP-001', 4, 2850], ['ZP-SP-002', 1, 1240]], delivery: 360 },
+    { number: 'ORD-2026-0209', status: 'dispatched', created: '2026-11-16T11:00', paid: '2026-11-16T11:04', packed: '2026-11-20T15:10', dispatched: '2026-11-21T17:05', expected: '2026-11-25', courier: 'Blue Dart', tracking: '79351204466', items: [['ZP-SP-008', 4, 1050], ['ZP-SP-010', 2, 1680]], delivery: 360 },
+    { number: 'ORD-2026-0210', status: 'delivered', created: '2026-11-10T14:20', paid: '2026-11-10T14:25', packed: '2026-11-12T12:00', dispatched: '2026-11-13T17:40', delivered: '2026-11-20T13:10', courier: 'Blue Dart', tracking: '79351187320', items: [['ZP-SP-002', 2, 1240], ['ZP-SP-006', 1, 1450]], delivery: 360 },
+    { number: 'ORD-2026-0211', status: 'cancelled', created: '2026-11-19T09:00', paid: '2026-11-19T09:05', cancelled: '2026-11-21T10:30', items: [['ZP-SP-008', 2, 1050]], delivery: 400 },
+    { number: 'ORD-2026-0212', status: 'return', created: '2026-11-04T10:00', paid: '2026-11-04T10:06', packed: '2026-11-05T11:00', dispatched: '2026-11-06T16:00', delivered: '2026-11-12T12:30', returned: '2026-11-16T09:15', returnReason: 'Damaged part: dial glass cracked', courier: 'Blue Dart', tracking: '79351152981', items: [['ZP-SP-005', 1, 980]], delivery: 300 },
+  ];
+  const STATUS = { submitted: ['Submitted', 'blue'], quoted: ['Quote ready', 'amber'], approved: ['Pending payment', 'amber'], packed: ['Packed', 'blue'],
+    dispatched: ['Dispatched', 'blue'], delivered: ['Delivered', 'green'], cancelled: ['Cancelled', ''], return: ['Return requested', 'amber'] };
+  const PICKS = [['ORD-2026-0205', 'submitted'], ['ORD-2026-0206', 'quoted'], ['ORD-2026-0206', 'quote expired', 'expired'], ['ORD-2026-0207', 'pending payment'],
+    ['ORD-2026-0208', 'paid and packed'], ['ORD-2026-0209', 'dispatched'], ['ORD-2026-0209', 'no tracking link', 'notrack'], ['ORD-2026-0209', 'partial delivery', 'partial'],
+    ['ORD-2026-0210', 'delivered'], ['ORD-2026-0211', 'cancelled, refund'], ['ORD-2026-0212', 'return requested']];
+
+  const params = new URLSearchParams(location.search);
+  const number = params.get('order') || 'ORD-2026-0209';
+  const variant = params.get('v') || '';
+  const o = ORDERS.find((x) => x.number === number);
+
+  $('pick').insertAdjacentHTML('beforeend', PICKS.map(([n, label, v = '']) =>
+    `<button type="button" data-q="?order=${n}${v ? `&v=${v}` : ''}" aria-pressed="${n === number && v === variant}">${n.slice(-4)} ${label}</button>`).join(''));
+  $('pick').addEventListener('click', (e) => { const b = e.target.closest('[data-q]'); if (b) location.search = b.dataset.q; });
+
+  if (!o) { document.querySelector('.screen').dataset.state = 'notfound'; return; }
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const stamp = (iso) => (iso ? `${R.dayDate(iso)}${iso.length > 10 ? `, ${time(iso)}` : ''}` : '');
+  const partName = (n) => data.parts.find((p) => p.number === n)?.name || EXTRA_PARTS[n];
+  const priced = o.items.every(([, , rate]) => rate !== null);
+  const lines = priced ? [...o.items.map(([n, qty, rate]) => [partName(n), qty, rate]), ['Delivery', 1, o.delivery]] : [];
+  const t = priced ? R.totals(lines) : null;
+  const invoice = o.invoice && data.invoices.find((i) => i.number === o.invoice);
+  const refund = data.refunds.find((r) => r.order === o.number);
+  const site = data.companies.find((c) => c.id === 'shree').sites[0];
+  const expired = variant === 'expired';
+  const [statusLabel, tone] = expired ? ['Quote expired', 'red'] : STATUS[o.status];
+
+  $('title').textContent = o.number;
+  $('more-title').textContent = o.number;
+  if (t) $('approve-text').textContent = `${R.money(t.total)} including GST. You pay after approval.`;
+
+  /* ---------- header ---------- */
+  const header = `<div class="ohead">
+      <div class="row-flex">${R.tag(o.request ? 'Part request' : 'Order', 'outline')}${R.tag(statusLabel, tone)}</div>
+      <b class="amount"${t ? '' : ' style="font-size:var(--fs-22)"'}>${t ? R.money(t.total) : 'Awaiting quote'}</b>
+      <p>${o.request ? 'Requested' : 'Placed'} ${stamp(o.created)}</p></div>`;
+
+  /* ---------- banners ---------- */
+  const banner = (cls, icon, title, text) => `<div class="banner ${cls}">${R.icon(icon)}<div><b>${title}</b>${text}</div></div>`;
+  const banners = [
+    o.status === 'quoted' && !expired ? banner('amber', 'clock', `Quote valid until ${R.date(o.validUntil)}`, 'Approve to keep this price.') : '',
+    expired ? banner('red', 'clock', 'Quote expired', `It ended on ${R.date(o.validUntil)}. Ask Zixom for a new price.`) : '',
+    invoice && invoice.lastAttempt === 'failed' && o.status === 'approved' ? banner('amber', 'warning', 'Last payment failed', 'Your order stays pending until it is paid.') : '',
+    o.status === 'return' ? banner('', 'arrows-clockwise', 'Return requested', `${R.esc(o.returnReason)}. Zixom replies within 1 working day.`) : '',
+  ].join('');
+
+  /* ---------- refund card when cancelled after payment ---------- */
+  const refundCard = refund ? `<div class="sec"><h2>Refund</h2><div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">
+      <div><dt>Amount</dt><dd>${R.money(refund.amount)}</dd></div>
+      <div><dt>Status</dt><dd>${R.tag('Refund started', 'blue')}</dd></div>
+      <div><dt>Expected by</dt><dd>${R.date(refund.expected)}</dd></div>
+      <div><dt>Reason</dt><dd>${R.esc(refund.reason)}</dd></div></dl></div></div>` : '';
+
+  /* ---------- timeline ---------- */
+  const STEPS = o.request ? [['submitted', 'Submitted'], ['quoted', 'Quoted'], ['approved', 'Approved'], ['paid', 'Paid'], ['packed', 'Packed'], ['dispatched', 'Dispatched'], ['delivered', 'Delivered']]
+    : [['created', 'Order placed'], ['paid', 'Paid'], ['packed', 'Packed'], ['dispatched', 'Dispatched'], ['delivered', 'Delivered']];
+  const NEXT = { submitted: 'Zixom quotes within 1 working day', quoted: expired ? 'Quote expired' : 'Waiting for your approval', approved: 'Waiting for payment',
+    packed: 'Ships within 1 working day', dispatched: `Expected ${o.expected ? R.dayDate(o.expected) : ''}` };
+  const when = (key) => stamp(key === 'submitted' ? o.created : o[key]);
+  const current = { submitted: 'submitted', quoted: 'quoted', approved: 'approved', packed: 'packed', dispatched: 'dispatched', delivered: 'delivered', return: 'delivered', cancelled: 'paid' }[o.status];
+  const reached = STEPS.findIndex(([key]) => key === current || (key === 'created' && current === 'submitted'));
+  const step = (cls, label, sub = '') => `<li class="${cls}"><span class="dot"></span><div><b>${R.esc(label)}</b>${sub ? `<span>${R.esc(sub)}</span>` : ''}</div></li>`;
+  let rows = STEPS.slice(0, reached + 1).map(([key, label]) => step('done', label, when(key)));
+  if (o.status === 'cancelled') rows.push(step('done', 'Cancelled', `${stamp(o.cancelled)} · You`));
+  else if (o.status === 'return') rows = [step('done', 'Delivered', stamp(o.delivered)), step('now', 'Return requested', stamp(o.returned)), step('todo', 'Zixom reviews'), step('todo', 'Pickup'), step('todo', 'Replacement or refund')];
+  else if (reached < STEPS.length - 1) rows = [...rows, step('now', NEXT[o.status]), ...STEPS.slice(reached + 2).map(([, label]) => step('todo', label))];
+  const timeline = `<div class="sec"><h2>${o.status === 'return' ? 'Return' : 'Status'}</h2><ol class="timeline">${rows.join('')}</ol></div>`;
+
+  /* ---------- shipment ---------- */
+  const trackRow = `<div class="track"><span class="mono">${o.tracking}</span><button class="icon-btn" type="button" data-toast="Tracking number copied" aria-label="Copy tracking number">${R.icon('copy', 'ic-18')}</button></div>`;
+  const shipCard = (title, sub, items, withLink) => `<div class="ship"><div class="top"><span class="disc">${R.icon('truck')}</span><span><b>${title}</b><span>${sub}</span></span></div>
+      ${o.tracking ? trackRow : ''}${items ? `<p class="items">${items}</p>` : ''}
+      ${withLink ? `<button class="btn btn-secondary btn-sm" type="button" data-toast="Opening ${o.courier} tracking">${R.icon('arrow-up-right', 'ic-18')}Track shipment</button>` : ''}</div>`;
+  let shipment = '';
+  if (o.courier) {
+    const sub = o.delivered ? `Delivered ${stamp(o.delivered)}` : `Dispatched ${stamp(o.dispatched)}`;
+    if (variant === 'partial') {
+      const [first, second] = o.items;
+      shipment = shipCard(`${o.courier}, shipment 1 of 2`, sub, `${partName(first[0])} × ${first[1]}`, true)
+        + `<div class="ship"><div class="top"><span class="disc">${R.icon('package')}</span><span><b>Shipment 2 of 2</b><span>Packing, ships in 2 days</span></span></div>
+          <p class="items">${partName(second[0])} × ${second[1]}</p></div>`;
+    } else {
+      shipment = shipCard(o.courier, sub, '', false)
+        + (variant === 'notrack' ? '<p class="hint" style="margin:8px 4px 0">Tracking link not available yet. Use the number on the Blue Dart site.</p>' : '');
+    }
+    shipment = `<div class="sec"><h2>Shipment</h2>${shipment}</div>`;
+  }
+
+  /* ---------- items ---------- */
+  const items = `<div class="sec"><h2>Items</h2><div class="money">${priced
+    ? lines.map(([name, qty, rate]) => `<div><span>${R.esc(name)}${name === 'Delivery' ? '' : `<small>${qty} × ${R.money(rate)}</small>`}</span><span>${R.money(qty * rate)}</span></div>`).join('')
+      + `<div><span>GST 18%</span><span>${R.money(t.gst)}</span></div><div class="total"><span>Total</span><span>${R.money(t.total)}</span></div>`
+    : o.items.map(([n, qty]) => `<div><span>${R.esc(partName(n))}<small class="mono">${n}</small></span><span>× ${qty}</span></div>`).join('')
+      + '<div class="total"><span>Price</span><span style="font-size:var(--fs-14)">On request</span></div>'}</div></div>`;
+
+  /* ---------- address, payment, invoice ---------- */
+  const address = `<div class="sec"><h2>Delivery address</h2><p class="addr"><b>${R.esc(site.name)}</b>${R.esc(site.address)} ${site.pincode}</p></div>`;
+  const PAY = { submitted: null, quoted: null, approved: ['Not paid', 'amber'], cancelled: ['Refund started', 'blue'] };
+  const pay = o.status in PAY ? PAY[o.status] : ['Paid', 'green'];
+  const invoiceRow = invoice
+    ? `<a class="list-item" href="C802-invoice-detail.html?invoice=${invoice.number}"><span class="disc">${R.icon('receipt')}</span><b class="mono">${invoice.number}</b><span class="sub">Invoice · ${R.money(invoice.amount)}</span><span class="end">${R.icon('caret-right')}</span></a>`
+    : `<button class="list-item" type="button" data-toast="Invoice saved to Downloads"><span class="disc">${R.icon('receipt')}</span><b>Invoice</b><span class="sub">PDF</span><span class="end">${R.icon('download-simple')}</span></button>`;
+  const payment = pay ? `<div class="sec"><h2>Payment</h2><div class="list">
+      <div class="list-item" style="cursor:default"><span class="disc">${R.icon('wallet')}</span><b>${t ? R.money(t.total) : ''}</b><span class="sub">${o.paid ? `Paid ${stamp(o.paid)}` : 'Pay to confirm the order'}</span><span class="end">${R.tag(...pay)}</span></div>
+      ${o.status === 'cancelled' ? '' : invoiceRow}</div></div>` : '';
+
+  const offline = `<div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>`;
+  $('body').innerHTML = offline + header + banners + refundCard + shipment + timeline + items + address + payment;
+
+  /* ---------- actions by status (spec C708) ---------- */
+  const q = `?order=${o.number}`;
+  const ask = `<a class="icon-btn" href="C602-ask.html" aria-label="Ask a question">${R.icon('chat-circle-dots')}</a>`;
+  const download = `<button class="icon-btn" type="button" data-toast="Invoice saved to Downloads" aria-label="Download invoice">${R.icon('download-simple')}</button>`;
+  const online = (html) => html.replace('class="btn btn-primary"', 'class="btn btn-primary" data-when="ready"');
+  const offlineBtn = (label) => `<button class="btn btn-primary" type="button" disabled data-when="offline">${label}</button>`;
+  const primary = (label, attrs) => online(`<a class="btn btn-primary" ${attrs}>${label}</a>`) + offlineBtn(label);
+  const ACTIONS = {
+    submitted: `<a class="btn btn-secondary" href="C602-ask.html">Ask a question</a>`,
+    quoted: expired ? primary('Request again', 'href="C706-request-part.html?part=ZP-SP-003"') : ask + primary('Approve quote', 'href="#" data-open="approve"'),
+    approved: ask + primary(`Pay ${t && R.money(t.total)}`, `href="C803-pay-method.html?invoice=${o.invoice}"`),
+    packed: `${download}<a class="btn btn-secondary" href="C709-cancel-order.html${q}">Cancel order</a>`,
+    dispatched: variant === 'notrack' ? ask + primary('Copy tracking number', 'href="#" data-toast="Tracking number copied"') : ask + primary('Track shipment', `href="#" data-toast="Opening ${o.courier} tracking"`),
+    delivered: `<a class="btn btn-secondary" href="C710-delivery-problem.html${q}">Report a problem</a>${primary('Reorder', 'href="C704-cart.html"')}`,
+    cancelled: primary('Reorder', 'href="C704-cart.html"'),
+    return: `<a class="btn btn-secondary" href="C602-ask.html">Ask a question</a>`,
+  };
+  $('actions').innerHTML = `<div class="acts">${ACTIONS[o.status]}</div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

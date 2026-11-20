@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C709 Cancel order</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.choice.one b{grid-row:1 / span 2}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.done-state{padding-top:56px}
+.done-state .card-fill{width:100%; margin-top:20px; padding:2px 16px; text-align:left}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C709 Cancel order</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">no reason</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="confirm">confirm</button>
+  <button type="button" data-state="cancelling" aria-pressed="false">cancelling</button>
+  <button type="button" data-state="cancelled" aria-pressed="false">cancelled</button>
+  <button type="button" data-state="notallowed" aria-pressed="false">after dispatch</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C708-order-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Cancel order</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready errors cancelling offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Cancelling needs the internet.</div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="order"></dl></div>
+          <div class="sec">
+            <h2>Why are you cancelling?</h2>
+            <span class="error-text" data-when="errors" style="margin:0 2px 10px"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a reason</span>
+            <div role="radiogroup" aria-label="Reason" id="reasons"></div>
+          </div>
+          <div class="banner green" id="refund"></div>
+        </div>
+
+        <div class="state done-state" data-when="cancelled">
+          <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Order cancelled</h3><p id="done-text"></p>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="done-refund"></dl></div>
+        </div>
+        <div class="state" data-when="notallowed" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-truck"/></svg></span>
+          <h3>This order is already dispatched</h3><p>Report a problem after delivery to return it.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-danger" type="button" data-open="confirm" data-when="ready">Cancel order</button>
+        <button class="btn btn-danger" type="button" data-when="errors" onclick="document.getElementById('reasons').querySelector('[role=radio]').focus()">Cancel order</button>
+        <button class="btn btn-danger" type="button" aria-busy="true" data-when="cancelling">Cancel order</button>
+        <button class="btn btn-danger" type="button" disabled data-when="offline">Cancel order</button>
+        <a class="btn btn-primary" href="C810-refunds.html" data-when="cancelled">Track refund</a>
+        <a class="btn btn-secondary" id="keep" href="C708-order-detail.html" data-when="notallowed">Back to order</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="confirm" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="confirm-t">
+        <h3 id="confirm-t">Cancel this order?</h3><p id="confirm-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep order</button>
+          <button class="btn btn-text" type="button" style="width:100%; color:var(--red)" data-close onclick="document.querySelector('[data-state=cancelling]').click()">Cancel order</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Allowed until dispatch; after that the order offers a return through
+<a href="C710-delivery-problem.html">C710</a>. A paid order shows where the refund goes.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: ORD-2026-0208 is paid and packed: 4 heater elements, 1 timer relay, delivery, plus GST */
+  const ORDER = 'ORD-2026-0208';
+  const REFUND_DAYS = '5 to 7 working days';
+  const REASONS = [['x', 'Ordered by mistake'], ['storefront', 'Found it elsewhere'], ['clock', 'Delivery takes too long'], ['package', 'Wrong part ordered'], ['dots-three', 'Other']];
+
+  const number = new URLSearchParams(location.search).get('order') || ORDER;
+  const invoice = { amount: R.totals([['Ceramic heater element 650 W', 4, 2850], ['Timer relay 24 V DC', 1, 1240], ['Delivery', 1, 360]]).total };
+  const back = `C708-order-detail.html?order=${number}`;
+  $('back').href = back;
+  $('keep').href = back;
+  if (number !== ORDER) document.querySelector('.screen').dataset.state = 'notallowed';
+
+  $('order').innerHTML = `<div><dt>Order</dt><dd class="mono">${ORDER}</dd></div>
+    <div><dt>Status</dt><dd>${R.tag('Packed', 'blue')}</dd></div><div><dt>Paid</dt><dd>${R.money(invoice.amount)}</dd></div>`;
+  $('reasons').innerHTML = REASONS.map(([icon, label]) => `<button class="choice one" role="radio" aria-checked="false" type="button">
+    <span class="disc">${R.icon(icon)}</span><b>${label}</b><span class="mark"></span></button>`).join('');
+  $('refund').innerHTML = `${R.icon('wallet')}<div><b>${R.money(invoice.amount)} refund</b>To the original payment method in ${REFUND_DAYS}.</div>`;
+  $('confirm-text').textContent = `${R.money(invoice.amount)} is refunded in ${REFUND_DAYS}.`;
+  $('done-text').innerHTML = `<span class="mono">${ORDER}</span> is cancelled.`;
+  $('done-refund').innerHTML = `<div><dt>Refund</dt><dd>${R.money(invoice.amount)}</dd></div>
+    <div><dt>Status</dt><dd>${R.tag('Refund started', 'blue')}</dd></div><div><dt>Expected in</dt><dd>${REFUND_DAYS}</dd></div>`;
+  $('reasons').querySelector('[role=radio]').setAttribute('aria-checked', 'true');
+  document.querySelector('[data-state=errors]').addEventListener('click', () => $('reasons').querySelectorAll('[role=radio]').forEach((r) => r.setAttribute('aria-checked', 'false')));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

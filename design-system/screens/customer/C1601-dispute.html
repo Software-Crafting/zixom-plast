@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1601 Dispute a charge</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+.files + .add-file{margin-top:8px}
+.line-choice{grid-template-columns:1fr auto}
+.line-choice b, .line-choice p{grid-column:1}
+.line-choice .amt{grid-column:2; grid-row:1 / span 2; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.line-choice:disabled{opacity:.55}
+.field.has-error .add-file{border-color:var(--red); background:var(--red-50)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1601 Dispute a charge</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>invoice</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="uploading" aria-pressed="false">evidence uploading</button>
+  <button type="button" data-state="restored" aria-pressed="false">draft restored</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="submitted" aria-pressed="false" data-open="done">submitted</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C802-invoice-detail.html" aria-label="Back" data-toast="Draft saved"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Dispute a charge</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your draft is saved.</div>
+        <div class="banner" style="margin-bottom:14px" data-when="restored"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg><div><b>We restored your draft</b>Saved on Sun 22 Nov.</div></div>
+        <div class="error-summary" role="alert" style="margin:0 0 16px" data-when="errors"><b>Fix 2 things to continue</b>
+          <ul><li><a href="#reasons">Choose a reason</a></li><li><a href="#desc-bad">Describe the problem in at least 20 characters</a></li></ul></div>
+        <div id="open-banner"></div>
+
+        <div class="field">
+          <span class="field-label">Invoice<span class="req">*</span></span>
+          <button class="select" type="button" data-open="invoices"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg><span class="value" id="inv-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+        </div>
+        <div class="field">
+          <span class="field-label">Charge<span class="req">*</span></span>
+          <div role="radiogroup" aria-label="Charge" id="lines"></div>
+        </div>
+        <div class="field" id="reasons">
+          <span class="field-label">Reason<span class="req">*</span></span>
+          <div class="chips" data-single id="reason-chips" style="flex-wrap:wrap"></div>
+          <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a reason</span>
+        </div>
+        <div class="field" data-when="ready uploading restored submitting submitted offline">
+          <label for="desc">What is wrong<span class="req">*</span><span class="counter" id="count"></span></label>
+          <textarea class="textarea" id="desc" rows="4" maxlength="1000"></textarea>
+        </div>
+        <div class="field has-error" data-when="errors">
+          <label for="desc-bad">What is wrong<span class="req">*</span><span class="counter">9 / 1000</span></label>
+          <textarea class="textarea" id="desc-bad" rows="4" maxlength="1000" aria-invalid="true" aria-describedby="desc-err">Too high.</textarea>
+          <span class="error-text" id="desc-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Write at least 20 characters</span>
+        </div>
+        <div class="field">
+          <span class="field-label">Evidence<span class="counter">Optional</span></span>
+          <div class="files" data-when="ready restored submitting submitted offline">
+            <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+              <div class="file-body"><b>service-report-signed.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 540 KB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="uploading">
+            <div class="file" data-status="uploading" data-progress="70"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+              <div class="file-body"><b>service-report-signed.pdf</b><span class="file-meta">Uploading 70% · 540 KB</span><span class="progress"><i style="width:70%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="wrong-type"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>gate-register.xlsx</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Use PDF, JPG or PNG</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <button class="add-file" type="button" data-open="attach">
+            <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-paperclip"/></svg></span>
+            <span class="grow"><b>Add photo or file</b><span>PDF, JPG or PNG up to 10 MB</span></span>
+            <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready restored" onclick="document.querySelector('.plate-states [data-state=submitting]').click()">Submit dispute</button>
+        <button class="btn btn-primary" type="button" data-when="errors uploading" disabled>Submit dispute</button>
+        <button class="btn btn-primary" type="button" data-when="submitting submitted" aria-busy="true">Submit dispute</button>
+        <button class="btn btn-primary" type="button" data-when="offline" disabled>Submit when online</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="invoices" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="inv-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="inv-t">Choose invoice</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Invoices" id="inv-list"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="attach" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add evidence">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg>Choose a file</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="done" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="done-t">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="done-t">Dispute submitted</h3><p id="done-p"></p>
+        <div class="actions"><a class="btn btn-primary" id="done-view" href="C1602-dispute-status.html">View status</a>
+          <a class="btn btn-text" id="done-back" href="C802-invoice-detail.html" style="width:100%">Done</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Pick an invoice above; INV-2026-0981 already has an open dispute on its delivery line. Paid invoices
+can be disputed, and leaving keeps a draft.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const REASONS = ['Wrong amount', 'Work not done', 'Already paid', 'Duplicate', 'Other'];
+  /* sample: the open dispute C1602 shows, and the number a new dispute gets */
+  const OPEN_DISPUTE = { number: 'DSP-2026-0007', invoice: 'INV-2026-0981', line: 2 };
+  const NEW_NUMBER = 'DSP-2026-0009';
+  const TYPED = 'Engineer was on site for 2 hours, not 2.5. The signed report shows 10:30 to 12:30.';
+  const PICKS = [['INV-2026-0980', 'due'], ['INV-2026-0981', 'open dispute'], ['INV-2026-0987', 'paid']];
+
+  const number = new URLSearchParams(location.search).get('invoice') || PICKS[0][0];
+  const inv = data.invoices.find((i) => i.number === number);
+  const open = OPEN_DISPUTE.invoice === inv.number ? OPEN_DISPUTE : null;
+  const q = `?invoice=${number}`;
+  $('back').href += q;
+  $('done-back').href += q;
+  $('done-view').href += `?dispute=${NEW_NUMBER}`;
+  $('pick').insertAdjacentHTML('beforeend', PICKS.map(([n, label]) =>
+    `<button type="button" aria-pressed="${n === number}" onclick="location.search='?invoice=${n}'">${label}</button>`).join(''));
+
+  $('inv-value').innerHTML = `<span class="mono">${inv.number}</span> · ${R.money(inv.amount)}`;
+  $('inv-list').innerHTML = data.invoices.map((i) => `<button class="choice" role="radio" type="button" aria-checked="${i.number === number}"
+    onclick="location.search='?invoice=${i.number}'"><span class="disc">${R.icon('receipt')}</span><b class="mono">${i.number}</b>
+    <p>${R.esc(i.title)} · ${R.money(i.amount)}</p><span class="mark"></span></button>`).join('');
+
+  const choose = open ? (open.line === 0 ? 1 : 0) : 1 % inv.lines.length;
+  $('lines').innerHTML = inv.lines.map(([desc, qty, rate], i) => {
+    const disputed = open && open.line === i;
+    return `<button class="choice line-choice" role="radio" type="button" aria-checked="${i === choose}"${disputed ? ' disabled' : ''}>
+      <b>${R.esc(desc)}</b><p>${disputed ? `Already disputed in ${open.number}` : `${qty} × ${R.money(rate)}`}</p><span class="amt">${R.money(qty * rate)}</span></button>`;
+  }).join('');
+  if (open) {
+    $('open-banner').outerHTML = `<div class="banner amber" style="margin-bottom:14px">${R.icon('hourglass')}
+      <div><b>Open dispute on this invoice</b>${R.esc(inv.lines[open.line][0])}. <a href="C1602-dispute-status.html?dispute=${open.number}">View ${open.number}</a></div></div>`;
+  }
+
+  $('reason-chips').innerHTML = REASONS.map((r, i) => `<button class="chip outline" type="button" aria-pressed="${i === 0}">${r}</button>`).join('');
+  $('desc').value = TYPED;
+  $('count').textContent = `${TYPED.length} / 1000`;
+  $('done-p').innerHTML = `Your dispute number is <span class="mono">${NEW_NUMBER}</span>. We will tell you when Zixom replies.`;
+  /* errors state: no reason chosen yet */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    $('reason-chips').querySelectorAll('button').forEach((c, i) => c.setAttribute('aria-pressed', String(b.dataset.state !== 'errors' && i === 0)));
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

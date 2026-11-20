@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1508 Service drafts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.draft{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 2px}
+.draft + .draft{border-top:1px solid var(--line)}
+.draft .disc{grid-row:1 / span 2; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.draft a{display:grid; color:inherit; text-decoration:none}
+.draft b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.draft .sub{margin-top:3px; font-size:var(--fs-12); color:var(--text-muted)}
+.draft .tag{justify-self:start; margin-top:6px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1508 Service drafts</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="expired" aria-pressed="false">old draft removed</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="delete">delete</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C501-support.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Drafts</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready expired offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Drafts are on this phone.</div>
+          <div class="banner grey" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg><div id="expired"></div></div>
+          <div id="drafts"></div>
+        </div>
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg></span>
+          <h3>No drafts</h3><p>Unfinished requests, claims and questions are kept here for 30 days.</p>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:55%"></span><span class="skeleton sk-line" style="width:35%"></span></div></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:65%"></span><span class="skeleton sk-line" style="width:30%"></span></div></div>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="delete" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="delete-t">
+        <h3 id="delete-t">Delete this draft?</h3><p id="delete-p"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep draft</button>
+          <button class="btn btn-text" type="button" style="color:var(--red); width:100%" data-close data-toast="Draft deleted">Delete</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Unsent drafts for the current company, newest first. Drafts older than 30 days are removed with a
+notice.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const MAX_AGE_DAYS = 30;
+  /* sample drafts on this phone; the service request one is the draft on C501 */
+  const DRAFTS = [
+    { kind: 'Service request', icon: 'wrench', machine: 'ZP-CF-2011', sub: 'Step 2 of 5', edited: '2026-11-23T10:05', href: 'C504-raise-issue.html?machine=ZP-CF-2011' },
+    { kind: 'Warranty claim', icon: 'shield-check', machine: 'ZP-TF-2204', sub: 'Photos not added', edited: '2026-11-20T18:20', href: 'C303-claim-machine.html?serial=ZP-TF-2204' },
+    { kind: 'Question', icon: 'chat-circle-dots', title: 'Heater settings for 0.8 mm PET', sub: 'Not sent', edited: '2026-10-29T15:40', href: 'C602-ask.html' },
+    { kind: 'Service request', icon: 'wrench', machine: 'ZP-VF-1908', sub: 'Step 1 of 5', edited: '2026-10-12T11:00', href: '' },
+  ];
+
+  const age = (d) => -R.daysFromToday(d.edited);
+  const kept = DRAFTS.filter((d) => age(d) <= MAX_AGE_DAYS);
+  const removed = DRAFTS.filter((d) => age(d) > MAX_AGE_DAYS);
+  const title = (d) => d.title || (R.machine(d.machine).nickname || R.machine(d.machine).model);
+
+  $('drafts').innerHTML = kept.map((d, i) => {
+    const left = MAX_AGE_DAYS - age(d);
+    return `<div class="draft"><span class="disc">${R.icon(d.icon)}</span>
+      <a href="${d.href}"><b>${R.esc(title(d))}</b><span class="sub">${d.kind} · ${d.sub} · ${R.ago(d.edited)}</span>
+      ${left <= 7 ? R.tag(`Removed in ${left} days`, 'amber') : ''}</a>
+      <button class="icon-btn sm" type="button" data-open="delete" data-i="${i}" aria-label="Delete draft">${R.icon('trash', 'ic-18')}</button></div>`;
+  }).join('');
+  $('expired').innerHTML = removed.map((d) => `<b>Draft removed</b>${d.kind}, ${R.esc(title(d))}, was older than ${MAX_AGE_DAYS} days.`).join('');
+
+  const pick = (i) => { $('delete-p').textContent = `${kept[i].kind}, ${title(kept[i])}. This cannot be undone.`; };
+  pick(0);
+  document.addEventListener('click', (ev) => { const b = ev.target.closest('[data-i]'); if (b) pick(Number(b.dataset.i)); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1604 Request invoice correction</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.inv-line{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center}
+.inv-line .disc{grid-row:1 / span 2; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff; color:var(--slate-800); border:1px solid var(--line)}
+.inv-line b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.inv-line .sub{grid-column:2; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.inv-line .amt{grid-column:3; grid-row:1 / span 2; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.rules{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.rules div{padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); font-size:var(--fs-13); line-height:1.6; color:var(--slate-900)}
+.rules b{display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:var(--fs-12); font-weight:600}
+.rules .yes b{color:var(--green)} .rules .no b{color:var(--text-muted)}
+.rules .ic{width:16px; height:16px}
+.checks{display:grid; gap:12px; margin:4px 0 18px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1604 Request invoice correction</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>invoice</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">wrong GSTIN</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="submitted" aria-pressed="false" data-open="done">submitted</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C802-invoice-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Request a correction</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your request is kept.</div>
+          <div class="card-fill inv-line" id="invoice"></div>
+          <div id="blocker"></div>
+          <div class="rules" id="rules">
+            <div class="yes"><b><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Can change</b>GSTIN<br>Company name<br>Billing address</div>
+            <div class="no"><b><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Cannot change</b>Amounts<br>Items<br>Dates</div>
+          </div>
+          <div id="form">
+            <span class="field-label">What is wrong<span class="req">*</span></span>
+            <div class="checks">
+              <label class="check"><input type="checkbox" checked>GSTIN</label>
+              <label class="check"><input type="checkbox">Company name</label>
+              <label class="check"><input type="checkbox">Billing address</label>
+            </div>
+            <div class="field" data-when="ready submitting submitted offline">
+              <label for="gstin">Correct GSTIN<span class="req">*</span></label>
+              <input class="input mono" id="gstin" maxlength="15" autocapitalize="characters">
+              <span class="hint" id="gstin-hint"></span>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <label for="gstin-bad">Correct GSTIN<span class="req">*</span></label>
+              <input class="input mono" id="gstin-bad" value="24AAAAA0000A2Z" aria-invalid="true" aria-describedby="gstin-err">
+              <span class="error-text" id="gstin-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the 15 character GSTIN</span>
+            </div>
+            <p class="hint" style="margin:4px 2px 0">Wrong amount? <a class="link accent" id="dispute" href="C1601-dispute.html">Dispute a charge</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" id="footer">
+        <button class="btn btn-primary" type="button" data-when="ready offline" onclick="document.querySelector('.plate-states [data-state=submitting]').click()">Submit request</button>
+        <button class="btn btn-primary" type="button" data-when="errors" disabled>Submit request</button>
+        <button class="btn btn-primary" type="button" data-when="submitting submitted" aria-busy="true">Submit request</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="done" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="done-t">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="done-t">Correction requested</h3><p>It shows on the invoice until Zixom issues the corrected one.</p>
+        <div class="actions"><a class="btn btn-primary" id="done-back" href="C802-invoice-detail.html">Back to invoice</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Pick an invoice above: open for correction, a request already pending, or closed because that month's
+GST return is filed.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* the GST return for a month is filed on this day of the next month; after it the invoice is locked */
+  const GST_RETURN_DAY = 11;
+  const PENDING = { invoice: 'INV-2026-0984', field: 'Billing address', requested: '2026-11-21' };
+  const NEW_GSTIN = '24AAAAA0000A2Z4';
+  const PICKS = [['INV-2026-0980', 'open'], ['INV-2026-0984', 'pending request'], ['INV-2026-0987', 'GST return filed']];
+
+  const number = new URLSearchParams(location.search).get('invoice') || PICKS[0][0];
+  const inv = data.invoices.find((i) => i.number === number);
+  const company = data.companies.find((c) => c.id === 'shree');
+  const q = `?invoice=${number}`;
+  $('back').href += q;
+  $('done-back').href += q;
+  $('dispute').href += q;
+  $('pick').insertAdjacentHTML('beforeend', PICKS.map(([n, label]) =>
+    `<button type="button" aria-pressed="${n === number}" onclick="location.search='?invoice=${n}'">${label}</button>`).join(''));
+
+  $('invoice').innerHTML = `<span class="disc">${R.icon('receipt')}</span><b class="mono">${inv.number}</b>
+    <span class="sub">${R.esc(inv.title)}</span><span class="amt">${R.money(inv.amount)}</span>`;
+  $('gstin').value = NEW_GSTIN;
+  $('gstin-hint').innerHTML = `On the invoice: <span class="mono">${company.gstin}</span>`;
+
+  const issued = new Date(`${inv.issued}T00:00:00`);
+  const next = new Date(issued.getFullYear(), issued.getMonth() + 1, GST_RETURN_DAY);
+  const filedOn = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(GST_RETURN_DAY).padStart(2, '0')}`;
+  const locked = data.today > filedOn;
+  const pending = PENDING.invoice === inv.number ? PENDING : null;
+  const banner = (tone, iconName, title, text) => `<div class="banner ${tone}">${R.icon(iconName)}<div><b>${title}</b>${text}</div></div>`;
+  if (locked || pending) {
+    const month = issued.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    $('blocker').innerHTML = locked
+      ? banner('grey', 'lock-simple', 'Corrections closed', `The GST return for ${month} was filed on ${R.dayDate(filedOn)}.`)
+      : banner('', 'hourglass', 'Correction pending', `${pending.field}, requested on ${R.dayDate(pending.requested)}.`);
+    $('form').hidden = true;
+    $('rules').hidden = locked;
+    $('footer').innerHTML = `<a class="btn btn-secondary" href="C605-contact.html"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact support</a>`;
+    document.querySelectorAll('.plate-states [data-state]:not([data-state=ready])').forEach((b) => { b.disabled = true; });
+  }
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

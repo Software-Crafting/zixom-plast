@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1602 Dispute status</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.dsp-head{text-align:center; padding:4px 0 2px}
+.dsp-head .amount{display:block; margin-top:12px; font:400 34px var(--font-display); color:var(--slate-900)}
+.dsp-head .mono{display:block; margin-top:4px; font-size:var(--fs-13); color:var(--slate-600)}
+.dsp-head p{margin:6px 0 0; font-size:var(--fs-14)}
+.kv a{color:var(--blue); text-decoration:none}
+.reply{margin:0; padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line); font-size:var(--fs-14); color:var(--slate-900)}
+.reply small{display:block; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1602 Dispute status</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="pick"><span>dispute</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="info">add information</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C802-invoice-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Dispute</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="dsp-head" id="head"></div>
+          <div id="outcome" class="stack-sm"></div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+          <div><div class="section-head" style="margin-bottom:10px"><h2>Progress</h2></div><ol class="timeline" id="timeline"></ol></div>
+        </div>
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:110px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:160px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready offline" id="footer"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="info" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="info-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="info-t">Add information</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="more">Message<span class="req">*</span></label>
+            <textarea class="textarea" id="more" rows="3" maxlength="1000">Gate register photo attached. Courier arrived on 4 Nov.</textarea></div>
+          <div class="files">
+            <div class="file" data-status="uploading" data-progress="55"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>gate-register.jpg</b><span class="file-meta">Uploading 55% · 1.4 MB</span><span class="progress"><i style="width:55%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-close data-toast="Information sent">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Pick a dispute above for under review, resolved with a credit note and refund, or rejected with
+Zixom's reply.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample disputes; line is the index into the invoice lines */
+  const DISPUTES = [
+    { number: 'DSP-2026-0009', invoice: 'INV-2026-0980', line: 1, reason: 'Wrong amount', status: 'review', raised: '2026-11-23', reviewed: null },
+    { number: 'DSP-2026-0007', invoice: 'INV-2026-0981', line: 2, reason: 'Wrong amount', status: 'review', raised: '2026-11-19', reviewed: '2026-11-20' },
+    { number: 'DSP-2026-0004', invoice: 'INV-2026-0987', line: 0, reason: 'Wrong amount', status: 'resolved', raised: '2026-10-28', reviewed: '2026-10-29', closed: '2026-11-06',
+      reply: 'Engineer worked 1 hour, not 1.25. We issued a credit note for the difference.',
+      creditNote: { lines: [['Labour, hours', 0.25, 800]] }, refund: { status: 'Refund initiated', expected: '2026-11-28' } },
+    { number: 'DSP-2026-0005', invoice: 'INV-2026-0982', line: 0, reason: 'Already paid', status: 'rejected', raised: '2026-11-02', reviewed: '2026-11-03', closed: '2026-11-05',
+      reply: 'Receipt RCP-2026-0650 paid this invoice once. There is no second charge on our side.' },
+  ];
+
+  const id = new URLSearchParams(location.search).get('dispute') || DISPUTES[0].number;
+  const d = DISPUTES.find((x) => x.number === id);
+  if (!d) { location.replace('../system/S05-not-found.html'); return; }
+  const inv = data.invoices.find((i) => i.number === d.invoice);
+  const [desc] = inv.lines[d.line];
+  const STATUS = { review: ['Under review', 'amber'], resolved: ['Resolved', 'green'], rejected: ['Rejected', 'red'] };
+
+  $('pick').insertAdjacentHTML('beforeend', DISPUTES.map((x) =>
+    `<button type="button" aria-pressed="${x.number === d.number}" onclick="location.search='?dispute=${x.number}'">${x.number.slice(-4)} ${STATUS[x.status][0].toLowerCase()}</button>`).join(''));
+  $('back').href += `?invoice=${inv.number}`;
+
+  $('head').innerHTML = `${R.tag(...STATUS[d.status])}<b class="amount">${R.money(R.totals([inv.lines[d.line]]).total)}</b>
+    <span class="mono">${d.number}</span><p>${R.esc(desc)}</p>`;
+  $('facts').innerHTML = `<div><dt>Invoice</dt><dd><a class="mono" href="C802-invoice-detail.html?invoice=${inv.number}">${inv.number}</a></dd></div>
+    <div><dt>Reason</dt><dd>${R.esc(d.reason)}</dd></div><div><dt>Raised</dt><dd>${R.date(d.raised)}</dd></div>`;
+
+  const outcome = [];
+  if (d.reply) outcome.push(`<p class="reply">${R.esc(d.reply)}<small>Zixom accounts · ${R.date(d.closed)}</small></p>`);
+  if (d.creditNote) {
+    const credit = R.totals(d.creditNote.lines).total;
+    const paidWith = data.payments.find((p) => p.invoice === inv.number && p.status === 'paid');
+    outcome.push(`<div class="banner green">${R.icon('receipt')}<div><b>Credit note <span class="mono">${inv.creditNote}</span>, ${R.money(credit)}</b>
+      <a href="C1603-credit-notes.html">Open credit note</a></div></div>`,
+    `<div class="banner">${R.icon('arrows-clockwise')}<div><b>${d.refund.status}</b>${R.money(credit)} to ${R.esc(paidWith.method)}, by ${R.dayDate(d.refund.expected)}.</div></div>`);
+  }
+  $('outcome').innerHTML = outcome.join('');
+
+  const step = (cls, title, when) => `<li class="${cls}"><span class="dot"></span><div><b>${title}</b>${when ? `<span>${R.date(when)}</span>` : ''}</div></li>`;
+  const end = { review: step('todo', 'Resolved or rejected'), resolved: step('done', 'Resolved', d.closed), rejected: step('done', 'Rejected', d.closed) }[d.status];
+  $('timeline').innerHTML = step('done', 'Submitted', d.raised) + step(d.status === 'review' ? 'now' : 'done', 'Under review', d.reviewed) + end;
+
+  $('footer').innerHTML = {
+    review: '<button class="btn btn-primary" type="button" data-open="info">Add information</button>',
+    resolved: '<a class="btn btn-secondary" href="C1603-credit-notes.html">Open credit note</a>',
+    rejected: '<a class="btn btn-secondary" href="C605-contact.html"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact support</a>',
+  }[d.status];
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

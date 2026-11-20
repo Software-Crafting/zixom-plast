@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C307 New claim: review and submit</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C303 to C307 wizard, same as C503 to C507 */
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+/* same review cards as C507 */
+.rcard{padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff}
+.rcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
+.rcard h2{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.rcard .top a{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.rcard .kv div{padding:8px 0}
+.rcard .text{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.mline{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; margin-bottom:12px}
+.mline b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mline .mono{font-size:var(--fs-12); color:var(--text-muted)}
+.mini{display:flex; flex-wrap:wrap; gap:6px}
+.mini .upload{width:46px; height:46px; aspect-ratio:auto}
+.next-steps{margin:14px 0 0; padding:0; list-style:none; text-align:left; font-size:var(--fs-13); color:var(--slate-700)}
+.next-steps li{display:flex; gap:10px; align-items:center; padding:6px 0}
+.next-steps .n{width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); font:600 var(--fs-11) var(--font-body)}
+/* this page */
+.declare{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
+.declare.has-error{border-color:var(--red)}
+.declare .error-text{margin-top:8px}
+.footer-bar .banner{margin-bottom:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C307 New claim: review and submit</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="unticked" aria-pressed="false">not confirmed</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="ready" data-open="success" aria-pressed="false">submitted</button>
+  <button type="button" data-state="ended" aria-pressed="false">warranty ended</button>
+  <button type="button" data-state="mediafail" aria-pressed="false">upload failed</button>
+  <button type="button" data-state="ready" data-open="duplicate" aria-pressed="false">duplicate</button>
+  <button type="button" data-state="ready" data-open="notsure" aria-pressed="false">network dropped</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C306-claim-site.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New claim</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 5 of 5</b><span>Review and submit</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+            <div><b>You are offline</b>Your claim is kept as a draft. Submit when you are back online.</div></div>
+          <div class="banner red" data-when="ended"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg>
+            <div><b id="ended-title"></b>This can no longer be a warranty claim. Your draft can become a paid service request.</div></div>
+          <div class="banner red" data-when="mediafail"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>1 file did not upload</b>hmi-alarm-H02.jpg. <button class="link-btn" type="button" data-busy>Retry</button> or submit without it.</div></div>
+
+          <div class="rcard">
+            <div class="top"><h2>Machine</h2><a href="C303-claim-machine.html" data-keep>Edit</a></div>
+            <div class="mline" id="mline" style="margin:0"></div>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Problem</h2><a href="C304-claim-problem.html" data-keep>Edit</a></div>
+            <dl class="kv" style="margin:0" id="problem"></dl>
+            <p class="text" id="problem-text"></p>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Evidence</h2><a href="C305-claim-evidence.html" data-keep>Edit</a></div>
+            <div class="mini" id="evidence"></div>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Site and contact</h2><a href="C306-claim-site.html" data-keep>Edit</a></div>
+            <dl class="kv" style="margin:0" id="site"></dl>
+          </div>
+
+          <div class="declare" id="declare">
+            <label class="check"><input type="checkbox" id="confirm" checked>I confirm that the machine was used as intended and was not repaired or changed by anyone other than Zixom</label>
+            <span class="error-text" data-when="unticked"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Tick the box to submit</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-open="success" data-when="ready mediafail">Submit claim</button>
+        <button class="btn btn-primary" type="button" data-when="unticked">Submit claim</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submitting...</button>
+        <a class="btn btn-primary" id="convert" href="C503-raise-machine.html" data-when="ended">Convert to paid service request</a>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit claim</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="success" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ok-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="ok-title">Claim submitted</h3>
+        <p>Your claim number is <span class="mono" id="new-number"></span>.</p>
+        <ol class="next-steps">
+          <li><span class="n">1</span>We review it within 2 working days</li>
+          <li><span class="n">2</span>We may ask you for more information</li>
+          <li><span class="n">3</span>Approved: we book a visit at no charge</li>
+        </ol>
+        <div class="actions"><a class="btn btn-primary" id="view-claim" href="C308-claim.html">View claim</a>
+          <a class="btn btn-text" style="width:100%" href="C301-warranty.html">Back to Support</a></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="duplicate" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="dup-title">
+        <h3 id="dup-title">You already claimed this</h3>
+        <p id="dup-text"></p>
+        <div class="actions"><a class="btn btn-primary" id="dup-view" href="C308-claim.html">View claim</a>
+          <button class="btn btn-text" style="width:100%" type="button" data-close>Back to review</button></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="notsure" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ns-title">
+        <h3 id="ns-title">We are not sure this was sent</h3>
+        <p>We will check before you send it again. Your draft is kept.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-busy>Check again</button>
+          <button class="btn btn-text" style="width:100%" type="button" data-close>Close</button></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave claim">
+        <div class="group"><div class="title">Leave this claim? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C301-warranty.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C301-warranty.html'">Discard claim</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 5: check, confirm and send. A claim cannot be edited after submit. Warranty ending meanwhile
+blocks Submit (EC-47); a dropped network never shows success (EC-03); a duplicate links to the claim (EC-41).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample values not in data.js yet (move there): the draft entered in C304 to C306, the next claim number,
+     and the open claim for the same fault */
+  const DRAFT = { category: 'Heating', part: 'PID temperature controller', started: '2026-11-20', stopped: 'No', code: 'H-02',
+    description: 'Heater zone 2 overshoots by 30 degrees and trips. Sheets come out with burn marks.',
+    photos: 3, video: 1, nameplate: 1, documents: 1, slots: [['2026-11-25', '9 to 12'], ['2026-11-26', '12 to 3']] };
+  const NEW_CLAIM = 'WCL-2026-0047';
+  const SAME_FAULT = 'WCL-2026-0042';
+
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+  $('mline').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span><br><span data-when="ready unticked submitting mediafail offline">${R.warrantyTag(m)}</span><span data-when="ended">${R.tag('Out of warranty')}</span></span>`;
+  $('problem').innerHTML = `<div><dt>Category</dt><dd>${DRAFT.category}</dd></div><div><dt>Part</dt><dd>${DRAFT.part}</dd></div>
+    <div><dt>Started</dt><dd>${R.date(DRAFT.started)}</dd></div><div><dt>Machine stopped</dt><dd>${DRAFT.stopped}</dd></div>
+    <div><dt>Error code</dt><dd class="mono">${DRAFT.code}</dd></div>`;
+  $('problem-text').textContent = DRAFT.description;
+
+  const tile = (icon) => `<div class="upload">${R.icon(icon, 'ic-24')}</div>`;
+  $('evidence').innerHTML = tile('image').repeat(DRAFT.photos) + tile('video-camera').repeat(DRAFT.video)
+    + tile('barcode').repeat(DRAFT.nameplate) + tile('file-pdf').repeat(DRAFT.documents);
+
+  $('site').innerHTML = `<div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+    <div><dt>Contact</dt><dd>${R.esc(site.contact.name)}</dd></div>
+    ${DRAFT.slots.map(([date, slot], i) => `<div><dt>${i ? '' : 'Times'}</dt><dd>${R.dayDate(date)}, ${slot}</dd></div>`).join('')}`;
+
+  $('ended-title').textContent = `Warranty ended on ${R.date(m.warrantyEnd)}`;
+  $('convert').href = `C503-raise-machine.html?machine=${serial}`;
+  $('new-number').textContent = NEW_CLAIM;
+  $('view-claim').href = `C308-claim.html?claim=${NEW_CLAIM}&machine=${serial}`;
+  $('dup-text').textContent = `${SAME_FAULT} is open for the same fault on this machine.`;
+  $('dup-view').href = `C308-claim.html?claim=${SAME_FAULT}`;
+
+  /* the declaration box mirrors the unticked state */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    const unticked = b.dataset.state === 'unticked';
+    $('confirm').checked = !unticked;
+    $('declare').classList.toggle('has-error', unticked);
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

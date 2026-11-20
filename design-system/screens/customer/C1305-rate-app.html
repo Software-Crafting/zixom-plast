@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1305 Rate the app prompt</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.prompt .state{padding:4px 0 0}
+.prompt .disc{background:var(--amber-50); color:var(--amber)}
+.prompt .disc .ic{fill:currentColor}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1305 Rate the app prompt</b><span>after a 4 or 5 star service rating</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="rate">ready</button>
+  <button type="button" data-state="suppressed" aria-pressed="false">not shown</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Rate the service</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding-top:90px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Thank you</h3>
+          <p>Your rating helps us improve.</p>
+        </div>
+      </div>
+      <div class="footer-bar"><a class="btn btn-primary" href="C508-request-detail.html" id="done">Done</a></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom prompt" id="rate" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="rate-title">
+        <span class="grabber"></span>
+        <div class="state">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-star"/></svg></span>
+          <h3 id="rate-title">Enjoying Zixom Connect?</h3>
+          <p>A rating in the store helps other plants find us.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close data-toast="Opening the store">Rate now</button>
+          <button class="btn btn-secondary" type="button" data-close>Not now</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close data-toast="We will not ask again">Never ask</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Soft sheet after a 4 or 5 star service rating, then the store's own review prompt. At most once in 90 days,
+never right after a failed or pending payment.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const rated = ZX.data.tickets.find((t) => t.rating >= 4);
+  const href = `C508-request-detail.html?ticket=${rated.number}`;
+  document.getElementById('back').href = href;
+  document.getElementById('done').href = href;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

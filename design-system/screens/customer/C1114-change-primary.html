@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1114 Change primary contact</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.choice .avatar, .list-item .avatar{grid-row:1 / span 2}
+.choice[aria-checked="true"] .avatar{background:var(--slate-800); color:#fff}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1114 Change primary contact</b><span>primary contact only</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">missing reason</button>
+  <button type="button" data-state="pending" aria-pressed="false">request pending</button>
+  <button type="button" data-state="empty" aria-pressed="false">no one else</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1105-team.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Change primary contact</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send.</div>
+
+        <div data-when="ready errors offline">
+          <p class="list-title" style="margin-top:4px">Now</p>
+          <div class="list"><div class="list-item" style="cursor:default" id="current"></div></div>
+
+          <p class="list-title">New primary contact</p>
+          <div role="radiogroup" aria-label="New primary contact" id="candidates"></div>
+          <p class="hint">Only active members can be chosen.</p>
+
+          <div class="field" style="margin-top:16px" data-when="ready offline"><label for="reason">Reason<span class="req">*</span></label>
+            <textarea class="textarea" id="reason" rows="3">I am moving to the Nova Cups plant from January. Pooja handles maintenance here.</textarea></div>
+          <div class="field has-error" style="margin-top:16px" data-when="errors"><label for="reason-e">Reason<span class="req">*</span></label>
+            <textarea class="textarea" id="reason-e" rows="3" aria-invalid="true" aria-describedby="reason-err"></textarea>
+            <span class="error-text" id="reason-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a reason for Zixom</span></div>
+        </div>
+
+        <div data-when="pending">
+          <div class="state" style="padding:16px 20px 22px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+            <h3>Request pending</h3><p>Zixom confirms by notification.</p>
+          </div>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="pending"></dl></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span>
+          <h3>No one else to choose</h3><p>Invite a colleague first.</p>
+          <a class="btn btn-secondary" href="C1105-team.html">Invite person</a>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:62px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:100px; border-radius:var(--r-md)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready errors offline">
+        <button class="btn btn-primary" type="button" data-busy data-toast="Sent to Zixom" data-when="ready">Send to Zixom</button>
+        <button class="btn btn-primary" type="button" disabled data-when="errors offline">Send to Zixom</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The primary contact asks Zixom to hand the role to another active member, with a reason. Zixom
+confirms by notification; a pending request blocks a second one.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const COMPANY = 'shree';
+  const SENT = '2026-11-23T10:05';
+  const members = data.users.filter((u) => u.companies.some((c) => c.id === COMPANY));
+  const isPrimary = (u) => u.companies.find((c) => c.id === COMPANY).primary;
+  const current = members.find(isPrimary);
+  const candidates = members.filter((u) => !isPrimary(u));
+
+  $('current').innerHTML = `<span class="avatar">${R.esc(current.initials)}</span><b>${R.esc(current.name)}</b>
+    <span class="sub">${R.esc(current.designation)}</span>`;
+  $('candidates').innerHTML = candidates.map((u, i) => `<button class="choice" role="radio" aria-checked="${i === 0}" type="button">
+    <span class="avatar">${R.esc(u.initials)}</span><b>${R.esc(u.name)}</b><p>${R.esc(u.designation)}</p><span class="mark"></span></button>`).join('');
+  $('pending').innerHTML = [['New primary contact', R.esc(candidates[0].name)], ['Sent', `${R.dayDate(SENT)}, 10:05 AM`],
+    ['Status', R.tag('Pending', 'blue')]].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

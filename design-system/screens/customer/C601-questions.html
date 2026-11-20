@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C601 Questions list</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.segment .n{display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:var(--r-pill);
+  background:var(--slate-200); color:var(--slate-700); font:700 var(--fs-11) var(--font-body)}
+.segment [aria-selected="true"] .n{background:var(--slate-800); color:#fff}
+.segment a, .segment button{display:flex; align-items:center; justify-content:center}
+.ticket p b{font-weight:600; color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C601 Questions list</b><span>Support tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <h1 class="root-title" style="margin:0; flex:1">Support</h1>
+          <a class="icon-btn glass" href="C604-faq.html" aria-label="Help and FAQ"><svg class="ic" aria-hidden="true"><use href="#ph-question"/></svg></a>
+          <a class="icon-btn glass" href="C605-contact.html" aria-label="Contact Zixom"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></a>
+        </div>
+      </header>
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="stack" style="margin-top:16px">
+            <nav class="segment" role="tablist" aria-label="Support sections">
+              <a role="tab" aria-selected="false" href="C501-support.html">Service<span class="n" id="n-service"></span></a>
+              <a role="tab" aria-selected="false" href="C301-warranty.html">Warranty<span class="n" id="n-warranty"></span></a>
+              <a role="tab" aria-selected="true" href="#">Questions<span class="n" id="n-questions"></span></a>
+            </nav>
+
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+            <div class="search" data-when="ready noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+              <input class="input" placeholder="Subject or QRY number" aria-label="Search questions" id="search"></div>
+
+            <div class="chips" role="tablist" aria-label="Question status" data-when="ready offline">
+              <button class="chip" role="tab" aria-selected="true" aria-controls="tab-open" id="chip-open"></button>
+              <button class="chip" role="tab" aria-selected="false" aria-controls="tab-answered" id="chip-answered"></button>
+              <button class="chip" role="tab" aria-selected="false" aria-controls="tab-closed" id="chip-closed"></button>
+            </div>
+
+            <div data-when="ready offline">
+              <div class="stack-sm" id="tab-open"></div>
+              <div class="stack-sm" id="tab-answered" hidden></div>
+              <div class="stack-sm" id="tab-closed" hidden></div>
+            </div>
+
+            <div class="state" data-when="noresults">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+              <h3>No matching results</h3>
+              <p>Nothing matches "chain tension".</p>
+              <a class="btn btn-secondary" href="C602-ask.html">Ask a question</a>
+            </div>
+
+            <div class="state" data-when="empty" style="padding-top:48px">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span>
+              <h3>No questions yet</h3>
+              <p>Ask Zixom about a machine, a bill or a part.</p>
+              <a class="btn btn-primary" href="C602-ask.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Ask a question</a>
+            </div>
+
+            <div class="stack-sm" data-when="loading">
+              <span class="skeleton" style="height:52px; border-radius:var(--r-md)"></span>
+              <span class="skeleton sk-line" style="width:60%; margin:6px 4px"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+            </div>
+
+            <div class="state" data-when="error" style="padding-top:40px">
+              <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+              <h3>Something went wrong</h3>
+              <p>We could not load this. Please try again in a moment.</p>
+              <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+              <span class="code mono">ZC-500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab" href="C602-ask.html" data-when="ready noresults empty offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Ask a question</a>
+    <nav class="tabbar" data-tabs="customer" data-active="support"></nav>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Questions segment of the Support tab: Open, Answered and Closed. A card opens its thread in
+<a href="C603-thread.html">C603</a>; Ask a question opens <a href="C602-ask.html">C602</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ENDED = ['closed', 'cancelled'];
+
+  /* Sample data not in data.js yet (move there): questions from spec section 16, the same set as C603 */
+  const OPEN_CLAIMS = 3; /* WCL-2026-0040 to 0042, as on C501 */
+  const QUESTIONS = [
+    { number: 'QRY-2026-0030', status: 'open', category: 'Technical or operation', subject: 'Heater settings for 0.8 mm PET sheet',
+      machine: 'ZP-TF-2310', last: ['me', 'Supplier is Polyfab. Top heater runs at 68 percent.'], when: '2026-11-23T10:48' },
+    { number: 'QRY-2026-0033', status: 'complaint', category: 'Complaint', subject: 'Engineer arrived after our site closed',
+      ticket: 'TKT-2026-0130', last: ['them', 'Mr Kapoor will call you by Tue 24 Nov.'], when: '2026-11-22T16:05' },
+    { number: 'QRY-2026-0031', status: 'answered', category: 'Billing or invoice', subject: 'GSTIN missing on invoice',
+      invoice: 'INV-2026-0980', last: ['them', 'Done. The revised invoice shows your GSTIN.'], when: '2026-11-23T08:40' },
+    { number: 'QRY-2026-0032', status: 'closed', category: 'Spare parts and price', subject: 'Price for crusher blade set',
+      machine: 'ZP-PC-1805', last: ['me', 'Thanks, that helps.'], when: '2026-11-13T15:10' },
+  ];
+  const STATUS = { open: ['Open', 'blue'], complaint: ['Complaint', 'red'], answered: ['Answered', 'green'], closed: ['Closed', ''] };
+  const TAB = { open: 'open', complaint: 'open', answered: 'answered', closed: 'closed' };
+
+  const linked = (q) => {
+    if (q.machine) { const m = R.machine(q.machine); return [R.icon('factory'), m.nickname || m.model]; }
+    if (q.ticket) return [R.icon('wrench'), q.ticket];
+    return [R.icon('receipt'), q.invoice];
+  };
+  const card = (q) => {
+    const [linkIcon, linkText] = linked(q);
+    const [who, text] = q.last;
+    return `<a class="ticket" href="C603-thread.html?q=${q.number}">
+      <span class="top"><span class="num mono">${q.number}</span>${R.tag(...STATUS[q.status])}</span>
+      <h3>${R.esc(q.subject)}</h3>
+      <p><b>${who === 'me' ? 'You' : R.esc(data.support.agent)}:</b> ${R.esc(text)}</p>
+      <span class="row-flex">${R.tag(q.status === 'complaint' ? 'With the service manager' : q.category, 'outline')}</span>
+      <span class="foot"><span>${linkIcon}${R.esc(linkText)}</span><span>${R.icon('clock')}${R.ago(q.when)}</span></span>
+    </a>`;
+  };
+
+  ['open', 'answered', 'closed'].forEach((tab) => {
+    const items = QUESTIONS.filter((q) => TAB[q.status] === tab).sort((a, b) => b.when.localeCompare(a.when));
+    $(`tab-${tab}`).innerHTML = items.map(card).join('');
+    $(`chip-${tab}`).textContent = `${tab[0].toUpperCase()}${tab.slice(1)}, ${items.length}`;
+  });
+
+  $('n-service').textContent = R.count(data.tickets.filter((t) => !ENDED.includes(t.status)).length);
+  $('n-warranty').textContent = R.count(OPEN_CLAIMS);
+  $('n-questions').textContent = R.count(QUESTIONS.filter((q) => TAB[q.status] === 'open').length);
+  $('search').value = '';
+  document.querySelector('[data-state="noresults"]').addEventListener('click', () => { $('search').value = 'chain tension'; });
+  document.querySelectorAll('.plate-states [data-state]:not([data-state="noresults"])').forEach((b) => b.addEventListener('click', () => { $('search').value = ''; }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

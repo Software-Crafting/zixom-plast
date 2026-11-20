@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C604 Help and FAQ</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.faq + .faq{border-top:1px solid var(--line)}
+.faq summary{display:flex; align-items:center; gap:12px; min-height:56px; padding:12px 14px; list-style:none; cursor:pointer;
+  font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span{flex:1}
+.faq summary .ic{width:16px; height:16px; color:var(--slate-400)}
+.faq[open] summary .ic{transform:rotate(180deg)}
+.faq .answer{padding:0 14px 14px; font-size:var(--fs-14); line-height:1.55; color:var(--text)}
+.faq .answer p{margin:0}
+.helpful{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:var(--fs-12); color:var(--text-muted)}
+.helpful span{flex:1; white-space:nowrap}
+.helpful .btn{width:auto; min-height:32px; padding:0 14px; font-size:var(--fs-13)}
+.group-title{margin:4px 4px -8px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C604 Help and FAQ</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="search" aria-pressed="false">search</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Help and FAQ</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Answers you opened still work.</div>
+
+          <div class="search" data-when="ready search noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" placeholder="Search help" aria-label="Search help" id="search"></div>
+
+          <div class="chips" data-single id="topics" data-when="ready offline"></div>
+
+          <div class="stack" id="faq" data-when="ready offline"></div>
+          <div class="stack" id="results" data-when="search"></div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p>Ask Zixom support instead.</p>
+            <a class="btn btn-primary" href="C602-ask.html"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+          </div>
+
+          <div class="stack" data-when="loading">
+            <span class="skeleton" style="height:38px; width:80%; border-radius:var(--r-pill)"></span>
+            <span class="skeleton sk-line" style="width:30%"></span>
+            <span class="skeleton" style="height:112px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:30%"></span>
+            <span class="skeleton" style="height:112px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:60px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+
+          <div data-when="ready search offline">
+            <p class="group-title" style="margin-bottom:8px">Still need help?</p>
+            <div class="list">
+              <a class="list-item" href="C602-ask.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span><b>Ask a question</b><span class="sub" id="reply-time"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="C605-contact.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg></span><b>Contact Zixom</b><span class="sub" id="hours"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="C1301-tour.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Take the tour again</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Short FAQ grouped by topic; tap a question to open its answer. No results points to
+<a href="C602-ask.html">C602</a>. Articles and videos come in a later phase.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const SEARCH = 'payment';
+
+  /* Sample data not in data.js yet (move there): the first release FAQ, answers from spec rules */
+  const FAQ = [
+    ['Machines', 'Where do I find the serial number?', 'On the nameplate fixed to the machine frame. It starts with ZP, for example ZP-TF-2310.'],
+    ['Machines', 'Parts form unevenly. What should I check?', 'Check each heater zone reading and clean the reflectors. If it continues, raise a service request with a photo.'],
+    ['Warranty', 'When does my warranty end?', 'Open the machine. It shows the end date and days left. We remind you 60, 30 and 7 days before.'],
+    ['Warranty', 'How do I claim warranty?', 'Support, Warranty, New claim. Add photos of the problem and Zixom replies in the app.'],
+    ['AMC', 'What if my AMC expires?', 'Renew within 7 days to keep the same plan with no gap. After that it is a new contract.'],
+    ['AMC', 'How many visits are left?', 'Open the AMC contract. It shows visits included and used.'],
+    ['Service', 'How fast will an engineer come?', 'Machine down: within 4 hours. Production affected: 1 working day. Minor: 3 working days.'],
+    ['Service', 'Can I change or cancel a visit?', 'Yes, until the engineer is on the way. After that, call support.'],
+    ['Payments', 'How can I pay?', 'UPI, card, net banking, or bank transfer with proof. Full payment only.'],
+    ['Payments', 'My payment failed but money was deducted', 'Any amount deducted is returned in 5 to 7 working days.'],
+    ['Account', 'How many phones can I use?', 'Two phones per account. Sign out on one to add another.'],
+    ['Account', 'Who in my company can pay invoices?', 'Everyone in your company can pay, approve estimates and add machines.'],
+  ];
+  const TOPICS = [...new Set(FAQ.map(([topic]) => topic))];
+
+  const item = ([, question, answer], open = false) => `<details class="faq"${open ? ' open' : ''}>
+    <summary><span>${R.esc(question)}</span>${R.icon('caret-down')}</summary>
+    <div class="answer"><p>${R.esc(answer)}</p>
+      <div class="helpful"><span>Was this helpful?</span>
+        <button class="btn btn-secondary" type="button" data-toast="Thanks for telling us">Yes</button>
+        <button class="btn btn-secondary" type="button" data-toast="Thanks. We will improve it">No</button></div></div>
+  </details>`;
+  const section = (title, items) => `<div class="stack" data-topic="${title}"><p class="group-title">${title}</p><div class="list">${items.join('')}</div></div>`;
+
+  $('topics').innerHTML = ['All', ...TOPICS].map((t, i) => `<button class="chip outline" type="button" aria-pressed="${i === 0}">${t}</button>`).join('');
+  $('faq').innerHTML = TOPICS.map((topic) => section(topic, FAQ.filter((f) => f[0] === topic).map((f, i) => item(f, topic === 'Machines' && i === 1)))).join('');
+  const found = FAQ.filter(([, q, a]) => `${q} ${a}`.toLowerCase().includes(SEARCH));
+  $('results').innerHTML = section(`${found.length} results for "${SEARCH}"`, found.map((f) => item(f)));
+
+  $('topics').addEventListener('click', (event) => {
+    const chip = event.target.closest('.chip');
+    if (chip) $('faq').querySelectorAll('[data-topic]').forEach((s) => { s.hidden = chip.textContent !== 'All' && s.dataset.topic !== chip.textContent; });
+  });
+  $('reply-time').textContent = 'Reply within 4 working hours';
+  $('hours').textContent = `${data.support.hours} · ${data.support.phone}`;
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    $('search').value = { search: SEARCH, noresults: 'gearbox oil' }[b.dataset.state] || '';
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

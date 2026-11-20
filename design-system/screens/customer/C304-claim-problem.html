@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C304 New claim: describe the problem</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C303 to C307 wizard, same as C503 to C507 */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+.mrow-sm{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r-lg); background:var(--field)}
+.mrow-sm b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mrow-sm .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+/* this page */
+.wrap{flex-wrap:wrap; overflow:visible}
+.mic{display:flex; justify-content:flex-end; margin-top:8px}
+.field-block{margin-top:20px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C304 New claim: describe the problem</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="freetext" aria-pressed="false">part not in list</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">same problem claimed</button>
+  <button type="button" data-state="ready" data-open="parts" aria-pressed="false">part picker</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C303-claim-machine.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New claim</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 2 of 5</b><span>Problem</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span><span></span><span></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. You can submit when back online.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#category">Choose a problem category</a></li><li><a href="#desc">Describe what happened in at least 20 characters</a></li></ul></div>
+          <div class="banner amber" data-when="duplicate" id="dup"></div>
+          <div class="mrow-sm" id="mrow"></div>
+
+          <div>
+            <div class="field-block" id="category" style="margin-top:0">
+              <span class="field-label">Problem category<span class="req">*</span></span>
+              <div class="chips wrap" data-single id="categories"></div>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a problem category</span>
+            </div>
+
+            <div class="field-block">
+              <span class="field-label">Affected part</span>
+              <button class="select" type="button" data-open="parts"><svg class="ic" aria-hidden="true"><use href="#ph-nut"/></svg><span class="value" id="part-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+              <div class="field" data-when="freetext" style="margin-top:10px">
+                <label for="part-text">Part name<span class="counter">19 / 80</span></label>
+                <input class="input" id="part-text" maxlength="80" value="Cooling fan bracket">
+              </div>
+            </div>
+
+            <div class="field" id="desc-field" style="margin-top:20px">
+              <label for="desc">What happened<span class="req">*</span><span class="counter" id="count"></span></label>
+              <textarea class="textarea" id="desc" maxlength="1000"></textarea>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe what happened in at least 20 characters</span>
+              <div class="mic"><button class="btn btn-soft btn-sm" type="button" data-toast="Listening..."><svg class="ic ic-18" aria-hidden="true"><use href="#ph-microphone"/></svg>Speak</button></div>
+            </div>
+
+            <div class="field">
+              <label for="started">When did it start<span class="req">*</span></label>
+              <input class="input" id="started" type="date">
+            </div>
+
+            <div class="field-block">
+              <span class="field-label">Is the machine stopped?</span>
+              <div class="segment" role="tablist" aria-label="Is the machine stopped">
+                <button role="tab" type="button" aria-selected="false">Yes</button>
+                <button role="tab" type="button" aria-selected="true">No</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="code">Error code on the panel</label>
+              <input class="input mono" id="code" maxlength="20" placeholder="E-17">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C305-claim-evidence.html" data-keep>Next</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="parts" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="parts-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="parts-title">Affected part</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Parts" id="part-list"></div>
+        <button class="btn btn-primary" type="button" style="margin-top:12px" data-close id="part-choose">Choose</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave claim">
+        <div class="group"><div class="title">Leave this claim? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C301-warranty.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C301-warranty.html'">Discard claim</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 2. Category, part from the machine's parts list or free text, what happened, start date (not
+in the future), machine stopped and error code. The same problem claimed in the last 30 days links to that claim.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const CATEGORIES = ['Mechanical', 'Electrical', 'Heating', 'Vacuum or pneumatic', 'Control or PLC', 'Other'];
+  const NOT_IN_LIST = 'Not in the list';
+  const DUPLICATE_DAYS = 30;
+  /* Sample data not in data.js yet (move there): the draft, and claims of the last 30 days */
+  const DRAFT = { category: 'Heating', part: 'PID temperature controller', started: '2026-11-20', code: 'H-02',
+    description: 'Heater zone 2 overshoots by 30 degrees and trips. Sheets come out with burn marks.' };
+  const SHORT_DESCRIPTION = 'Burn marks';
+  const DUPLICATE_DESCRIPTION = 'Vacuum drops again at the forming station. Corners are soft.';
+  const RECENT_CLAIMS = [
+    { number: 'WCL-2026-0042', machine: 'ZP-TF-2204', category: 'Vacuum or pneumatic', submitted: '2026-11-18' },
+    { number: 'WCL-2026-0040', machine: 'ZP-TF-2310', category: 'Heating', submitted: '2026-11-22' },
+  ];
+
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('mrow').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span>`;
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  $('started').max = data.today;
+
+  $('categories').innerHTML = CATEGORIES.map((c) => `<button class="chip outline" type="button" data-cat="${c}" aria-pressed="false">${c}</button>`).join('');
+  const setCategory = (category) => document.querySelectorAll('[data-cat]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === category)));
+
+  /* the machine's parts list: the spare parts catalogue in data.js */
+  const parts = [...data.parts.map((p) => [p.name, `<span class="mono">${p.number}</span>`, 'nut']), [NOT_IN_LIST, 'Type the part name', 'pencil-simple']];
+  $('part-list').innerHTML = parts.map(([part, sub, icon]) => `<button class="choice" role="radio" type="button" data-part="${R.esc(part)}" aria-checked="${part === DRAFT.part}">
+    <span class="disc">${R.icon(icon)}</span><b>${R.esc(part)}</b><p>${sub}</p><span class="mark"></span></button>`).join('');
+  const setPart = (part) => {
+    $('part-value').textContent = part;
+    document.querySelectorAll('[data-part]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.part === part)));
+  };
+  $('part-choose').addEventListener('click', () => setPart(document.querySelector('[data-part][aria-checked="true"]').dataset.part));
+
+  const desc = $('desc');
+  const count = () => { $('count').textContent = `${desc.value.trim().length} / 1000`; };
+  desc.addEventListener('input', count);
+
+  /* same machine and category within 30 days counts as the same problem */
+  const sameProblem = (category) => RECENT_CLAIMS.find((c) => c.machine === serial && c.category === category
+    && -R.daysFromToday(c.submitted) <= DUPLICATE_DAYS);
+
+  const fill = (state) => {
+    const duplicate = state === 'duplicate' && RECENT_CLAIMS.find((c) => c.machine === serial);
+    setCategory(state === 'errors' ? null : duplicate ? duplicate.category : DRAFT.category);
+    setPart(state === 'freetext' ? NOT_IN_LIST : DRAFT.part);
+    desc.value = state === 'errors' ? SHORT_DESCRIPTION : duplicate ? DUPLICATE_DESCRIPTION : DRAFT.description;
+    $('desc-field').classList.toggle('has-error', state === 'errors');
+    $('started').value = DRAFT.started;
+    $('code').value = DRAFT.code;
+    const same = duplicate && sameProblem(duplicate.category);
+    $('dup').innerHTML = same ? `${R.icon('warning')}<div><b>You claimed this problem on ${R.dayDate(same.submitted)}</b>
+      <a href="C308-claim.html?claim=${same.number}">View ${same.number}</a> or continue if it is new.</div>` : '';
+    count();
+  };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => fill(b.dataset.state)));
+  fill('ready');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

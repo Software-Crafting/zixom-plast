@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1301 First run tour</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* card deck from A02 Welcome: drag or flick the top card to throw it under the pile */
+.skip-row{display:flex; justify-content:flex-end; padding:6px 12px 0}
+.stage{flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:24px 0 20px}
+.deck{position:relative; width:236px; aspect-ratio:4 / 5; touch-action:pan-y; outline:none}
+.deck-card{position:absolute; inset:0; overflow:hidden; display:flex; flex-direction:column; border-radius:24px; background:#fff;
+  box-shadow:0 1px 2px rgba(24,34,45,.1), 0 18px 34px -14px rgba(24,34,45,.45); will-change:transform; user-select:none; -webkit-user-select:none}
+.deck-card.top{cursor:grab}
+.deck-card.top:active{cursor:grabbing}
+.deck-card .shade{position:absolute; inset:0; background:var(--slate-900); pointer-events:none; transition:opacity .4s ease}
+.deck-card .art{position:relative; flex:1; display:grid; place-items:center; margin:8px 8px 0; border-radius:18px}
+.deck-card .art > .ic{width:64px; height:64px; stroke-width:1.4}
+.deck-card .art .tag{position:absolute; left:10px; top:10px}
+.deck-card .info{padding:12px 16px 16px}
+.deck-card h3{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.deck-card .meta{display:flex; justify-content:space-between; gap:8px; margin-top:4px; font-size:var(--fs-12); color:var(--text-muted)}
+.art.equipment{background:linear-gradient(150deg, var(--blue-50), var(--slate-100)); color:var(--slate-600)}
+.art.service{background:linear-gradient(150deg, #E6EEFB, #DCE4F9); color:var(--blue)}
+.art.money{background:linear-gradient(150deg, var(--amber-50), #F7EBD5); color:var(--amber)}
+
+.intro{flex-shrink:0; padding:26px 22px 40px; border-radius:var(--r-xl) var(--r-xl) 0 0; background:var(--surface); text-align:center}
+.copy{height:98px; overflow:hidden; margin-bottom:18px}
+.copy h1{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.copy p{margin:8px auto 0; max-width:290px; font-size:var(--fs-14); line-height:1.45; color:var(--text);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.counter{display:block; margin-top:8px; font:500 var(--fs-12) var(--font-body); color:var(--text-faint); letter-spacing:.08em}
+.counter b{color:var(--slate-800)}
+/* Dynamic Type: the text reflows and the deck gives it room */
+.screen[data-state="largetext"] .deck{width:170px}
+.screen[data-state="largetext"] .copy{height:auto}
+.screen[data-state="largetext"] .copy h1{font-size:28px; white-space:normal}
+.screen[data-state="largetext"] .copy p{font-size:19px; -webkit-line-clamp:unset}
+.screen[data-state="largetext"] .btn{font-size:20px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1301 First run tour</b><span>once after the first sign in</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="largetext" aria-pressed="false">large text</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status"></div>
+    <div class="skip-row"><a class="btn btn-text" href="C101-home.html">Skip</a></div>
+
+    <div class="stage">
+      <div class="deck" id="deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="What you can do in Zixom Connect"></div>
+    </div>
+
+    <section class="intro">
+      <div class="copy" id="copy" aria-live="polite"></div>
+      <button class="btn btn-primary" type="button" id="next">Next</button>
+      <a class="btn btn-primary" href="C101-home.html" id="start" hidden>Get started</a>
+    </section>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Three cards, shown once after the first sign in; Skip or Get started ends it for good. Reopen it from
+<a href="C604-faq.html">Help</a>. Next throws the top card; drag or arrow keys work too.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const machine = R.machine('ZP-TF-2310');
+  const site = data.companies.find((c) => c.id === machine.company).sites.find((s) => s.id === machine.site);
+  const visit = data.tickets.find((t) => t.status === 'on-the-way');
+  const eng = R.engineer(visit.engineer);
+  const invoice = data.invoices.find((i) => i.number === 'INV-2026-0980');
+  const due = R.dayDate(invoice.due).split(' ').slice(1).join(' ');
+
+  const CARDS = [
+    ['equipment', R.daysFromToday(machine.warrantyEnd) > 30 ? R.tag('In warranty', 'green', 'shield-check') : R.warrantyTag(machine), 'factory', machine.model, machine.serial, site.name,
+      'My machines and history', 'Warranty, AMC and every visit for each machine.'],
+    ['service', R.tag('On the way', 'blue'), 'navigation-arrow', `${eng.name.split(' ')[0]}, in ${visit.eta} min`, visit.number, R.machine(visit.machine).nickname,
+      'Service and warranty in one place', 'Raise a request, claim warranty, follow the engineer.'],
+    ['money', R.tag(`Due ${due}`, 'amber'), 'receipt', R.money(invoice.amount), invoice.number, invoice.type,
+      'Pay and track orders', 'Pay invoices and follow parts to your door.'],
+  ];
+  const deck = document.getElementById('deck');
+  deck.innerHTML = CARDS.map(([art, tag, iconName, title, mono, meta], i) => `<article class="deck-card" aria-roledescription="slide" aria-label="${i + 1} of ${CARDS.length}">
+    <div class="art ${art}">${tag}${R.icon(iconName)}</div>
+    <div class="info"><h3>${R.esc(title)}</h3><div class="meta"><span class="mono">${mono}</span><span>${R.esc(meta)}</span></div></div>
+    <span class="shade"></span></article>`).join('');
+
+  /* deck motion ported from A02 Welcome, without autoplay so each card waits for the reader */
+  const SCATTER_DEG = 7;
+  const DEPTH = { RISE_PX: 16, SHRINK: 0.055, SHADE: 0.1, VISIBLE: 3 };
+  const THROW = { DISTANCE: 0.28, SPEED: 0.55, MIN_FLICK: 24 };
+  const FLIGHT = { DISTANCE: 1.25, RISE_PX: 40, ROTATION: 16, DRAG_ROTATION: 0.05 };
+  const THROW_MS = 430;
+  const REST = 'transform 600ms var(--ease), opacity 400ms ease';
+  const FLY = 'transform 450ms cubic-bezier(.3, .5, .3, 1), opacity 450ms ease';
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const copy = document.getElementById('copy');
+  const next = document.getElementById('next');
+  const start = document.getElementById('start');
+  const cards = [...deck.querySelectorAll('.deck-card')];
+  const count = cards.length;
+  const wrap = (i) => ((i % count) + count) % count;
+  const tilt = (i) => (((((i + 1) * 2654435761) >>> 0) / 4294967296) * 2 - 1) * SCATTER_DEG;
+  let top = 0;
+  let busy = false;
+
+  const pose = () => cards.forEach((card, i) => {
+    const depth = wrap(i - top);
+    const shown = Math.min(depth, DEPTH.VISIBLE);
+    card.style.transition = REST;
+    card.style.zIndex = count - depth;
+    card.style.opacity = depth > DEPTH.VISIBLE ? 0 : 1;
+    card.style.transform = `translateY(${-shown * DEPTH.RISE_PX}px) scale(${1 - shown * DEPTH.SHRINK}) rotate(${depth && !reduceMotion ? tilt(i) : 0}deg)`;
+    card.querySelector('.shade').style.opacity = shown * DEPTH.SHADE;
+    card.classList.toggle('top', depth === 0);
+    card.setAttribute('aria-hidden', String(depth !== 0));
+  });
+  const caption = () => {
+    const [, , , , , , title, text] = CARDS[top];
+    copy.innerHTML = `<h1>${title}</h1><p>${text}</p><span class="counter"><b>0${top + 1}</b> / 0${count}</span>`;
+    next.hidden = top === count - 1;
+    start.hidden = top !== count - 1;
+  };
+
+  const throwTop = (side = 1, fromX = 0, fromY = 0) => {
+    if (busy) return;
+    busy = true;
+    const card = cards[top];
+    card.style.transition = FLY;
+    card.style.zIndex = count + 1;
+    card.style.transform = `translate(${fromX + side * deck.offsetWidth * FLIGHT.DISTANCE}px, ${fromY * 0.4 - FLIGHT.RISE_PX}px) rotate(${side * FLIGHT.ROTATION}deg)`;
+    window.setTimeout(() => { top = wrap(top + 1); pose(); caption(); busy = false; }, THROW_MS);
+  };
+  const pullBack = () => {
+    if (busy) return;
+    busy = true;
+    const index = wrap(top - 1);
+    const card = cards[index];
+    card.style.transition = 'none';
+    card.style.zIndex = count + 1;
+    card.style.opacity = 1;
+    card.style.transform = `translate(${-deck.offsetWidth * FLIGHT.DISTANCE}px, ${-FLIGHT.RISE_PX}px) rotate(${-FLIGHT.ROTATION}deg)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      card.style.transition = FLY;
+      card.style.transform = 'none';
+      window.setTimeout(() => { top = index; pose(); caption(); busy = false; }, THROW_MS);
+    }));
+  };
+
+  let drag = null;
+  deck.addEventListener('pointerdown', (e) => {
+    const card = e.target.closest('.deck-card.top');
+    if (!card || busy) return;
+    card.setPointerCapture(e.pointerId);
+    drag = { card, x: e.clientX, y: e.clientY, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
+  });
+  deck.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dt = Math.max(1, e.timeStamp - drag.lastT);
+    drag.v = 0.8 * ((e.clientX - drag.lastX) / dt) + 0.2 * drag.v;
+    drag.lastX = e.clientX; drag.lastT = e.timeStamp;
+    const dx = e.clientX - drag.x;
+    drag.card.style.transition = 'none';
+    drag.card.style.transform = `translate(${dx}px, ${e.clientY - drag.y}px) rotate(${reduceMotion ? 0 : dx * FLIGHT.DRAG_ROTATION}deg)`;
+  });
+  const release = (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    const isThrow = Math.abs(dx) > deck.offsetWidth * THROW.DISTANCE || (Math.abs(drag.v) > THROW.SPEED && Math.abs(dx) > THROW.MIN_FLICK);
+    drag = null;
+    if (isThrow) throwTop(Math.sign(dx) || 1, dx, dy); else pose();
+  };
+  deck.addEventListener('pointerup', release);
+  deck.addEventListener('pointercancel', release);
+  deck.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); throwTop(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); pullBack(); }
+  });
+  next.addEventListener('click', () => throwTop(1));
+
+  pose(); caption();
+})();
+</script>
+</body>
+</html>

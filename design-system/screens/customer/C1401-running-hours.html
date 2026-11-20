@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1401 Running hours log</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.entry{display:grid; grid-template-columns:1fr auto; column-gap:12px; align-items:center; padding:14px 2px; color:inherit; text-decoration:none}
+.entry + .entry{border-top:1px solid var(--line)}
+.entry b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.entry .sub{grid-column:1; margin-top:3px; font-size:var(--fs-12); color:var(--text-muted)}
+.entry .delta{grid-column:2; grid-row:1 / span 2; font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1401 Running hours log</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="entry">open entry</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C202-machine-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Running hours</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <p class="card-sub" style="margin:0" id="machine-line"></p>
+          <div class="stats" id="stats"></div>
+          <div>
+            <div class="section-head" style="margin-bottom:4px"><h2>Entries</h2></div>
+            <div id="entries"></div>
+          </div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gauge"/></svg></span>
+          <h3>No running hours recorded</h3><p>Add the hour meter reading to track usage.</p>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <div class="stats"><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span></div>
+          <span class="skeleton sk-line" style="width:30%; margin-top:12px"></span>
+          <span class="skeleton" style="height:56px"></span><span class="skeleton" style="height:56px"></span><span class="skeleton" style="height:56px; opacity:.6"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready offline empty">
+        <a class="btn btn-primary" id="add" href="C1402-add-running-hours.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add entry</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="entry" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="entry-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="entry-title">Entry</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" id="entry-body"></div>
+        <button class="btn btn-secondary" type="button" style="margin-top:16px; width:100%" data-close>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Hour meter readings for one machine via <code>?serial=</code>, newest first, with the reading at the
+last service. A reading lower than the one before is refused in <a href="C1402-add-running-hours.html">C1402</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample log: hours added since the entry before, newest first, ending at the machine's current reading */
+  const LOG = [['2026-11-20', 0, 'pooja', 'Before the festive run'], ['2026-11-13', 118, 'rakesh', ''], ['2026-11-06', 126, 'pooja', ''],
+    ['2026-10-30', 131, 'pooja', 'Meter photo attached'], ['2026-10-23', 122, 'rakesh', '']];
+  const LAST_SERVICE_ENTRY = 2; /* reading taken at the last service visit */
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const q = `?serial=${serial}`;
+  $('back').href += q;
+  $('add').href += q;
+  $('machine-line').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${serial}</span>`;
+
+  if (m.runningHours === null) { document.querySelector('.screen').dataset.state = 'empty'; return; }
+  let hours = m.runningHours;
+  const entries = LOG.map(([date, gap, by, note]) => { hours -= gap; return { date, hours, by: data.users.find((u) => u.id === by), note }; });
+  const fmt = (h) => `${h.toLocaleString('en-IN')} h`;
+  const lastService = entries[LAST_SERVICE_ENTRY];
+
+  $('stats').innerHTML = `<div class="stat"><b>${fmt(entries[0].hours)}</b><span>Current total</span></div>
+    <div class="stat"><b>${fmt(entries[0].hours - lastService.hours)}</b><span>Since last service</span></div>`;
+  $('entries').innerHTML = entries.map((e, i) => `<a class="entry row-link" href="#" data-open="entry" data-i="${i}">
+    <b>${fmt(e.hours)}</b><span class="sub">${R.date(e.date)} · ${R.esc(e.by.name)}</span>
+    <span class="delta">${entries[i + 1] ? `+${e.hours - entries[i + 1].hours} h` : ''}</span></a>`).join('');
+
+  const showEntry = (i) => {
+    const e = entries[i];
+    $('entry-title').textContent = R.date(e.date);
+    $('entry-body').innerHTML = `<dl class="kv" style="margin:0"><div><dt>Reading</dt><dd>${fmt(e.hours)}</dd></div>
+      <div><dt>Entered by</dt><dd>${R.esc(e.by.name)}</dd></div>${e.note ? `<div><dt>Note</dt><dd>${R.esc(e.note)}</dd></div>` : ''}</dl>`;
+  };
+  showEntry(0);
+  document.addEventListener('click', (ev) => { const row = ev.target.closest('[data-i]'); if (row) showEntry(Number(row.dataset.i)); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

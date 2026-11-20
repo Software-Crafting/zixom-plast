@@ -212,7 +212,7 @@ verification ones open without Pay now. Pay all due opens <a href="C1607-select-
     <span class="amt">${R.money(R.balance(i) || i.amount)}</span>
     <span class="foot"><span>${note}</span>${R.invoiceTag(i.status)}</span></a>`;
 
-  const open = data.invoices.filter((i) => i.status !== 'paid')
+  const open = data.invoices.filter((i) => !['paid', 'draft'].includes(i.status))
     .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.due.localeCompare(b.due));
   const outstanding = open.filter(payable).reduce((sum, i) => sum + R.balance(i), 0);
   const overdue = open.filter((i) => i.status === 'overdue');

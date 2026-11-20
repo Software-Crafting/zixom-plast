@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1107 Security</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item .end .btn-text{min-height:36px; padding:0 4px}
+.list-item .end .tag{margin-right:2px}
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1107 Security</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="nobio" aria-pressed="false">biometrics unavailable</button>
+  <button type="button" data-state="single" aria-pressed="false">one device</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="sign-out-this">sign out this device</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="sign-out-others">sign out others</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Security</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 4px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Device changes need the internet.</div>
+
+        <div data-when="ready nobio single offline">
+          <p class="list-title" style="margin-top:8px">App lock</p>
+          <div class="list">
+            <label class="list-item" style="cursor:default" data-when="ready single offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg></span><b>Face ID</b><span class="sub">Ask when the app opens</span>
+              <span class="end"><span class="switch"><input type="checkbox" checked aria-label="App lock with Face ID"><span></span></span></span></label>
+            <label class="list-item" style="cursor:default" data-when="nobio"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg></span><b>Face ID</b><span class="sub">Not set up on this phone</span>
+              <span class="end"><span class="switch"><input type="checkbox" disabled aria-label="App lock with Face ID"><span></span></span></span></label>
+          </div>
+          <a class="link accent" href="../system/S19-biometric-help.html" style="margin:10px 4px 0" data-when="nobio">How to set up Face ID</a>
+
+          <p class="list-title">Signed in devices <span id="device-count"></span></p>
+          <div class="list" id="devices"></div>
+          <div class="stack-sm" style="margin-top:16px">
+            <button class="btn btn-secondary" type="button" data-open="sign-out-others" data-when="ready nobio"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg>Sign out other devices</button>
+            <button class="btn btn-secondary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg>Sign out other devices</button>
+          </div>
+        </div>
+
+        <div class="stack-sm" data-when="loading" style="margin-top:12px">
+          <span class="skeleton" style="height:64px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:40%; margin-top:14px"></span>
+          <span class="skeleton" style="height:128px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="sign-out-this" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="st-title">
+        <h3 id="st-title">Sign out?</h3><p>You will need an OTP to sign in again.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Cancel</button><a class="btn btn-text" style="color:var(--red); width:100%" href="../access/A03-sign-in.html">Sign out</a></div>
+      </div>
+    </div>
+    <div class="overlay center" id="sign-out-others" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="so-title">
+        <h3 id="so-title">Sign out other devices?</h3><p id="so-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Cancel</button><button class="btn btn-text" style="color:var(--red); width:100%" type="button" data-close data-toast="Other devices signed out">Sign out</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">App lock and the devices signed in to this account; a customer can use 2. Signing out this phone asks
+first; without Face ID set up the switch is off.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const DEVICE_LIMIT = 2; /* customers: 2 devices */
+  /* not in data.js: devices signed in to Rakesh's account */
+  const DEVICES = [
+    { name: 'iPhone 15', icon: 'device-mobile', place: 'Ahmedabad', current: true },
+    { name: 'Samsung Galaxy Tab A9', icon: 'device-mobile', place: 'Ahmedabad', lastUsed: '2026-11-21T18:20' },
+  ];
+  /* the second device is hidden in the one device state */
+  const row = (d) => `<div class="list-item" style="cursor:default"${d.current ? '' : ' data-when="ready nobio offline"'}>
+      <span class="disc">${R.icon(d.icon)}</span><b>${R.esc(d.name)}</b>
+      <span class="sub">${R.esc(d.place)} · ${d.current ? 'Active now' : `Last used ${R.ago(d.lastUsed)}`}</span>
+      <span class="end">${d.current ? R.tag('This device', 'green')
+        : '<button class="btn btn-text" type="button" data-open="sign-out-others">Sign out</button>'}</span></div>`;
+  $('devices').innerHTML = DEVICES.map(row).join('') + `<button class="list-item danger" type="button" data-open="sign-out-this">
+      <span class="disc">${R.icon('sign-out')}</span><b>Sign out of this device</b></button>`;
+  $('device-count').innerHTML = `<span data-when="ready nobio offline">· ${DEVICES.length} of ${DEVICE_LIMIT}</span><span data-when="single">· 1 of ${DEVICE_LIMIT}</span>`;
+  $('so-text').textContent = `${DEVICES.find((d) => !d.current).name} will need an OTP to sign in again.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

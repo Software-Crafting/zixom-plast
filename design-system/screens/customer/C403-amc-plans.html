@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C403 AMC plans</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.plan{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.plan .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.plan h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.plan .price{margin:10px 0 0; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.plan .price small{font:400 var(--fs-13) var(--font-body); color:var(--text-muted)}
+.plan .facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:12px}
+.plan .facts div{padding:10px; border-radius:var(--r-md); background:var(--field)}
+.plan .facts b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.plan .facts span{font-size:var(--fs-11); color:var(--text-muted)}
+.plan ul{margin:12px 0 0; padding:0; list-style:none; font-size:var(--fs-13); color:var(--slate-700)}
+.plan li{display:flex; gap:8px; align-items:center; padding:3px 0}
+.plan li .ic{width:16px; height:16px; color:var(--green)}
+.plan .btn{width:100%; margin-top:14px}
+.note{margin:0 4px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C403 AMC plans</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="none" aria-pressed="false">plans not configured</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C401-amc.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>AMC plans</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Prices from 11:42 AM.</div>
+          <p class="note">Sample plans. Per machine per year, before GST.</p>
+          <div class="stack-sm" id="plans"></div>
+          <a class="btn btn-text" href="C602-ask.html">Ask about a plan</a>
+        </div>
+
+        <div class="state" data-when="none" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-seal-check"/></svg></span>
+          <h3>Contact us for AMC</h3>
+          <p>We will suggest a plan for your machines.</p>
+          <a class="btn btn-primary" href="tel:+919991910097"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom 24x7</a>
+          <a class="btn btn-text" href="C602-ask.html">Ask a question</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:55%"></span>
+          <span class="skeleton" style="height:290px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:290px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load the plans. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Three sample plans (spec Q12) until Zixom shares real ones. A plan that does not fit a machine type
+is marked. Choose plan opens Buy AMC (C404) with that plan picked.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  /* sample only: Q12 default plans, prices per machine per year before GST */
+  const PLANS = [
+    { name: 'Essential', price: 24000, visits: 4, response: '48 h', parts: '5% off',
+      includes: ['Preventive visit every quarter', 'Breakdown visits at no charge', 'Labour included'] },
+    { name: 'Preventive Plus', price: 36000, visits: 6, response: '24 h', parts: '10% off',
+      includes: ['Preventive visit every 2 months', 'Breakdown visits at no charge', 'Heater and vacuum check each visit'] },
+    { name: 'Comprehensive', price: 54000, visits: 12, response: '8 h', parts: 'Included', notFor: 'Not for plastic crushers',
+      includes: ['Monthly preventive visit', 'Breakdown visits at no charge', 'Heaters, belts and seals included'] },
+  ];
+  document.getElementById('plans').innerHTML = PLANS.map((p) => `<article class="plan">
+      <div class="top"><h2>${p.name}</h2>${p.notFor ? R.tag(p.notFor) : ''}</div>
+      <p class="price">${R.money(p.price).replace('.00', '')} <small>per machine per year</small></p>
+      <div class="facts"><div><b>${p.visits}</b><span>Visits a year</span></div>
+        <div><b>${p.response}</b><span>Response</span></div><div><b>${p.parts}</b><span>Parts</span></div></div>
+      <ul>${p.includes.map((i) => `<li>${R.icon('check')}${i}</li>`).join('')}</ul>
+      <a class="btn btn-secondary" href="C404-buy-amc.html?plan=${encodeURIComponent(p.name)}">Choose plan</a>
+    </article>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

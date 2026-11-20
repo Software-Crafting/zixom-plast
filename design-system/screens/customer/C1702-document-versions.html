@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1702 Document versions</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.dhead{display:flex; align-items:center; gap:12px}
+.dhead .disc{width:48px; height:48px; flex-shrink:0; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.dhead b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.dhead span span{font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1702 Document versions</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="single" aria-pressed="false">only one version</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1701-downloads.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Versions</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready single offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved versions open.</div>
+          <div class="dhead"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><span><b id="doc-title"></b><span id="doc-sub"></span></span></div>
+          <div class="banner green" data-when="single"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><div>This is the latest version.</div></div>
+          <div class="list" id="versions"></div>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <div class="row-flex"><span class="skeleton sk-circle"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:70%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <span class="skeleton" style="height:66px"></span><span class="skeleton" style="height:66px"></span><span class="skeleton" style="height:66px; opacity:.6"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="version" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Version">
+        <div class="group"><div class="title" id="version-title"></div>
+          <button type="button" id="open-version" onclick="location.href=this.dataset.href">Open</button>
+          <button type="button" data-close data-toast="Downloading">Download</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Version list for a manual or datasheet, newest first, via <code>?doc=</code>. Tap a version to open
+it (<a href="C902-document-viewer.html">C902</a>) or download it.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: versions of the AFM-760 operating manual, newest first; version 3 is saved on this phone */
+  const DOC = { id: 'afm760-manual', title: 'AFM-760 operating manual', machine: 'ZP-TF-2310' };
+  const VERSIONS = [
+    [4, '2026-11-20', 'Chain drive error codes E-15 to E-19 added', 48],
+    [3, '2026-09-14', 'Heater zone settings for 0.8 mm PET', 47, true],
+    [2, '2026-02-02', 'Mould change steps updated', 45],
+    [1, '2025-06-10', 'First issue', 44],
+  ];
+
+  const m = R.machine(DOC.machine);
+  $('doc-title').textContent = DOC.title;
+  $('doc-sub').textContent = `${m.nickname} · ${VERSIONS.length} versions`;
+  const row = ([v, date, note, mb, saved], latest, when) => `<button class="list-item" type="button" data-open="version" data-v="${v}" data-when="${when}">
+      <span class="disc">${R.icon('file-text')}</span><b>Version ${v} · ${R.date(date)}</b>
+      <span class="sub">${R.esc(note)} · ${mb} MB${saved ? ' · On this phone' : ''}</span>
+      <span class="end">${latest ? R.tag('Latest', 'green') : ''}${R.icon('caret-right')}</span></button>`;
+  $('versions').innerHTML = VERSIONS.map((ver, i) => row(ver, i === 0, 'ready offline')).join('')
+    + row([1, VERSIONS[0][1], 'First issue', VERSIONS[0][3]], true, 'single');
+
+  $('versions').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-v]');
+    if (!b) return;
+    $('version-title').textContent = `${DOC.title}, version ${b.dataset.v}`;
+    $('open-version').dataset.href = `C902-document-viewer.html?doc=${DOC.id}`;
+  });
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    $('doc-sub').textContent = b.dataset.state === 'single' ? `${m.nickname} · 1 version` : `${m.nickname} · ${VERSIONS.length} versions`;
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1108 Settings</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1108 Settings</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="clear">clear data, drafts warning</button>
+  <button type="button" data-state="cleared" aria-pressed="false">data cleared</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Settings</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 4px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Settings save on this phone.</div>
+
+        <p class="list-title" style="margin-top:8px">General</p>
+        <div class="list">
+          <a class="list-item" href="C1002-notification-settings.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Notifications</b><span class="sub">Push and email</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-eye"/></svg></span><b>Appearance</b><span class="sub">Dark mode is coming later</span><span class="end">Light</span></div>
+        </div>
+
+        <p class="list-title">Downloads and storage</p>
+        <div class="list">
+          <label class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Download on Wi-Fi only</b><span class="sub">Documents and manuals</span>
+            <span class="end"><span class="switch"><input type="checkbox" checked aria-label="Download on Wi-Fi only"><span></span></span></span></label>
+          <button class="list-item" type="button" data-open="clear" data-when="ready offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Clear saved data</b><span class="sub">68 MB on this phone</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></button>
+          <div class="list-item" style="cursor:default" data-when="cleared"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Clear saved data</b><span class="sub">Nothing saved</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span></div>
+        </div>
+
+        <p class="list-title">About</p>
+        <div class="list">
+          <a class="list-item" href="../system/S09-about.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg></span><b>About this app</b><span class="sub">Version 1.0.0 (104)</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="clear" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="cl-title">
+        <span class="disc red"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-trash"/></svg></span>
+        <h3 id="cl-title">Clear saved data?</h3><p>2 unsent drafts will be lost. Saved documents download again.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep data</button><button class="btn btn-text" style="color:var(--red); width:100%" type="button" data-close data-toast="Saved data cleared">Clear data</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Settings stored on this phone, so they work offline. Light is the only appearance for now; clearing
+saved data warns when drafts would be lost.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

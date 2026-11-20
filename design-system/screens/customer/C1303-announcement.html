@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1303 Announcement detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.head .row-flex{gap:8px; font-size:var(--fs-12); color:var(--text-muted)}
+.head h2{margin:10px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.3}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1303 Announcement detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="n-switch"><span>notice</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="attachfail" aria-pressed="false">attachment failed</button>
+  <button type="button" data-state="withdrawn" aria-pressed="false">withdrawn</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1302-announcements.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Announcement</h1>
+        <button class="icon-btn" type="button" data-toast="Opening share sheet" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+      </div>
+      <div class="scroll">
+        <div class="stack" id="body" data-when="ready attachfail offline"></div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:35%"></span>
+          <span class="skeleton sk-line" style="width:85%; height:22px"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line"></span><span class="skeleton sk-line" style="width:70%"></span>
+        </div>
+        <div class="state" data-when="withdrawn" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>We cannot find this</h3>
+          <p>This announcement was withdrawn.</p>
+          <a class="btn btn-secondary" href="C1302-announcements.html">Go back</a>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">One notice with its PDF and related link; pick a notice above or open with <code>?id=guard</code>.
+A withdrawn notice shows not found.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'heaters';
+
+  /* Sample data not in data.js yet (move there): the notices of C1302 with full text, attachment and related link */
+  const KIND = { Safety: ['warning', 'red'], 'Spare parts': ['package', 'blue'], 'App news': ['device-mobile', ''], Support: ['headset', ''] };
+  const NOTICES = [
+    { id: 'guard', kind: 'Safety', when: '2026-11-22', title: 'Check heater guard interlocks on AFM machines',
+      body: ['Test the guard interlock before each shift. Open the guard with the heater on: the heater must switch off.',
+        'If it keeps running, stop the machine and call Zixom support. Do not bypass the interlock.'],
+      file: ['Safety notice, AFM guard.pdf', '220 KB'], link: ['factory', 'Your machines', 'C201-machines.html'] },
+    { ...data.announcements[0], id: 'heaters', kind: 'Spare parts',
+      body: [data.announcements[0].text, 'Order before 2 PM for dispatch the same day.'],
+      file: ['Heater price list.pdf', '140 KB'], link: ['package', 'Ceramic heater element 650 W', 'C703-part-detail.html'] },
+    { id: 'app', kind: 'App news', when: '2026-11-18', title: 'Reschedule AMC visits in the app',
+      body: ['Move an AMC visit yourself, and download reports faster.'], link: ['star', 'What is new', 'C1304-whats-new.html'] },
+    { id: 'holiday', kind: 'Support', when: '2026-11-16', title: 'Field visits paused on 25 Dec',
+      body: ['Phone, WhatsApp and email support stay open 24x7.', 'Machine down visits still go ahead.'], link: ['headset', 'Contact Zixom', 'C605-contact.html'] },
+    { id: 'pid', kind: 'Spare parts', when: '2026-11-02', title: 'PID controllers now on request',
+      body: ['Ask for a price from the part page in the app.'], link: ['package', 'Request a price', 'C706-request-part.html'] },
+  ];
+
+  const id = new URLSearchParams(location.search).get('id') || DEFAULT;
+  $('n-switch').insertAdjacentHTML('beforeend', NOTICES.map((n) => `<button type="button" data-id="${n.id}" aria-pressed="${n.id === id}">${n.id}</button>`).join(''));
+  $('n-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-id]');
+    if (b) location.search = `?id=${b.dataset.id}`;
+  });
+  const n = NOTICES.find((x) => x.id === id);
+  if (!n) {
+    document.querySelector('.screen').dataset.state = 'withdrawn';
+    return;
+  }
+
+  const [kindIcon, tone] = KIND[n.kind];
+  const file = n.file ? `<div class="files">
+      <div class="file" data-status="done" data-when="ready offline"><span class="file-thumb">${R.icon('file-pdf')}</span>
+        <div class="file-body"><b>${R.esc(n.file[0])}</b><span class="file-meta">PDF · ${n.file[1]}</span></div>
+        <span class="actions"><button class="btn btn-secondary btn-sm" type="button" data-toast="Opening PDF">Open</button></span></div>
+      <div class="file" data-status="failed" data-progress="20" data-when="attachfail"><span class="file-thumb">${R.icon('file-pdf')}</span>
+        <div class="file-body"><b>${R.esc(n.file[0])}</b><span class="file-meta">${R.icon('warning-circle')}Could not load</span></div>
+        <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry">${R.icon('rotate-ccw')}</button></span></div>
+    </div>` : '';
+  const [linkIcon, linkTitle, linkHref] = n.link;
+  $('body').innerHTML = `
+    <div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Saved copy.</div>
+    <div class="head"><div class="row-flex">${R.tag(n.kind, tone, kindIcon)}<span>${R.date(n.when)}</span></div><h2>${R.esc(n.title)}</h2></div>
+    <span class="thumb lg" aria-hidden="true">${R.icon(n.kind === 'Safety' ? 'shield-warning' : 'megaphone')}</span>
+    <div class="prose">${n.body.map((p) => `<p>${R.esc(p)}</p>`).join('')}</div>
+    ${file}
+    <div class="list"><a class="list-item" href="${linkHref}"><span class="disc">${R.icon(linkIcon)}</span><b>${R.esc(linkTitle)}</b>
+      <span class="end">${R.icon('caret-right')}</span></a></div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C903 Upload a document</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.for{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.pickers{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.pickers button{display:flex; flex-direction:column; align-items:center; gap:10px; padding:20px 8px 16px; border-radius:var(--r-lg); background:#fff;
+  border:1px solid var(--line); font:500 var(--fs-14) var(--font-body); color:var(--slate-900); cursor:pointer}
+.pickers .disc{width:48px; height:48px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.pickers button:disabled{opacity:.5}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C903 Upload a document</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">nothing added</button>
+  <button type="button" data-state="uploading" aria-pressed="false">uploading</button>
+  <button type="button" data-state="done" aria-pressed="false">uploaded</button>
+  <button type="button" data-state="failed" aria-pressed="false">failed</button>
+  <button type="button" data-state="badfile" aria-pressed="false">too large, wrong type</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C204-unlisted-machine.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Purchase invoice</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Files upload when you reconnect.</div>
+          <p class="for" id="for"></p>
+          <div class="pickers">
+            <button type="button" data-open="camera"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>Take photo</button>
+            <button type="button" data-open="camera"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>Choose file</button>
+          </div>
+          <p class="hint" style="margin:0 4px">PDF, JPG or PNG up to 10 MB</p>
+
+          <div class="files" data-when="uploading">
+            <div class="files-head"><span><b>1 of 3 uploaded</b></span></div>
+            <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+              <div class="file-body"><b>invoice-page-1.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 1.2 MB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="uploading" data-progress="64"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>invoice-page-2.jpg</b><span class="file-meta">Uploading 64% · 1.4 MB</span><span class="progress"><i style="width:64%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="queued"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+              <div class="file-body"><b>delivery-challan.pdf</b><span class="file-meta">Waiting · 820 KB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="done">
+            <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+              <div class="file-body"><b>purchase-invoice.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 640 KB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="failed">
+            <div class="files-head"><span><b>0 of 1 uploaded</b> · 1 needs attention</span></div>
+            <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+              <div class="file-body"><b>purchase-invoice.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed. Tap to retry</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="badfile">
+            <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>invoice-scan.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB. Choose a smaller file</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="wrong-type"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>invoice.docx</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Use PDF, JPG or PNG</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <div class="files" data-when="offline">
+            <div class="file" data-status="queued"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+              <div class="file-body"><b>purchase-invoice.pdf</b><span class="file-meta">Waiting for internet · 640 KB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" disabled data-when="ready uploading failed badfile offline">Done</button>
+        <a class="btn btn-primary" href="C204-unlisted-machine.html" data-when="done">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="camera" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a file">
+        <div class="group">
+          <button type="button" data-close onclick="document.querySelector('[data-state=uploading]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close onclick="document.querySelector('[data-state=uploading]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close onclick="document.querySelector('[data-state=uploading]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg>Choose a file</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shared upload step where a flow asks for a file, here the purchase invoice of an unlisted machine
+(<a href="C204-unlisted-machine.html">C204</a>). Every upload state is on the switch.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const m = ZX.data.machines.find((x) => x.status === 'pending');
+  document.getElementById('for').innerHTML = `For ${R.esc(m.nickname || m.model)} · <span class="mono">${m.serial}</span>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

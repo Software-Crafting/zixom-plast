@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C603 Question thread</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.qhead h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900); line-height:1.3}
+.qhead .row-flex{flex-wrap:wrap; gap:6px; margin-top:10px}
+.linked{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; margin-top:12px; padding:10px 12px;
+  border-radius:var(--r-md); background:#fff; border:1px solid var(--line); color:inherit; text-decoration:none}
+.linked b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.linked span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.day{align-self:center; margin:10px 0 4px; font-size:var(--fs-11); font-weight:600; color:var(--text-faint)}
+.bubble .att{display:flex; align-items:center; gap:8px; margin-top:8px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,.12); font-size:var(--fs-12)}
+.bubble.them .att{background:var(--slate-100)}
+.bubble.clamp{display:-webkit-box; -webkit-line-clamp:12; -webkit-box-orient:vertical; overflow:hidden}
+.bubble-meta .read{color:var(--blue)}
+.bubble-meta .retry{margin-left:4px; padding:0; border:0; background:none; color:inherit; font:700 var(--fs-11) var(--font-body); text-decoration:underline; cursor:pointer}
+.show-more{align-self:flex-start; margin:-2px 0 8px 6px; padding:0; border:0; background:none; color:var(--blue); font:600 var(--fs-12) var(--font-body); cursor:pointer}
+.resolve{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; padding:10px 10px 10px 16px;
+  border-radius:var(--r-pill); background:#fff; border:1px solid var(--line); font-size:var(--fs-13); color:var(--slate-800)}
+.composer{position:absolute; z-index:20; left:0; right:0; bottom:0; display:flex; align-items:center; gap:8px; padding:10px var(--gutter) 30px;
+  background:var(--surface-bottom); border-top:1px solid var(--line)}
+.composer .input{min-height:44px; border-radius:22px; background:#fff}
+.closed-bar{position:absolute; z-index:20; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px var(--gutter) 30px; background:var(--surface-bottom); border-top:1px solid var(--line); font-size:var(--fs-14); color:var(--slate-700)}
+.new-msg{position:absolute; z-index:21; left:50%; bottom:100px; transform:translateX(-50%); display:inline-flex; align-items:center; gap:6px;
+  height:38px; padding:0 16px; border:0; border-radius:var(--r-pill); background:var(--blue); color:#fff; font:400 var(--fs-13) var(--font-display);
+  box-shadow:var(--shadow-lift); cursor:pointer}
+.stars{display:flex; justify-content:center; gap:8px}
+.stars button{width:48px; height:48px; display:grid; place-items:center; border:0; border-radius:50%; background:var(--slate-100); color:var(--slate-300); cursor:pointer}
+.stars button .ic{width:26px; height:26px}
+.stars button[aria-pressed="true"]{background:var(--amber-50); color:var(--amber)}
+.stars button[aria-pressed="true"] .ic{fill:currentColor}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C603 Question thread</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="q-switch"><span>question</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending, offline</button>
+  <button type="button" data-state="failed" aria-pressed="false">failed</button>
+  <button type="button" data-state="newmsg" aria-pressed="false">new message</button>
+  <button type="button" data-state="long" aria-pressed="false">long message</button>
+  <button type="button" data-state="reopened" aria-pressed="false">reopened by reply</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C601-questions.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Question</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll" style="padding-bottom:120px">
+        <div class="stack" data-when="ready sending failed newmsg long reopened">
+          <div class="offline-strip" style="margin:0" data-when="sending"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Messages send when you are back.</div>
+          <div class="banner" data-when="reopened"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><div id="reopened-text"></div></div>
+          <div class="qhead" id="head"></div>
+          <div class="thread" id="thread"></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:70%"></span>
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="height:58px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:64px; width:70%; align-self:flex-end; border-radius:20px"></span>
+          <span class="skeleton" style="height:84px; width:75%; border-radius:20px"></span>
+          <span class="skeleton" style="height:44px; width:55%; align-self:flex-end; border-radius:20px"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>We cannot find this</h3>
+          <p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="C601-questions.html">Go back</a>
+        </div>
+      </div>
+      <button class="new-msg" type="button" data-when="newmsg"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg>New message</button>
+      <div id="bottom"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Question actions">
+        <div class="group"><div class="title" id="more-title"></div><div id="more-actions"></div>
+          <button type="button" data-close data-toast="Copied"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg>Copy question number</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="attach" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Attach">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo or video</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Choose a PDF</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="rate" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="rate-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="rate-t">Rate the answer</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="stars" role="group" aria-label="Rating, 1 to 5 stars" id="stars"></div>
+        <button class="btn btn-primary" type="button" style="margin-top:20px" data-close data-toast="Thanks for rating">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Chat with Zixom support; pick a question above. Open with <code>?q=QRY-2026-0030</code>. Closed threads
+are read only with Reopen; a failed message keeps its text with Retry.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'QRY-2026-0030';
+  const agent = `${data.support.agent}, Zixom support`;
+  const shree = data.companies.find((c) => c.id === 'shree');
+  const blades = data.estimates[0].lines[0];
+
+  /* Sample data not in data.js yet (move there): questions from spec section 16, same set as C601.
+     Messages are [from, text, time, status, attachment] */
+  const QUESTIONS = [
+    { number: 'QRY-2026-0030', status: 'open', category: 'Technical or operation', subject: 'Heater settings for 0.8 mm PET sheet', machine: 'ZP-TF-2310',
+      messages: [
+        ['me', 'Can we run 0.8 mm PET sheet on the AFM-760 without changing the heater settings?', '2026-11-23T10:12', 'read'],
+        ['them', 'Which sheet supplier, and what top heater setting do you use now?', '2026-11-23T10:31'],
+        ['me', 'Supplier is Polyfab. Top heater runs at 68 percent.', '2026-11-23T10:48', 'sent', ['image', 'heater-screen.jpg', '1.4 MB']],
+      ] },
+    { number: 'QRY-2026-0031', status: 'answered', category: 'Billing or invoice', subject: 'GSTIN missing on invoice', invoice: 'INV-2026-0980',
+      messages: [
+        ['me', 'Please add our GSTIN on INV-2026-0980. It shows only the company name.', '2026-11-20T15:20', 'read'],
+        ['them', `Done. The revised invoice shows GSTIN ${shree.gstin}.`, '2026-11-23T08:40', null, ['file-pdf', 'INV-2026-0980.pdf', '180 KB']],
+      ] },
+    { number: 'QRY-2026-0032', status: 'closed', category: 'Spare parts and price', subject: 'Price for crusher blade set', machine: 'ZP-PC-1805',
+      resolved: '2026-11-13', rating: 5,
+      messages: [
+        ['me', 'What is the price of a blade set for the PCR-300 crusher?', '2026-11-12T11:00', 'read'],
+        ['them', `${blades[0]}: ${R.money(blades[2])} plus GST. It ships in 3 days.`, '2026-11-12T13:25'],
+        ['me', 'Thanks, that helps.', '2026-11-13T15:10', 'read'],
+      ] },
+    { number: 'QRY-2026-0033', status: 'complaint', category: 'Complaint', subject: 'Engineer arrived after our site closed', ticket: 'TKT-2026-0130',
+      messages: [
+        ['me', 'The engineer came at 6:40 PM for TKT-2026-0130. Our site closes at 6 PM, so the visit failed.', '2026-11-22T15:30', 'read'],
+        ['them', `Sorry about this. Your complaint is with ${data.support.manager}, our service manager. He will call you by Tue 24 Nov.`, '2026-11-22T16:05'],
+      ] },
+  ];
+  const LONG_REPLY = 'For 0.8 mm PET on the AFM-760:\n1. Raise the top heater to 72 percent.\n2. Keep the bottom heater at 60 percent.\n3. Heat time 9.5 seconds.\n4. Forming air 5.5 bar.\n5. Cooling 3 seconds.\n6. Run 20 trial sheets first.\n7. Check wall thickness at the corners.\n8. If corners are thin, add 0.5 seconds heat time.\n9. If sheet sags, lower the top heater by 2 percent.\n10. Clean the heater reflectors before the trial.\n11. Note the settings on the HMI recipe page.\n12. Save them as a new recipe.\n13. Share the trial results here.\n14. We can arrange a calibration visit if needed.';
+  const STATUS = { open: ['Open', 'blue'], complaint: ['Complaint', 'red'], answered: ['Answered', 'green'], closed: ['Closed', ''] };
+
+  /* a question just sent from C602 is not in data.js: build it from the query string */
+  const params = new URLSearchParams(location.search);
+  const number = params.get('q') || DEFAULT;
+  const nextNumber = `QRY-2026-${String(Math.max(...QUESTIONS.map((q) => Number(q.number.slice(-4)))) + 1).padStart(4, '0')}`;
+  const q = QUESTIONS.find((x) => x.number === number)
+    || (number === nextNumber && { number, status: 'open', category: 'Technical or operation', subject: 'Cup rims uneven on the left mould',
+      machine: 'ZP-CF-2011', messages: [['me', 'Left mould rims are 1 mm lower than the right since the heater was replaced. What should we check?', data.now, 'sent']] });
+
+  $('q-switch').insertAdjacentHTML('beforeend', QUESTIONS.map((x) => `<button type="button" data-q="${x.number}"
+    aria-pressed="${x.number === number}">${x.number.slice(-4)} ${x.status}</button>`).join(''));
+  $('q-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-q]');
+    if (b) location.search = `?q=${b.dataset.q}`;
+  });
+
+  if (!q) {
+    document.querySelector('.screen').dataset.state = 'notfound';
+    return;
+  }
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const day = (iso) => (iso.slice(0, 10) === data.today ? 'Today' : R.dayDate(iso));
+  const closed = q.status === 'closed';
+  const live = 'ready sending failed newmsg long reopened';
+
+  $('title').textContent = q.number;
+  $('more-title').textContent = q.subject;
+
+  /* ---------- header: subject, status, linked record ---------- */
+  const link = () => {
+    if (q.machine) {
+      const m = R.machine(q.machine);
+      return `<a class="linked" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+        <span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span></a>`;
+    }
+    if (q.ticket) {
+      const t = data.tickets.find((x) => x.number === q.ticket);
+      return `<a class="linked" href="C508-request-detail.html?ticket=${t.number}"><span class="thumb sm">${R.icon('wrench')}</span>
+        <span><b class="mono">${t.number}</b><span>${R.esc(R.machine(t.machine).nickname || t.type)}</span></span></a>`;
+    }
+    const inv = data.invoices.find((i) => i.number === q.invoice);
+    return `<a class="linked" href="C802-invoice-detail.html?invoice=${inv.number}"><span class="thumb sm">${R.icon('receipt')}</span>
+      <span><b class="mono">${inv.number}</b><span>${R.money(inv.amount)} · ${R.esc(inv.type)}</span></span></a>`;
+  };
+  $('head').innerHTML = `<h2>${R.esc(q.subject)}</h2>
+    <div class="row-flex">${R.tag(...STATUS[q.status])}${R.tag(q.category, 'outline')}</div>${link()}`;
+
+  /* ---------- messages ---------- */
+  const STATE = {
+    sending: `${R.icon('clock', 'ic-16')}Sending`,
+    sent: `${R.icon('check', 'ic-16')}Sent`,
+    read: `<span class="row-flex read" style="gap:4px">${R.icon('check', 'ic-16')}Read</span>`,
+  };
+  const att = ([iconName, name, size]) => `<span class="att">${R.icon(iconName, 'ic-16')}<span class="grow">${R.esc(name)}</span>${size}</span>`;
+  const bubble = ([from, text, at, state, file], when = '') => {
+    const meta = from === 'me' ? `${time(at)} · ${STATE[state]}` : `${R.esc(agent)} · ${time(at)}`;
+    return `<div class="bubble ${from}"${when}>${R.esc(text)}${file ? att(file) : ''}</div>
+      <div class="bubble-meta ${from}"${when}>${meta}</div>`;
+  };
+  let lastDay = '';
+  const rows = q.messages.map((msg) => {
+    const d = day(msg[2]);
+    const sep = d !== lastDay ? `<span class="day">${d}</span>` : '';
+    lastDay = d;
+    return sep + bubble(msg);
+  }).join('');
+  const queued = 'Will try a trial run this afternoon.';
+  const extra = closed ? '' : `
+    <div class="bubble me" data-when="sending failed">${queued}</div>
+    <div class="bubble-meta me" data-when="sending">${STATE.sending}</div>
+    <div class="bubble-meta me failed" data-when="failed">${R.icon('warning-circle', 'ic-16')}Not sent.<button class="retry" type="button" data-toast="Sent">Retry</button></div>
+    <div class="bubble them clamp" data-when="long newmsg" style="white-space:pre-line">${R.esc(LONG_REPLY)}</div>
+    <button class="show-more" type="button" data-when="long" onclick="this.previousElementSibling.classList.remove('clamp'); this.remove()">Show more</button>
+    <div class="bubble-meta" data-when="long newmsg">${R.esc(agent)} · 11:52 AM</div>`;
+  const resolve = q.status === 'answered' ? `<div class="resolve"><span>Did this answer it?</span>
+    <button class="btn btn-secondary btn-sm" type="button" data-open="rate">Mark as resolved</button></div>` : '';
+  const closedNote = closed ? `<span class="day">Resolved ${R.date(q.resolved)}${q.rating ? ` · Rated ${q.rating} of 5` : ''}</span>` : '';
+  $('thread').innerHTML = rows + extra + resolve + closedNote;
+
+  /* ---------- composer, or the closed bar ---------- */
+  $('bottom').innerHTML = closed
+    ? `<div class="closed-bar" data-when="${live}"><span>This question is closed</span>
+        <button class="btn btn-secondary btn-sm" type="button" data-toast="Question reopened">Reopen</button></div>`
+    : `<div class="composer" data-when="${live}">
+        <button class="icon-btn" type="button" data-open="attach" aria-label="Attach">${R.icon('paperclip')}</button>
+        <input class="input" placeholder="Message Zixom support" aria-label="Message">
+        <button class="icon-btn dark" type="button" aria-label="Send" data-toast="Sent">${R.icon('paper-plane-tilt')}</button>
+      </div>`;
+  $('reopened-text').innerHTML = `<b>Open again</b>${R.esc(data.support.agent)} replied after it was resolved.`;
+
+  $('more-actions').innerHTML = closed
+    ? `<button type="button" data-close data-toast="Question reopened">${R.icon('arrows-clockwise')}Reopen</button>
+       <button type="button" data-open="rate">${R.icon('star')}Rate the answer</button>`
+    : `<button type="button" data-open="rate">${R.icon('check-circle')}Mark as resolved</button>`;
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('#more [data-open]')) $('more').hidden = true;
+  });
+
+  $('stars').innerHTML = [1, 2, 3, 4, 5].map((n) => `<button type="button" data-star="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="false">${R.icon('star')}</button>`).join('');
+  $('stars').addEventListener('click', (event) => {
+    const star = event.target.closest('[data-star]');
+    if (star) $('stars').querySelectorAll('[data-star]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.star) <= Number(star.dataset.star))));
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

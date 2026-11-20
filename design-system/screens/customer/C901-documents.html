@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C901 Documents home</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.saved{color:var(--green)}
+.list-item .end .saved .ic{color:var(--green)}
+.none{margin:0; padding:14px 16px; border-radius:var(--r-lg); border:1px dashed var(--line-strong); font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C901 Documents home</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Documents</h1>
+        <a class="icon-btn" href="C1701-downloads.html" aria-label="Downloads"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></a>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Downloaded documents open.</div>
+          <div class="search" data-when="ready noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" id="q" placeholder="Search documents" aria-label="Search documents"></div>
+
+          <div data-when="ready offline">
+            <p class="list-title" style="margin-top:0">Recent</p>
+            <div class="list" id="recent"></div>
+            <div class="segment" role="tablist" aria-label="View" style="margin-top:18px">
+              <button role="tab" aria-selected="true" aria-controls="by-machine">By machine</button><button role="tab" aria-selected="false" aria-controls="by-type">By type</button>
+            </div>
+            <div id="by-machine"></div>
+            <div id="by-type" hidden></div>
+          </div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching documents</h3><p>Nothing matches "hydraulic".</p>
+          </div>
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+            <h3>No documents yet</h3><p>Manuals and reports for your machines show here.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:25%"></span>
+            <span class="skeleton" style="height:62px"></span><span class="skeleton" style="height:62px"></span>
+            <span class="skeleton" style="height:50px; border-radius:var(--r-pill); margin-top:8px"></span>
+            <span class="skeleton" style="height:62px"></span><span class="skeleton" style="height:62px; opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The paperwork of every machine, by machine or by type. A document opens in
+<a href="C902-document-viewer.html">C902</a>; the top right button opens Downloads (<a href="C1701-downloads.html">C1701</a>).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only (move to data.js): spec section 16 documents, newest first by date */
+  const TYPES = { manual: ['Manuals', 'book-open'], wiring: ['Wiring diagrams', 'circuitry'], parts: ['Parts lists', 'list-checks'],
+    warranty: ['Warranty certificates', 'certificate'], commissioning: ['Commissioning reports', 'clipboard-text'], service: ['Service reports', 'file-text'],
+    quotation: ['Quotations', 'currency-inr'], invoice: ['Invoices', 'receipt'], amc: ['AMC contracts', 'seal-check'] };
+  const DOCS = [
+    { id: 'quote-0041', type: 'quotation', title: 'Quotation QT-2026-0041', machine: 'ZP-PC-1805', mb: 0.3, date: '2026-11-23' },
+    { id: 'sr-0128', type: 'service', title: 'Service report SR-2026-0128', machine: 'ZP-TF-2310', mb: 0.8, date: '2026-11-21' },
+    { id: 'inv-0981', type: 'invoice', title: 'Invoice INV-2026-0981', machine: null, mb: 0.2, date: '2026-11-02' },
+    { id: 'sr-0129', type: 'service', title: 'Service report SR-2026-0129', machine: 'ZP-VF-1908', mb: 0.7, date: '2026-10-28' },
+    { id: 'afm760-manual', type: 'manual', title: 'AFM-760 operating manual', machine: 'ZP-TF-2310', mb: 48, date: '2026-11-20', saved: true },
+    { id: 'amc-0010', type: 'amc', title: 'AMC contract AMC-2026-0010', machine: 'ZP-CF-2011', mb: 0.6, date: '2026-04-01', saved: true },
+    { id: 'afm1000-wiring', type: 'wiring', title: 'AFM-1000 wiring diagram', machine: 'ZP-TF-2204', mb: 6, date: '2026-02-10' },
+    { id: 'afm1000-warranty', type: 'warranty', title: 'Warranty certificate', machine: 'ZP-TF-2204', mb: 0.4, date: '2025-12-05', saved: true },
+    { id: 'afm1000-manual', type: 'manual', title: 'AFM-1000 operating manual', machine: 'ZP-TF-2204', mb: 52, date: '2025-11-20' },
+    { id: 'afm760-parts', type: 'parts', title: 'AFM-760 parts list', machine: 'ZP-TF-2310', mb: 2, date: '2025-06-24' },
+    { id: 'afm760-commissioning', type: 'commissioning', title: 'Commissioning report', machine: 'ZP-TF-2310', mb: 1.2, date: '2025-06-24' },
+    { id: 'cfm450-manual', type: 'manual', title: 'CFM-450 operating manual', machine: 'ZP-CF-2011', mb: 31, date: '2024-08-02' },
+  ];
+  const RECENT = ['quote-0041', 'sr-0128', 'afm760-manual'];
+
+  const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
+  const row = (d, sub) => `<a class="list-item" href="C902-document-viewer.html?doc=${d.id}"><span class="disc">${R.icon(TYPES[d.type][1])}</span>
+    <b>${R.esc(d.title)}</b><span class="sub">${R.esc(sub)} · ${size(d.mb)}</span>
+    <span class="end">${d.saved ? `<span class="saved" aria-label="Downloaded">${R.icon('check-circle')}</span>` : ''}${R.icon('caret-right')}</span></a>`;
+  const machineName = (serial) => { const m = R.machine(serial); return m.nickname || m.model; };
+  const group = (title, docs, sub) => `<p class="list-title">${R.esc(title)}</p>`
+    + (docs.length ? `<div class="list">${docs.map((d) => row(d, sub(d))).join('')}</div>` : '<p class="none">No documents yet</p>');
+
+  $('recent').innerHTML = RECENT.map((id) => DOCS.find((d) => d.id === id)).map((d) => row(d, R.date(d.date))).join('');
+  const machines = data.machines.filter((m) => m.company === 'shree');
+  $('by-machine').innerHTML = machines.map((m) => group(m.nickname || m.model, DOCS.filter((d) => d.machine === m.serial), (d) => TYPES[d.type][0].replace(/s$/, ''))).join('')
+    + group('Orders and billing', DOCS.filter((d) => !d.machine), (d) => R.date(d.date));
+  $('by-type').innerHTML = Object.entries(TYPES).map(([key, [label]]) =>
+    group(label, DOCS.filter((d) => d.type === key), (d) => (d.machine ? machineName(d.machine) : R.date(d.date)))).join('');
+
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    $('q').value = b.dataset.state === 'noresults' ? 'hydraulic' : '';
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

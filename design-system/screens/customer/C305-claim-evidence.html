@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C305 New claim: evidence</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C303 to C307 wizard, same as C503 to C507 */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+/* this page */
+.media-head{display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 8px}
+.media-head b{font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.media-head b .req{color:var(--red)}
+.media-head span{font-size:var(--fs-12); color:var(--text-muted)}
+.files:empty{display:none}
+.files + .btn{margin-top:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C305 New claim: evidence</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">uploading</button>
+  <button type="button" data-state="empty" aria-pressed="false">minimum not met</button>
+  <button type="button" data-state="failed" aria-pressed="false">upload failed</button>
+  <button type="button" data-state="toolarge" aria-pressed="false">too large, wrong type</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">already added</button>
+  <button type="button" data-state="trimmed" aria-pressed="false">video trimmed</button>
+  <button type="button" data-state="mobiledata" data-open="mobile-data" aria-pressed="false">large video on mobile data</button>
+  <button type="button" data-state="resumed" aria-pressed="false">uploads resumed</button>
+  <button type="button" data-state="camera" data-open="camera-off" aria-pressed="false">camera denied</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C304-claim-problem.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New claim</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 3 of 5</b><span>Evidence</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Uploads start when you are back.</div>
+          <div class="banner amber" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg><div>Add at least 1 photo or video of the fault and the nameplate photo.</div></div>
+          <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div>1 photo did not upload. <button class="link-btn" type="button" data-busy>Retry</button></div></div>
+          <div class="banner" data-when="trimmed"><svg class="ic" aria-hidden="true"><use href="#ph-timer"/></svg><div>Your video was trimmed to 60 seconds.</div></div>
+          <div class="banner" data-when="resumed"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><div><b>Uploads resumed</b>2 files continued after the app was closed.</div></div>
+
+          <div>
+            <div class="media-head"><b>Photos and video of the fault<span class="req">*</span></b><span id="fault-count"></span></div>
+            <div class="files" id="fault"></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-open="picker"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-camera"/></svg>Add photo or video</button>
+          </div>
+
+          <div>
+            <div class="media-head"><b>Nameplate photo<span class="req">*</span></b><span>1 photo</span></div>
+            <div class="files" id="nameplate"></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-open="picker" data-when="empty"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-barcode"/></svg>Take nameplate photo</button>
+          </div>
+
+          <div>
+            <div class="media-head"><b>Other documents</b><span>Up to 3 · PDF, JPG, PNG</span></div>
+            <div class="files" id="docs"></div>
+            <button class="btn btn-secondary btn-sm" type="button"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-paperclip"/></svg>Add document</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C306-claim-site.html" data-keep data-when="ready toolarge duplicate trimmed mobiledata resumed camera offline">Next</a>
+          <button class="btn btn-primary" type="button" data-open="leave-failed" data-when="failed">Next</button>
+          <button class="btn btn-primary" type="button" disabled data-when="empty">Next</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="picker" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add evidence">
+        <div class="group">
+          <button type="button" data-close>Take photo</button>
+          <button type="button" data-close>Record video</button>
+          <button type="button" data-close>Choose from library</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="leave-failed" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="lf-title">
+        <h3 id="lf-title">Continue without 1 photo?</h3>
+        <p>hmi-alarm-H02.jpg did not upload and will be left out.</p>
+        <div class="actions"><a class="btn btn-primary" href="C306-claim-site.html" data-keep>Continue</a>
+          <button class="btn btn-text" style="width:100%" type="button" data-close>Retry upload</button></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="mobile-data" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="md-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+          <h3 id="md-title">Upload 48 MB on mobile data?</h3>
+          <p>The video is large. You can wait for Wi-Fi.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close>Upload now</button>
+          <button class="btn btn-secondary" type="button" data-close>Wait for Wi-Fi</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="camera-off" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="cam-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+          <h3 id="cam-title">Camera access is off</h3>
+          <p>Allow the camera in Settings to take photos.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-primary" href="../system/S07-permission.html">Open Settings</a>
+          <button class="btn btn-secondary" type="button" data-close>Not now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave claim">
+        <div class="group"><div class="title">Leave this claim? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C301-warranty.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C301-warranty.html'">Discard claim</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 3. At least 1 fault photo or video and the nameplate photo; up to 10 photos, one 60 second
+video and 3 documents. Failed files can be left out after a confirmation.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MAX_PHOTOS = 10;
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-TF-2204';
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+  /* one upload row: [file name, icon, status, size or note, progress] */
+  const btn = (action, label, icon, cls = '') => `<button class="icon-btn ${cls}" type="button" data-file="${action}" aria-label="${label}">${R.icon(icon)}</button>`;
+  const remove = btn('remove', 'Remove', 'x');
+  const META = {
+    done: (note) => [`${R.icon('check-circle')}Uploaded · ${note}`, remove],
+    uploading: (note, p) => [`Uploading ${p}% · ${note}`, btn('pause', 'Pause', 'pause') + remove],
+    queued: (note) => [`Waiting · ${note}`, remove],
+    paused: (note, p) => [`Paused at ${p}% · ${note}`, btn('resume', 'Resume', 'play') + remove],
+    failed: () => [`${R.icon('warning-circle')}Upload failed. Tap to retry`, btn('retry', 'Retry', 'rotate-ccw') + remove],
+    'too-large': () => [`${R.icon('warning-circle')}Larger than 50 MB. Trim it`, btn('remove', 'Remove', 'x', 'danger')],
+    'wrong-type': () => [`${R.icon('warning-circle')}Use PDF, JPG or PNG`, btn('remove', 'Remove', 'x', 'danger')],
+    duplicate: () => [`${R.icon('info')}Already added`, remove],
+  };
+  const row = ([name, icon, status, note, progress]) => {
+    const [meta, actions] = META[status](note, progress);
+    const bar = ['uploading', 'paused'].includes(status) ? `<span class="progress"><i style="width:${progress}%"></i></span>` : '';
+    return `<div class="file" data-status="${status}"${progress ? ` data-progress="${progress}"` : ''}><span class="file-thumb">${R.icon(icon)}</span>
+      <div class="file-body"><b>${name}</b><span class="file-meta">${meta}</span>${bar}</div><span class="actions">${actions}</span></div>`;
+  };
+
+  /* Sample evidence of the draft, per prototype state */
+  const PHOTO_1 = ['zone-2-burn-marks.jpg', 'image', 'done', '2.4 MB'];
+  const PHOTO_2 = ['sheet-edge.jpg', 'image', 'done', '1.9 MB'];
+  const PHOTO_3 = (status, progress) => ['hmi-alarm-H02.jpg', 'image', status, '1.6 MB', progress];
+  const VIDEO = (status, note, progress) => ['zone-2-overshoot.mp4', 'video-camera', status, note, progress];
+  const NAMEPLATE = ['nameplate.jpg', 'image', 'done', '2.1 MB'];
+  const INVOICE = ['purchase-invoice.pdf', 'file-check', 'done', '640 KB'];
+  const STATES = {
+    ready: [[PHOTO_1, PHOTO_2, PHOTO_3('uploading', 64), VIDEO('queued', '0:42 · 18 MB')], [NAMEPLATE], [INVOICE]],
+    empty: [[], [], []],
+    failed: [[PHOTO_1, PHOTO_2, PHOTO_3('failed'), VIDEO('done', '0:42 · 18 MB')], [NAMEPLATE], [INVOICE]],
+    toolarge: [[PHOTO_1, PHOTO_2, PHOTO_3('done'), ['line-walkthrough.mov', 'file-x', 'too-large']], [NAMEPLATE],
+      [INVOICE, ['service-log.xlsx', 'file-x', 'wrong-type']]],
+    duplicate: [[PHOTO_1, PHOTO_2, PHOTO_3('done'), ['zone-2-burn-marks.jpg', 'copy', 'duplicate']], [NAMEPLATE], [INVOICE]],
+    trimmed: [[PHOTO_1, PHOTO_2, PHOTO_3('done'), VIDEO('done', 'Trimmed to 1:00 · 26 MB')], [NAMEPLATE], [INVOICE]],
+    mobiledata: [[PHOTO_1, PHOTO_2, PHOTO_3('done'), VIDEO('paused', 'Wi-Fi only', 30)], [NAMEPLATE], [INVOICE]],
+    resumed: [[PHOTO_1, PHOTO_2, PHOTO_3('uploading', 80), VIDEO('uploading', '18 MB', 35)], [NAMEPLATE], [INVOICE]],
+    offline: [[PHOTO_1, PHOTO_2, PHOTO_3('queued'), VIDEO('queued', '0:42 · 18 MB')], [NAMEPLATE], [INVOICE]],
+  };
+  STATES.camera = STATES.ready;
+
+  const fill = (state) => {
+    const [fault, nameplate, docs] = STATES[state];
+    $('fault').innerHTML = fault.map(row).join('');
+    $('nameplate').innerHTML = nameplate.map(row).join('');
+    $('docs').innerHTML = docs.map(row).join('');
+    const photos = fault.filter(([, icon]) => icon === 'image').length;
+    const videos = fault.filter(([, icon]) => icon === 'video-camera').length;
+    $('fault-count').textContent = `${photos} of ${MAX_PHOTOS} photos · ${videos} of 1 video`;
+  };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => fill(b.dataset.state)));
+  fill('ready');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

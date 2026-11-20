@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1302 Announcements</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.inbox{padding:0 12px 0 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.inbox .notif.unread .disc{background:var(--blue-50); color:var(--blue)}
+.notif p{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.count-line .btn{min-height:0; padding:0}
+.pin{display:flex; align-items:center; gap:4px; margin:0 4px -8px; font-size:var(--fs-12); font-weight:600; color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1302 Announcements</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Announcements</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <p class="count-line"><span id="unread-line"></span>
+            <button class="btn btn-text" type="button" id="mark-all" data-toast="All marked as read">Mark all read</button></p>
+          <p class="pin"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning"/></svg>Pinned until you open it</p>
+          <div id="pinned"></div>
+          <div class="inbox" id="list"></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:100px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-megaphone"/></svg></span>
+          <h3>No announcements</h3>
+          <p>News from Zixom will appear here.</p>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-line" style="width:35%; margin:4px"></span>
+          <span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:320px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Notices from Zixom. A safety notice stays pinned on top until it is opened; each row opens
+<a href="C1303-announcement.html">C1303</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+
+  /* Sample data not in data.js yet (move there): more notices beside ZX.data.announcements, same set as C1303 */
+  const KIND_ICON = { Safety: 'warning', 'Spare parts': 'package', 'App news': 'device-mobile', Support: 'headset' };
+  const NOTICES = [
+    { id: 'guard', kind: 'Safety', pinned: true, unread: true, when: '2026-11-22', title: 'Check heater guard interlocks on AFM machines',
+      text: 'Test the guard interlock before each shift. Stop the machine if the heater runs with the guard open.' },
+    { ...data.announcements[0], id: 'heaters', kind: 'Spare parts', unread: true },
+    { id: 'app', kind: 'App news', when: '2026-11-18', title: 'Reschedule AMC visits in the app', text: 'Move an AMC visit yourself, and download reports faster.' },
+    { id: 'holiday', kind: 'Support', when: '2026-11-16', title: 'Field visits paused on 25 Dec', text: 'Phone, WhatsApp and email support stay open 24x7.' },
+    { id: 'pid', kind: 'Spare parts', when: '2026-11-02', title: 'PID controllers now on request', text: 'Ask for a price from the part page in the app.' },
+  ];
+
+  const href = (n) => `C1303-announcement.html?id=${n.id}`;
+  const pinned = NOTICES.find((n) => n.pinned);
+  $('pinned').innerHTML = R.alertCard({ tone: 'red', icon: KIND_ICON[pinned.kind], title: pinned.title, sub: `${pinned.kind} · ${R.date(pinned.when)}`, href: href(pinned) });
+  $('list').innerHTML = NOTICES.filter((n) => !n.pinned).map((n) => `<a class="notif${n.unread ? ' unread' : ''}" href="${href(n)}">
+    <span class="disc">${R.icon(KIND_ICON[n.kind])}</span><span><b>${R.esc(n.title)}</b><p>${R.esc(n.text)}</p></span><time>${R.ago(n.when)}</time></a>`).join('');
+
+  const unreadLine = () => {
+    const n = document.querySelectorAll('#list .notif.unread').length + (pinned.unread ? 1 : 0);
+    $('unread-line').innerHTML = n ? `<b>${n} unread</b>` : 'All read';
+  };
+  unreadLine();
+  /* the pinned safety notice stays unread until it is opened */
+  $('mark-all').addEventListener('click', () => {
+    document.querySelectorAll('#list .notif.unread').forEach((el) => el.classList.remove('unread'));
+    unreadLine();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

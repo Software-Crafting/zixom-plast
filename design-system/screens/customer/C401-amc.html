@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C401 AMC overview</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.amc{border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); overflow:hidden}
+.amc.soon{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber) inset}
+.amc-main{display:block; padding:14px 16px; color:inherit; text-decoration:none}
+.amc-main .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.amc-main h3{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.amc-main .num{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.amc-main .covers{margin:10px 0 0; font-size:var(--fs-14); color:var(--slate-700)}
+.amc-main .facts{display:flex; justify-content:space-between; gap:8px; margin-top:10px; font-size:var(--fs-12); color:var(--text-muted)}
+.amc-main .facts b{color:var(--slate-900); font-weight:600}
+.amc-main .meter{margin-top:8px}
+.amc-actions{display:grid; grid-template-columns:1fr; padding:0 16px 14px}
+.plan-row .end{color:var(--slate-900); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C401 AMC overview</b><span>Machines tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">no AMC yet</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+<header class="root-head">
+      <div class="root-bar">
+        <h1 class="root-title" style="margin:0; flex:1">Machines</h1>
+        <a class="icon-btn glass" href="C205-scan-qr.html" aria-label="Scan a machine QR"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></a>
+      </div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <nav class="segment" role="tablist" aria-label="Machines or AMC">
+            <a role="tab" aria-selected="false" href="C201-machines.html">Machines</a>
+            <a role="tab" aria-selected="true" href="#">AMC</a>
+          </nav>
+
+          <div class="stack" data-when="ready offline">
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+            <div class="stats" id="stats"></div>
+            <div class="chips" role="tablist" aria-label="Contracts">
+              <button class="chip" role="tab" aria-selected="true" aria-controls="p-active" id="t-active">Active</button>
+              <button class="chip" role="tab" aria-selected="false" aria-controls="p-expiring" id="t-expiring">Expiring</button>
+              <button class="chip" role="tab" aria-selected="false" aria-controls="p-expired" id="t-expired">Expired</button>
+              <button class="chip" role="tab" aria-selected="false" aria-controls="p-plans">Plans</button>
+            </div>
+            <section id="p-active" class="stack-sm"></section>
+            <section id="p-expiring" class="stack-sm" hidden></section>
+            <section id="p-expired" class="stack-sm" hidden></section>
+            <section id="p-plans" class="stack-sm" hidden></section>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:48px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-seal-check"/></svg></span>
+            <h3>No AMC yet</h3>
+            <p>Planned visits, faster response and parts discounts.</p>
+            <a class="btn btn-primary" href="C403-amc-plans.html">View plans</a>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <div class="stats"><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton sk-line" style="width:60%; margin:6px 4px"></span>
+            <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:36px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your contracts. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab" href="C404-buy-amc.html" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Buy AMC</a></div>
+
+    <nav class="tabbar" data-tabs="customer" data-active="machines"></nav>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Every AMC contract of the company. Expiring soon is highlighted with the days left; an expired
+contract in its 7 day grace period keeps Renew. Machines opens the machine list (C201).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const GRACE_DAYS = 7;
+  /* sample only (spec section 16), not in data.js yet: the other contract statuses */
+  const EXTRA = [
+    { number: 'AMC-2026-0012', plan: 'Preventive Plus', status: 'pending', start: '2026-12-06', end: '2027-12-05', machines: ['ZP-TF-2204'], visitsIncluded: 6, visitsUsed: 0 },
+    { number: 'AMC-2026-0013', plan: 'Essential', status: 'suspended', start: '2026-07-01', end: '2027-06-30', machines: ['ZP-TF-2310'], visitsIncluded: 4, visitsUsed: 1 },
+    { number: 'AMC-2026-0015', plan: 'Comprehensive', status: 'quote', start: '2027-04-01', end: '2029-03-31', machines: ['ZP-CF-2011', 'ZP-VF-1908'], visitsIncluded: 24, visitsUsed: 0 },
+  ];
+  /* sample only: Q12 default, three plans until Zixom shares real ones */
+  const PLANS = [['Essential', 24000, 4, '48 h'], ['Preventive Plus', 36000, 6, '24 h'], ['Comprehensive', 54000, 12, '8 h']];
+  const NEXT_VISIT = { 'AMC-2026-0010': '2026-12-12', 'AMC-2026-0011': '2026-11-30' };
+  const contracts = [...ZX.data.amc, ...EXTRA];
+
+  const statusTag = (c) => {
+    const left = R.daysFromToday(c.end);
+    const tags = { active: ['Active', 'green'], expiring: [`Ends in ${left} days`, 'amber'], pending: ['Pending payment', 'amber'],
+      suspended: ['Suspended', 'red'], quote: ['Quote requested', 'blue'], expired: ['Expired', 'red'] };
+    return R.tag(...tags[c.status]);
+  };
+  const action = (c) => {
+    const graceLeft = GRACE_DAYS + R.daysFromToday(c.end);
+    if (c.status === 'expiring') return `<a class="btn btn-primary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew</a>`;
+    if (c.status === 'expired' && graceLeft > 0) return `<a class="btn btn-primary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew within ${graceLeft} days</a>`;
+    if (['pending', 'suspended'].includes(c.status)) return `<a class="btn btn-primary btn-sm" href="C803-pay-method.html?invoice=${c.status === 'pending' ? 'INV-2026-0988' : 'INV-2026-0989'}">Pay now</a>`;
+    return '';
+  };
+  const card = (c) => {
+    const names = c.machines.map((s) => { const m = R.machine(s); return R.esc(m.nickname || m.model); }).join(', ');
+    const live = ['active', 'expiring', 'suspended'].includes(c.status);
+    const next = NEXT_VISIT[c.number];
+    const left = c.visitsIncluded - c.visitsUsed;
+    const buttons = action(c);
+    return `<article class="amc${c.status === 'expiring' ? ' soon' : ''}">
+      <a class="amc-main" href="C402-amc-contract.html?amc=${c.number}">
+        <span class="top"><h3>${R.esc(c.plan)}</h3>${statusTag(c)}</span>
+        <span class="num mono">${c.number}</span>
+        <p class="covers">${names}</p>
+        <span class="facts"><span>${R.date(c.start)} to ${R.date(c.end)}</span></span>
+        ${live ? `<div class="meter"><i style="width:${(c.visitsUsed / c.visitsIncluded) * 100}%"></i></div>
+        <span class="facts"><span><b>${left} of ${c.visitsIncluded}</b> visits left</span><span>${next ? `Next ${R.dayDate(next)}` : 'No visit planned'}</span></span>` : ''}
+      </a>
+      ${buttons ? `<div class="amc-actions">${buttons}</div>` : ''}
+    </article>`;
+  };
+  const group = (statuses) => contracts.filter((c) => statuses.includes(c.status));
+  const fill = (id, list) => { $(id).innerHTML = list.map(card).join(''); };
+  fill('p-active', group(['expiring', 'active', 'pending', 'suspended', 'quote']));
+  fill('p-expiring', group(['expiring']));
+  fill('p-expired', group(['expired', 'cancelled']));
+  ['active', 'expiring', 'expired'].forEach((key) => { $(`t-${key}`).textContent += ` ${$(`p-${key}`).children.length}`; });
+
+  $('p-plans').innerHTML = `<div class="list">${PLANS.map(([name, price, visits, response]) => `
+    <a class="list-item plan-row" href="C403-amc-plans.html"><span class="disc">${R.icon('seal-check')}</span>
+      <b>${name}</b><span class="sub">${visits} visits a year · ${response} response</span>
+      <span class="end">${R.money(price).replace('.00', '')}${R.icon('caret-right')}</span></a>`).join('')}</div>
+    <p class="card-sub" style="margin:0 4px">Per machine per year, before GST. Sample plans.</p>
+    <a class="btn btn-secondary" href="C403-amc-plans.html">Compare plans</a>`;
+
+  const covered = new Set(group(['active', 'expiring']).flatMap((c) => c.machines)).size;
+  const visitsLeft = group(['active', 'expiring']).reduce((sum, c) => sum + c.visitsIncluded - c.visitsUsed, 0);
+  $('stats').innerHTML = `<div class="stat"><b>${covered} of ${ZX.data.machines.length}</b><span>Machines covered</span></div>
+    <div class="stat"><b>${visitsLeft}</b><span>Visits left</span></div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

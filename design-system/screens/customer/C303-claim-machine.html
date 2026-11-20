@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C303 New claim: choose machine</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C303 to C307 wizard, same as C503 to C507 */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+/* this page */
+.choice .thumb{grid-row:1 / span 2}
+.choice .tags{grid-column:2; display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.choice .mono{white-space:nowrap}
+.choice.off{cursor:default; background:var(--field)}
+.choice.off .thumb, .choice.off b, .choice.off p{opacity:.55}
+.choice.off .paid{grid-column:2; justify-self:start; margin-top:10px}
+.list-title:first-child{margin-top:0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C303 New claim: choose machine</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">machine picked</button>
+  <button type="button" data-state="idle" aria-pressed="false">nothing picked</button>
+  <button type="button" data-state="empty" aria-pressed="false">no machine in warranty</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states"><span>pick</span>
+  <button type="button" data-pick="ZP-TF-2204">with open claim</button>
+  <button type="button" data-pick="ZP-TF-2310">Line 1 former</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C301-warranty.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New claim</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 1 of 5</b><span>Machine</span></div><div class="bars"><span class="now"></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. You can submit when back online.</div>
+          <div data-when="ready offline" id="dup"></div>
+          <div data-when="ready idle offline">
+            <p class="list-title">In warranty</p>
+            <div role="radiogroup" aria-label="Machine" id="machines"></div>
+            <p class="list-title">Not eligible</p>
+            <div id="others"></div>
+          </div>
+
+          <div data-when="empty">
+            <div class="state" style="padding-top:40px">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
+              <h3>No machine in warranty</h3>
+              <p>Raise a paid service request instead.</p>
+              <a class="btn btn-primary" href="C503-raise-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg>Raise paid service</a>
+              <a class="btn btn-text" href="C605-contact.html" style="margin-top:8px">Contact Zixom</a>
+            </div>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:30%"></span>
+            <span class="skeleton" style="height:104px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:104px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:104px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:60px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your machines.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready idle offline">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C304-claim-problem.html" id="next" data-when="ready offline">Next</a>
+          <button class="btn btn-primary" type="button" disabled data-when="idle">Next</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave claim">
+        <div class="group"><div class="title">Leave this claim? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C301-warranty.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C301-warranty.html'">Discard claim</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 1. Only machines in warranty today can be claimed; the rest are disabled with the reason and
+a paid service link (EC-46). A machine with an open claim links to it.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample data not in data.js yet (move there): open warranty claims per machine, spec section 16 */
+  const OPEN_CLAIMS = [
+    { number: 'WCL-2026-0040', machine: 'ZP-TF-2310', summary: 'Heater zone 3' },
+    { number: 'WCL-2026-0041', machine: 'ZP-TF-2310', summary: 'Mould clamp' },
+    { number: 'WCL-2026-0042', machine: 'ZP-TF-2204', summary: 'Vacuum drop' },
+    { number: 'WCL-2026-0043', machine: 'ZP-TF-2204', summary: 'Chain drive E-17' },
+  ];
+  const params = new URLSearchParams(location.search);
+  let picked = params.get('machine') || params.get('serial') || 'ZP-TF-2204';
+
+  const inWarranty = (m) => m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0;
+  const eligible = data.machines.filter(inWarranty);
+  const others = data.machines.filter((m) => !inWarranty(m));
+
+  const name = (m) => `${R.thumb(m, 'sm')}<b>${R.esc(m.nickname || m.model)}</b>
+    <p>${m.nickname ? `${R.esc(m.model)} · ` : ''}<span class="mono">${m.serial}</span></p>`;
+  $('machines').innerHTML = eligible.map((m) => `<button class="choice" role="radio" type="button" data-serial="${m.serial}" aria-checked="${m.serial === picked}">
+      ${name(m)}<span class="mark"></span><span class="tags">${R.warrantyTag(m)}</span></button>`).join('');
+  $('others').innerHTML = others.map((m) => {
+    const pending = m.status === 'pending';
+    return `<div class="choice off" aria-disabled="true">${name(m)}
+      <span class="tags">${pending ? R.tag('Waiting for verification', '', 'hourglass') : R.tag(`Warranty ended ${R.date(m.warrantyEnd)}`)}</span>
+      ${pending ? '' : `<a class="btn btn-secondary btn-sm paid" href="C503-raise-machine.html?machine=${m.serial}">Raise paid service</a>`}</div>`;
+  }).join('');
+
+  const showPicked = () => {
+    const open = OPEN_CLAIMS.filter((c) => c.machine === picked);
+    $('dup').innerHTML = open.length ? `<div class="banner amber">${R.icon('warning')}<div><b>Open claims on this machine</b>
+      ${open.map((c) => `<a href="C308-claim.html?claim=${c.number}">${c.number}</a> ${R.esc(c.summary)}`).join('<br>')}<br>Raise a new one only for a different problem.</div></div>` : '';
+    $('next').href = `C304-claim-problem.html?machine=${picked}`;
+    document.querySelectorAll('[data-serial]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.serial === picked)));
+  };
+  $('machines').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-serial]');
+    if (!b) return;
+    picked = b.dataset.serial;
+    showPicked();
+  });
+  document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelector('.plate-states [data-state="ready"]').click();
+    picked = b.dataset.pick;
+    showPicked();
+  }));
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.state === 'idle') document.querySelectorAll('[data-serial]').forEach((c) => c.setAttribute('aria-checked', 'false'));
+    else showPicked();
+  }));
+  showPicked();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

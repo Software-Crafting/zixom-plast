@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1103 Company details</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.co{display:flex; align-items:center; gap:14px; padding:4px 2px 16px}
+.co .disc{width:56px; height:56px; display:grid; place-items:center; border-radius:18px; background:#fff; border:1px solid var(--line); color:var(--slate-800)}
+.co b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.co .mono{display:block; margin-top:3px; font-size:var(--fs-13); color:var(--text-muted)}
+.kv dd{max-width:62%}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1103 Company details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="pending" aria-pressed="false">change pending</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="change">request a change</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Company details</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+        <div data-when="ready pending offline">
+          <div class="co"><span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+            <span class="grow"><b id="co-name"></b><span class="mono" id="co-code"></span></span></div>
+          <div class="banner amber" data-when="pending" style="margin-bottom:12px"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+            <div><b>Change requested: billing address</b><span id="pending-line"></span></div></div>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="details"></dl></div>
+          <p class="hint" style="text-align:center"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-lock-simple"/></svg> Set by Zixom. Ask for a change below.</p>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:260px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready pending offline">
+        <button class="btn btn-secondary" type="button" data-open="change" data-when="ready">Request a change</button>
+        <button class="btn btn-secondary" type="button" disabled data-when="pending offline">Request a change</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="change" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ch-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ch-title">Request a change</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field-label">What to change</div>
+          <div class="chips" data-single style="margin-bottom:14px">
+            <button class="chip outline" type="button" aria-pressed="true">Billing address</button>
+            <button class="chip outline" type="button" aria-pressed="false">Company name</button>
+            <button class="chip outline" type="button" aria-pressed="false">GSTIN</button>
+            <button class="chip outline" type="button" aria-pressed="false">PAN</button>
+            <button class="chip outline" type="button" aria-pressed="false">Industry</button>
+          </div>
+          <div class="field"><label for="new-value">New value<span class="req">*</span></label>
+            <textarea class="textarea" id="new-value" rows="3">Plot 9, Narol Industrial Estate, Ahmedabad, Gujarat 382405</textarea></div>
+          <div class="field"><label for="note">Note for Zixom</label><input class="input" id="note" placeholder="Optional"></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close data-toast="Sent to Zixom">Send to Zixom</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Read only company record set by Zixom. A change goes to Zixom as a request; while one is pending
+it shows here and a second request waits.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const company = ZX.data.companies.find((c) => c.id === 'shree');
+  /* not in data.js: billing address and industry of this company */
+  const EXTRA = { billing: 'Plot 214, Phase II, GIDC Vatva, Ahmedabad, Gujarat 382445', industry: 'Plastic packaging', requested: '2026-11-21' };
+  const pan = company.gstin.slice(2, 12); /* the PAN is characters 3 to 12 of the GSTIN */
+  const rows = [['Company name', R.esc(company.name)], ['Customer code', `<span class="mono">${company.code}</span>`],
+    ['GSTIN', `<span class="mono">${company.gstin}</span>`], ['PAN', `<span class="mono">${pan}</span>`],
+    ['Billing address', R.esc(EXTRA.billing)], ['Industry', R.esc(EXTRA.industry)]];
+  document.getElementById('details').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  document.getElementById('co-name').textContent = company.name;
+  document.getElementById('co-code').textContent = company.code;
+  document.getElementById('pending-line').textContent = `Sent ${R.dayDate(EXTRA.requested)}. Zixom will confirm.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

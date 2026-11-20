@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C705 Checkout</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.sec h2 a{float:right; font:500 var(--fs-14) var(--font-body); color:var(--blue); text-decoration:none}
+.addr{display:grid; grid-template-columns:auto 1fr auto; gap:4px 12px; align-items:center; width:100%; padding:14px; border-radius:var(--r-lg);
+  background:#fff; border:1px solid var(--line); font:inherit; text-align:left; cursor:pointer}
+.addr > .ic:first-child{grid-row:1 / span 2; color:var(--slate-500)}
+.addr b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.addr span{grid-column:2; font-size:var(--fs-13); line-height:1.4; color:var(--text)}
+.addr > .ic:last-child{grid-row:1 / span 2; grid-column:3; width:16px; height:16px; color:var(--slate-400)}
+.ok{display:flex; align-items:center; gap:6px; margin:8px 2px 0; font-size:var(--fs-13); color:var(--green)}
+.ok .ic{width:16px; height:16px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.money small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.change{display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); font-size:var(--fs-14)}
+.change b{font-weight:600; color:var(--slate-900)}
+.change s{color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C705 Checkout</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="newaddress" aria-pressed="false">new address</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="pincode" aria-pressed="false">pincode not served</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="changed">price changed</button>
+  <button type="button" data-state="placing" aria-pressed="false">placing order</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C704-cart.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Checkout</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready newaddress errors pincode placing offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Placing an order needs the internet.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#pin-bad">Enter a 6 digit pincode</a></li><li><a href="#gst-bad">Check the GSTIN</a></li></ul></div>
+
+          <div class="sec">
+            <h2>Delivery address</h2>
+            <div data-when="ready pincode placing offline">
+              <button class="addr" type="button" data-open="addr"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><b id="site-name"></b><span id="site-addr"></span><svg class="ic" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+              <p class="ok" data-when="ready placing offline"><svg class="ic" aria-hidden="true"><use href="#ph-truck"/></svg>Delivers in 2 to 4 days</p>
+            </div>
+            <div data-when="newaddress errors">
+              <div class="field"><label for="a-name">Name<span class="req">*</span></label><input class="input" id="a-name" value="Shree Packaging, Naroda store"></div>
+              <div class="field"><label for="a-l1">Address line 1<span class="req">*</span></label><input class="input" id="a-l1" value="Plot 77, GIDC Naroda"></div>
+              <div class="field"><label for="a-l2">Address line 2</label><input class="input" id="a-l2"></div>
+              <div class="two">
+                <div class="field"><label for="a-city">City<span class="req">*</span></label><input class="input" id="a-city" value="Ahmedabad"></div>
+                <div class="field"><label for="a-state">State<span class="req">*</span></label><input class="input" id="a-state" value="Gujarat"></div>
+              </div>
+              <div class="two">
+                <div class="field" data-when="newaddress"><label for="a-pin">Pincode<span class="req">*</span></label><input class="input" id="a-pin" inputmode="numeric" maxlength="6" value="382330"></div>
+                <div class="field has-error" data-when="errors"><label for="pin-bad">Pincode<span class="req">*</span></label><input class="input" id="pin-bad" inputmode="numeric" value="38233" aria-invalid="true" aria-describedby="pin-err">
+                  <span class="error-text" id="pin-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 6 digits</span></div>
+                <div class="field"><label for="a-phone">Phone<span class="req">*</span></label><input class="input" id="a-phone" inputmode="tel"></div>
+              </div>
+            </div>
+            <div class="banner red" data-when="pincode" style="margin-top:10px"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+              <div><b>We do not deliver here yet</b>Call support to arrange delivery. <a id="call" href="#">Call support</a></div></div>
+          </div>
+
+          <div class="sec">
+            <h2>Billing details <a href="C811-billing-details.html">Change</a></h2>
+            <div class="card-fill" style="padding:2px 16px" data-when="ready newaddress pincode placing offline"><dl class="kv" style="margin:0" id="billing"></dl></div>
+            <div data-when="errors">
+              <div class="field has-error"><label for="gst-bad">GSTIN<span class="counter">For input credit</span></label>
+                <input class="input mono" id="gst-bad" value="24AAAAA0000A1Z" aria-invalid="true" aria-describedby="gst-err">
+                <span class="error-text" id="gst-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the 15 character GSTIN</span></div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <h2>Contact</h2>
+            <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="contact"></dl></div>
+          </div>
+
+          <div class="field" style="margin:0">
+            <label for="notes">Delivery notes<span class="counter" id="notes-count">0 / 200</span></label>
+            <textarea class="textarea" id="notes" maxlength="200" placeholder="Gate, timing or who receives it"></textarea>
+          </div>
+
+          <div class="sec">
+            <h2>Order summary</h2>
+            <div class="money" id="summary"></div>
+          </div>
+
+          <div class="sec">
+            <h2>Payment</h2>
+            <div role="radiogroup" aria-label="Payment" id="pay">
+              <button class="choice" role="radio" aria-checked="true" type="button" data-mode="pay"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-credit-card"/></svg></span><b>Pay now</b><p>UPI, card or net banking</p><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button" data-mode="quote"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span><b>Request quote</b><p>Zixom confirms price and stock first</p><span class="mark"></span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:45%"></span><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:170px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready newaddress errors pincode placing offline">
+        <div class="total"><span>Total</span><b id="total"></b></div>
+        <a class="btn btn-primary" id="place" href="C803-pay-method.html" data-when="ready newaddress">Place order</a>
+        <button class="btn btn-primary" type="button" data-when="errors" onclick="document.getElementById('pin-bad').focus()">Place order</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="placing">Place order</button>
+        <button class="btn btn-primary" type="button" disabled data-when="pincode offline">Place order</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="addr" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="addr-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="addr-t">Delivery address</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Saved addresses" id="sites"></div>
+        <button class="btn btn-secondary" type="button" style="margin-top:12px; width:100%" onclick="document.querySelector('[data-state=newaddress]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New address</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="changed" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ch-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ch-t">The price changed</h3></div>
+        <div class="body" id="changes"></div>
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr; margin-top:18px">
+          <a class="btn btn-secondary" href="C704-cart.html">Go back</a>
+          <button class="btn btn-primary" type="button" data-close>Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Place order opens payment (<a href="C803-pay-method.html">C803</a>); if the payment window closes the
+order stays Pending payment in <a href="C708-order-detail.html">C708</a>. Pay on credit is not offered.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: the cart from C704 (part, quantity), delivery charge to the chosen site and the relay's new price */
+  const CART = [['ZP-SP-001', 2], ['ZP-SP-002', 1]];
+  const DELIVERY = 360;
+  const NEW_RELAY_PRICE = 1310;
+
+  const company = data.companies.find((c) => c.id === 'shree');
+  const site = company.sites[0];
+  const me = data.users.find((u) => u.id === 'rakesh');
+  const part = (n) => data.parts.find((p) => p.number === n);
+
+  $('site-name').textContent = site.name;
+  $('site-addr').textContent = `${site.address} ${site.pincode}`;
+  $('call').href = `tel:${data.support.phone.replace(/\s/g, '')}`;
+  $('billing').innerHTML = `<div><dt>Bill to</dt><dd>${R.esc(company.name)}</dd></div><div><dt>GSTIN</dt><dd class="mono">${company.gstin}</dd></div>`;
+  $('contact').innerHTML = `<div><dt>Name</dt><dd>${R.esc(me.name)}</dd></div><div><dt>Mobile</dt><dd>${me.mobile}</dd></div>`;
+  $('sites').innerHTML = company.sites.map((s, i) => `<button class="choice" role="radio" aria-checked="${i === 0}" type="button" data-close>
+    <span class="disc">${R.icon('factory')}</span><b>${R.esc(s.name)}</b><p>${R.esc(s.address)} ${s.pincode}</p><span class="mark"></span></button>`).join('');
+
+  const lines = [...CART.map(([n, qty]) => [part(n).name, qty, part(n).price]), ['Delivery', 1, DELIVERY]];
+  const t = R.totals(lines);
+  $('summary').innerHTML = lines.map(([name, qty, rate]) => `<div><span>${R.esc(name)}${name === 'Delivery' ? '' : `<small>${qty} × ${R.money(rate)}</small>`}</span><span>${R.money(qty * rate)}</span></div>`).join('')
+    + `<div><span>GST 18%</span><span>${R.money(t.gst)}</span></div><div class="total"><span>Total</span><span>${R.money(t.total)}</span></div>`;
+  $('total').textContent = R.money(t.total);
+
+  const relay = part('ZP-SP-002');
+  const changedTotal = R.totals(lines.map((l) => (l[0] === relay.name ? [l[0], l[1], NEW_RELAY_PRICE] : l))).total;
+  $('changes').innerHTML = `<div class="change"><span><b>${R.esc(relay.name)}</b><br><s>${R.money(relay.price)}</s> → ${R.money(NEW_RELAY_PRICE)}</span></div>
+    <div class="change" style="border:0"><b>New total</b><b>${R.money(changedTotal)}</b></div>`;
+
+  $('notes').addEventListener('input', (e) => { $('notes-count').textContent = `${e.target.value.length} / 200`; });
+  $('pay').addEventListener('click', (e) => {
+    const choice = e.target.closest('[data-mode]');
+    if (!choice) return;
+    const quote = choice.dataset.mode === 'quote';
+    $('place').textContent = quote ? 'Send request' : 'Place order';
+    $('place').href = quote ? 'C707-orders.html' : 'C803-pay-method.html';
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

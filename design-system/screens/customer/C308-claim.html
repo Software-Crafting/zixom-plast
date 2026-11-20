@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C308 Claim detail and tracking</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* same header and status card as C508 */
+.tags-row{display:flex; flex-wrap:wrap; gap:6px}
+.mrow{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; margin-top:12px; color:inherit; text-decoration:none}
+.mrow b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.raised{margin:10px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.scard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.scard .disc{grid-row:1 / span 2; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.scard.amber .disc{background:var(--amber-50); color:var(--amber)}
+.scard.red .disc{background:var(--red-50); color:var(--red)}
+.scard.green .disc{background:var(--green-50); color:var(--green)}
+.scard.grey .disc{background:var(--slate-100); color:var(--slate-600)}
+.scard b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); line-height:1.35}
+.scard p{grid-column:2; margin:4px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.scard.amber{border-color:rgba(168,100,0,.3); background:#FFFCF6}
+.scard.red{border-color:rgba(194,59,59,.3); background:#FFFBFB}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.desc{margin:10px 2px 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.mini{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.mini .upload{width:56px; height:56px; aspect-ratio:auto}
+.acts{display:flex; gap:10px}
+.acts .btn{flex:1; padding:0 12px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C308 Claim detail and tracking</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="claim-switch"><span>claim</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="threadloading" aria-pressed="false">messages loading</button>
+  <button type="button" data-state="refresh" aria-pressed="false">updated while open</button>
+  <button type="button" data-state="overdue" aria-pressed="false">reply overdue</button>
+  <button type="button" data-state="commentfail" aria-pressed="false">message not sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C301-warranty.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Warranty claim</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body"></div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:55%"></span>
+          <div class="row-flex"><span class="skeleton" style="width:44px; height:44px"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <span class="skeleton" style="height:96px; border-radius:24px"></span>
+          <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this claim.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>We cannot find this claim</h3>
+          <p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="C301-warranty.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="actions" data-when="ready threadloading refresh overdue commentfail offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Claim actions">
+        <div class="group"><div class="title" id="more-title">Warranty claim</div>
+          <button type="button" data-close data-toast="Copied">Copy claim number</button>
+          <button type="button" data-close id="more-call"></button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="cancel" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel claim">
+        <div class="group"><div class="title">Cancel this claim? You cannot undo this.</div>
+          <button class="destructive" type="button" data-close data-toast="Claim cancelled">Cancel claim</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep claim</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="comment" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="c-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="c-title">Add a comment</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field" style="margin-top:0"><label for="c-text">Message to Zixom<span class="counter">0 / 1000</span></label>
+            <textarea class="textarea" id="c-text" maxlength="1000"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Sent to Zixom">Send</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="info" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="i-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="i-title">Upload information</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <p class="card-sub" id="i-request" style="margin:0 2px 12px"></p>
+          <div class="field" style="margin-top:0"><label for="i-text">Your reply<span class="counter">58 / 1000</span></label>
+            <textarea class="textarea" id="i-text" maxlength="1000" style="min-height:84px">Video of two cycles attached. The seal is cracked at one corner.</textarea></div>
+          <div class="files" style="margin-top:12px">
+            <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg></span>
+              <div class="file-body"><b>vacuum-gauge-cycle.mp4</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 0:38 · 16 MB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="uploading" data-progress="45"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>seal-corner.jpg</b><span class="file-meta">Uploading 45% · 2.2 MB</span><span class="progress"><i style="width:45%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <button class="btn btn-secondary btn-sm" type="button" style="margin-top:10px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-camera"/></svg>Add photo or video</button>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Sent to Zixom">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One warranty claim from submit to decision; pick a claim above for each status. Open with
+<code>?claim=WCL-2026-0042</code>. Appeal opens <a href="C310-appeal-claim.html">C310</a>, the linked request
+<a href="C508-request-detail.html">C508</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_CLAIM = 'WCL-2026-0042';
+  const NEW_CLAIM = 'WCL-2026-0047';
+  const APPEAL_DAYS = 7;
+  const DECIDER = 'Zixom service manager';
+
+  /* Sample data not in data.js yet (move there): warranty claims, spec section 16. Same list in C301 */
+  const CLAIMS = [
+    { number: 'WCL-2026-0040', status: 'submitted', machine: 'ZP-TF-2310', category: 'Heating', part: 'Ceramic heater element 650 W',
+      started: '2026-11-21', stopped: false, code: '', submitted: '2026-11-22T15:10', decideBy: '2026-11-25', evidence: [3, 0],
+      summary: 'Heater zone 3 does not reach the set temperature. Corners of the cups stay thin.' },
+    { number: 'WCL-2026-0041', status: 'under-review', machine: 'ZP-TF-2310', category: 'Mechanical', part: '',
+      started: '2026-11-19', stopped: false, code: '', submitted: '2026-11-20T11:30', reviewed: '2026-11-21T10:15', decideBy: '2026-11-24', evidence: [2, 1],
+      summary: 'Mould clamp does not lock fully on the right side. Parts flash on one edge.' },
+    { number: 'WCL-2026-0042', status: 'info-requested', machine: 'ZP-TF-2204', category: 'Vacuum or pneumatic', part: 'Vacuum gauge, analogue',
+      started: '2026-11-16', stopped: false, code: '', submitted: '2026-11-18T09:40', reviewed: '2026-11-19T11:00', requested: '2026-11-20T12:00',
+      deadline: '2026-11-27', request: 'Share a video of the vacuum gauge during one forming cycle and a photo of the seal.', evidence: [4, 0],
+      summary: 'Vacuum drops at the forming station. Corners do not form fully.' },
+    { number: 'WCL-2026-0043', status: 'approved', machine: 'ZP-TF-2204', category: 'Mechanical', part: 'Industrial chain set, 12B',
+      started: '2026-11-22', stopped: true, code: 'E-17', submitted: '2026-11-22T18:30', reviewed: '2026-11-22T19:10', decided: '2026-11-23T07:40',
+      ticket: 'TKT-2026-0126', reason: 'Chain tensioner spring failed. Covered as a manufacturing defect.', evidence: [3, 1],
+      summary: 'Chain drive trips with error E-17 on the HMI. Machine stopped.' },
+    { number: 'WCL-2026-0044', status: 'rejected', machine: 'ZP-TF-2310', category: 'Electrical', part: '',
+      started: '2026-11-15', stopped: true, code: 'F-03', submitted: '2026-11-16T14:05', reviewed: '2026-11-17T10:00', decided: '2026-11-18T16:30',
+      reason: 'The burnt supply cable shows a voltage surge from outside the machine. Damage from the power supply is not covered.', evidence: [2, 0],
+      summary: 'Main motor fuse blew twice in one shift.' },
+    { number: 'WCL-2026-0045', status: 'resolved', machine: 'ZP-TF-2310', category: 'Heating', part: 'Ceramic heater element 650 W',
+      started: '2026-11-15', stopped: false, code: '', submitted: '2026-11-16T09:20', reviewed: '2026-11-16T15:00', decided: '2026-11-17T08:15',
+      ticket: 'TKT-2026-0128', reason: 'Heater element open circuit. Covered under warranty.', evidence: [3, 0],
+      summary: 'Sheet sags before the forming station.' },
+    { number: 'WCL-2026-0046', status: 'cancelled', machine: 'ZP-TF-2204', category: 'Control or PLC', part: '',
+      started: '2026-11-09', stopped: false, code: '', submitted: '2026-11-10T10:00', cancelled: '2026-11-11T09:30',
+      reason: 'Fixed after a PLC restart.', evidence: [1, 0], summary: 'HMI freezes on recipe change.' },
+  ];
+  const COMMENTS = {
+    'WCL-2026-0041': [['me', 'The right clamp also leaks oil at the cylinder.', 'You · Sat 21 Nov, 9:02 AM']],
+    'WCL-2026-0042': [['them', 'Please share a video of the vacuum gauge during one forming cycle and a photo of the seal.', 'Zixom service · Fri 20 Nov, 12:00 PM']],
+    'WCL-2026-0043': [['them', 'Approved. Sandeep is visiting this morning.', 'Zixom service · Mon 23 Nov, 7:40 AM']],
+    'WCL-2026-0044': [['me', 'Our supply has a stabiliser. Can you check again?', 'You · Thu 19 Nov, 10:15 AM']],
+  };
+  const FAILED_COMMENT = 'Is the gauge reading enough or do you need the pump hours too?';
+  const CLAIM_STATUS = {
+    'submitted': ['Submitted', 'blue'], 'under-review': ['Under review', 'blue'], 'info-requested': ['Information requested', 'amber'],
+    'approved': ['Approved', 'green'], 'rejected': ['Rejected', 'red'], 'resolved': ['Resolved', 'green'],
+    'closed': ['Closed', ''], 'cancelled': ['Cancelled', ''],
+  };
+
+  /* a claim just submitted in C307 is not in the list: build it from the query string */
+  const params = new URLSearchParams(location.search);
+  const number = params.get('claim') || DEFAULT_CLAIM;
+  const c = CLAIMS.find((x) => x.number === number)
+    || (number === NEW_CLAIM && { number, status: 'submitted', machine: params.get('machine') || 'ZP-TF-2204', category: 'Heating',
+      part: 'PID temperature controller', started: '2026-11-20', stopped: false, code: 'H-02', submitted: data.now, decideBy: '2026-11-25',
+      evidence: [3, 1], summary: 'Heater zone 2 overshoots by 30 degrees and trips. Sheets come out with burn marks.' });
+
+  $('claim-switch').insertAdjacentHTML('beforeend', CLAIMS.map((x) => `<button type="button" data-claim="${x.number}"
+    aria-pressed="${x.number === number}">${x.number.slice(-4)} ${x.status}</button>`).join(''));
+  $('claim-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-claim]');
+    if (b) location.search = `?claim=${b.dataset.claim}`;
+  });
+  $('more-call').textContent = `Call Zixom support, ${data.support.phone}`;
+
+  if (!c) {
+    document.querySelector('.screen').dataset.state = 'notfound';
+    return;
+  }
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const stamp = (iso, who) => `${R.dayDate(iso)}, ${time(iso)} · ${who}`;
+  const addDays = (iso, days) => {
+    const d = new Date(`${iso.slice(0, 10)}T12:00:00`);
+    d.setDate(d.getDate() + days);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const m = R.machine(c.machine);
+  const ticket = c.ticket && data.tickets.find((t) => t.number === c.ticket);
+  const report = ticket && data.reports.find((r) => r.ticket === ticket.number);
+  const appealBy = c.decided && addDays(c.decided, APPEAL_DAYS);
+  const ok = 'ready threadloading refresh overdue commentfail offline';
+  const isInfo = c.status === 'info-requested';
+  const okNotOverdue = isInfo ? 'ready threadloading refresh commentfail offline' : ok;
+
+  $('title').textContent = c.number;
+  $('more-title').textContent = c.number;
+
+  /* ---------- banners ---------- */
+  const banners = `<div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>
+    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div>This claim was updated. <button class="link-btn" type="button" data-busy>Refresh</button></div></div>`;
+
+  /* ---------- header ---------- */
+  const header = `<div>
+      <div class="tags-row">${R.tag(...CLAIM_STATUS[c.status])}${R.tag(c.category, 'outline')}</div>
+      <a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+        <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)} · <span class="mono" style="display:inline; white-space:nowrap">${m.serial}</span></span></span>${R.icon('caret-right', 'ic-16')}</a>
+      <p class="raised">Submitted ${R.dayDate(c.submitted)}, ${time(c.submitted)}</p>
+    </div>`;
+
+  /* ---------- status card: where the claim is and what comes next ---------- */
+  const CARD = {
+    'submitted': ['tray', 'blue', 'Submitted. Waiting for review', `Decision by ${c.decideBy && R.dayDate(c.decideBy)}.`],
+    'under-review': ['file-search', 'blue', 'Zixom is checking the evidence', `Decision by ${c.decideBy && R.dayDate(c.decideBy)}.`],
+    'info-requested': ['chat-text', 'amber', `Zixom needs more information by ${c.deadline && R.dayDate(c.deadline)}`, c.request],
+    'approved': ['seal-check', 'green', 'Approved. Repair at no charge', `Follow it in ${c.ticket}.`],
+    'rejected': ['circle-x', 'red', 'Rejected', appealBy && `Appeal by ${R.dayDate(appealBy)} or raise a paid service.`],
+    'resolved': ['check-circle', 'green', 'Resolved', report && `Repaired on ${R.dayDate(report.date)}. Rate the service.`],
+    'cancelled': ['x', 'grey', 'Cancelled by you', c.reason],
+  };
+  const [cIcon, cTone, cHead, cNext] = CARD[c.status];
+  const statusCard = `<div class="scard ${cTone}" data-when="${okNotOverdue}"><span class="disc">${R.icon(cIcon)}</span>
+      <b>${R.esc(cHead)}</b>${cNext ? `<p>${R.esc(cNext)}</p>` : ''}</div>
+    ${isInfo ? `<div class="scard red" data-when="overdue"><span class="disc">${R.icon('clock')}</span>
+      <b>Reply was due ${R.dayDate(c.deadline)}</b><p>Zixom may reject the claim. Reply now.</p></div>` : ''}`;
+
+  /* ---------- timeline ---------- */
+  const li = (cls, label, sub = '') => `<li class="${cls}"><span class="dot"></span><div><b>${R.esc(label)}</b>${sub ? `<span>${R.esc(sub)}</span>` : ''}</div></li>`;
+  const submitted = li('done', 'Submitted', stamp(c.submitted, 'You'));
+  const reviewed = c.reviewed && li('done', 'Under review', stamp(c.reviewed, 'Zixom'));
+  const later = (from) => ['Decision', 'Repair visit', 'Resolved'].slice(from).map((l) => li('todo', l));
+  const TIMELINE = {
+    'submitted': () => [submitted, li('now', 'Waiting for review'), ...later(0)],
+    'under-review': () => [submitted, li('now', 'Under review', stamp(c.reviewed, 'Zixom')), ...later(0)],
+    'info-requested': () => [submitted, reviewed, li('now', 'Information requested', `${stamp(c.requested, 'Zixom')} · reply by ${R.dayDate(c.deadline)}`), ...later(0)],
+    'approved': () => [submitted, reviewed, li('done', 'Approved', stamp(c.decided, DECIDER)), li('now', 'Repair visit', `${c.ticket} · in progress`), ...later(2)],
+    'rejected': () => [submitted, reviewed, li('done', 'Rejected', stamp(c.decided, DECIDER))],
+    'resolved': () => [submitted, reviewed, li('done', 'Approved', stamp(c.decided, DECIDER)), li('done', 'Repair visit', report ? `${R.dayDate(report.date)} · ${R.engineer(report.engineer).name}` : c.ticket),
+      li('done', 'Resolved', report ? stamp(report.signedAt, 'You') : '')],
+    'cancelled': () => [submitted, li('done', 'Cancelled', stamp(c.cancelled, 'You'))],
+  };
+  const timeline = `<div class="sec" data-when="${ok}"><h2>Timeline</h2><ol class="timeline">${TIMELINE[c.status]().join('')}</ol></div>`;
+
+  /* ---------- decision ---------- */
+  const decided = ['approved', 'rejected', 'resolved'].includes(c.status);
+  const decision = decided ? `<div class="sec" data-when="${ok}"><h2>Decision</h2><div class="card">
+      <dl class="kv" style="margin:0">
+        <div><dt>Decided</dt><dd>${R.date(c.decided)}</dd></div>
+        <div><dt>By</dt><dd>${DECIDER}</dd></div>
+      </dl><p class="desc" style="margin:8px 0 0">${R.esc(c.reason)}</p></div></div>` : '';
+
+  /* ---------- linked service request ---------- */
+  const linked = ticket ? `<div class="sec" data-when="${ok}"><h2>Service request</h2>
+      ${R.ticketCard(ticket, `C508-request-detail.html?ticket=${ticket.number}`)}</div>` : '';
+
+  /* ---------- your claim ---------- */
+  const [photos, videos] = c.evidence;
+  const tile = (icon) => `<div class="upload">${R.icon(icon, 'ic-24')}</div>`;
+  const yourClaim = `<div class="sec" data-when="${ok}"><h2>Your claim</h2>
+      <dl class="kv" style="margin:0">
+        <div><dt>Category</dt><dd>${R.esc(c.category)}</dd></div>
+        ${c.part ? `<div><dt>Part</dt><dd>${R.esc(c.part)}</dd></div>` : ''}
+        <div><dt>Started</dt><dd>${R.date(c.started)}</dd></div>
+        <div><dt>Machine stopped</dt><dd>${c.stopped ? 'Yes' : 'No'}</dd></div>
+        ${c.code ? `<div><dt>Error code</dt><dd class="mono">${R.esc(c.code)}</dd></div>` : ''}
+      </dl>
+      <p class="desc">${R.esc(c.summary)}</p>
+      <div class="mini">${tile('image').repeat(photos)}${tile('video-camera').repeat(videos)}${tile('barcode')}</div>
+    </div>`;
+
+  /* ---------- messages with Zixom, loaded on their own ---------- */
+  const ended = ['closed', 'cancelled'].includes(c.status);
+  const comments = COMMENTS[c.number] || [];
+  const bubbles = comments.map(([who, text, meta]) => `<div class="bubble ${who}">${R.esc(text)}</div>
+    <div class="bubble-meta ${who === 'me' ? 'me' : ''}">${R.esc(meta)}</div>`).join('');
+  const failed = `<div class="bubble me" data-when="commentfail">${R.esc(FAILED_COMMENT)}</div>
+    <button class="bubble-meta me failed" type="button" data-when="commentfail" data-busy style="border:0; background:none; width:100%">${R.icon('warning-circle', 'ic-16')}Not sent. Tap to retry</button>`;
+  const thread = `<div class="sec" data-when="${ok}"><h2>Messages with Zixom</h2>
+      <div class="stack-sm" data-when="threadloading"><span class="skeleton" style="height:56px; width:80%; border-radius:18px"></span><span class="skeleton" style="height:44px; width:60%; margin-left:auto; border-radius:18px"></span></div>
+      <div data-when="ready refresh overdue commentfail offline">
+        ${comments.length ? `<div class="thread">${bubbles}${failed}</div>` : `<p class="hint" style="margin-top:0" data-when="ready refresh overdue offline">No messages yet.</p><div class="thread">${failed}</div>`}
+      </div>
+      ${ended ? '' : `<button class="btn btn-secondary btn-sm" type="button" data-open="comment" style="margin-top:12px">${R.icon('chat-text', 'ic-18')}Add a comment</button>`}
+    </div>`;
+
+  $('body').innerHTML = banners + header + statusCard + linked + decision + timeline + yourClaim + thread;
+  $('body').dataset.when = ok;
+  $('i-request').textContent = c.request || '';
+
+  /* ---------- action bar by status (spec C308) ---------- */
+  const cancel = `<button class="btn btn-secondary" type="button" data-open="cancel">Cancel claim</button>`;
+  const ACTIONS = {
+    'submitted': [cancel, `<button class="btn btn-primary" type="button" data-open="comment">Add comment</button>`],
+    'under-review': [cancel, `<button class="btn btn-primary" type="button" data-open="comment">Add comment</button>`],
+    'info-requested': [`<button class="btn btn-primary" type="button" data-open="info">${R.icon('upload-simple')}Upload information</button>`],
+    'approved': [`<a class="btn btn-primary" href="C508-request-detail.html?ticket=${c.ticket}">Open service request</a>`],
+    'rejected': [`<a class="btn btn-secondary" href="C503-raise-machine.html?machine=${m.serial}">Raise paid service</a>`,
+      `<a class="btn btn-primary" href="C310-appeal-claim.html?claim=${c.number}">Appeal</a>`],
+    'resolved': [`<a class="btn btn-primary" href="C514-rate-service.html?ticket=${c.ticket}">Rate the service</a>`],
+    'cancelled': [],
+  };
+  const actions = ACTIONS[c.status];
+  if (actions.length) $('actions').innerHTML = `<div class="acts">${actions.join('')}</div>`;
+  else $('actions').remove();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>
