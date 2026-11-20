@@ -8,9 +8,14 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .tags-row{display:flex; flex-wrap:wrap; gap:6px}
-.mrow{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; margin-top:12px; color:inherit; text-decoration:none}
+.req-card{padding:14px 16px 6px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.req-card .kv{margin:12px 0 0; padding-top:4px; border-top:1px solid var(--line)}
+.req-card .kv div{align-items:center}
+.req-card .kv dd{display:flex; justify-content:flex-end}
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; color:inherit; text-decoration:none}
 .mrow b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.mrow span .mono{color:var(--slate-700)}
 .mrow > .ic{color:var(--slate-400)}
 .raised{margin:10px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
 .scard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
@@ -233,11 +238,16 @@
       <button class="link-btn" type="button" data-toast="New time accepted">Accept</button> · <a href="C510-reschedule.html?ticket=${t.number}">Request another time</a></div></div>` : ''}`;
 
   /* ---------- header ---------- */
-  const header = `<div>
-      <div class="tags-row"><span data-when="${ready}">${R.ticketTag(t.status)}</span><span data-when="zcancel">${R.ticketTag('cancelled')}</span>${R.coverageTag(t.coverage)}${R.severityTag(t.severity)}</div>
+  const header = `<div class="req-card">
       <a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
-        <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)} · <span class="mono" style="display:inline; white-space:nowrap">${m.serial}</span></span></span>${R.icon('caret-right', 'ic-16')}</a>
-      <p class="raised">Raised ${R.dayDate(t.created)}, ${time(t.created)} · ${R.esc(site.name)}</p>
+        <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)}</span><span class="mono">${m.serial}</span></span></a>
+      <dl class="kv">
+        <div><dt>Status</dt><dd><span data-when="${ready}">${R.ticketTag(t.status)}</span><span data-when="zcancel">${R.ticketTag('cancelled')}</span></dd></div>
+        <div><dt>Coverage</dt><dd>${R.coverageTag(t.coverage)}</dd></div>
+        ${t.severity ? `<div><dt>Severity</dt><dd>${R.severityTag(t.severity)}</dd></div>` : ''}
+        <div><dt>Raised</dt><dd>${R.dayDate(t.created)}, ${time(t.created)}</dd></div>
+        <div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+      </dl>
     </div>`;
 
   /* ---------- engineer ---------- */
