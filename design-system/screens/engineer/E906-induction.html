@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E906 Site induction acknowledgement</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; color:inherit; text-decoration:none; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.done{padding-top:70px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E906 Site induction</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="photo" aria-pressed="false">pass photo added</button>
+  <button type="button" data-state="uploading" aria-pressed="false">photo uploading, failed</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on confirm</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="confirmed" aria-pressed="false">confirmed</button>
+  <button type="button" data-state="notneeded" aria-pressed="false">not needed, skipped</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E206-check-in.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Site induction</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready photo uploading errors offline">
+          <p class="who" id="who"></p>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved on the phone until you are online.</div>
+          <div class="banner"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg><div><b id="site-name"></b>Needs a safety induction before work.</div></div>
+          <div class="error-summary" role="alert" style="margin:0" data-when="errors">
+            <b>Fix 1 thing to confirm</b><ul><li><a href="#by-bad">Enter who briefed you</a></li></ul>
+          </div>
+
+          <div class="two">
+            <div class="field" style="margin:0"><label for="d">Date<span class="req">*</span></label><input class="input" type="date" id="d"></div>
+            <div class="field" style="margin:0"><label for="t">Time<span class="req">*</span></label><input class="input" type="time" id="t" value="09:40"></div>
+          </div>
+
+          <div class="field" style="margin:0" data-when="ready photo uploading offline"><label for="by">Briefed by<span class="req">*</span></label><input class="input" id="by"></div>
+          <div class="field has-error" style="margin:0" data-when="errors"><label for="by-bad">Briefed by<span class="req">*</span></label>
+            <input class="input" id="by-bad" aria-invalid="true">
+            <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter who briefed you</span></div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label">Photo of the pass<span class="counter">Optional</span></span>
+            <a class="add-file" href="E1001-camera.html" data-when="ready errors">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-identification-card"/></svg></span>
+              <span class="grow"><b>Add a photo</b><span>Visitor or induction pass</span></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg></a>
+            <div class="files" data-when="photo offline">
+              <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>vatva-pass.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Added · 1.2 MB</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="files" data-when="uploading">
+              <div class="file" data-status="failed" data-progress="30"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>vatva-pass.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="state done" data-when="confirmed">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Induction confirmed</h3><p id="confirmed-at"></p>
+        </div>
+        <div class="state done" data-when="notneeded">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg></span>
+          <h3>No induction needed</h3><p>This site does not ask for one.</p>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready photo uploading offline" onclick="document.querySelector('[data-state=confirmed]').click()">Confirm induction</button>
+        <button class="btn btn-primary" type="button" data-when="errors">Confirm induction</button>
+        <a class="btn btn-primary" href="E901-safety-checklist.html" id="next" data-when="confirmed notneeded">Continue to safety checklist</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">For sites that need an induction, before the safety checklist. Records when, who briefed and an
+optional photo of the pass. Sites without one skip straight to <a href="E901-safety-checklist.html">E901</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample: the site's safety officer who usually briefs visitors */
+  const BRIEFED_BY = 'Kiran Desai, Safety officer';
+
+  const ticketNo = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNo);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+
+  $('back').href = `E206-check-in.html?ticket=${ticketNo}`;
+  $('next').href = `E901-safety-checklist.html?ticket=${ticketNo}`;
+  $('who').innerHTML = `<span class="mono">${ticketNo}</span> · ${R.esc(company.name)}`;
+  $('site-name').textContent = site.name;
+  $('d').value = data.today;
+  $('by').value = BRIEFED_BY;
+  $('confirmed-at').textContent = `${R.dayDate(data.today)}, 9:40 AM. Briefed by ${BRIEFED_BY.split(',')[0]}.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

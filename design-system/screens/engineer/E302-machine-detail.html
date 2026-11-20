@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E302 Machine detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.hero{display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center}
+.hero .thumb{width:88px; height:88px; border-radius:22px}
+.hero .thumb .ic{width:40px; height:40px}
+.hero h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.2}
+.hero .series{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.hero .serial{margin:6px 0 0; font-size:var(--fs-13); color:var(--slate-700)}
+.chip-row{display:flex; flex-wrap:wrap; gap:6px}
+.panel-title{margin:4px 2px 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+[data-state="offline"] .quick a.online, [data-state="outside"] .quick a.online{opacity:.42; pointer-events:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E302 Machine detail</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="note">add a note</button>
+  <button type="button" data-state="outside" aria-pressed="false">outside my jobs</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E303-find-machine.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="nav-title">Machine</h1><span></span>
+      </div>
+
+      <div class="scroll">
+        <div class="stack" data-when="ready outside offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+          <div class="banner amber" data-when="outside"><svg class="ic" aria-hidden="true"><use href="#ph-eye"/></svg>
+            <div><b>Not on your jobs</b>This lookup is logged. Customer contact is hidden.</div></div>
+
+          <div class="hero" id="hero"></div>
+          <div class="chip-row" id="chips"></div>
+          <a class="alert-card amber" href="#" id="hazards"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
+            <b>Hazard notes</b><span>Read before work</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+          <div class="quick" id="quick"></div>
+
+          <div class="card-fill"><dl class="kv" style="margin:0" id="overview"></dl></div>
+
+          <div data-when="ready offline">
+            <h3 class="panel-title">Customer and site</h3>
+            <div class="card stack-sm" id="customer"></div>
+          </div>
+
+          <div data-when="ready offline">
+            <h3 class="panel-title">My jobs on this machine</h3>
+            <div class="list" id="jobs"></div>
+          </div>
+
+          <div><h3 class="panel-title">Key specifications</h3><div class="card"><dl class="kv" style="margin:0" id="specs"></dl></div></div>
+        </div>
+
+        <div class="stack" data-when="loading" style="margin-top:4px">
+          <div class="hero"><span class="skeleton" style="width:88px; height:88px; border-radius:22px"></span>
+            <div class="stack-sm"><span class="skeleton sk-line" style="width:80%; height:18px"></span><span class="skeleton sk-line" style="width:50%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <span class="skeleton" style="height:62px; border-radius:var(--r-lg)"></span>
+          <div class="quick"><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span></div>
+          <span class="skeleton" style="height:220px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this machine. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="note" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="note-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="note-t">Add a note</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="field" style="margin-top:8px"><label for="note-text">Note<span class="counter">0 / 500</span></label>
+          <textarea class="textarea" id="note-text" placeholder="For example, chain tension reading after adjustment"></textarea></div>
+        <p class="hint">Visible to Zixom engineers only.</p>
+        <button class="btn btn-primary" type="button" style="margin-top:14px" data-close data-toast="Note saved">Save note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Everything an engineer needs about one machine, without prices. A machine outside his jobs opens with
+the lookup logged and the customer contact hidden. Offline shows the saved copy; notes save on the phone.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const me = data.engineerDay.engineer;
+  const STATUS = { running: ['Running', 'green'], repair: ['Under repair', 'amber'], idle: ['Idle', ''], pending: ['Pending verification', ''] };
+  /* sample specifications per machine type until Zixom supplies datasheets (same as C202) */
+  const SPECS = {
+    'Thermoforming machine': [['Forming area', '760 x 560 mm'], ['Sheet thickness', '0.2 to 1.8 mm'], ['Heaters', 'Infrared ceramic, PID'], ['Control', 'PLC with HMI']],
+    'Cup forming machine': [['Cup diameter', '50 to 95 mm'], ['Output', 'Up to 18,000 cups per hour'], ['Heaters', 'Calrod, PID'], ['Control', 'PLC with HMI']],
+    'Vacuum forming machine': [['Forming area', '600 x 450 mm'], ['Depth of draw', '200 mm'], ['Heaters', 'Infrared ceramic'], ['Operation', 'Semi automatic']],
+    'Plastic crusher': [['Throat size', '300 x 200 mm'], ['Motor', '7.5 kW'], ['Blades', '4 rotating, 2 fixed'], ['Output', 'Up to 120 kg per hour']],
+  };
+  /* engineer wording for job status, short enough for a row */
+  const JOB_STATUS = { 'submitted': ['New', 'blue'], 'assigned': ['Offered', 'blue'], 'scheduled': ['Scheduled', 'blue'],
+    'on-the-way': ['On the way', 'blue'], 'in-progress': ['In progress', 'blue'], 'on-hold': ['On hold', 'amber'],
+    'completed': ['Completed', 'green'], 'closed': ['Closed', ''], 'visit-failed': ['Visit failed', 'red'],
+    'cancelled': ['Cancelled', ''], 'reopened': ['Reopened', 'amber'] };
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const myJobs = data.tickets.filter((t) => t.machine === serial && t.engineer === me);
+  const mySerials = new Set(data.tickets.filter((t) => t.engineer === me).map((t) => t.machine));
+  const lastService = data.tickets.find((t) => t.machine === serial && t.status === 'closed');
+
+  $('machines').insertAdjacentHTML('beforeend', data.machines.filter((x) => mySerials.has(x.serial)).map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+
+  $('nav-title').textContent = m.nickname || m.model;
+  $('hero').innerHTML = `${R.thumb(m)}<div><h2>${R.esc(m.model)}</h2>
+    <p class="series">${R.esc(m.type)}${m.nickname ? ` · ${R.esc(m.nickname)}` : ''}</p><p class="serial mono">${R.esc(serial)}</p></div>`;
+  $('chips').innerHTML = R.tag(...STATUS[m.status]) + R.warrantyTag(m) + R.amcTag(m);
+  $('hazards').href = `E905-hazards.html?serial=${serial}`;
+  
+  const action = (href, iconName, label, online = false) => `<a href="${href}"${online ? ' class="online"' : ''}><span class="disc">${R.icon(iconName)}</span>${label}</a>`;
+  $('quick').innerHTML = [
+    action(`E301-machine-history.html?serial=${serial}`, 'clock', 'History'),
+    action(`E304-documents.html?serial=${serial}`, 'book-open', 'Documents'),
+    `<a href="#" data-open="note"><span class="disc">${R.icon('note-pencil')}</span>Add note</a>`,
+    action(`E501-request-parts.html?ticket=${(myJobs.find(R.isOpen) || myJobs[0] || {}).number || ''}`, 'package', 'Request parts', true),
+  ].join('');
+
+  const kv = (rows) => rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  $('overview').innerHTML = kv([
+    ['Installed on', m.installed ? R.date(m.installed) : 'Not installed'],
+    ['Commissioned on', m.commissioned ? R.date(m.commissioned) : 'Not commissioned'],
+    ['Running hours', m.runningHours ? `${m.runningHours.toLocaleString('en-IN')} h` : 'Not recorded'],
+    ['Last service', lastService ? R.date(lastService.created) : 'None on record'],
+    ['Coverage', m.amc ? `AMC to ${R.date(R.amc(m.amc).end)}` : m.warrantyEnd ? `Warranty to ${R.date(m.warrantyEnd)}` : 'None'],
+  ]);
+
+  $('customer').innerHTML = `<div class="person"><span class="avatar">${R.esc(site.contact.name.split(' ').map((w) => w[0]).join(''))}</span>
+      <span class="grow"><b>${R.esc(site.contact.name)}</b><span>${R.esc(company.name)}</span></span>
+      <a class="icon-btn dark" href="tel:${site.contact.phone.replace(/\s/g, '')}" aria-label="Call ${R.esc(site.contact.name)}">${R.icon('phone')}</a></div>
+    <a class="list-item" style="padding:12px 0 0; min-height:0; border-top:1px solid var(--line)" href="E902-site-access.html?ticket=${(myJobs[0] || {}).number || ''}">
+      <span class="disc">${R.icon('map-pin')}</span><b>${R.esc(site.name)}</b><span class="sub">${R.esc(site.address)}</span><span class="end">${R.icon('caret-right')}</span></a>`;
+
+  $('jobs').innerHTML = myJobs.map((t) => `<a class="list-item" href="E202-job-detail.html?ticket=${t.number}">
+    <span class="disc">${R.icon('wrench')}</span><b>${R.esc(t.type)}</b><span class="sub"><span class="mono">${t.number}</span> · ${R.dayDate(t.created)}</span>
+    <span class="end">${R.tag(...JOB_STATUS[t.status])}${R.icon('caret-right')}</span></a>`).join('');
+
+  $('specs').innerHTML = kv(SPECS[m.type].map(([k, v]) => [k, R.esc(v)]));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

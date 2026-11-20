@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E217 Running late</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.wrap{flex-wrap:wrap; margin:0; padding:0}
+.facts{margin:0; padding:4px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.used{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.used b{color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E217 Running late</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready, 1 of 3 sent</button>
+  <button type="button" data-state="late" aria-pressed="false">over 2 hours late</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="limit" aria-pressed="false">3 updates used</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">waiting to sync</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Running late</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready late offline limit">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="job" id="job"></div>
+          <dl class="kv facts">
+            <div><dt>Visit window</dt><dd id="window"></dd></div>
+            <div><dt>Arrival told to customer</dt><dd id="eta"></dd></div>
+          </dl>
+          <div class="banner amber" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>3 updates sent</b>That is the limit for this job. Call the customer instead.</div></div>
+
+          <div data-when="ready late offline">
+            <h2 class="sec-title">Reason</h2>
+            <div class="chips wrap" data-single>
+              <button class="chip outline" type="button" aria-pressed="true">Traffic</button>
+              <button class="chip outline" type="button" aria-pressed="false">Previous job ran over</button>
+              <button class="chip outline" type="button" aria-pressed="false">Vehicle problem</button>
+              <button class="chip outline" type="button" aria-pressed="false">Other</button>
+            </div>
+          </div>
+
+          <div data-when="ready offline">
+            <h2 class="sec-title">New arrival time</h2>
+            <div class="chips wrap" data-single>
+              <button class="chip outline" type="button" aria-pressed="false">+15 min</button>
+              <button class="chip outline" type="button" aria-pressed="true">+30 min</button>
+              <button class="chip outline" type="button" aria-pressed="false">+1 h</button>
+              <button class="chip outline" type="button" aria-pressed="false">+2 h</button>
+            </div>
+            <input class="input" type="time" aria-label="New arrival time" style="margin-top:10px" id="new-time">
+          </div>
+          <div data-when="late">
+            <h2 class="sec-title">New arrival time</h2>
+            <div class="chips wrap" data-single>
+              <button class="chip outline" type="button" aria-pressed="false">+15 min</button>
+              <button class="chip outline" type="button" aria-pressed="false">+30 min</button>
+              <button class="chip outline" type="button" aria-pressed="false">+1 h</button>
+              <button class="chip outline" type="button" aria-pressed="false">+2 h</button>
+            </div>
+            <input class="input" type="time" aria-label="New arrival time" style="margin-top:10px" id="late-time">
+          </div>
+
+          <div class="banner amber" data-when="late"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg>
+            <div><b>Over 2 hours late</b><span id="mgr-alert"></span></div></div>
+          <div class="banner grey" data-when="ready late offline"><svg class="ic" aria-hidden="true"><use href="#ph-chat-text"/></svg>
+            <div><b>Customer gets</b><span data-when="ready offline" id="preview"></span><span data-when="late" id="preview-late"></span></div></div>
+          <p class="used" data-when="ready late offline"><b>Update 2 of 3</b> for this job</p>
+        </div>
+
+        <div class="state" data-when="sent queued" style="padding-top:80px">
+          <span class="disc green" data-when="sent"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg></span>
+          <span class="disc" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Customer told</h3>
+          <p id="sent-text"></p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready late offline" data-goto="sent">Send update</button>
+        <a class="btn btn-primary call-customer" href="#" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg><span class="call-label"></span></a>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="sent queued">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">From Job detail while on the way. Sends the reason and new arrival time to the customer as a push;
+up to 3 updates per job, and over 2 hours late also alerts the service manager.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0125';
+  const DELAY_MIN = 30;
+  const LATE_DELAY_MIN = 150;
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const me = R.engineer(data.engineerDay.engineer);
+
+  const etaMin = data.engineerDay.today.find((j) => j.ticket === t.number)?.etaMin ?? t.eta ?? 0;
+  const at = (minutes) => new Date(new Date(data.now).getTime() + minutes * 60000);
+  const clock = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const hhmm = (d) => d.toTimeString().slice(0, 5);
+  const newTime = clock(at(etaMin + DELAY_MIN));
+  const lateTime = clock(at(etaMin + LATE_DELAY_MIN));
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+  $('window').textContent = t.window ? `${R.dayDate(t.window.date)}, ${t.window.slot}` : '';
+  $('eta').textContent = clock(at(etaMin));
+  $('new-time').value = hhmm(at(etaMin + DELAY_MIN));
+  $('late-time').value = hhmm(at(etaMin + LATE_DELAY_MIN));
+  $('preview').textContent = `${me.name} is running late due to traffic. New arrival around ${newTime}.`;
+  $('preview-late').textContent = `${me.name} is running late due to traffic. New arrival around ${lateTime}.`;
+  $('mgr-alert').textContent = `${data.support.manager} is also alerted.`;
+  $('sent-text').textContent = `New arrival around ${newTime}.`;
+  document.querySelectorAll('.call-customer').forEach((a) => { a.href = `tel:${site.contact.phone.replace(/\s/g, '')}`; });
+  document.querySelectorAll('.call-label').forEach((el) => { el.textContent = `Call ${site.contact.name}`; });
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const target = document.querySelector('.screen').dataset.state === 'offline' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E402 Parts used picker</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.search .scan{background:var(--slate-800); color:#fff}
+.chips.wrap{flex-wrap:wrap; overflow:visible; margin:0; padding:0}
+.line{padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.line-top{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center}
+.line-top b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.line-top .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.line .row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0 0; margin-top:12px; border-top:1px solid var(--line)}
+.line .row > span{font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.line .segment{width:140px}
+.line .segment button{height:32px; font-size:var(--fs-13)}
+.line .field-label{margin-top:14px}
+.line .file{margin-top:8px}
+.part-row{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; padding:12px 14px}
+.part-row + .part-row{border-top:1px solid var(--line)}
+.part-row b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part-row .sub{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:3px; font-size:var(--fs-12); color:var(--text-muted)}
+.part-row .icon-btn{width:38px; height:38px}
+.part-row .icon-btn.added{background:var(--slate-800); border-color:var(--slate-800); color:#fff}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E402 Parts used picker</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="empty" aria-pressed="false">nothing added</button>
+  <button type="button" data-state="nomatch" aria-pressed="false">part not found</button>
+  <button type="button" data-state="nomatch" data-open="manual" aria-pressed="false">add manually</button>
+  <button type="button" data-state="ready" data-open="nofit" aria-pressed="false">does not fit</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">duplicate merged</button>
+  <button type="button" data-state="over" aria-pressed="false">over issued qty</button>
+  <button type="button" data-state="ready" data-open="noscan" aria-pressed="false">scan not recognised</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back" href="E401-report.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Parts used</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready empty nomatch duplicate over offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Parts list saved for this machine.</div>
+          <div class="search">
+            <svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" id="q" placeholder="Part name or number" aria-label="Search parts">
+            <a class="icon-btn scan" href="E1005-scan.html" aria-label="Scan barcode"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-barcode"/></svg></a>
+          </div>
+
+          <div class="banner" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+            <div><b>Already added</b>Quantity updated to 2.</div></div>
+          <div class="banner amber" data-when="over"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b id="over-title"></b>Check the quantity or tell Stores.</div></div>
+
+          <div data-when="ready duplicate over offline">
+            <p class="list-title" style="margin-top:0">Added</p>
+            <div id="line"></div>
+          </div>
+          <div class="banner grey" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg>
+            <div><b>No parts added</b>Search, scan or pick from the list.</div></div>
+
+          <div data-when="ready empty duplicate over offline">
+            <p class="list-title" style="margin-top:0" id="for-model"></p>
+            <div class="list" id="parts"></div>
+          </div>
+
+          <div class="state" data-when="nomatch" style="padding:24px 12px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+            <h3>No matching part</h3>
+            <p>Add it by name. Stores will match it later.</p>
+          </div>
+          <button class="btn btn-secondary" type="button" data-open="manual"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add part not in the list</button>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:50px; border-radius:var(--r-pill)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton sk-card" style="height:230px"></span>
+          <span class="skeleton sk-line" style="width:40%"></span><span class="skeleton sk-card" style="height:200px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready empty nomatch duplicate over offline">
+        <a class="btn btn-primary back" href="E401-report.html" id="done">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="manual" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="manual-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="manual-title">Add part not in the list</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="m-name">Part name<span class="req">*</span></label><input class="input" id="m-name" value="Drive coupling, jaw type"></div>
+          <div class="field"><label for="m-number">Number on the part</label><input class="input mono" id="m-number" placeholder="If visible"></div>
+          <div class="field"><span class="field-label">Quantity</span>
+            <span class="stepper lg"><button type="button" data-step="-1" aria-label="Less"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output value="1">1</output><button type="button" data-step="1" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close data-toast="Part added for Stores to match">Add part</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="nofit" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="nofit-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-warning"/></svg></span>
+        <h3 id="nofit-title">Does not fit this model</h3>
+        <p id="nofit-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Cancel</button>
+          <button class="btn btn-text" style="width:100%" type="button" data-close data-toast="Part added">Add anyway</button></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="noscan" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="noscan-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-barcode"/></svg></span>
+        <h3 id="noscan-title">Barcode not recognised</h3>
+        <p>Type the part number instead.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close onclick="document.getElementById('q').focus()">Enter number</button>
+          <a class="btn btn-text" style="width:100%" href="E1005-scan.html">Scan again</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Records the parts fitted on this visit. No prices here; warranty defaults from the job's coverage.
+Duplicates merge, and a quantity above what Stores issued warns.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample: parts that fit the AFM range (move to data.parts as a fits list) */
+  const FITS = ['ZP-SP-001', 'ZP-SP-002', 'ZP-SP-003', 'ZP-SP-004'];
+  const SOURCES = ['Carried by engineer', 'Issued by Stores', 'Supplied by customer'];
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  document.querySelectorAll('a.back').forEach((a) => { a.href = `E401-report.html?ticket=${ticket.number}&section=5`; });
+
+  const request = data.engineerDay.partsRequests.find((r) => r.ticket === ticket.number);
+  const chosen = data.parts.find((p) => p.number === (request?.part || 'ZP-SP-001'));
+  const nofit = data.parts.find((p) => !FITS.includes(p.number));
+  const partIcon = R.icon('package');
+  const fitsTag = (p) => (FITS.includes(p.number) ? R.tag('Fits this machine', 'green') : '');
+
+  const line = (qty) => `<div class="line">
+    <div class="line-top"><span class="thumb sm" aria-hidden="true">${partIcon}</span>
+      <span><b>${R.esc(chosen.name)}</b><span class="sub"><span class="mono">${chosen.number}</span></span></span>
+      <span class="stepper"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button><output value="${qty}">${qty}</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span></div>
+    <span class="field-label">Source<span class="req">*</span></span>
+    <div class="chips wrap" data-single>${SOURCES.map((s) => `<button class="chip outline" type="button" aria-pressed="${s === 'Issued by Stores'}">${s}</button>`).join('')}</div>
+    <div class="row"><span>Old part returned</span>
+      <div class="segment" role="tablist" aria-label="Old part returned"><button role="tab" aria-selected="true">Yes</button><button role="tab" aria-selected="false">No</button></div></div>
+    <div class="file" data-status="done"><span class="file-thumb">${R.icon('image')}</span>
+      <div class="file-body"><b>old-chain.jpg</b><span class="file-meta">${R.icon('check-circle')}Photo of the old part</span></div>
+      <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove">${R.icon('x')}</button></span></div>
+    <label class="row" style="cursor:pointer"><span>Warranty part<br><small style="font-weight:400; color:var(--text-muted)">From coverage: ${ticket.coverage === 'warranty' ? 'Warranty' : 'Not covered'}</small></span>
+      <span class="switch"><input type="checkbox" ${ticket.coverage === 'warranty' ? 'checked' : ''} aria-label="Warranty part"><span></span></span></label>
+    <div class="row"><span></span><button class="btn btn-text" type="button" style="color:var(--red); min-height:32px" data-toast="Part removed">${R.icon('trash', 'ic-16')}Remove</button></div>
+  </div>`;
+
+  $('for-model').textContent = `Parts for ${m.model.split(' ')[0]}`;
+  $('parts').innerHTML = data.parts.map((p) => {
+    const added = p.number === chosen.number;
+    const replaced = p.replacedBy ? ` · Replaced by <span class="mono">${p.replacedBy}</span>` : '';
+    return `<div class="part-row"><span class="thumb sm" aria-hidden="true">${partIcon}</span>
+      <span><b>${R.esc(p.name)}</b><span class="sub"><span class="mono">${p.number}</span>${replaced}${fitsTag(p)}</span></span>
+      <button class="icon-btn${added ? ' added' : ''}" type="button" ${p.number === nofit.number ? 'data-open="nofit"' : 'data-toast="Part added"'} aria-label="${added ? 'Added' : 'Add'} ${R.esc(p.name)}">${R.icon(added ? 'check' : 'plus')}</button></div>`;
+  }).join('');
+  $('nofit-text').textContent = `${nofit.name} is not listed for the ${m.model}.`;
+  if (request) $('over-title').textContent = `Stores issued ${request.qty} for this job`;
+
+  const renderLine = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    $('line').innerHTML = line(['duplicate', 'over'].includes(state) ? 2 : 1);
+    $('q').value = state === 'nomatch' ? 'drive coupling' : '';
+  };
+  renderLine();
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) renderLine(); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

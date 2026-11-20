@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E211 Escalate or ask for help</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.add-file{display:flex; align-items:center; gap:12px; width:100%; margin-top:8px; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.to{display:flex; align-items:center; gap:12px}
+.to b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.to span span{font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E211 Escalate or ask for help</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">already escalated</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">waiting to sync</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Escalate</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready errors offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 1 thing to continue</b><ul><li><a href="#note-bad">Notes: write at least 10 characters</a></li></ul></div>
+          <div class="job" id="job"></div>
+          <div class="card-fill to"><span class="avatar" id="mgr-initials"></span><span class="grow"><b id="mgr"></b><span>Service manager</span></span></div>
+
+          <div>
+            <h2 class="sec-title">Reason</h2>
+            <div role="radiogroup" aria-label="Reason">
+              <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span><b>Needs a senior engineer</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span><b>Part not available</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg></span><b>Safety</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-toolbox"/></svg></span><b>Beyond scope</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span><b>Warranty dispute</b><span class="mark"></span></button>
+            </div>
+          </div>
+
+          <div>
+            <div class="field" data-when="ready offline">
+              <label for="note">Notes<span class="req">*</span><span class="counter">96 / 500</span></label>
+              <textarea class="textarea" id="note">E-17 keeps tripping after a new chain. Suspect the drive PLC card. Need a PLC specialist on site.</textarea>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <label for="note-bad">Notes<span class="req">*</span><span class="counter">4 / 500</span></label>
+              <textarea class="textarea" id="note-bad" aria-invalid="true" aria-describedby="note-err">help</textarea>
+              <span class="error-text" id="note-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Write at least 10 characters</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Attachments<span class="counter">Optional</span></span>
+              <div class="files">
+                <div class="file" data-status="done" data-when="ready errors"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>hmi-error-e17.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 2.0 MB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+                <div class="file" data-status="queued" data-when="offline"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>hmi-error-e17.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Saved on phone · waiting to sync</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+              <button class="add-file" type="button" data-open="attach"><span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-paperclip"/></svg></span><b class="grow">Add photo, video or file</b><svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack" data-when="duplicate">
+          <div class="job job-copy"></div>
+          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>Already escalated</b><span id="dup-text"></span></div></div>
+          <dl class="kv card-fill" style="margin:0; padding:4px 16px">
+            <div><dt>Reason</dt><dd>Needs a senior engineer</dd></div>
+            <div><dt>Sent</dt><dd id="dup-sent"></dd></div>
+            <div><dt>Status</dt><dd><span class="tag amber">Waiting for reply</span></dd></div>
+          </dl>
+        </div>
+
+        <div class="state" data-when="sent queued" style="padding-top:80px">
+          <span class="disc green" data-when="sent"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg></span>
+          <span class="disc" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3 class="sent-title"></h3>
+          <p>The reply shows on the job.</p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:300px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready offline" data-goto="sent">Send to service manager</button>
+        <button class="btn btn-primary" type="button" data-when="errors" disabled>Send to service manager</button>
+        <a class="btn btn-secondary call-mgr" href="#" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom support</a>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="sent queued">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="attach" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add attachment">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg>Record video</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg>Choose a file</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">From Job detail while work is in progress. One open escalation per job: a second one is blocked
+until the manager replies. Offline, the request waits in the sync queue.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  /* sample: the escalation already open in the duplicate state, and the manager's initials */
+  const OPEN_ESCALATION_SENT = '2026-11-23T11:05';
+  const MANAGER_INITIALS = 'MK';
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const { manager, phone } = data.support;
+  const q = `?ticket=${t.number}`;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  document.querySelectorAll('.call-mgr').forEach((a) => { a.href = `tel:${phone.replace(/\s/g, '')}`; });
+  const strip = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+  $('job').innerHTML = strip;
+  document.querySelectorAll('.job-copy').forEach((el) => { el.innerHTML = strip; });
+  $('mgr').textContent = manager;
+  $('mgr-initials').textContent = MANAGER_INITIALS;
+  const sentAt = new Date(OPEN_ESCALATION_SENT).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  $('dup-text').textContent = `Wait for ${manager} to reply before sending another.`;
+  $('dup-sent').textContent = `Today, ${sentAt}`;
+  document.querySelectorAll('.sent-title').forEach((el) => { el.textContent = `Sent to ${manager}`; });
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const target = document.querySelector('.screen').dataset.state === 'offline' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

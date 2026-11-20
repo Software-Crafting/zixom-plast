@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1011 Team contacts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.contact .disc{width:44px; height:44px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); color:var(--slate-700)}
+.contact .hours{display:flex; align-items:center; gap:6px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);
+  font-size:var(--fs-13); color:var(--text-muted)}
+.contact .hours .tag{margin-left:auto}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1011 Team contacts</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="notset" aria-pressed="false">numbers not set</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Team contacts</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Calls still work.</div>
+        <div class="stack-sm" id="contacts" data-when="ready offline"></div>
+        <div class="stack-sm" id="contacts-notset" data-when="notset"></div>
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:122px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:122px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:122px; border-radius:var(--r-lg)"></span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Who to call from the field, saved on the phone so it works offline. A contact without a number calls the
+Zixom main number instead.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { support } = ZX.data;
+  /* team numbers and hours, not in data.js yet (move there) */
+  const TEAM = [
+    { name: support.manager, initials: 'MK', role: 'Service manager', phone: support.managerPhone, hours: 'Mon to Sat, 9 AM to 7 PM' },
+    { name: 'Stores', icon: 'package', role: 'Parts and returns', phone: '+91 79 4890 2214', hours: 'Mon to Sat, 9 AM to 6 PM' },
+    { name: 'Support desk', icon: 'headset', role: 'Customers and tickets', phone: support.phone, hours: support.hours, main: true },
+  ];
+  const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
+  const card = (c, numberSet) => {
+    const phone = numberSet || c.main ? c.phone : support.phone;
+    const number = numberSet || c.main ? R.esc(phone) : 'No number. Calls Zixom main line';
+    return `<div class="card contact">
+      <div class="person">
+        ${c.initials ? `<span class="avatar">${R.esc(c.initials)}</span>` : `<span class="disc">${R.icon(c.icon)}</span>`}
+        <span class="grow"><b>${R.esc(c.name)}</b><span>${R.esc(c.role)}</span><span>${number}</span></span>
+        <a class="icon-btn dark" href="${tel(phone)}" aria-label="Call ${R.esc(c.name)}">${R.icon('phone')}</a>
+      </div>
+      <div class="hours">${R.icon('clock', 'ic-16')}${R.esc(c.hours)}${R.tag('Open now', 'green')}</div>
+    </div>`;
+  };
+  document.getElementById('contacts').innerHTML = TEAM.map((c) => card(c, true)).join('');
+  document.getElementById('contacts-notset').innerHTML = TEAM.map((c) => card(c, false)).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

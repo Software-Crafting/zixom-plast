@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E904 Emergency help</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.big{min-height:64px; font-size:var(--fs-18)}
+.copy{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center}
+.copy + .copy{margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+.copy span{display:block; font-size:var(--fs-12); color:var(--text-muted)}
+.copy b{font-weight:600; color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E904 Emergency help</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="shared" aria-pressed="false">location shared</button>
+  <button type="button" data-state="noloc" aria-pressed="false">no location permission</button>
+  <button type="button" data-state="nocall" aria-pressed="false">phone cannot call</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E202-job-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Emergency help</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Calls still work.</div>
+        <div class="state" style="padding:24px 0 8px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span>
+          <h3>Get help now</h3><p id="where"></p>
+        </div>
+
+        <div class="stack-sm" style="margin-top:16px" data-when="ready shared noloc offline">
+          <a class="btn btn-danger big" href="tel:112"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call 112</a>
+          <a class="btn btn-primary" href="#" id="call-manager"></a>
+        </div>
+        <div class="card" style="margin-top:16px" id="copies" data-when="nocall"></div>
+
+        <div class="stack-sm" style="margin-top:8px">
+          <button class="btn btn-secondary" type="button" data-when="ready nocall" onclick="document.querySelector('[data-state=shared]').click()"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Share my location</button>
+          <div class="banner green" data-when="shared"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><div><b id="shared-t"></b>Live for the next 60 minutes.</div></div>
+          <button class="btn btn-secondary" type="button" data-when="noloc" data-toast="Site address sent"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg>Share site address</button>
+          <p class="hint" style="text-align:center" data-when="noloc">Location is off. We send the job's site address.</p>
+          <button class="btn btn-secondary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Share my location</button>
+          <p class="hint" style="text-align:center" data-when="offline">Sharing needs internet. Call instead.</p>
+        </div>
+
+        <div class="card-fill" style="margin-top:16px"><dl class="kv" style="margin:0" id="site"></dl></div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Reachable from every job screen. Call 112, call the service manager, or share live location with him.
+Without location permission it sends the site address; a phone that cannot call shows numbers to copy.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample: service manager's mobile until data.js holds one (same on E903) */
+  const MANAGER_PHONE = ZX.data.support.managerPhone;
+  const manager = data.support.manager;
+
+  const ticketNo = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNo);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+
+  $('back').href = `E202-job-detail.html?ticket=${ticketNo}`;
+  $('where').textContent = `${site.name}, ${company.name}`;
+  $('call-manager').href = `tel:${MANAGER_PHONE.replace(/\s/g, '')}`;
+  $('call-manager').innerHTML = `${R.icon('phone')}Call ${manager}, service manager`;
+  $('shared-t').textContent = `Location sent to ${manager}`;
+  $('copies').innerHTML = [['Emergency', '112'], [`${manager}, service manager`, MANAGER_PHONE]].map(([who, phone]) => `<div class="copy">
+    <div><span>${R.esc(who)}</span><b>${phone}</b></div><button class="btn btn-secondary btn-sm" type="button" data-toast="Number copied">${R.icon('copy', 'ic-16')}Copy</button></div>`).join('');
+  $('site').innerHTML = [['Job', `<span class="mono">${ticketNo}</span>`], ['Address', R.esc(site.address)], ['Site contact', R.esc(site.contact.name)]]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

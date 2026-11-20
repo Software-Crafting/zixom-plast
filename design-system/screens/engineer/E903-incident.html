@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E903 Report a safety incident or near miss</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.kinds{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.kinds .chip{height:46px; justify-content:center}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.sos{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.sos .btn{width:100%}
+.sent{padding-top:56px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E903 Report a safety incident</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">near miss</button>
+  <button type="button" data-state="injury" aria-pressed="false">injury, yes</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="uploading" aria-pressed="false">photo uploading, failed</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="submitted" aria-pressed="false">submitted</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E202-job-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Report an incident</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready injury errors uploading submitting offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. The report sends when you are online.</div>
+          <div class="banner red" data-when="injury"><svg class="ic" aria-hidden="true"><use href="#ph-first-aid"/></svg>
+            <div><b>Get help first</b><span id="told"></span></div></div>
+          <div class="sos" data-when="injury"><a class="btn btn-danger btn-sm" href="tel:112"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-phone"/></svg>Call 112</a>
+            <a class="btn btn-secondary btn-sm" href="#" id="call-manager"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-phone"/></svg>Call manager</a></div>
+          <div class="error-summary" role="alert" style="margin:0" data-when="errors">
+            <b>Fix 2 things to submit</b>
+            <ul><li><a href="#kind-bad">Choose what happened</a></li><li><a href="#desc-bad">Describe it in at least 20 characters</a></li></ul>
+          </div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label" id="kind-bad">What happened<span class="req">*</span></span>
+            <div class="kinds" data-single data-when="ready injury uploading submitting offline" id="kinds"></div>
+            <div class="kinds" data-when="errors" id="kinds-empty"></div>
+            <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose what happened</span>
+          </div>
+
+          <div class="two">
+            <div class="field" style="margin:0"><label for="when-d">Date<span class="req">*</span></label><input class="input" type="date" id="when-d"></div>
+            <div class="field" style="margin:0"><label for="when-t">Time<span class="req">*</span></label><input class="input" type="time" id="when-t" value="11:40"></div>
+          </div>
+
+          <div class="field" style="margin:0"><label for="where">Where<span class="req">*</span></label><input class="input" id="where"></div>
+
+          <div class="field" style="margin:0" data-when="ready injury uploading submitting offline">
+            <label for="desc">Description<span class="req">*</span><span class="counter">96 / 1000</span></label>
+            <textarea class="textarea" id="desc">Chain guard slipped off its bracket while the line was isolated. Fell near my hand, no contact.</textarea>
+          </div>
+          <div class="field has-error" style="margin:0" data-when="errors">
+            <label for="desc-bad">Description<span class="req">*</span><span class="counter">9 / 1000</span></label>
+            <textarea class="textarea" id="desc-bad" aria-invalid="true">Guard fell</textarea>
+            <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe it in at least 20 characters</span>
+          </div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label">Was anyone injured?<span class="req">*</span></span>
+            <div class="segment" role="tablist" aria-label="Was anyone injured" data-when="ready errors uploading submitting offline">
+              <button role="tab" aria-selected="false" onclick="document.querySelector('[data-state=injury]').click()">Yes</button><button role="tab" aria-selected="true">No</button></div>
+            <div class="segment" role="tablist" aria-label="Was anyone injured" data-when="injury">
+              <button role="tab" aria-selected="true">Yes</button><button role="tab" aria-selected="false" onclick="document.querySelector('[data-state=ready]').click()">No</button></div>
+          </div>
+
+          <div class="field" style="margin:0"><label for="action">Immediate action taken<span class="counter">Optional</span></label>
+            <textarea class="textarea" id="action" style="min-height:80px">Stopped work, refitted the guard with new bolts, told the plant head.</textarea></div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label">Photos<span class="counter">Up to 5</span></span>
+            <div class="files" data-when="ready injury errors submitting offline">
+              <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>chain-guard.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Added · 2.4 MB</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="files" data-when="uploading">
+              <div class="file" data-status="uploading" data-progress="58"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>chain-guard.jpg</b><span class="file-meta">Uploading 58% · 2.4 MB</span><span class="progress"><i style="width:58%"></i></span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>bracket.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <a class="btn btn-soft btn-sm" href="E1001-camera.html" style="margin-top:8px"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-camera"/></svg>Add photo</a>
+          </div>
+        </div>
+
+        <div class="state sent" data-when="submitted">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Report sent</h3>
+          <p><span class="mono">INC-2026-0007</span>. Your manager has it. It cannot be edited now.</p>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready injury uploading" onclick="document.querySelector('[data-state=submitting]').click()">Submit report</button>
+        <button class="btn btn-primary" type="button" data-when="errors">Submit report</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit report</button>
+        <button class="btn btn-primary" type="button" data-when="offline" data-toast="Saved. Sends when online">Submit report</button>
+        <a class="btn btn-primary" href="E202-job-detail.html" id="done" data-when="submitted">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Injury, near miss, damage or unsafe condition, with photos. Injury Yes shows the emergency numbers and
+tells the manager at once. Works offline; after submit it cannot be edited.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample: service manager's mobile until data.js holds one (same on E904) */
+  const MANAGER_PHONE = ZX.data.support.managerPhone;
+  const KINDS = [['first-aid', 'Injury'], ['eye', 'Near miss'], ['hammer', 'Damage'], ['warning', 'Unsafe condition']];
+
+  const ticketNo = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNo);
+  const m = R.machine(ticket.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+
+  $('back').href = `E202-job-detail.html?ticket=${ticketNo}`;
+  $('done').href = `E202-job-detail.html?ticket=${ticketNo}`;
+  $('when-d').value = data.today;
+  $('where').value = `${site.name}, ${m.nickname || m.model}`;
+  $('told').textContent = `${data.support.manager} is being told now.`;
+  $('call-manager').href = `tel:${MANAGER_PHONE.replace(/\s/g, '')}`;
+
+  const chips = (picked) => KINDS.map(([i, label]) => `<button class="chip outline" type="button" aria-pressed="${label === picked}">${R.icon(i, 'ic-18')}${label}</button>`).join('');
+  $('kinds').innerHTML = chips('Near miss');
+  $('kinds-empty').innerHTML = chips('');
+  document.querySelector('[data-state=injury]').addEventListener('click', () => { $('kinds').innerHTML = chips('Injury'); });
+  document.querySelector('[data-state=ready]').addEventListener('click', () => { $('kinds').innerHTML = chips('Near miss'); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

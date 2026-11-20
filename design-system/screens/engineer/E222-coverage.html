@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E222 Coverage check</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.cover{padding:16px 16px 6px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.cover .top{display:flex; align-items:center; gap:12px; margin-bottom:6px}
+.cover .disc{width:44px; height:44px; display:grid; place-items:center; border-radius:50%; background:var(--green-50); color:var(--green)}
+.cover.amc .disc{background:var(--blue-50); color:var(--blue)}
+.cover.none .disc{background:var(--slate-100); color:var(--slate-600)}
+.cover .top b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.cover .top .tag{margin-top:4px}
+.scope{display:flex; flex-direction:column; gap:10px; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.scope div{display:flex; align-items:flex-start; gap:10px; font-size:var(--fs-14); color:var(--slate-900)}
+.scope .ic{margin-top:1px}
+.scope .yes .ic{color:var(--green)}
+.scope .no{color:var(--text-muted)}
+.scope .no .ic{color:var(--slate-400)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E222 Coverage check</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="mismatch">report a mismatch</button>
+  <button type="button" data-state="sent" aria-pressed="false">mismatch sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">waiting to sync</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Coverage</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved 8:05 AM.</div>
+          <div class="job" id="job"></div>
+          <div id="cover"></div>
+          <div>
+            <h2 class="sec-title">What is covered</h2>
+            <div class="scope" id="scope"></div>
+          </div>
+        </div>
+
+        <div class="state" data-when="sent queued" style="padding-top:80px">
+          <span class="disc green" data-when="sent"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg></span>
+          <span class="disc" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3 class="sent-title"></h3>
+          <p>The job stays with you.</p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-secondary" type="button" data-open="mismatch" data-when="ready offline"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>Report a mismatch</button>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="sent queued">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="mismatch" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="mismatch-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="mismatch-t">What does not match?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="chips" data-single style="flex-wrap:wrap; margin:0; padding:0">
+            <button class="chip outline" type="button" aria-pressed="true">Warranty has ended</button>
+            <button class="chip outline" type="button" aria-pressed="false">AMC has expired</button>
+            <button class="chip outline" type="button" aria-pressed="false">Wrong machine</button>
+            <button class="chip outline" type="button" aria-pressed="false">Damage not covered</button>
+            <button class="chip outline" type="button" aria-pressed="false">Other</button>
+          </div>
+          <div class="field" style="margin-top:16px"><label for="mismatch-note">Note<span class="counter">0 / 300</span></label>
+            <textarea class="textarea" id="mismatch-note" placeholder="What you found on site"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-goto="sent">Send to service manager</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Warranty or AMC coverage for this job with dates, claim or plan, and what is covered. A mismatch goes to
+the service manager and the job stays assigned. Try <code>?ticket=TKT-2026-0127</code> (AMC) or
+<code>?ticket=TKT-2026-0124</code> (chargeable).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  /* what each kind of cover includes (sample wording, to confirm with Zixom) */
+  const SCOPE = {
+    warranty: [['Parts with a manufacturing defect', 'Labour and travel for the repair'], ['Wear parts: chains, heaters, belts', 'Damage from misuse or power faults']],
+    amc: [['Planned preventive visits', 'Labour for breakdowns', 'Travel'], ['Spare parts, charged separately']],
+    chargeable: [[], ['Labour, travel and parts are charged', 'Extra parts need an approved estimate']],
+  };
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  document.querySelectorAll('.sent-title').forEach((el) => { el.textContent = `Sent to ${data.support.manager}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+
+  const row = (dt, dd) => `<div><dt>${dt}</dt><dd>${dd}</dd></div>`;
+  const card = (cls, iconName, title, tagHtml, rows) => `<div class="cover ${cls}">
+      <div class="top"><span class="disc">${R.icon(iconName)}</span><span class="grow"><b>${title}</b>${tagHtml}</span></div>
+      <dl class="kv" style="margin:0">${rows.join('')}</dl></div>`;
+  const contract = m.amc && R.amc(m.amc);
+  const COVER = {
+    warranty: () => card('', 'shield-check', 'Warranty', R.warrantyTag(m), [
+      row('Start', R.date(m.commissioned)), row('End', R.date(m.warrantyEnd)), row('Claim', 'None linked')]),
+    amc: () => card('amc', 'seal-check', `AMC, ${contract.plan}`, R.amcTag(m), [
+      row('Contract', `<span class="mono">${contract.number}</span>`), row('Start', R.date(contract.start)), row('End', R.date(contract.end)),
+      row('Visits used', `${contract.visitsUsed} of ${contract.visitsIncluded}`)]),
+    chargeable: () => card('none', 'currency-inr', 'Not covered', R.coverageTag('chargeable'), [
+      row('Warranty', m.warrantyEnd ? `Ended ${R.date(m.warrantyEnd)}` : 'None'), row('AMC', 'None')]),
+  };
+  $('cover').innerHTML = COVER[t.coverage]();
+  const [yes, no] = SCOPE[t.coverage];
+  $('scope').innerHTML = yes.map((s) => `<div class="yes">${R.icon('check')}${s}</div>`).join('')
+    + no.map((s) => `<div class="no">${R.icon('x')}${s}</div>`).join('');
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const target = document.querySelector('.screen').dataset.state === 'offline' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E405 Submitted report</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* customer copy, same look as C512 */
+.rep-head{padding:18px; border-radius:24px; background:var(--field)}
+.rep-head .ids{display:flex; justify-content:space-between; font-size:var(--fs-12); color:var(--text-muted)}
+.rep-head h2{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.rep-head .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.rep-head .kv{margin-top:10px; padding-top:4px; border-top:1.5px dashed var(--slate-300)}
+.rep-head .kv div{padding:8px 0}
+.rep-head .kv div + div{border-top:0}
+.block h3{margin:0 2px 6px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
+.block p{margin:0 2px; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
+.part{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
+.part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part span{font-size:var(--fs-12); color:var(--text-muted)}
+.part .tag{grid-column:2; grid-row:1 / span 2; align-self:center}
+.photos{grid-template-columns:repeat(4, 1fr)}
+.photos .upload span:not(.state){position:absolute; left:6px; bottom:6px; font-size:10px; font-weight:600; color:var(--slate-600)}
+.sigs{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.sig{padding:12px; border-radius:var(--r-md); background:var(--field)}
+.sig > svg{display:block; width:100%; height:44px; color:var(--slate-800)}
+.sig b{display:block; margin-top:6px; font-size:var(--fs-13); font-weight:600; color:var(--slate-900)}
+.sig span{display:block; font-size:var(--fs-11); color:var(--text-muted)}
+/* this page */
+.sync{display:flex; align-items:center; gap:8px; margin:-4px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E405 Submitted report</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">sent</button>
+  <button type="button" data-state="waiting" aria-pressed="false">waiting to sync</button>
+  <button type="button" data-state="ready" data-open="amend" aria-pressed="false">request amendment</button>
+  <button type="button" data-state="requested" aria-pressed="false">amendment requested</button>
+  <button type="button" data-state="closed" aria-pressed="false">amendment closed</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn job-link" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Visit report</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready waiting requested closed offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing the saved report.</div>
+          <div class="sync">
+            <span class="tag green" data-when="ready requested closed offline"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Sent</span>
+            <span class="tag outline" data-when="waiting"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+            <span id="submitted"></span>
+          </div>
+          <div class="banner amber" data-when="requested"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>
+            <div><b>Amendment requested</b>Zixom will review it. The report stays as sent until then.</div></div>
+          <div class="banner grey" data-when="waiting"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>
+            <div><b>Sends when you are online</b>Kept on this phone until then. <a href="E102-sync-queue.html">Sync queue</a></div></div>
+
+          <div class="rep-head">
+            <div class="ids"><span class="mono" id="rep-number"></span><span class="mono" id="rep-ticket"></span></div>
+            <h2 id="rep-machine"></h2>
+            <div class="tags" id="rep-tags"></div>
+            <dl class="kv" id="rep-kv"></dl>
+          </div>
+
+          <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
+          <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
+          <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          <div class="block"><h3>Parts replaced</h3><div class="stack-sm" id="r-parts"></div></div>
+          <div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div>
+          <div class="block"><h3>Before and after</h3><div class="uploads photos" id="r-photos"></div></div>
+
+          <div class="block"><h3>Signatures</h3>
+            <div class="sigs">
+              <div class="sig" id="sig-engineer"></div>
+              <div class="sig" id="sig-customer"></div>
+            </div>
+          </div>
+
+          <div class="banner green" id="cost"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg><div><b>No charge</b>Covered by warranty.</div></div>
+        </div>
+
+        <div class="state" data-when="notfound" style="padding-top:110px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+          <h3>We cannot find this</h3>
+          <p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary job-link" href="E202-job-detail.html">Go back</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:45%"></span>
+          <span class="skeleton" style="height:210px; border-radius:24px"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span><span class="skeleton sk-line" style="width:70%"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready waiting requested closed offline">
+        <span class="hint" style="text-align:center; margin:0 0 10px" data-when="closed" id="closed-note"></span>
+        <div class="btn-pair">
+          <button class="icon-btn" type="button" aria-label="Share PDF" data-toast="PDF shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="btn btn-secondary" type="button" data-open="amend" data-when="ready waiting"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>Request amendment</button>
+          <button class="btn btn-secondary" type="button" disabled data-when="requested closed offline"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>Request amendment</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="amend" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="amend-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="amend-title">Request amendment</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="amend-what">What needs to change<span class="req">*</span><span class="counter">52 / 500</span></label>
+            <textarea class="textarea" id="amend-what" maxlength="500">Old chain was kept by the customer, not returned.</textarea>
+            <span class="hint" id="amend-window"></span></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-goto="requested">Send to Zixom</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The sent report as the customer gets it, with submit time and sync status. The engineer cannot
+delete it; corrections go to Zixom as an amendment within 7 days.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample draft for TKT-2026-0126, same as E401, E404 and E409 (move to ZX.data.engineerDay.report) */
+  const DRAFT = {
+    number: 'SR-2026-0126', workStart: '2026-11-23T09:40', checkOut: '2026-11-23T11:58',
+    findings: 'Drive chain stretched past its limit and slipping on the main sprocket. The overload relay trips and the HMI shows E-17.',
+    work: 'Replaced the 12B drive chain, aligned the sprockets, reset the overload relay and ran 40 cycles without a trip.',
+    parts: [{ number: 'ZP-SP-003', qty: 1, warranty: true }],
+    photos: ['Before', 'Before', 'After', 'After'], status: 'Running',
+    recommendations: ['Keep a spare 12B chain set in the store.', 'Check chain tension every week and log it.'],
+    signedBy: ['Rakesh Mehta', 'Plant head'], signedAt: '2026-11-23T11:54', engineerSignedAt: '2026-11-23T11:52',
+  };
+  const SIGNATURE = '<svg viewBox="0 0 140 44" aria-hidden="true"><path d="M6 32c10-18 18-24 22-18s-8 20-2 20 14-22 20-20-4 18 2 18 10-12 16-12 2 10 8 10 14-14 22-16 16 4 30 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  const engineer = R.engineer(data.engineerDay.engineer);
+  const job = data.engineerDay.today.find((j) => j.ticket === ticket.number);
+  const checkIn = job?.checkedIn || DRAFT.workStart;
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  const minutes = Math.round((new Date(DRAFT.checkOut) - new Date(checkIn)) / 60000);
+  /* sample: submitted time and the amendment window (7 days, a backend setting) */
+  const SUBMITTED = '2026-11-23T11:59';
+  const AMEND_DAYS = 7;
+  const amendUntil = new Date(new Date(SUBMITTED).getTime() + AMEND_DAYS * 86400000).toISOString();
+  document.querySelectorAll('.job-link').forEach((a) => { a.href = `E202-job-detail.html?ticket=${ticket.number}`; });
+  $('submitted').textContent = `Submitted ${R.dayDate(SUBMITTED)}, ${time(SUBMITTED)}`;
+  $('amend-window').textContent = `Zixom approves changes. Open until ${R.dayDate(amendUntil)}.`;
+  $('closed-note').textContent = `Amendments closed ${AMEND_DAYS} days after submission.`;
+
+  $('rep-number').textContent = DRAFT.number;
+  $('rep-ticket').textContent = ticket.number;
+  $('rep-machine').textContent = `${m.nickname || m.model}, ${m.model}`;
+  $('rep-tags').innerHTML = R.coverageTag(ticket.coverage) + R.tag(`Machine ${DRAFT.status.toLowerCase()}`, 'green', 'check-circle');
+  $('rep-kv').innerHTML = `<div><dt>Visit date</dt><dd>${R.date(checkIn)}</dd></div>
+    <div><dt>Engineer</dt><dd>${R.esc(engineer.name)}</dd></div><div><dt>Time on site</dt><dd>${Math.floor(minutes / 60)} h ${minutes % 60} min</dd></div>`;
+  $('r-problem').textContent = ticket.summary;
+  $('r-findings').textContent = DRAFT.findings;
+  $('r-work').textContent = DRAFT.work;
+  $('r-reco').textContent = DRAFT.recommendations.join(' ');
+  $('r-parts').innerHTML = DRAFT.parts.map(({ number, qty, warranty }) => `<div class="part"><b>${R.esc(data.parts.find((p) => p.number === number).name)}</b>
+    <span><span class="mono">${number}</span> · Qty ${qty}</span>${warranty ? R.tag('Warranty', 'green') : R.tag('Chargeable')}</div>`).join('');
+  $('r-photos').innerHTML = DRAFT.photos.map((label) => `<div class="upload">${R.icon('image', 'ic-28')}<span>${label}</span></div>`).join('');
+  $('sig-engineer').innerHTML = `${SIGNATURE}<b>${R.esc(engineer.name)}</b><span>Engineer · ${time(DRAFT.engineerSignedAt)}</span>`;
+  $('sig-customer').innerHTML = `${SIGNATURE}<b>${R.esc(DRAFT.signedBy[0])}</b><span>Customer · ${time(DRAFT.signedAt)}</span>`;
+  if (ticket.coverage === 'chargeable') $('cost').className = 'banner grey';
+  if (ticket.coverage === 'chargeable') $('cost').innerHTML = `${R.icon('currency-inr')}<div><b>Chargeable</b>Zixom sends the invoice.</div>`;
+
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

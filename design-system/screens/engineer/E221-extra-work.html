@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E221 Additional work found</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.list .list-item{cursor:default}
+.add-row b{grid-column:2; grid-row:1; color:var(--blue)}
+.add-row .disc{grid-column:1; grid-row:1; background:var(--blue-50); color:var(--blue)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E221 Additional work found</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="saved" aria-pressed="false">saved as note</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Additional work</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready errors offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 1 thing to continue</b><ul><li><a href="#desc-bad">Describe the work: at least 10 characters</a></li></ul></div>
+          <div class="job" id="job"></div>
+          <div id="coverage"></div>
+
+          <div>
+            <div class="field" data-when="ready offline">
+              <label for="desc">What needs doing<span class="req">*</span><span class="counter">78 / 500</span></label>
+              <textarea class="textarea" id="desc">Drive sprocket teeth are worn. Replace with the chain to stop the E-17 trips.</textarea>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <label for="desc-bad">What needs doing<span class="req">*</span><span class="counter">0 / 500</span></label>
+              <textarea class="textarea" id="desc-bad" aria-invalid="true" aria-describedby="desc-err"></textarea>
+              <span class="error-text" id="desc-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe the work in at least 10 characters</span>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Parts needed<span class="counter">Optional</span></span>
+              <div class="list">
+                <div class="list-item" id="part"></div>
+                <a class="list-item add-row" id="add-part" href="E402-parts-used.html"><span class="disc"></span><b>Add part</b><span class="end"></span></a>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="cost">Rough cost<span class="counter">Optional</span></label>
+              <div class="input-group"><span class="prefix">₹</span><input class="input" id="cost" inputmode="numeric" value="7,500"></div>
+              <span class="hint">Your estimate. Zixom sets the final price.</span>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Photos<span class="counter">2 / 10</span></span>
+              <div class="uploads">
+                <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+                <div class="upload" data-when="ready errors"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+                <div class="upload" data-when="offline"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="tag amber" style="position:absolute; bottom:6px; height:20px; padding:0 6px; font-size:10px">Not synced</span></div>
+                <button class="upload add" type="button" data-open="photo" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="state" data-when="saved" style="padding-top:80px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg></span>
+          <h3>Saved to job notes</h3>
+          <p>Internal note. Turn it into an estimate any time.</p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:60px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="btn-pair" style="grid-template-columns:1fr 1.4fr" data-when="ready offline">
+          <button class="btn btn-secondary" type="button" data-goto="saved">Save note</button>
+          <a class="btn btn-primary estimate" href="E408-estimate.html">Add to estimate</a>
+        </div>
+        <div class="btn-pair" style="grid-template-columns:1fr 1.4fr" data-when="errors">
+          <button class="btn btn-secondary" type="button" disabled>Save note</button>
+          <button class="btn btn-primary" type="button" disabled>Add to estimate</button>
+        </div>
+        <div class="stack-sm" data-when="saved">
+          <a class="btn btn-primary estimate" href="E408-estimate.html">Create estimate</a>
+          <a class="btn btn-secondary back-job" href="E202-job-detail.html">Back to job</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a photo">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Records work or parts that were not in the request, then leads to an estimate in
+<a href="E408-estimate.html">E408</a>. On a warranty job the work becomes chargeable only after the manager decides.
+Try <code>?ticket=TKT-2026-0124</code> for a chargeable job.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  /* sample: the extra part found on this job */
+  const EXTRA_PART = { number: 'ZP-SP-002', qty: 1 };
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.estimate').forEach((a) => { a.href = `E408-estimate.html${q}`; });
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  $('add-part').href = `E402-parts-used.html${q}`;
+  $('add-part').querySelector('.disc').innerHTML = R.icon('plus');
+  $('add-part').querySelector('.end').innerHTML = R.icon('caret-right');
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+
+  const COVERAGE = {
+    warranty: ['amber', 'shield-warning', 'Warranty job', 'Extra work is chargeable only after the manager decides.'],
+    amc: ['', 'info', 'AMC job', 'Work outside the plan needs the customer\'s approval.'],
+    chargeable: ['grey', 'currency-inr', 'Chargeable job', 'The customer approves the estimate before you fit parts.'],
+  };
+  const [tone, iconName, head, text] = COVERAGE[t.coverage];
+  $('coverage').innerHTML = `<div class="banner ${tone}">${R.icon(iconName)}<div><b>${head}</b>${text}</div></div>`;
+
+  const p = data.parts.find((x) => x.number === EXTRA_PART.number);
+  $('part').innerHTML = `<span class="disc">${R.icon('package')}</span><b>${R.esc(p.name)}</b>
+    <span class="sub"><span class="mono">${p.number}</span> · Qty ${EXTRA_PART.qty}</span>
+    <span class="end"><button class="icon-btn sm" type="button" aria-label="Remove part" onclick="this.closest('.list-item').remove()">${R.icon('x')}</button></span>`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

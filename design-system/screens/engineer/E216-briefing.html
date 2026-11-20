@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E216 Job briefing</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.tags-row{display:flex; flex-wrap:wrap; gap:6px}
+.list .list-item{cursor:default}
+.list .list-item .icon-btn{width:38px; height:38px}
+.visit-tag{grid-column:3; grid-row:1 / span 2}
+.access{padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); font-size:var(--fs-13); line-height:1.5; color:var(--text)}
+.access b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.access p{margin:6px 0 0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E216 Job briefing</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="first" aria-pressed="false">first visit on record</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, saved</button>
+  <button type="button" data-state="missing" aria-pressed="false">offline, not downloaded</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Briefing</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready first offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved 8:05 AM.</div>
+          <div class="job" id="job"></div>
+          <div class="tags-row" id="coverage"></div>
+
+          <div class="banner amber" data-when="ready offline"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>
+            <div><b>Repeated fault</b><span id="repeat"></span></div></div>
+
+          <div>
+            <h2 class="sec-title">Last visits</h2>
+            <div class="list" id="visits" data-when="ready offline"></div>
+            <div class="banner grey" data-when="first"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div>First visit on record</div></div>
+          </div>
+
+          <div>
+            <h2 class="sec-title">Open parts requests</h2>
+            <div class="list" id="parts"></div>
+          </div>
+
+          <div>
+            <h2 class="sec-title">Hazards</h2>
+            <div class="banner red"><svg class="ic" aria-hidden="true"><use href="#ph-fire"/></svg><div id="hazard"></div></div>
+          </div>
+
+          <div>
+            <h2 class="sec-title">Site access</h2>
+            <div class="access"><b id="site-name"></b><p id="address"></p><p id="access"></p></div>
+          </div>
+
+          <div>
+            <h2 class="sec-title">Contacts</h2>
+            <div class="list" id="contacts"></div>
+          </div>
+        </div>
+
+        <div class="state" data-when="missing" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+          <h3>Briefing not downloaded</h3>
+          <p>Connect to the internet to load it.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+        </div>
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:50%"></span>
+          <span class="skeleton" style="height:60px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:190px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-card"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="btn-pair" style="grid-template-columns:1fr 1.4fr" data-when="ready first offline missing">
+          <a class="btn btn-secondary" id="history" href="E301-machine-history.html">History</a>
+          <a class="btn btn-primary" id="travel" href="E205-start-travel.html"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Start travel</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Read before travel: last 3 visits, repeated faults, open parts, coverage, hazards, access and contacts.
+Saved with the next 7 days of jobs, so it opens offline.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0132';
+  /* sample briefing details not in data.js: older visits, hazard, line operator */
+  const OLDER_VISITS = [
+    { ticket: 'TKT-2026-0132', date: '2026-11-12', title: 'Cooling fan bearing greased', outcome: ['Reopened', 'amber'] },
+    { ticket: 'TKT-2026-0098', date: '2026-10-02', title: 'Preventive maintenance', outcome: ['Fixed', 'green'] },
+  ];
+  const HAZARD = 'Heater platens stay hot. Allow 30 minutes to cool.';
+  const OPERATOR = { name: 'Mahesh Patel', role: 'Line 1 operator', phone: '+91 98250 44102' };
+  const REPEAT = 'Cooling fan noise, 2 times in 30 days';
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const slot = data.engineerDay.today.find((j) => j.ticket === t.number)?.slot;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  $('travel').href = `E205-start-travel.html${q}`;
+  $('history').href = `E301-machine-history.html?serial=${m.serial}`;
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${slot ? `Today, ${R.esc(slot)}` : R.esc(site.name)}</span></span>`;
+  /* warranty and AMC tags already say the coverage; a chargeable job says so itself */
+  $('coverage').innerHTML = (t.coverage === 'chargeable' ? R.coverageTag(t.coverage) : '') + R.warrantyTag(m) + R.amcTag(m)
+    + (t.coverage === 'warranty' ? R.tag('No warranty claim', 'outline') : '');
+  $('repeat').textContent = REPEAT;
+
+  /* last 3 visits: reports in data.js first, then older sample visits */
+  const reported = data.reports.filter((r) => R.machine(data.tickets.find((x) => x.number === r.ticket).machine) === m)
+    .map((r) => ({ ticket: r.ticket, date: r.date, title: r.findings.split('.')[0], outcome: [r.status, 'green'] }));
+  $('visits').innerHTML = [...reported, ...OLDER_VISITS].slice(0, 3).map((v) => `<div class="list-item">
+      <span class="disc">${R.icon('wrench')}</span><b>${R.esc(v.title)}</b>
+      <span class="sub">${R.date(v.date)} · <span class="mono">${v.ticket}</span></span>
+      <span class="visit-tag">${R.tag(...v.outcome)}</span></div>`).join('');
+
+  const machineTickets = data.tickets.filter((x) => x.machine === m.serial).map((x) => x.number);
+  const open = data.engineerDay.partsRequests.filter((p) => machineTickets.includes(p.ticket) && p.status !== 'Delivered');
+  $('parts').innerHTML = open.length ? open.map((p) => `<a class="list-item" href="E502-parts-requests.html?request=${p.number}">
+      <span class="disc">${R.icon('package')}</span><b>${R.esc(data.parts.find((x) => x.number === p.part).name)}</b>
+      <span class="sub"><span class="mono">${p.number}</span> · ${p.status}</span><span class="end">${R.icon('caret-right')}</span></a>`).join('')
+    : `<div class="list-item"><span class="disc" style="grid-row:auto">${R.icon('package')}</span><b>None open</b></div>`;
+
+  $('hazard').textContent = HAZARD;
+  $('site-name').textContent = site.name;
+  $('address').textContent = `${site.address} ${site.pincode}`;
+  $('access').textContent = site.access || 'No access notes.';
+  const contact = (name, role, phone) => `<div class="list-item"><span class="avatar" style="grid-row:1 / span 2; width:38px; height:38px; font-size:var(--fs-14)">${R.esc(name.split(' ').map((w) => w[0]).join(''))}</span>
+      <b>${R.esc(name)}</b><span class="sub">${R.esc(role)}</span>
+      <span class="end"><a class="icon-btn" href="tel:${phone.replace(/\s/g, '')}" aria-label="Call ${R.esc(name)}">${R.icon('phone')}</a></span></div>`;
+  $('contacts').innerHTML = contact(site.contact.name, 'Site contact', site.contact.phone) + contact(OPERATOR.name, OPERATOR.role, OPERATOR.phone);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

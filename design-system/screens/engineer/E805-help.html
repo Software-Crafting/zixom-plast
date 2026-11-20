@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E805 Help and training</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:disabled{opacity:.5; cursor:not-allowed}
+.steps{margin:0; padding:0; list-style:none; counter-reset:step}
+.steps li{position:relative; padding:10px 0 10px 40px; font-size:var(--fs-14); line-height:1.45; color:var(--slate-800); counter-increment:step}
+.steps li + li{border-top:1px solid var(--line)}
+.steps li::before{content:counter(step); position:absolute; left:0; top:8px; width:26px; height:26px; display:grid; place-items:center;
+  border-radius:50%; background:var(--slate-100); font-size:var(--fs-12); font-weight:600; color:var(--slate-800)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E805 Help and training</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="guide">guide open</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Help and training</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Downloaded guides still open.</div>
+          <div class="search" data-when="ready noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" placeholder="Search guides" aria-label="Search guides" id="q"></div>
+          <div id="groups" data-when="ready offline"></div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p>Nothing matches "hydraulic".</p>
+            <button class="btn btn-secondary" type="button">Clear search</button>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:50px; border-radius:var(--r-pill)"></span>
+            <span class="skeleton sk-line" style="width:40%; margin:14px 4px 4px"></span>
+            <span class="skeleton" style="height:190px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:40%; margin:14px 4px 4px"></span>
+            <span class="skeleton" style="height:190px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div class="list" data-when="ready noresults offline">
+            <a class="list-item" href="E1011-team-contacts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span><b>Ask your manager</b><span class="sub">Team contacts</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="E806-report-problem.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Report a problem</b><span class="sub">Something in the app is not working</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="guide" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="g-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="g-title"></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body"><ol class="steps" id="g-steps"></ol></div>
+        <button class="btn btn-secondary" type="button" style="margin-top:16px" id="g-save" data-close data-toast="Saved for offline"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Save for offline</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Short guides on the app and on service procedures. Offline, only downloaded guides open.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* page data: guides, with steps and whether they are on the phone */
+  const GUIDES = [
+    { group: 'Using the app', items: [
+      { title: 'Accept or decline a job', icon: 'clock-countdown', saved: true, steps: ['Open the alert or the job on Today', 'Check the machine, site and visit window', 'Tap Accept, or Decline with a reason'] },
+      { title: 'Send a report without network', icon: 'cloud-arrow-up', saved: true, steps: ['Fill the report and add photos', 'Tap Submit. It shows Waiting to sync', 'It sends by itself when you are back online'] },
+      { title: 'Request parts for a job', icon: 'package', saved: false, steps: ['Open the job and tap Request parts', 'Pick the part and quantity', 'Choose site or engineer delivery and send'] },
+    ] },
+    { group: 'Service procedures', items: [
+      { title: 'Heater zone check', icon: 'thermometer', saved: true, steps: ['Isolate power and let heaters cool', 'Check each element with a clamp meter', 'Replace any element reading open or 10 percent low'] },
+      { title: 'Chain tension and E-17 trips', icon: 'nut', saved: false, steps: ['Lock out the drive', 'Measure chain slack at the mid span', 'Adjust the tensioner and reset E-17 on the HMI'] },
+      { title: 'Vacuum leak test', icon: 'gauge', saved: false, steps: ['Close the forming box', 'Run the pump and note the gauge', 'A drop over 0.1 bar a minute means a leak'] },
+    ] },
+  ];
+  const all = GUIDES.flatMap((g) => g.items);
+  const render = (offline) => {
+    $('groups').innerHTML = GUIDES.map((g, i) => `<p class="list-title"${i ? '' : ' style="margin-top:0"'}>${g.group}</p><div class="list">
+      ${g.items.map((it) => `<button class="list-item" type="button" data-open="guide" data-guide="${it.title}"${offline && !it.saved ? ' disabled' : ''}>
+        <span class="disc">${R.icon(it.icon)}</span><b>${it.title}</b><span class="sub">${it.saved ? 'Downloaded' : (offline ? 'Not downloaded' : `${it.steps.length} steps`)}</span>
+        <span class="end">${R.icon('caret-right')}</span></button>`).join('')}</div>`).join('');
+  };
+  const open = (title) => {
+    const g = all.find((it) => it.title === title);
+    $('g-title').textContent = g.title;
+    $('g-steps').innerHTML = g.steps.map((s) => `<li>${R.esc(s)}</li>`).join('');
+    $('g-save').hidden = g.saved;
+  };
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-guide]'); if (b) open(b.dataset.guide); });
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => render(b.dataset.state === 'offline')));
+  render(false);
+  open(all[1].title);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

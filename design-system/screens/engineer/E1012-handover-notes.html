@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1012 Handover notes</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.note .person .grow span span{display:inline}
+.note dl{margin:12px 0 0; display:grid; gap:10px}
+.note dt{font-size:var(--fs-12); font-weight:600; color:var(--text-muted)}
+.note dd{margin:2px 0 0; font-size:var(--fs-14); line-height:1.45; color:var(--slate-900)}
+.note .tag{margin-top:12px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1012 Handover notes</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="note-sheet">add note</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Handover notes</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Notes save on this phone.</div>
+          <div class="card row-flex" id="machine" data-when="ready empty offline"></div>
+          <div class="banner grey" data-when="ready empty offline"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg><div>Only Zixom engineers see these. Not the customer.</div></div>
+          <div class="stack-sm" id="notes" data-when="ready offline"></div>
+          <div class="state" data-when="empty" style="padding-top:24px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg></span>
+            <h3>No handover notes yet</h3>
+            <p>Leave one for the next engineer on this machine.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:210px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:190px; border-radius:var(--r-lg)"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load the notes. Please try again.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready empty offline">
+        <button class="btn btn-primary" type="button" data-open="note-sheet" data-note=""><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add note</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="note-sheet" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="note-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="note-t">Add note</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body stack-sm">
+          <div class="field"><label for="f-tried">What was tried</label><textarea class="textarea" id="f-tried" rows="2"></textarea></div>
+          <div class="field"><label for="f-remains">What remains</label><textarea class="textarea" id="f-remains" rows="2"></textarea></div>
+          <div class="field"><label for="f-tips">Site tips</label><textarea class="textarea" id="f-tips" rows="2"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Saved on this phone">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Notes left for the next engineer on a machine: what was tried, what remains, site tips. Engineers assigned
+to the machine later see them; the customer never does. Your own notes can be edited.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ME = data.engineerDay.engineer;
+  const ticket = data.tickets.find((t) => t.number === data.engineerDay.today[0].ticket);
+  const machine = R.machine(ticket.machine);
+  const site = data.companies.find((c) => c.id === machine.company).sites.find((s) => s.id === machine.site);
+  const partsRequest = data.engineerDay.partsRequests.find((p) => p.ticket === ticket.number);
+  const part = data.parts.find((p) => p.number === partsRequest.part);
+
+  /* handover notes, not in data.js yet (move there) */
+  const NOTES = [
+    { by: ME, when: '2026-11-23T10:41', ticket: ticket.number, pending: true,
+      tried: 'Re tensioned the drive chain. E-17 cleared for 40 minutes, then came back.',
+      remains: `Fit ${part.name} when ${partsRequest.number} arrives.`,
+      tips: 'Spare chain is in the store room behind the press.' },
+    { by: 'anita', when: '2026-11-10T16:20', ticket: 'TKT-2026-0116',
+      tried: 'Replaced the chain tensioner.',
+      remains: 'Left sprocket shows wear. Check at the next visit.',
+      tips: site.access },
+  ];
+
+  $('machine').innerHTML = `${R.thumb(machine)}<div class="grow"><b style="font-size:var(--fs-14); color:var(--slate-900)">${R.esc(machine.model)}</b>
+    <div class="card-sub" style="margin:2px 0 0">${R.esc(machine.nickname)} · <span class="mono">${R.esc(machine.serial)}</span></div></div>`;
+
+  const noteCard = (n, i) => {
+    const e = R.engineer(n.by);
+    const mine = n.by === ME;
+    return `<div class="card note">
+      <div class="person">
+        <span class="avatar">${R.esc(e.initials)}</span>
+        <span class="grow"><b>${mine ? 'You' : R.esc(e.name)}</b><span>${R.dayDate(n.when)} · <span class="mono">${R.esc(n.ticket)}</span></span></span>
+        ${mine ? `<button class="icon-btn sm" type="button" data-open="note-sheet" data-note="${i}" aria-label="Edit note">${R.icon('pencil-simple', 'ic-18')}</button>` : ''}
+      </div>
+      <dl><div><dt>What was tried</dt><dd>${R.esc(n.tried)}</dd></div>
+        <div><dt>What remains</dt><dd>${R.esc(n.remains)}</dd></div>
+        <div><dt>Site tips</dt><dd>${R.esc(n.tips)}</dd></div></dl>
+      ${n.pending ? `<span data-when="offline">${R.tag('Waiting to sync', 'amber', 'cloud-arrow-up')}</span>` : ''}
+    </div>`;
+  };
+  $('notes').innerHTML = NOTES.map(noteCard).join('');
+
+  /* Add opens an empty sheet, Edit fills it with the note */
+  document.addEventListener('click', (event) => {
+    const opener = event.target.closest('[data-open="note-sheet"]');
+    if (!opener) return;
+    const note = NOTES[opener.dataset.note] || {};
+    $('note-t').textContent = opener.dataset.note ? 'Edit note' : 'Add note';
+    $('f-tried').value = note.tried || '';
+    $('f-remains').value = note.remains || '';
+    $('f-tips').value = note.tips || '';
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

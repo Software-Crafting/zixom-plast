@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1006 Offline data</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.setting{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); cursor:pointer}
+.setting b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.setting .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.list-title{margin:14px 4px 0}
+.item{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 2px}
+.item + .item{border-top:1px solid var(--line)}
+.item .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.item b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.item .sub{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.item .progress{display:block; height:4px; margin-top:8px; border-radius:var(--r-pill); background:var(--slate-100); overflow:hidden}
+.item .progress i{display:block; height:100%; background:var(--blue)}
+.item .end{display:flex; align-items:center; gap:4px}
+.item .end .btn{min-height:0; padding:0 4px; font-size:var(--fs-13)}
+.item .end .icon-btn{width:34px; height:34px; border:0; background:none; color:var(--slate-500)}
+.clear{color:var(--red); width:100%; margin-top:8px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1006 Offline data</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="downloading" aria-pressed="false">downloading</button>
+  <button type="button" data-state="empty" aria-pressed="false">nothing downloaded</button>
+  <button type="button" data-state="storage" aria-pressed="false">storage low</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="clear">clear all</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><a class="icon-btn" href="E804-settings.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Offline data</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Using saved data.</div>
+          <div class="banner red" data-when="storage">
+            <svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Storage almost full</b>Downloads are paused. <a href="../system/S10-storage-full.html">Free up space</a></div>
+          </div>
+
+          <div class="stats" data-when="ready downloading storage offline">
+            <span class="stat"><b id="used"></b><span>Saved on this phone</span></span>
+            <span class="stat"><b data-when="ready downloading offline">4.1 GB</b><b data-when="storage" style="color:var(--red)">160 MB</b><span>Free space</span></span>
+          </div>
+
+          <label class="setting" data-when="ready downloading empty storage offline"><span><b>Download tomorrow's jobs at night</b><span class="sub">On Wi-Fi only</span></span>
+            <span class="switch"><input type="checkbox" checked aria-label="Download tomorrow's jobs at night"><span></span></span></label>
+
+          <div id="saved" data-when="ready storage offline"></div>
+          <div id="saved-downloading" data-when="downloading"></div>
+          <button class="btn btn-text clear" type="button" data-open="clear" data-when="ready storage offline">Clear all</button>
+
+          <div class="state" data-when="empty" style="padding-top:40px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span>
+            <h3>Nothing saved for offline</h3><p>Download jobs before you go to a site with no network.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <div class="stats"><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton" style="height:58px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:60px"></span><span class="skeleton" style="height:60px"></span><span class="skeleton" style="height:60px; opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not read what is saved.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready empty">
+        <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download now</button></div>
+      <div class="footer-bar" data-when="downloading storage offline">
+        <button class="btn btn-primary" type="button" disabled><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download now</button></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="clear" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="clear-title">
+        <h3 id="clear-title">Clear offline data?</h3><p>Unsent reports and photos stay on the phone.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep data</button>
+          <button class="btn btn-text" type="button" style="color:var(--red); width:100%" data-close data-toast="Offline data cleared">Clear all</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">What is saved for offline work: tomorrow's jobs, their machine histories and manuals, with size and last update.
+Tomorrow's jobs download at night on Wi-Fi.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  /* size in MB and last download per saved item; a job without a time is not downloaded yet */
+  const SAVED_JOBS = { 'TKT-2026-0123': [6, '2026-11-23T02:10'], 'TKT-2026-0124': [4, '2026-11-23T02:10'], 'TKT-2026-0120': [3, null] };
+  const HISTORY_MB = { 'ZP-CF-2011': 22, 'ZP-TF-2310': 14 };
+  const MANUALS = [['AFM-760 operation manual', 48], ['CFM-450 service manual', 64]];
+
+  const clock = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const updated = (iso) => (iso.slice(0, 10) === data.today ? `Updated ${clock(iso)}` : `Updated ${R.dayDate(iso)}`);
+  const removeBtn = (label) => `<button class="icon-btn" type="button" aria-label="Remove ${R.esc(label)}" data-toast="Removed from this phone">${R.icon('trash')}</button>`;
+  const row = (iconName, title, sub, end, extra = '') => `<div class="item"><span class="disc">${R.icon(iconName)}</span>
+    <span><b>${R.esc(title)}</b><span class="sub">${sub}</span>${extra}</span><span class="end">${end}</span></div>`;
+
+  const ticket = (n) => data.tickets.find((t) => t.number === n);
+  const tomorrow = day.tomorrow.map((n) => ({ t: ticket(n), m: R.machine(ticket(n).machine), saved: SAVED_JOBS[n] }));
+  const serials = [...new Set(tomorrow.map(({ m }) => m.serial))];
+
+  const render = (downloading) => {
+    const jobs = tomorrow.map(({ t, m, saved: [mb, when] }) => {
+      const title = m.nickname || m.model;
+      if (when) return row('clipboard-text', title, `<span class="mono">${t.number}</span> · ${mb} MB · ${updated(when)}`, removeBtn(title));
+      if (downloading) return row('clipboard-text', title, `<span class="mono">${t.number}</span> · Downloading 40%`, '', '<span class="progress"><i style="width:40%"></i></span>');
+      return row('clipboard-text', title, `<span class="mono">${t.number}</span> · Not downloaded`,
+        '<button class="btn btn-text" type="button" data-busy>Download</button>');
+    }).join('');
+    const histories = serials.map((s) => {
+      const m = R.machine(s);
+      return row('clock', m.model, `<span class="mono">${s}</span> · ${HISTORY_MB[s]} MB · ${updated('2026-11-23T02:10')}`, removeBtn(m.model));
+    }).join('');
+    const manuals = MANUALS.map(([name, mb]) => row('book-open', name, `PDF · ${mb} MB · ${updated('2026-11-16')}`, removeBtn(name))).join('');
+    return `<p class="list-title" style="margin-top:0">Tomorrow's jobs</p>${jobs}<p class="list-title">Machine histories</p>${histories}<p class="list-title">Manuals</p>${manuals}`;
+  };
+  document.getElementById('saved').innerHTML = render(false);
+  document.getElementById('saved-downloading').innerHTML = render(true);
+
+  const total = Object.values(SAVED_JOBS).filter(([, when]) => when).reduce((sum, [mb]) => sum + mb, 0)
+    + Object.values(HISTORY_MB).reduce((a, b) => a + b, 0) + MANUALS.reduce((sum, [, mb]) => sum + mb, 0);
+  document.getElementById('used').textContent = `${total} MB`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

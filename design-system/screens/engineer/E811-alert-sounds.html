@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E811 Notification alerts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+label.list-item{cursor:default}
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+.list-item .sound{color:var(--blue)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E811 Notification alerts</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="sounds">choose sound</button>
+  <button type="button" data-state="notifoff" aria-pressed="false">permission off</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E804-settings.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Notification alerts</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes save when you are back online.</div>
+          <div class="banner amber" data-when="notifoff"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+            <div><b>Notifications are off</b>Turn them on to hear about new jobs. <a href="#">Open Settings</a></div></div>
+          <div id="groups"></div>
+          <p class="hint" style="margin:0 4px">Critical alerts are also sent by email.</p>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="sounds" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="s-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="s-title">New assignments</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Alert sound" id="sound-list"></div>
+        <div class="btn-pair" style="margin-top:16px; grid-template-columns:1fr 1fr">
+          <button class="btn btn-secondary" type="button" id="test" data-toast="Playing Siren"><svg class="ic" aria-hidden="true"><use href="#ph-play"/></svg>Test sound</button>
+          <button class="btn btn-primary" type="button" data-close>Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Alert sound for each kind of message. New assignments and urgent jobs are time sensitive and cannot be
+turned off; with notifications off in the phone the banner points to Settings (EC-27).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  /* page data: alert kinds and the sounds the app ships */
+  const KINDS = [
+    { name: 'New assignments', icon: 'clock-countdown', sound: 'Siren', locked: true },
+    { name: 'Urgent jobs', icon: 'siren', sound: 'Alarm', locked: true },
+    { name: 'Customer and manager messages', icon: 'chat-text', sound: 'Chime', locked: false },
+    { name: 'Parts and leave updates', icon: 'package', sound: 'Default', locked: false },
+  ];
+  const SOUNDS = [['Siren', 'Loud, repeats until opened'], ['Alarm', 'Loud'], ['Chime', 'Soft'], ['Default', 'Phone sound']];
+  const row = (k) => `<label class="list-item"><span class="disc">${R.icon(k.icon)}</span><b>Alerts</b>
+    <span class="sub">${k.locked ? 'Time sensitive, always on' : 'Push and email'}</span>
+    <span class="end"><span class="switch"><input type="checkbox" checked${k.locked ? ' disabled' : ''} aria-label="${k.name}"><span></span></span></span></label>
+    <button class="list-item" type="button" data-open="sounds" data-kind="${k.name}"><span class="disc">${R.icon('bell')}</span><b>Sound</b>
+    <span class="end"><span class="sound">${k.sound}</span>${R.icon('caret-right')}</span></button>`;
+  document.getElementById('groups').innerHTML = KINDS.map((k, i) => `<p class="list-title"${i ? '' : ' style="margin-top:0"'}>${k.name}</p>
+    <div class="list">${row(k)}</div>`).join('');
+  const choose = (kind) => {
+    document.getElementById('s-title').textContent = kind.name;
+    document.getElementById('sound-list').innerHTML = SOUNDS.map(([s, note]) => `<button class="choice" role="radio" aria-checked="${s === kind.sound}" type="button">
+      <span class="disc">${R.icon('bell')}</span><b>${s}</b><p>${note}</p><span class="mark"></span></button>`).join('');
+    document.getElementById('test').dataset.toast = `Playing ${kind.sound}`;
+  };
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-kind]'); if (b) choose(KINDS.find((k) => k.name === b.dataset.kind)); });
+  choose(KINDS[0]);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

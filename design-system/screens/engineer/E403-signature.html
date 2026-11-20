@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E403 Customer signature</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* landscape screen drawn inside the portrait frame: turned 90 degrees, island on the left */
+.land{position:absolute; z-index:35; top:0; left:390px; width:844px; height:390px; transform-origin:0 0; transform:rotate(90deg);
+  display:grid; grid-template-columns:290px 1fr; grid-template-rows:auto 1fr; gap:10px 16px; padding:12px 28px 22px 60px;
+  background:var(--surface)}
+.land-bar{grid-column:1 / span 2; display:flex; align-items:center; gap:12px}
+.land-bar h1{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.land-bar .tag{margin-left:4px}
+.land-bar .btn-text{margin-left:auto}
+.side{display:flex; flex-direction:column; gap:8px; min-height:0}
+.summary{padding:10px 12px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:var(--fs-12); color:var(--text)}
+.summary div{display:flex; gap:8px; padding:3px 0}
+.summary dt{width:62px; flex-shrink:0; color:var(--text-muted)}
+.summary dd{margin:0; color:var(--slate-900); font-weight:500; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.side .field ~ .field{margin-top:0}
+.side .field > label{margin-bottom:4px; font-size:var(--fs-12)}
+.side .input{min-height:42px; font-size:var(--fs-14)}
+.side .error-text{margin-top:4px}
+.pad-col{display:flex; flex-direction:column; gap:8px; min-height:0}
+.pad{position:relative; flex:1; min-height:0; border-radius:var(--r-lg); background:#fff; border:1.5px dashed var(--slate-300)}
+.pad.has-error{border-color:var(--red); border-style:solid; box-shadow:0 0 0 4px var(--red-50)}
+.pad canvas{position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair; border-radius:inherit}
+.pad .baseline{position:absolute; left:24px; right:24px; bottom:42px; display:flex; align-items:flex-end; gap:8px;
+  border-bottom:1.5px solid var(--slate-300); padding-bottom:4px; color:var(--slate-400); font-size:var(--fs-12); pointer-events:none}
+.pad .baseline b{font:400 var(--fs-18) var(--font-display)}
+.pad-foot{display:flex; align-items:center; gap:10px}
+.pad-foot p{flex:1; margin:0; font-size:var(--fs-12); line-height:1.4; color:var(--text)}
+.pad-foot .btn{width:auto}
+.land .overlay.bottom{justify-content:center}
+.land .bottom-sheet{max-width:480px; max-height:94%; padding-bottom:18px}
+.land .action-sheet{max-width:420px; padding-bottom:16px}
+.land .alert{max-width:340px}
+.land .home-indicator{bottom:6px}
+.contact{width:100%}
+.contact + .contact{margin-top:6px}
+.contact.choice{padding:10px 12px}
+.contact .disc{width:38px; height:38px; font:400 var(--fs-14) var(--font-display)}
+.otp input{height:48px}
+.chips.wrap{flex-wrap:wrap; overflow:visible; margin:0 0 10px; padding:0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E403 Customer signature</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="signed" aria-pressed="false">signed</button>
+  <button type="button" data-state="small" aria-pressed="false">too small</button>
+  <button type="button" data-state="noname" aria-pressed="false">name missing</button>
+  <button type="button" data-state="ready" data-open="cannot" aria-pressed="false">cannot sign</button>
+  <button type="button" data-state="ready" data-open="otp" aria-pressed="false">OTP contact</button>
+  <button type="button" data-state="ready" data-open="otp-code" aria-pressed="false">OTP code</button>
+  <button type="button" data-state="ready" data-open="refused" aria-pressed="false">refused</button>
+  <button type="button" data-state="signed" data-open="saved" aria-pressed="false">saved</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="land">
+      <div class="land-bar">
+        <a class="icon-btn sm review-link" href="E404-report-review.html" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></a>
+        <h1>Customer signature</h1>
+        <span class="tag outline" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline, saved with the report</span>
+        <button class="btn btn-text" type="button" data-open="cannot">Customer cannot sign</button>
+      </div>
+
+      <div class="side">
+        <dl class="summary" id="summary" style="margin:0"></dl>
+        <div class="field" id="name-field"><label for="name">Name<span class="req">*</span></label>
+          <input class="input" id="name" maxlength="60" autocomplete="off">
+          <span class="error-text" data-when="noname"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the signer's name</span></div>
+        <div class="field"><label for="designation">Designation</label><input class="input" id="designation" placeholder="Optional"></div>
+      </div>
+
+      <div class="pad-col">
+        <div class="pad" id="pad">
+          <span class="baseline"><b>x</b>Sign here</span>
+          <canvas id="canvas" aria-label="Signature pad"></canvas>
+        </div>
+        <span class="error-text" id="small-error" hidden><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Please sign inside the box</span>
+        <div class="pad-foot">
+          <p>I confirm the work described above was carried out.</p>
+          <button class="btn btn-secondary btn-sm" type="button" id="clear">Clear</button>
+          <button class="btn btn-primary btn-sm" type="button" id="save">Save signature</button>
+        </div>
+      </div>
+
+      <span class="home-indicator"></span>
+
+      <div class="overlay bottom" id="cannot" hidden>
+        <div class="action-sheet" role="dialog" aria-label="Customer cannot sign">
+          <div class="group">
+            <div class="title">Customer cannot sign</div>
+            <button type="button" data-open="otp"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg>Send an OTP to the customer</button>
+            <button class="destructive" type="button" data-open="refused"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Customer refused to sign</button>
+          </div>
+          <button class="cancel" type="button" data-close>Cancel</button>
+        </div>
+      </div>
+
+      <div class="overlay bottom" id="otp" hidden>
+        <div class="bottom-sheet" role="dialog" aria-labelledby="otp-title">
+          <div class="head"><h3 id="otp-title">Send OTP to</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+          <div class="body" role="radiogroup" aria-label="Contact" id="contacts"></div>
+          <button class="btn btn-primary" type="button" style="margin-top:12px; min-height:46px" data-open="otp-code">Send OTP</button>
+        </div>
+      </div>
+
+      <div class="overlay bottom" id="otp-code" hidden>
+        <div class="bottom-sheet" role="dialog" aria-labelledby="code-title">
+          <div class="head"><h3 id="code-title">Enter the code</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+          <div class="body">
+            <p class="hint" style="margin:0 2px 10px" id="code-sent"></p>
+            <div class="otp"><input maxlength="1" value="4" aria-label="Digit 1"><input maxlength="1" value="8" aria-label="Digit 2"><input maxlength="1" value="2" aria-label="Digit 3"><input maxlength="1" aria-label="Digit 4"><input maxlength="1" aria-label="Digit 5"><input maxlength="1" aria-label="Digit 6"></div>
+            <span class="hint">The customer can also approve in their app within 24 hours.</span>
+          </div>
+          <div class="actions" style="grid-template-columns:1fr 1.4fr">
+            <button class="btn btn-secondary" type="button" style="min-height:46px" data-open="saved" data-pending>Confirm later</button>
+            <button class="btn btn-primary" type="button" style="min-height:46px" data-open="saved" data-otp>Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay bottom" id="refused" hidden>
+        <div class="bottom-sheet" role="dialog" aria-labelledby="refused-title">
+          <div class="head"><h3 id="refused-title">Why did the customer refuse?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+          <div class="body">
+            <div class="chips wrap" data-single>
+              <button class="chip outline" type="button" aria-pressed="true">Wants a longer trial</button>
+              <button class="chip outline" type="button" aria-pressed="false">Disputes the work</button>
+              <button class="chip outline" type="button" aria-pressed="false">Other</button>
+            </div>
+            <div class="field"><label for="reason">Reason<span class="req">*</span></label><input class="input" id="reason" value="Wants to see a full shift run first"></div>
+          </div>
+          <button class="btn btn-danger" type="button" style="margin-top:12px; min-height:46px" data-open="saved" data-refused>Mark as refused</button>
+        </div>
+      </div>
+
+      <div class="overlay center" id="saved" hidden>
+        <div class="alert" role="alertdialog" aria-labelledby="saved-title">
+          <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3 id="saved-title">Signature saved</h3>
+          <p id="saved-text"></p>
+          <div class="actions"><a class="btn btn-primary review-link" style="min-height:46px" href="E404-report-review.html">Back to review</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown turned: the pad opens in landscape and stays there until closed. Draw on the pad. Customer
+cannot sign offers an OTP to a chosen contact or a refusal with a reason (EC-59, EC-60).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample summary of the draft report (same draft as E401) */
+  const SUMMARY = { work: 'Replaced the 12B drive chain, aligned the sprockets, reset the overload relay.', parts: [['ZP-SP-003', 1]], status: 'Running' };
+  const MIN_STROKE_PX = 20;
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const signer = data.users.find((u) => u.name === site.contact.name);
+  document.querySelectorAll('.review-link').forEach((a) => { a.href = `E404-report-review.html?ticket=${ticket.number}`; });
+
+  $('summary').innerHTML = `<div><dt>Work done</dt><dd>${R.esc(SUMMARY.work)}</dd></div>
+    <div><dt>Parts</dt><dd>${SUMMARY.parts.map(([n, q]) => `${R.esc(data.parts.find((p) => p.number === n).name)} x ${q}`).join(', ')}</dd></div>
+    <div><dt>Machine</dt><dd>${SUMMARY.status}</dd></div>`;
+
+  /* OTP contacts: site contact first, then the company's people */
+  const people = data.users.filter((u) => u.companies.some((c) => c.id === m.company));
+  $('contacts').innerHTML = people.map((u, i) => {
+    const primary = u.companies.find((c) => c.id === m.company).primary;
+    const role = [u.name === site.contact.name && 'Site contact', primary && 'Primary contact', u.designation].filter(Boolean).slice(0, 2).join(' · ');
+    return `<button class="choice contact" role="radio" aria-checked="${i === 0}" type="button"><span class="disc">${u.initials}</span>
+      <b style="font-size:var(--fs-14)">${R.esc(u.name)}</b><p>${R.esc(role)} · ${u.mobile}</p><span class="mark"></span></button>`;
+  }).join('');
+  $('code-sent').textContent = `Sent to ${people[0].name}, ${people[0].mobile}`;
+
+  /* outcome text for the saved alert */
+  document.addEventListener('click', (event) => {
+    /* an overlay that opens the next one steps aside */
+    event.target.closest('.overlay [data-open]')?.closest('.overlay').setAttribute('hidden', '');
+    const b = event.target.closest('[data-open="saved"]');
+    if (!b) return;
+    const [title, text] = b.hasAttribute('data-otp') ? ['Confirmed by OTP', 'The report shows Confirmed by OTP.']
+      : b.hasAttribute('data-pending') ? ['Pending confirmation', 'If not confirmed in 24 hours, the report goes as unconfirmed.']
+      : b.hasAttribute('data-refused') ? ['Marked as refused', 'Zixom will review the reason.']
+      : ['Signature saved', `Signed by ${$('name').value || signer.name}.`];
+    $('saved-title').textContent = title;
+    $('saved-text').textContent = text;
+  });
+
+  /* signature pad: the canvas is turned 90 degrees, so screen y is pad x and screen x is pad y */
+  const canvas = $('canvas');
+  const ctx = canvas.getContext('2d');
+  let strokeLength = 0;
+  let last = null;
+  const size = () => {
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--slate-900');
+  };
+  const point = (event) => { const r = canvas.getBoundingClientRect(); return { x: event.clientY - r.top, y: r.right - event.clientX }; };
+  const line = (a, b) => { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); strokeLength += Math.hypot(b.x - a.x, b.y - a.y); };
+  const clear = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); strokeLength = 0; $('small-error').hidden = true; $('pad').classList.remove('has-error'); };
+  canvas.addEventListener('pointerdown', (event) => { canvas.setPointerCapture(event.pointerId); last = point(event); $('small-error').hidden = true; $('pad').classList.remove('has-error'); });
+  canvas.addEventListener('pointermove', (event) => { if (!last) return; const p = point(event); line(last, p); last = p; });
+  ['pointerup', 'pointercancel'].forEach((type) => canvas.addEventListener(type, () => { last = null; }));
+  $('clear').addEventListener('click', clear);
+  $('save').addEventListener('click', () => {
+    if (!$('name').value.trim()) { $('name-field').classList.add('has-error'); return; }
+    if (strokeLength < MIN_STROKE_PX) { $('small-error').hidden = false; $('pad').classList.add('has-error'); return; }
+    $('saved-title').textContent = 'Signature saved';
+    $('saved-text').textContent = `Signed by ${$('name').value}.`;
+    $('saved').hidden = false;
+  });
+
+  /* sample strokes for the signed and too small states */
+  const draw = (points) => points.reduce((a, b) => { line(a, b); return b; });
+  /* cursive loops along the line, then an underline */
+  const SIGNATURE = Array.from({ length: 241 }, (_, i) => {
+    const t = i / 240;
+    return { x: 50 + 340 * t + 12 * Math.cos(t * Math.PI * 10), y: 125 - 30 * Math.sin(t * Math.PI * 10) * (0.5 + 0.5 * Math.sin(t * Math.PI)) };
+  });
+  const UNDERLINE = [{ x: 60, y: 175 }, { x: 250, y: 168 }, { x: 420, y: 160 }];
+  const render = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    size(); clear();
+    $('name-field').classList.toggle('has-error', state === 'noname');
+    $('name').value = state === 'noname' ? '' : signer.name;
+    $('designation').value = state === 'noname' ? '' : signer.designation;
+    if (state === 'signed' || state === 'noname') { draw(SIGNATURE); draw(UNDERLINE); }
+    if (state === 'small') { draw([{ x: 200, y: 120 }, { x: 206, y: 124 }, { x: 203, y: 118 }]); $('small-error').hidden = false; $('pad').classList.add('has-error'); }
+  };
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) render(); });
+  window.addEventListener('load', render);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E103 Duty status sheet</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
+.title-row .root-title{margin:0}
+.duty-pill{display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 12px; border-radius:var(--r-pill);
+  background:#fff; box-shadow:inset 0 0 0 1px var(--line); color:var(--slate-800); font:400 var(--fs-13) var(--font-display)}
+.duty-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--blue)}
+.stats.three{grid-template-columns:repeat(3, 1fr)}
+.stats.three .stat b{font-size:var(--fs-22)}
+.duty .disc .dot{width:12px; height:12px; border-radius:50%}
+.reason{margin-top:14px}
+.reason .textarea{min-height:76px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E103 Duty status sheet</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="duty">ready</button>
+  <button type="button" data-state="blocked" aria-pressed="false" data-open="duty">off duty with a job in progress</button>
+  <button type="button" data-state="saving" aria-pressed="false" data-open="duty">saving</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="duty">offline</button>
+  <button type="button" data-state="error" aria-pressed="false" data-open="duty">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark" id="initials"></span>
+        <div class="grow"><span class="root-hello" id="date"></span><span class="root-name" id="name"></span></div>
+      </div>
+      <div class="title-row">
+        <h1 class="root-title">Today</h1>
+        <span class="duty-pill"><span class="dot"></span>On job<svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></span>
+      </div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stats three" id="stats" style="margin-top:12px"></div>
+      </div>
+    </div></div>
+    <nav class="tabbar" data-tabs="engineer" data-active="today"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="duty" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="duty-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="duty-title">Duty status</h3><a class="icon-btn sm" href="E101-today.html" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></a></div>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saves on this phone.</div>
+        <div class="body">
+          <div role="radiogroup" aria-label="Duty status" id="choices" data-when="ready saving offline error"></div>
+          <div role="radiogroup" aria-label="Duty status" id="choices-blocked" data-when="blocked"></div>
+          <div class="banner amber" style="margin-top:12px" data-when="blocked">
+            <svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Finish your job first</b><span id="blocked-text"></span></div>
+          </div>
+          <div class="field reason" data-when="ready saving offline error">
+            <label for="reason">Reason <span style="font-weight:400; color:var(--text-muted)">(optional)</span></label>
+            <textarea class="textarea" id="reason" placeholder="For example, lunch break"></textarea>
+          </div>
+          <div class="banner red" style="margin-top:12px" data-when="error">
+            <svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div>Couldn't save your status. Try again.</div>
+          </div>
+        </div>
+        <a class="btn btn-primary" href="E101-today.html" style="margin-top:16px" data-when="ready offline error">Save</a>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" aria-busy="true" data-when="saving">Save</button>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" disabled data-when="blocked">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from the duty pill on <a href="E101-today.html">E101</a>. Off duty is refused while a job is in progress; offline, the change saves on the phone and syncs later.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  const active = day.today.find((j) => j.status === 'in-progress');
+  const DUTY = [
+    ['available', 'Available', 'Ready for new jobs', 'var(--green)'],
+    ['on-job', 'On job', `Working on ${active.ticket}`, 'var(--blue)'],
+    ['on-break', 'On break', 'New offers wait until you are back', 'var(--amber)'],
+    ['off-duty', 'Off duty', 'No new jobs until you are available', 'var(--slate-400)'],
+  ];
+
+  document.getElementById('initials').textContent = me.initials;
+  document.getElementById('name').textContent = me.name;
+  document.getElementById('date').textContent = `${R.dayDate(data.today)} ${data.today.slice(0, 4)}`;
+  const toSync = day.sync.length;
+  document.getElementById('stats').innerHTML = [[day.today.length, 'Jobs today'], [0, 'Done'], [toSync, 'To sync']]
+    .map(([value, label]) => `<span class="stat"><b>${value}</b><span>${label}</span></span>`).join('');
+
+  /* the blocked state shows Off duty picked, every other state the saved status */
+  const choice = ([key, label, sub, colour], picked) => `<button class="choice duty" role="radio" aria-checked="${picked}" type="button">
+    <span class="disc"><span class="dot" style="background:${colour}"></span></span><b>${label}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+  document.getElementById('choices').innerHTML = DUTY.map((d) => choice(d, d[0] === day.duty)).join('');
+  document.getElementById('choices-blocked').innerHTML = DUTY.map((d) => choice(d, d[0] === 'off-duty')).join('');
+  document.getElementById('blocked-text').textContent = `${active.ticket} is in progress. Complete it or put it on hold.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

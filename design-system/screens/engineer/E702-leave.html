@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E702 Leave and availability</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+.two{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:start}
+.two .field{margin-top:0}
+.two .input{min-width:0; width:100%}
+.two + .field{margin-top:16px}
+.body .banner{margin-top:14px}
+.affected{margin-top:12px}
+.affected .list-item{min-height:52px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E702 Leave and availability</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="request">request leave</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="overlap">overlaps jobs</button>
+  <button type="button" data-state="sent" aria-pressed="false">approval pending</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Leave and availability</h1>
+        <a class="icon-btn" href="E705-holidays.html" aria-label="Holiday calendar"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready sent empty offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Requests are sent when you are back online.</div>
+          <div class="banner" data-when="sent"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+            <div><b id="sent-title"></b>Waiting for <span class="approver"></span>. <button class="link-btn" type="button" data-open="cancel">Cancel request</button></div></div>
+
+          <div>
+            <p class="list-title" style="margin-top:0">Working days</p>
+            <div class="list">
+              <a class="list-item" href="E707-working-hours.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+                <b id="hours"></b><span class="sub" id="days"></span><span class="end">Change<svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+
+          <div data-when="ready sent offline">
+            <p class="list-title">Leave</p>
+            <div class="list" id="leave"></div>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:40px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span>
+            <h3>No leave yet</h3>
+            <p>Your leave requests will appear here.</p>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:64px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load your leave. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready sent empty offline">
+        <button class="btn btn-primary" type="button" data-open="request"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Request leave</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="request" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="rq-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="rq-title">Request leave</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="two">
+            <div class="field"><label for="from">From<span class="req">*</span></label><input class="input" id="from" type="date" value="2026-12-21"></div>
+            <div class="field"><label for="to">To<span class="req">*</span></label><input class="input" id="to" type="date" value="2026-12-22"></div>
+          </div>
+          <div class="field"><label for="reason">Reason<span class="req">*</span><span class="counter">16 / 200</span></label>
+            <textarea class="textarea" id="reason" rows="2">Sister's wedding</textarea></div>
+          <p class="hint" style="margin:0">2 days · No jobs on these days</p>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Leave request sent">Send to manager</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="overlap" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ov-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ov-title">Request leave</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="two">
+            <div class="field"><label for="from2">From<span class="req">*</span></label><input class="input" id="from2" type="date"></div>
+            <div class="field"><label for="to2">To<span class="req">*</span></label><input class="input" id="to2" type="date"></div>
+          </div>
+          <div class="field"><label for="reason2">Reason<span class="req">*</span><span class="counter">17 / 200</span></label>
+            <textarea class="textarea" id="reason2" rows="2">Medical check up</textarea></div>
+          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div><b id="ov-count"></b>Your manager reassigns them if approved.</div></div>
+          <div class="list affected" id="affected"></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Leave request sent">Send to manager</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="cancel" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel leave request">
+        <div class="group"><div class="title" id="cancel-title"></div>
+          <button class="destructive" type="button" data-close data-toast="Leave request cancelled">Cancel request</button></div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Usual working days and every leave request. Dates that fall on assigned jobs list those jobs before the
+request is sent, so the manager can reassign them.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const day = data.engineerDay;
+  /* page data: usual hours, one past rejected request, and the dates used in the overlap example */
+  const WORKING = { days: 'Monday to Saturday', hours: '9 AM to 6 PM' };
+  const REJECTED = { from: '2026-11-09', to: '2026-11-09', reason: 'Personal work', status: 'Rejected', approver: 'Mr Kapoor' };
+  const OVERLAP = { from: '2026-11-24', to: '2026-11-26' };
+  const TONE = { Approved: 'green', Pending: 'amber', Rejected: 'red' };
+
+  $('hours').textContent = WORKING.hours;
+  $('days').textContent = WORKING.days;
+
+  const span = (l) => (l.from === l.to ? R.dayDate(l.from) : `${R.dayDate(l.from)} to ${R.dayDate(l.to)}`);
+  const days = (l) => R.daysFromToday(l.to) - R.daysFromToday(l.from) + 1;
+  const all = [...day.leave, REJECTED];
+  $('leave').innerHTML = all.map((l) => `<a class="list-item" href="E706-leave-detail.html?from=${l.from}">
+    <span class="disc">${R.icon('calendar-check')}</span><b>${span(l)}</b>
+    <span class="sub">${days(l)} day${days(l) > 1 ? 's' : ''} · ${R.esc(l.reason)}</span>
+    <span class="end">${R.tag(l.status, TONE[l.status])}${R.icon('caret-right')}</span></a>`).join('');
+
+  const pending = day.leave.find((l) => l.status === 'Pending');
+  $('sent-title').textContent = `Leave on ${span(pending)} sent`;
+  document.querySelectorAll('.approver').forEach((el) => { el.textContent = pending.approver; });
+  $('cancel-title').textContent = `Cancel leave on ${span(pending)}?`;
+
+  /* jobs of this engineer whose visit date falls inside the requested dates */
+  $('from2').value = OVERLAP.from;
+  $('to2').value = OVERLAP.to;
+  const hit = data.tickets.filter((t) => t.engineer === day.engineer && t.window && t.window.date >= OVERLAP.from && t.window.date <= OVERLAP.to);
+  $('ov-count').textContent = `${hit.length} jobs need reassigning`;
+  $('affected').innerHTML = hit.map((t) => { const m = R.machine(t.machine);
+    return `<a class="list-item" href="E202-job-detail.html?ticket=${t.number}"><span class="disc">${R.icon('wrench')}</span>
+      <b>${R.esc(m.nickname || m.model)}</b><span class="sub">${R.dayDate(t.window.date)}, ${t.window.slot} · <span class="mono">${t.number}</span></span>
+      <span class="end">${R.icon('caret-right')}</span></a>`; }).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

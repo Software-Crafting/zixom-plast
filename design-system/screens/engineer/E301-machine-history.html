@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E301 Machine history</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.month{margin:22px 2px 10px; font-size:var(--fs-12); font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted)}
+.hist{list-style:none; margin:0; padding:0}
+.hist li{position:relative; display:grid; grid-template-columns:36px 1fr; column-gap:12px; padding-bottom:10px}
+.hist li::before{content:""; position:absolute; left:17px; top:38px; bottom:0; width:2px; background:var(--slate-200)}
+.hist li:last-child::before{display:none}
+.hist .disc{width:36px; height:36px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff;
+  box-shadow:inset 0 0 0 1px var(--line-strong); color:var(--slate-700)}
+.hist .disc .ic{width:17px; height:17px}
+.hist .fault .disc{background:var(--red-50); box-shadow:none; color:var(--red)}
+.hist button{display:grid; grid-template-columns:1fr auto; gap:2px 8px; width:100%; padding:10px 12px; border:0; border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer; box-shadow:inset 0 0 0 1px var(--line)}
+.hist button b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.hist button time{font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap}
+.hist button span{grid-column:1 / -1; font-size:var(--fs-12); color:var(--text-muted); line-height:1.45}
+.hist button .tag{justify-self:start; margin-top:4px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E301 Machine history</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="entry">open entry</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="more" aria-pressed="false">loading older</button>
+  <button type="button" data-state="moreerror" aria-pressed="false">older failed</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E302-machine-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Machine history</h1><span></span>
+      </div>
+      <div class="scroll">
+        <p class="who" id="who"></p>
+
+        <div data-when="ready more moreerror offline">
+          <div class="offline-strip" style="margin:12px 0 0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved history from 11:42 AM.</div>
+          <div id="repeat"></div>
+          <div class="chips" style="margin-top:12px">
+            <button class="chip outline" type="button" data-open="range"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span id="range-label">All time</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          </div>
+          <div class="chips" id="kinds" style="margin-top:6px"></div>
+          <div id="list"></div>
+          <div class="state" id="noresults" hidden>
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-funnel"/></svg></span>
+            <h3>No matching results</h3><p>Try a different type or date range.</p>
+            <button class="btn btn-secondary" type="button" id="clear">Clear filters</button>
+          </div>
+          <div style="margin-top:14px" id="older">
+            <button class="btn btn-secondary" type="button" data-when="ready" onclick="document.querySelector('[data-state=more]').click()">Load older</button>
+            <button class="btn btn-secondary" type="button" aria-busy="true" data-when="more">Load older</button>
+            <div class="inline-retry" data-when="moreerror">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+            <p class="hint" style="text-align:center" data-when="offline">Older entries need internet.</p>
+          </div>
+        </div>
+
+        <div data-when="loading" class="stack" style="margin-top:16px">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-md)"></span>
+          <div class="row-flex"><span class="skeleton" style="width:90px; height:38px; border-radius:var(--r-pill)"></span><span class="skeleton" style="width:70px; height:38px; border-radius:var(--r-pill)"></span><span class="skeleton" style="width:80px; height:38px; border-radius:var(--r-pill)"></span></div>
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+          <h3>No history on record</h3><p>Visits, faults and parts appear here.</p>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:90px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load the history. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="range" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Date range">
+        <div class="group" role="radiogroup" id="ranges"><div class="title">Date range</div></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="entry" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="entry-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="entry-t"></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <dl class="kv" style="margin:0" id="entry-kv"></dl>
+        <a class="btn btn-secondary" style="margin-top:16px" id="entry-open" href="#">Open job</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Past visits, faults, parts, notes, claims and AMC visits for one machine. Three or more of the same
+fault raise a repeated fault banner. Offline opens entries from the saved copy; older pages need internet.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const me = data.engineerDay.engineer;
+  const REPEAT_AT = 3;
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const KINDS = { visit: ['Visits', 'wrench'], fault: ['Faults', 'warning'], parts: ['Parts', 'package'],
+    warranty: ['Warranty', 'shield-check'], amc: ['AMC', 'seal-check'], note: ['Notes', 'note-pencil'] };
+  const RANGES = [['All time', null], ['Last 30 days', 30], ['Last 6 months', 182], ['Last 12 months', 365]];
+
+  /* sample only: earlier faults and engineer notes the demo data does not hold. fault groups repeats of one issue */
+  const PAST = {
+    'ZP-TF-2204': [
+      { kind: 'fault', fault: 'chain', ticket: 'TKT-2026-0098', when: '2026-08-14', title: 'Chain drive tripping', sub: 'Error E-17. Chain re-tensioned', by: 'sandeep' },
+      { kind: 'fault', fault: 'chain', ticket: 'TKT-2026-0116', when: '2026-11-06', title: 'Chain drive tripping', sub: 'Error E-17. Chain tensioner replaced', by: 'sandeep' },
+      { kind: 'note', when: '2026-11-06', title: 'Engineer note', sub: 'Sprocket teeth worn on the drive side. Replace chain and sprocket together next time.', by: 'sandeep' },
+    ],
+    'ZP-VF-1908': [{ kind: 'note', when: '2026-10-28', title: 'Engineer note', sub: 'Vacuum hose clamp loose at pump inlet. Retightened.', by: 'sandeep' }],
+  };
+  const FAULT_OF = { 'TKT-2026-0126': 'chain' };
+  const FAULT_NAME = { chain: 'Chain drive tripping, error E-17' };
+  const CLAIMS = { 'ZP-TF-2204': [{ number: 'WCL-2026-0042', when: '2026-11-19', sub: 'Chain drive tripping. More information asked' }] };
+
+  const mySerials = new Set(data.tickets.filter((t) => t.engineer === me).map((t) => t.machine));
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+
+  $('machines').insertAdjacentHTML('beforeend', data.machines.filter((x) => mySerials.has(x.serial)).map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+  $('back').href = `E302-machine-detail.html?serial=${serial}`;
+  $('who').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${R.esc(serial)}</span>`;
+
+  /* ---------- events ---------- */
+  const tickets = data.tickets.filter((t) => t.machine === serial && t.status !== 'cancelled');
+  const events = [
+    ...tickets.map((t) => ({ kind: t.type === 'Breakdown or repair' ? 'fault' : 'visit', fault: FAULT_OF[t.number], ticket: t.number,
+      when: t.created.slice(0, 10), title: t.type, sub: `${t.number} · ${t.summary}`, by: t.engineer, mine: t.engineer === me,
+      tag: R.isOpen(t) ? R.tag('Open', 'blue') : '' })),
+    ...(PAST[serial] || []).map((e) => ({ ...e, sub: e.ticket ? `${e.ticket} · ${e.sub}` : e.sub })),
+    ...data.reports.filter((r) => tickets.some((t) => t.number === r.ticket)).flatMap((r) => r.parts.map(([number, name, qty]) => ({
+      kind: 'parts', ticket: r.ticket, when: r.date, title: 'Part replaced', sub: `${name} · ${number}`, qty, by: r.engineer, mine: true }))),
+    ...(CLAIMS[serial] || []).map((c) => ({ kind: 'warranty', when: c.when, title: 'Warranty claim', sub: `${c.number} · ${c.sub}` })),
+  ];
+  if (m.amc) {
+    const contract = R.amc(m.amc);
+    for (let i = 0; i < contract.visitsUsed; i += 1) {
+      const when = new Date(`${contract.start}T00:00:00`);
+      when.setMonth(when.getMonth() + i * 3);
+      const iso = `${when.getFullYear()}-${String(when.getMonth() + 1).padStart(2, '0')}-15`;
+      if (iso <= data.today) events.push({ kind: 'amc', when: iso, title: 'AMC visit', sub: `${contract.number} · Visit ${i + 1} of ${contract.visitsIncluded}` });
+    }
+  }
+  events.sort((a, b) => b.when.localeCompare(a.when));
+
+  /* ---------- repeated fault banner ---------- */
+  const counts = events.reduce((acc, e) => (e.fault ? { ...acc, [e.fault]: (acc[e.fault] || 0) + 1 } : acc), {});
+  const repeated = Object.entries(counts).find(([, n]) => n >= REPEAT_AT);
+  if (repeated) {
+    const first = events.filter((e) => e.fault === repeated[0]).at(-1);
+    $('repeat').innerHTML = `<div class="banner red" style="margin-top:12px">${R.icon('warning')}
+      <div><b>Repeated fault: ${repeated[1]} times</b>${R.esc(FAULT_NAME[repeated[0]])} since ${R.date(first.when)}.</div></div>`;
+  }
+
+  /* ---------- filters and list ---------- */
+  let kind = 'all';
+  let days = null;
+  const kindsPresent = Object.keys(KINDS).filter((k) => events.some((e) => e.kind === k));
+  $('kinds').innerHTML = [['all', 'All'], ...kindsPresent.map((k) => [k, KINDS[k][0]])]
+    .map(([k, label]) => `<button class="chip" type="button" data-kind="${k}" aria-pressed="${k === 'all'}">${label}</button>`).join('');
+  $('ranges').insertAdjacentHTML('beforeend', RANGES.map(([label, d], i) =>
+    `<button type="button" role="radio" aria-checked="${i === 0}" data-days="${d ?? ''}" data-close>${label}</button>`).join(''));
+
+  const row = (e) => `<li${e.fault ? ' class="fault"' : ''}><span class="disc">${R.icon(KINDS[e.kind][1])}</span>
+    <button type="button" data-entry="${events.indexOf(e)}"><b>${R.esc(e.title)}</b><time>${R.dayDate(e.when)}</time><span>${R.esc(e.sub)}</span>${e.tag || ''}</button></li>`;
+  const render = () => {
+    const shown = events.filter((e) => (kind === 'all' || e.kind === kind) && (days === null || -R.daysFromToday(e.when) <= days));
+    const months = [...new Set(shown.map((e) => e.when.slice(0, 7)))];
+    $('list').innerHTML = months.map((ym) => `<h3 class="month">${MONTHS[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}</h3>
+      <ol class="hist">${shown.filter((e) => e.when.startsWith(ym)).map(row).join('')}</ol>`).join('');
+    $('noresults').hidden = shown.length > 0;
+    $('older').hidden = shown.length === 0;
+  };
+  render();
+
+  const openEntry = (e) => {
+    $('entry-t').textContent = e.title;
+    const by = e.by ? R.engineer(e.by).name : 'Zixom';
+    $('entry-kv').innerHTML = [['Date', R.date(e.when)], ...(e.ticket ? [['Job', `<span class="mono">${e.ticket}</span>`]] : []), ['By', by],
+      ...(e.qty ? [['Quantity', e.qty]] : []), ['Details', R.esc(e.ticket ? e.sub.replace(`${e.ticket} · `, '') : e.sub)]]
+      .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    const own = e.ticket && data.tickets.some((t) => t.number === e.ticket && t.engineer === me);
+    $('entry-open').hidden = !own;
+    $('entry-open').href = `E202-job-detail.html?ticket=${e.ticket}`;
+  };
+  openEntry(events[0]);
+
+  document.addEventListener('click', (event) => {
+    const item = event.target.closest('[data-entry]');
+    if (item) { openEntry(events[item.dataset.entry]); $('entry').hidden = false; }
+    const chip = event.target.closest('[data-kind]');
+    if (chip) {
+      kind = chip.dataset.kind;
+      document.querySelectorAll('[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b === chip)));
+      render();
+    }
+    const range = event.target.closest('[data-days]');
+    if (range) {
+      days = range.dataset.days ? Number(range.dataset.days) : null;
+      range.parentElement.querySelectorAll('[role=radio]').forEach((b) => b.setAttribute('aria-checked', String(b === range)));
+      $('range-label').textContent = range.textContent;
+      render();
+    }
+    if (event.target.closest('#clear')) {
+      kind = 'all';
+      document.querySelectorAll('[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === 'all')));
+      document.querySelector('[data-days=""]').click();
+    }
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

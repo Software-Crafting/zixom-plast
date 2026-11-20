@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1014 Low storage</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.space{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px}
+.space b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.space span{font-size:var(--fs-13); color:var(--text-muted)}
+.meter.red i{background:var(--red)}
+.meter.amber i{background:var(--amber)}
+.meter.green i{background:var(--green)}
+.sheet-state{padding:4px 0 0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1014 Low storage</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="blocked" aria-pressed="true" data-open="storage">under 200 MB</button>
+  <button type="button" data-state="low" aria-pressed="false" data-open="storage">low</button>
+  <button type="button" data-state="cleared" aria-pressed="false" data-open="storage">space freed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="blocked">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title"></h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="banner red" data-when="blocked"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>Not enough space on your phone</b><button class="link-btn" type="button" data-open="storage">Free space</button></div></div>
+          <div class="card" id="job"></div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="blocked" disabled><svg class="ic" aria-hidden="true"><use href="#ph-clipboard-text"/></svg>Start report</button>
+        <a class="btn btn-primary" href="E401-report.html" data-when="low cleared"><svg class="ic" aria-hidden="true"><use href="#ph-clipboard-text"/></svg>Start report</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="storage" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="storage-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="storage-t"><span data-when="blocked low">Low storage</span><span data-when="cleared">Storage</span></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div data-when="blocked low">
+            <div class="space"><b data-when="blocked">180 MB left</b><b data-when="low">420 MB left</b><span>of 64 GB</span></div>
+            <div class="meter red" data-when="blocked"><i style="width:99.7%"></i></div>
+            <div class="meter amber" data-when="low"><i style="width:99.3%"></i></div>
+            <p class="hint" data-when="blocked" style="margin:10px 0 0; color:var(--red)">Reports need 200 MB free to start.</p>
+            <p class="list-title">What to clear</p>
+            <div class="list">
+              <div class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span><b>Uploaded photos and videos</b><span class="sub">1.2 GB · already sent to Zixom</span>
+                <span class="end"><button class="btn btn-soft btn-sm" type="button" id="free">Free</button></span></div>
+              <div class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Old manuals</b><span class="sub">340 MB · not on your jobs</span>
+                <span class="end"><button class="btn btn-soft btn-sm" type="button" data-toast="340 MB freed">Free</button></span></div>
+            </div>
+          </div>
+          <div class="state sheet-state" data-when="cleared">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>Space available</h3>
+            <p>1.4 GB free. You can start the report.</p>
+          </div>
+        </div>
+        <div class="stack-sm" style="margin-top:18px">
+          <button class="btn btn-secondary" type="button" data-when="blocked low" data-close data-toast="Opening storage settings">Open storage settings</button>
+          <a class="btn btn-primary" href="E401-report.html" data-when="cleared">Start report</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Warns when the phone is low on space and shows what the app can clear. Under 200 MB a new report cannot
+start; the warning clears itself once space is available.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const visit = data.engineerDay.today[0];
+  const ticket = data.tickets.find((t) => t.number === visit.ticket);
+  const machine = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === machine.company);
+  const site = company.sites.find((s) => s.id === machine.site);
+  const screen = document.querySelector('.screen');
+
+  document.getElementById('title').textContent = ticket.number;
+  document.getElementById('job').innerHTML = `<div class="row-flex">${R.thumb(machine)}<div class="grow">
+      <b style="font-size:var(--fs-14); color:var(--slate-900)">${R.esc(machine.nickname || machine.model)}</b>
+      <div class="card-sub" style="margin:2px 0 0">${R.esc(ticket.type)}</div></div></div>
+    <dl class="kv" style="margin:14px 0 0">
+      <div><dt>Customer</dt><dd>${R.esc(company.name)}</dd></div>
+      <div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+      <div><dt>Checked in</dt><dd>${new Date(visit.checkedIn).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }).toUpperCase()}</dd></div>
+      <div><dt>Severity</dt><dd>${R.severityTag(ticket.severity)}</dd></div>
+    </dl>`;
+
+  /* Free switches to the cleared state without closing the sheet */
+  document.getElementById('free').addEventListener('click', () => {
+    screen.dataset.state = 'cleared';
+    screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes('cleared'); });
+    document.querySelectorAll('.plate-states button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === 'cleared')));
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E806 Report a problem</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.add-file{display:flex; align-items:center; gap:12px; width:100%; margin-top:8px; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E806 Report a problem</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="uploading" aria-pressed="false">uploading, one failed</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">kept for later</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Report a problem</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div data-when="ready errors uploading offline">
+          <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. We send it when you are back online.</div>
+          <div class="error-summary" role="alert" style="margin-bottom:16px" data-when="errors"><b>Fix 1 thing to send</b>
+            <ul><li><a href="#what-bad">Describe the problem in at least 20 characters</a></li></ul></div>
+
+          <div class="field" data-when="ready uploading offline"><label for="what">What happened<span class="req">*</span><span class="counter">88 / 1000</span></label>
+            <textarea class="textarea" id="what">Photos stay in Waiting to sync for TKT-2026-0126 even on Wi-Fi. Tried closing the app.</textarea></div>
+          <div class="field has-error" data-when="errors"><label for="what-bad">What happened<span class="req">*</span><span class="counter">9 / 1000</span></label>
+            <textarea class="textarea" id="what-bad" aria-invalid="true" aria-describedby="what-err">Not sync.</textarea>
+            <span class="error-text" id="what-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe the problem in at least 20 characters</span></div>
+
+          <div class="field">
+            <span class="field-label">Screenshots<span class="counter">Optional, up to 3</span></span>
+            <div class="files" data-when="ready errors offline">
+              <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>sync-queue.png</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Added · 420 KB</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="files" data-when="uploading">
+              <div class="file" data-status="uploading" data-progress="58"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>sync-queue.png</b><span class="file-meta">Uploading 58% · 420 KB</span><span class="progress"><i style="width:58%"></i></span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>job-screen.png</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <button class="add-file" type="button" data-toast="Screenshot added">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <span class="grow"><b>Add a screenshot</b><span>JPG or PNG up to 10 MB</span></span>
+              <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg></button>
+          </div>
+
+          <div style="margin-top:18px"><label class="check"><input type="checkbox" checked>Include app logs</label></div>
+        </div>
+
+        <div class="state" data-when="sent" style="padding-top:80px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Thanks, problem sent</h3>
+          <p>Reference <span class="mono">PRB-2026-0087</span>.</p>
+          <a class="btn btn-secondary" href="E802-profile.html">Done</a>
+        </div>
+        <div class="state" data-when="queued" style="padding-top:80px">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Saved on your phone</h3>
+          <p>We send it when you are back online.</p>
+          <a class="btn btn-secondary" href="E802-profile.html">Done</a>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready errors uploading offline">
+        <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Tells Zixom something in the app is wrong, with screenshots and app logs. Offline the report is kept
+on the phone and sent later.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1015 Low power mode</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.visit{text-decoration:none; color:inherit; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:center}
+.visit .thumb{grid-row:1 / span 2}
+.visit b{font-size:var(--fs-14); color:var(--slate-900)}
+.visit .card-sub{margin:0}
+.visit .row-flex{grid-column:1 / -1; justify-content:space-between; margin-top:10px; font-size:var(--fs-13); color:var(--text-muted)}
+.sheet-state{padding:4px 0 0}
+.state .disc.amber{background:var(--amber-50); color:var(--amber)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1015 Low power mode</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="power">low power mode on</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="power">offline</button>
+  <button type="button" data-state="ready" aria-pressed="false">dismissed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <span class="avatar on-dark" id="initials"></span>
+          <div class="grow"><span class="root-hello" id="hello"></span><span class="root-name" id="code"></span></div>
+          <a class="icon-btn glass" href="E102-sync-queue.html" aria-label="Sync queue"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><span class="count" id="waiting-count"></span></a>
+        </div>
+        <h1 class="root-title">Today</h1>
+      </header>
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="stack" style="margin-top:16px">
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Work is saved on this phone.</div>
+            <div class="stack-sm" id="visits"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabbar" data-tabs="engineer" data-active="today"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="power" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="power-t">
+        <span class="grabber"></span>
+        <div class="state sheet-state">
+          <span class="disc amber"><svg class="ic" aria-hidden="true"><use href="#ph-lightning"/></svg></span>
+          <h3 id="power-t">Low power mode is on</h3>
+          <p>Background sync may be delayed. Keep the app open to sync.</p>
+        </div>
+        <div class="list" style="margin-top:18px">
+          <a class="list-item" href="E102-sync-queue.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+            <b id="waiting"></b><span class="sub" data-when="ready">Sending now</span><span class="sub" data-when="offline">Sends when you are back online</span>
+            <span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close data-toast="Opening phone settings">Open settings</button>
+          <button class="btn btn-secondary" type="button" data-close>Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown once a day while the phone is in low power mode, over Today. Everything stays saved on the phone;
+only background sync slows down.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  const waiting = day.sync.filter((s) => s.state === 'waiting').length;
+  const ENGINEER_STATUS = { 'in-progress': ['Working', 'blue'], 'on-the-way': ['Next', 'blue'], 'scheduled': ['Scheduled', ''], 'on-hold': ['On hold', 'amber'] };
+
+  $('initials').textContent = me.initials;
+  $('hello').textContent = `Good morning, ${me.name.split(' ')[0]}`;
+  $('code').textContent = `${me.region} region`;
+  $('waiting-count').textContent = waiting;
+  $('waiting').textContent = `${waiting} items waiting to sync`;
+
+  $('visits').innerHTML = day.today.map((v) => {
+    const t = data.tickets.find((x) => x.number === v.ticket);
+    const m = R.machine(t.machine);
+    const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+    return `<a class="card visit" href="E202-job-detail.html?ticket=${R.esc(t.number)}">
+      ${R.thumb(m)}<b>${R.esc(m.nickname || m.model)}</b><span class="card-sub">${R.esc(t.type)}</span>
+      <span class="row-flex"><span>${R.esc(v.slot)} · ${R.esc(site.name)}</span>${R.tag(...ENGINEER_STATUS[v.status])}</span></a>`;
+  }).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E801 Inbox</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
+.title-row .root-title{margin:0}
+.title-row .btn{min-height:0; padding:0}
+.urgent{border-color:var(--red)}
+.urgent .tag{grid-column:2; justify-self:start; margin-top:6px}
+.notif.is-urgent .disc{background:var(--red-50); color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E801 Inbox</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="notfound" aria-pressed="false" data-open="gone">record removed</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark" id="initials"></span>
+        <div class="grow"><span class="root-hello" id="today"></span><span class="root-name" id="name"></span></div>
+        <a class="icon-btn glass" href="E811-alert-sounds.html" aria-label="Notification alerts"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></a>
+      </div>
+      <div class="title-row">
+        <h1 class="root-title">Inbox</h1>
+        <button class="btn btn-text" type="button" id="mark-all" data-when="ready notfound offline" data-toast="All marked as read">Mark all read</button>
+      </div>
+    </header>
+
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div id="urgent" data-when="ready notfound offline"></div>
+          <div data-when="ready notfound offline">
+            <p class="list-title" style="margin-top:0" id="unread-title"></p>
+            <div id="list"></div>
+          </div>
+
+          <div data-when="loading">
+            <span class="skeleton" style="display:block; height:70px; border-radius:var(--r-lg)"></span>
+            <div class="stack-sm" style="margin-top:18px" id="sk"></div>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-tray"/></svg></span>
+            <h3>You are all caught up</h3>
+            <p>New updates will appear here.</p>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:60px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <nav class="tabbar" data-tabs="engineer" data-active="inbox"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="gone" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="gone-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+        <h3 id="gone-t">We cannot find this</h3><p id="gone-p"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>OK</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every message for the engineer, newest first. A new assignment is a time sensitive alert pinned on
+top until answered; a message whose job no longer exists says so instead of opening.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  $('initials').textContent = me.initials;
+  $('name').textContent = me.name;
+  $('today').textContent = R.dayDate(data.today);
+
+  /* where each message opens (spec section 12); a ticket missing from data opens the not found alert */
+  const ticketIn = (item) => item.sub.match(/TKT-\d{4}-\d{4}/)?.[0];
+  const OPENS = { 'clock-countdown': 'E203-accept-job.html', 'chat-text': 'E202-job-detail.html', 'package': 'E502-parts-requests.html',
+    'arrows-clockwise': 'E215-job-cancelled.html', 'calendar-check': 'E702-leave.html', 'users': 'E1011-team-contacts.html' };
+  const href = (item) => {
+    const ticket = ticketIn(item);
+    if (ticket && !data.tickets.some((t) => t.number === ticket)) return null;
+    return OPENS[item.icon] + (ticket && item.icon !== 'package' ? `?ticket=${ticket}` : '');
+  };
+  const row = (item) => {
+    const target = href(item);
+    const attrs = target ? `href="${target}"` : `href="#" data-open="gone" data-ticket="${ticketIn(item)}"`;
+    return `<a class="notif${item.unread ? ' unread' : ''}" ${attrs}><span class="disc">${R.icon(item.icon)}</span>
+      <span><b>${R.esc(item.title)}</b><p>${R.esc(item.sub)}</p></span><time>${R.ago(item.when)}</time></a>`;
+  };
+
+  const urgent = day.inbox.find((i) => i.urgent);
+  $('urgent').innerHTML = `<a class="alert-card red urgent" href="${href(urgent)}"><span class="disc">${R.icon(urgent.icon)}</span>
+    <b>${R.esc(urgent.title)}</b><span>${R.esc(urgent.sub)}</span>${R.icon('caret-right', 'ic-16')}
+    <span class="tag red">Time sensitive</span></a>`;
+  const rest = day.inbox.filter((i) => !i.urgent);
+  $('list').innerHTML = rest.map(row).join('');
+  const setUnread = () => {
+    const n = document.querySelectorAll('#list .notif.unread').length;
+    $('unread-title').textContent = n ? `${n} unread` : 'All read';
+  };
+  setUnread();
+  $('mark-all').addEventListener('click', () => {
+    document.querySelectorAll('#list .notif.unread').forEach((n) => n.classList.remove('unread'));
+    setUnread();
+  });
+  document.addEventListener('click', (e) => {
+    const missing = e.target.closest('[data-ticket]');
+    if (missing) $('gone-p').textContent = `${missing.dataset.ticket} was removed or moved to another engineer.`;
+  });
+  $('gone-p').textContent = `${ticketIn(rest.find((i) => !href(i)))} was removed or moved to another engineer.`;
+
+  $('sk').innerHTML = Array.from({ length: 5 }, () => `<div class="row-flex"><span class="skeleton sk-circle"></span>
+    <div class="grow stack-sm" style="gap:8px"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:85%"></span></div></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

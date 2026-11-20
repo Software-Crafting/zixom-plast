@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1013 Location is off</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.loss{display:grid; gap:8px; margin:18px 0 0; padding:0; list-style:none}
+.loss li{display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:var(--r-md); background:var(--field); border:1px solid var(--line);
+  font-size:var(--fs-14); color:var(--slate-900)}
+.loss .ic{color:var(--amber)}
+.sheet-state{padding:4px 0 0}
+.state .disc.amber{background:var(--amber-50); color:var(--amber)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1013 Location is off</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="travel" aria-pressed="true" data-open="location">at start travel</button>
+  <button type="button" data-state="checkin" aria-pressed="false" data-open="location">at check in</button>
+  <button type="button" data-state="travel" aria-pressed="false">dismissed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="travel">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E201-jobs.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 class="mono" id="title"></h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><div><b>Location is off</b><button class="link-btn" type="button" data-open="location">Turn it on</button></div></div>
+          <div class="card" id="job"></div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-open="location" data-when="travel"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Start travel</button>
+        <button class="btn btn-primary" type="button" data-open="location" data-when="checkin"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg>Check in</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="location" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="location-t">
+        <span class="grabber"></span>
+        <div class="state sheet-state">
+          <span class="disc amber"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span>
+          <h3 id="location-t">Location is off</h3>
+          <p>Turn on Location in your phone settings.</p>
+        </div>
+        <ul class="loss">
+          <li><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>No live ETA for the customer</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg>Check in needs a reason</li>
+        </ul>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close data-toast="Opening phone settings">Open settings</button>
+          <a class="btn btn-secondary" href="E205-start-travel.html" data-when="travel">Continue without location</a>
+          <a class="btn btn-secondary" href="E206-check-in.html" data-when="checkin">Continue without location</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown only at Start travel and Check in when location services are off for the whole phone. Travel and
+check in still work; check in then asks for a reason.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const visit = data.engineerDay.today[1];
+  const ticket = data.tickets.find((t) => t.number === visit.ticket);
+  const machine = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === machine.company);
+  const site = company.sites.find((s) => s.id === machine.site);
+
+  document.getElementById('title').textContent = ticket.number;
+  document.getElementById('job').innerHTML = `<div class="row-flex">${R.thumb(machine)}<div class="grow">
+      <b style="font-size:var(--fs-14); color:var(--slate-900)">${R.esc(machine.nickname || machine.model)}</b>
+      <div class="card-sub" style="margin:2px 0 0">${R.esc(ticket.type)}</div></div></div>
+    <dl class="kv" style="margin:14px 0 0">
+      <div><dt>Customer</dt><dd>${R.esc(company.name)}</dd></div>
+      <div><dt>Site</dt><dd>${R.esc(site.name)}, ${visit.distanceKm} km</dd></div>
+      <div><dt>Visit</dt><dd>Today, ${R.esc(visit.slot)}</dd></div>
+      <div><dt>Contact</dt><dd>${R.esc(site.contact.name)}</dd></div>
+    </dl>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

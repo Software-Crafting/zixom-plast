@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E206 Check in at site</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.radar{position:relative; height:210px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); overflow:hidden}
+.radar .zone{position:absolute; left:50%; top:50%; width:170px; height:170px; transform:translate(-50%, -50%); border-radius:50%;
+  background:var(--blue-50); border:1.5px dashed var(--blue)}
+.radar .zone span{position:absolute; left:50%; bottom:8px; transform:translateX(-50%); font-size:var(--fs-11); font-weight:600; color:var(--blue)}
+.radar .pin{position:absolute; left:50%; top:50%; transform:translate(-50%, -100%); color:var(--slate-800)}
+.radar .pin .ic{width:30px; height:30px}
+.radar .me{position:absolute; width:16px; height:16px; border-radius:50%; background:var(--blue); border:3px solid #fff;
+  box-shadow:0 0 0 6px rgba(64,100,215,.2); transform:translate(-50%, -50%)}
+.radar .me.near{left:62%; top:38%}
+.radar .me.far{left:92%; top:14%; background:var(--amber); box-shadow:0 0 0 6px rgba(168,100,0,.2)}
+.where{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px}
+.where b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.who b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.who span{display:block; margin-top:3px; font-size:var(--fs-13); line-height:1.45; color:var(--text-muted)}
+.chips.wrap{flex-wrap:wrap; overflow:visible}
+.wait{display:flex; align-items:center; gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.wait .disc{width:40px; height:40px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--amber-50); color:var(--amber)}
+.wait b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.wait span{font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E206 Check in at site</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">inside radius</button>
+  <button type="button" data-state="outside" aria-pressed="false">outside radius</button>
+  <button type="button" data-state="outsideerr" aria-pressed="false">outside, errors</button>
+  <button type="button" data-state="weak" aria-pressed="false">weak GPS</button>
+  <button type="button" data-state="gpsoff" aria-pressed="false">location off</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Check in</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready outside outsideerr weak offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Check in is saved with the time.</div>
+
+          <div>
+            <div class="radar" aria-hidden="true">
+              <span class="zone"><span id="radius-label"></span></span>
+              <span class="pin"><svg class="ic"><use href="#ph-map-pin"/></svg></span>
+              <span class="me near" data-when="ready offline"></span>
+              <span class="me far" data-when="outside outsideerr"></span>
+            </div>
+            <div class="where" data-when="ready offline"><b id="near-text"></b><span class="tag green" id="inside-tag"></span></div>
+            <div class="where" data-when="outside outsideerr"><b>You seem to be away from the site</b></div>
+            <p class="hint" data-when="outside outsideerr" id="far-text" style="margin-top:4px"></p>
+          </div>
+
+          <div class="wait" data-when="weak" id="waiting"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+            <div><b>Waiting for a better signal</b><span id="weak-left"></span></div></div>
+          <button class="btn btn-secondary" type="button" data-when="weak" id="override" hidden>Check in without a good signal</button>
+
+          <div class="card who" id="site"></div>
+
+          <div data-when="outside outsideerr">
+            <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div>This check in is flagged for your manager.</div></div>
+            <div class="error-summary" role="alert" style="margin-top:14px" data-when="outsideerr"><b>Fix 2 things to continue</b>
+              <ul><li><a href="#reason-bad">Choose a reason</a></li><li><a href="#photo-bad">Add a photo of the site gate</a></li></ul></div>
+            <div class="field-label" style="margin-top:16px" id="reason-bad">Reason<span class="req" style="color:var(--red)">*</span></div>
+            <div class="chips wrap" data-single>
+              <button class="chip outline" type="button" aria-pressed="false" data-pick>Gate is elsewhere</button>
+              <button class="chip outline" type="button" aria-pressed="false">GPS inaccurate</button>
+              <button class="chip outline" type="button" aria-pressed="false">Other</button></div>
+            <span class="error-text" data-when="outsideerr"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a reason</span>
+
+            <div class="field-label" style="margin-top:16px" id="photo-bad">Photo of the site gate<span class="req" style="color:var(--red)">*</span></div>
+            <div class="files" data-when="outside">
+              <div class="file" data-status="uploading" data-progress="58"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>site-gate.jpg</b><span class="file-meta">Uploading 58% · 2.4 MB</span><span class="progress"><i style="width:58%"></i></span></div>
+                <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
+            <div class="uploads" data-when="outsideerr"><a class="upload add" href="E1001-camera.html" aria-label="Take a photo of the gate"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></a></div>
+            <span class="error-text" data-when="outsideerr"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a photo of the site gate</span>
+          </div>
+        </div>
+
+        <div class="state" data-when="gpsoff" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span>
+          <h3>Location is off</h3>
+          <p>Allow location to share your arrival and travel time.</p>
+          <a class="btn btn-primary" href="E1013-location-off.html">Turn on location</a>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready outside outsideerr offline">
+        <a class="btn btn-primary" id="check-in" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg>Check in</a>
+        <a class="btn btn-primary" id="check-in-far" data-when="outside outsideerr">Check in anyway</a>
+        <button class="btn btn-primary" type="button" data-when="offline" data-toast="Checked in. Waiting to sync"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg>Check in</button>
+        <a class="btn btn-text" style="width:100%; margin-top:4px" id="unavailable">Customer not reachable?</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Records arrival time and location, then opens the safety checklist. Outside 300 m needs a reason
+and a gate photo; a weak signal waits 20 seconds before offering the override.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = data.engineerDay.today.find((j) => j.status === 'on-the-way').ticket;
+  const RADIUS_M = 300;
+  const NEAR_M = 120;
+  const FAR_KM = 1.4;
+  const WEAK_WAIT_SECONDS = 20;
+
+  const params = new URLSearchParams(location.search);
+  const t = data.tickets.find((x) => x.number === (params.get('ticket') || DEFAULT_TICKET));
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const screen = document.querySelector('.screen');
+
+  $('back').href = `E202-job-detail.html${q}`;
+  $('check-in').href = `E901-safety-checklist.html${q}`;
+  $('check-in-far').href = `E901-safety-checklist.html${q}`;
+  $('unavailable').href = `E209-customer-unavailable.html${q}`;
+  $('radius-label').textContent = `${RADIUS_M} m`;
+  $('inside-tag').textContent = `Within ${RADIUS_M} m`;
+  $('near-text').textContent = `You are ${NEAR_M} m from the site`;
+  $('far-text').textContent = `You are ${FAR_KM} km from ${site.name}.`;
+  $('site').innerHTML = `<b>${R.esc(company.name)}, ${R.esc(site.name)}</b><span>${R.esc(site.address)} ${site.pincode}</span>
+    <dl class="kv" style="margin:8px 0 0"><div><dt>Ticket</dt><dd class="mono">${t.number}</dd></div>
+    <div><dt>Arrival time</dt><dd>${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</dd></div></dl>`;
+
+  /* weak GPS: wait 20 seconds for a better fix, then offer the override (reason and photo) */
+  let left = WEAK_WAIT_SECONDS;
+  const paintWeak = () => {
+    $('weak-left').textContent = `${left} seconds left`;
+    $('waiting').hidden = screen.dataset.state !== 'weak' || left === 0;
+    $('override').hidden = screen.dataset.state !== 'weak' || left > 0;
+  };
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('.plate-states [data-state="weak"]')) left = WEAK_WAIT_SECONDS;
+    if (event.target.closest('.plate-states')) paintWeak();
+  });
+  setInterval(() => { if (screen.dataset.state === 'weak' && left > 0) { left -= 1; paintWeak(); } }, 1000);
+  $('override').addEventListener('click', () => document.querySelector('.plate-states [data-state="outside"]').click());
+
+  /* outside: the reason is picked; with errors nothing is picked */
+  document.addEventListener('click', (event) => {
+    const state = event.target.closest('.plate-states [data-state]')?.dataset.state;
+    if (state) document.querySelector('[data-pick]').setAttribute('aria-pressed', String(state === 'outside'));
+  });
+  document.querySelector('[data-pick]').setAttribute('aria-pressed', 'true');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

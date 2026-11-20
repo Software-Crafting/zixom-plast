@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E701 Schedule</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.day-head{display:flex; justify-content:space-between; align-items:baseline; margin:18px 4px 8px; font-size:var(--fs-13); color:var(--text-muted)}
+.day-head b{font-weight:600; color:var(--slate-900)}
+.day-head.today b::after{content:"Today"; margin-left:8px; font-weight:500; color:var(--blue)}
+.none{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-13); color:var(--text-muted)}
+.gap{display:flex; align-items:center; gap:8px; padding:8px 14px 8px 64px; border-top:1px dashed var(--line); font-size:var(--fs-12); color:var(--text-muted)}
+.gap .ic{width:16px; height:16px}
+.gap + .list-item{border-top:1px dashed var(--line)}
+.list-item.clash .disc{background:var(--amber-50); color:var(--amber)}
+.list-item .end .tag .ic{width:14px; height:14px; color:inherit}
+.dates .date.has-jobs b::after{content:""; display:block; width:5px; height:5px; margin:3px auto 0; border-radius:50%; background:currentColor; opacity:.5}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E701 Schedule</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready, week</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="emptyday" aria-pressed="false">empty day</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Schedule</h1>
+        <a class="icon-btn" href="E705-holidays.html" aria-label="Holiday calendar"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></a>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+          <div class="segment" role="tablist" aria-label="Week or day" data-when="ready offline">
+            <button role="tab" aria-selected="true" aria-controls="week">Week</button>
+            <button role="tab" aria-selected="false" aria-controls="day">Day</button>
+          </div>
+
+          <div class="banner amber" id="clash" data-when="ready offline"></div>
+
+          <div data-when="ready offline">
+            <div id="week"></div>
+            <div id="day" hidden>
+              <div class="dates" data-single id="strip"></div>
+              <div id="day-body"></div>
+            </div>
+          </div>
+
+          <div class="state" data-when="emptyday" style="padding-top:60px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+            <h3 id="empty-title"></h3>
+            <p>New jobs show here when they are assigned.</p>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:56px; border-radius:var(--r-pill)"></span>
+            <span class="skeleton sk-line" style="width:40%; margin:14px 4px 4px"></span>
+            <span class="skeleton" style="height:250px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:40%; margin:14px 4px 4px"></span>
+            <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:60px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your schedule. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">This week's jobs and AMC preventive visits. Day view adds travel between sites; two jobs at the same time
+get an amber clash warning.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const day = data.engineerDay;
+  /* page data: AMC preventive visits this week, and a slot for a job Zixom has not given a window yet */
+  const AMC_VISITS = [
+    { amc: 'AMC-2026-0010', date: '2026-11-27', slot: '9 to 12 AM' },
+    { amc: 'AMC-2026-0011', date: '2026-11-28', slot: '12 to 3 PM' },
+  ];
+  const UNSET_SLOT = '3 to 6 PM';
+  const WEEK_DAYS = 7;
+  const DAY_OFF = 0; /* Sunday */
+
+  const addDays = (iso, n) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + n);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const week = Array.from({ length: WEEK_DAYS }, (_, i) => addDays(data.today, i));
+  const ticket = (n) => data.tickets.find((t) => t.number === n);
+  const place = (serial) => {
+    const m = R.machine(serial);
+    const co = data.companies.find((c) => c.id === m.company);
+    return { m, site: co.sites.find((s) => s.id === m.site).name, company: co.name };
+  };
+
+  /* jobs per date: engineerDay.today, engineerDay.tomorrow and the AMC visits above */
+  const jobs = Object.fromEntries(week.map((d) => [d, []]));
+  day.today.forEach((j) => jobs[data.today].push({ ...j, kind: 'job' }));
+  /* a job with a visit window sits on that date; one without a window yet stays on tomorrow */
+  day.tomorrow.forEach((n) => { const w = ticket(n).window;
+    jobs[w && jobs[w.date] ? w.date : week[1]].push({ ticket: n, slot: w?.slot || UNSET_SLOT, kind: 'job' }); });
+  AMC_VISITS.forEach((v) => jobs[v.date].push({ ...v, kind: 'amc' }));
+  const startHour = (slot) => { const h = parseInt(slot, 10); return h < 8 ? h + 12 : h; }; /* slots run 9 AM to 6 PM */
+  week.forEach((d) => jobs[d].sort((a, b) => startHour(a.slot) - startHour(b.slot)));
+
+  const row = (j) => {
+    if (j.kind === 'amc') {
+      const contract = R.amc(j.amc);
+      const p = place(contract.machines[0]);
+      return `<a class="list-item" href="E302-machine-detail.html?serial=${p.m.serial}"><span class="disc">${R.icon('seal-check')}</span>
+        <b>${R.esc(p.m.nickname || p.m.model)}</b><span class="sub">${j.slot} · AMC visit · ${R.esc(p.site)}</span>
+        <span class="end">${R.icon('caret-right')}</span></a>`;
+    }
+    const t = ticket(j.ticket);
+    const p = place(t.machine);
+    return `<a class="list-item${j.overlapWarning ? ' clash' : ''}" href="E202-job-detail.html?ticket=${t.number}">
+      <span class="disc">${R.icon(j.overlapWarning ? 'warning' : 'wrench')}</span>
+      <b>${R.esc(p.m.nickname || p.m.model)}</b><span class="sub">${j.slot} · <span class="mono">${t.number}</span> · ${R.esc(p.site)}</span>
+      <span class="end">${j.overlapWarning ? R.tag('Clash', 'amber') : ''}${R.icon('caret-right')}</span></a>`;
+  };
+  const gap = (j) => (j.distanceKm ? `<div class="gap">${R.icon('car-profile')}${j.distanceKm} km to this site${j.etaMin ? `, about ${j.etaMin} min` : ''}</div>` : '');
+  const headLabel = (d) => `${R.dayDate(d)}`;
+  const count = (d) => (new Date(`${d}T00:00:00`).getDay() === DAY_OFF ? 'Day off' : `${jobs[d].length || 'No'} job${jobs[d].length === 1 ? '' : 's'}`);
+
+  $('week').innerHTML = week.map((d) => `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${count(d)}</span></div>
+    ${jobs[d].length ? `<div class="list">${jobs[d].map(row).join('')}</div>` : `<div class="none">${count(d)}</div>`}`).join('');
+
+  const renderDay = (d) => {
+    const list = jobs[d];
+    $('day-body').innerHTML = `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${count(d)}</span></div>`
+      + (list.length ? `<div class="list">${list.map((j, i) => (i ? gap(j) : '') + row(j)).join('')}</div>`
+        : `<div class="state" style="padding-top:24px"><span class="disc">${R.icon('calendar-blank')}</span><h3>No jobs on ${R.dayDate(d)}</h3></div>`);
+  };
+  $('strip').innerHTML = week.map((d) => { const x = new Date(`${d}T00:00:00`);
+    return `<button class="date${jobs[d].length ? ' has-jobs' : ''}" type="button" data-date="${d}" aria-pressed="${d === data.today}">
+      <span>${R.dayDate(d).slice(0, 3)}</span><b>${x.getDate()}</b></button>`; }).join('');
+  $('strip').addEventListener('click', (e) => { const b = e.target.closest('[data-date]'); if (b) renderDay(b.dataset.date); });
+  renderDay(data.today);
+
+  const clash = day.today.filter((j) => j.overlapWarning).map((j) => ticket(j.ticket));
+  const clashWith = day.today.find((j) => j.status === 'scheduled');
+  $('clash').innerHTML = `${R.icon('warning')}<div><b>2 jobs overlap today, ${day.today.find((j) => j.overlapWarning).slot}</b>
+    <span class="mono">${clashWith.ticket}</span> and <span class="mono">${clash[0].number}</span>. Ask your manager to move one.</div>`;
+  const emptyDate = week.find((d) => !jobs[d].length && new Date(`${d}T00:00:00`).getDay() !== DAY_OFF);
+  $('empty-title').textContent = `No jobs on ${R.dayDate(emptyDate)}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

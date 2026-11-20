@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E809 Change phone number request</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E809 Change phone number request</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="pending" aria-pressed="false">pending</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Change phone number</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Sending needs the internet.</div>
+          <p class="lede" style="margin:0 4px" data-when="ready errors offline">Zixom checks and changes it for you.</p>
+
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">
+            <div><dt>Current number</dt><dd class="cur"></dd></div>
+            <div data-when="pending"><dt>New number</dt><dd id="new-num"></dd></div>
+            <div data-when="pending"><dt>Sent</dt><dd id="sent"></dd></div>
+            <div data-when="pending"><dt>Status</dt><dd><span class="tag amber"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>Waiting for Zixom</span></dd></div>
+          </dl></div>
+          <div class="banner grey" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div>Keep signing in with your current number until Zixom confirms.</div></div>
+          <button class="btn btn-secondary" type="button" data-when="pending" data-open="withdraw">Withdraw request</button>
+
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 1 thing to send</b>
+            <ul><li><a href="#new-bad">Enter a 10 digit mobile number</a></li></ul></div>
+
+          <div data-when="ready errors offline">
+            <div class="field" data-when="ready offline"><label for="new">New mobile number<span class="req">*</span></label>
+              <div class="input-group"><span class="prefix">+91</span><input class="input" id="new" inputmode="numeric" value="98795 40217"></div></div>
+            <div class="field has-error" data-when="errors"><label for="new-bad">New mobile number<span class="req">*</span></label>
+              <div class="input-group"><span class="prefix">+91</span><input class="input" id="new-bad" inputmode="numeric" value="98795 402" aria-invalid="true" aria-describedby="new-err"></div>
+              <span class="error-text" id="new-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span></div>
+            <div class="field" style="margin-top:16px"><label for="why">Reason<span class="counter">Optional</span></label>
+              <input class="input" id="why" value="Changed my SIM"></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready errors">
+        <button class="btn btn-primary" type="button" data-busy data-toast="Request sent to Zixom"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send request</button>
+      </div>
+      <div class="footer-bar" data-when="offline">
+        <button class="btn btn-primary" type="button" disabled>Send request</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="withdraw" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Withdraw request">
+        <div class="group"><div class="title">Withdraw your phone number request?</div>
+          <button class="destructive" type="button" data-close data-toast="Request withdrawn">Withdraw request</button></div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">The sign in number cannot be changed in the app; this sends a request. The old number keeps working
+until Zixom confirms the new one.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const me = R.engineer(ZX.data.engineerDay.engineer);
+  /* page data: the asked number and when it was sent */
+  const NEW = '+91 98795 40217';
+  const SENT = '2026-11-23T10:05';
+  document.querySelectorAll('.cur').forEach((el) => { el.textContent = me.phone; });
+  document.getElementById('new-num').textContent = NEW;
+  document.getElementById('sent').textContent = R.ago(SENT);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

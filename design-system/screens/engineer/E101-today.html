@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E101 Today</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
+.title-row .root-title{margin:0}
+.duty-pill, .sync-chip{display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 12px; border-radius:var(--r-pill);
+  background:#fff; box-shadow:inset 0 0 0 1px var(--line); color:var(--slate-800); font:400 var(--fs-13) var(--font-display); text-decoration:none}
+.duty-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--blue)}
+.duty-pill.leave .dot{background:var(--slate-400)}
+.sync-chip{margin-top:10px; height:30px; font:500 var(--fs-12) var(--font-body)}
+.sync-chip .ic{width:16px; height:16px; color:var(--blue)}
+.sync-chip.bad .ic{color:var(--red)}
+.stats.three{grid-template-columns:repeat(3, 1fr)}
+.stats.three .stat b{font-size:var(--fs-22)}
+.offer{padding:16px; border-radius:24px; background:#fff; border:1px solid rgba(194,59,59,.25)}
+.offer .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.offer .top .mono{font-size:var(--fs-12); color:var(--text-muted)}
+.offer .btn-pair{grid-template-columns:1fr 1fr; margin-top:14px}
+.offer .wait{margin:12px 0 0; font-size:var(--fs-12); color:var(--text-muted)}
+.next{padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.next .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.next .when{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.next h3{margin:10px 0 0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.next .meta{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+.next .meta span{display:inline-flex; align-items:center; gap:4px}
+.next .meta .ic{width:15px; height:15px}
+.next .row-flex{margin-top:10px; flex-wrap:wrap; gap:6px}
+.next .btn-pair{grid-template-columns:auto auto 1fr; margin-top:14px}
+.job{display:grid; grid-template-columns:1fr auto; column-gap:12px; align-items:center; padding:14px 30px 14px 2px; color:inherit; text-decoration:none}
+.job + .job{border-top:1px solid var(--line)}
+.job b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.job .sub{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.job .warn{display:flex; align-items:center; gap:5px; margin-top:6px; font-size:var(--fs-12); font-weight:500; color:var(--amber)}
+.job .warn .ic{width:14px; height:14px}
+.job .moved{color:var(--red)}
+.foot-links{display:flex; flex-direction:column}
+.foot-links a{display:flex; justify-content:space-between; padding:14px 30px 14px 2px; color:var(--slate-900); font-size:var(--fs-14); font-weight:500; text-decoration:none}
+.foot-links a + a{border-top:1px solid var(--line)}
+.foot-links span{color:var(--text-muted); font-weight:400}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E101 Today</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="twooffers" aria-pressed="false">two offers</button>
+  <button type="button" data-state="reassigned" aria-pressed="false" data-toast="TKT-2026-0132 was moved to Anita Verma">job reassigned</button>
+  <button type="button" data-state="empty" aria-pressed="false">no jobs today</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, saved jobs</button>
+  <button type="button" data-state="offlinenone" aria-pressed="false">offline, nothing saved</button>
+  <button type="button" data-state="leave" aria-pressed="false">on leave today</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark" id="initials"></span>
+        <div class="grow">
+          <span class="root-hello" id="date"></span>
+          <span class="root-name" id="name"></span>
+        </div>
+      </div>
+      <div class="title-row">
+        <h1 class="root-title">Today</h1>
+        <a class="duty-pill" href="E103-duty-status.html" data-when="ready loading twooffers reassigned empty offline offlinenone error"><span class="dot"></span>On job<svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></a>
+        <span class="duty-pill leave" data-when="leave"><span class="dot"></span>On leave</span>
+      </div>
+      <a class="sync-chip" href="E102-sync-queue.html" id="sync-chip" data-when="ready twooffers reassigned offline offlinenone error"></a>
+    </header>
+
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:12px">
+          <div class="offline-strip" style="margin:0" data-when="offline offlinenone"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved 11:42 AM.</div>
+
+          <div class="stats three" id="stats" data-when="ready twooffers reassigned offline"></div>
+
+          <div class="stack-sm" id="offers" data-when="ready twooffers reassigned offline"></div>
+
+          <div data-when="ready twooffers reassigned offline">
+            <div class="section-head" style="margin-bottom:10px"><h2>Next job</h2></div>
+            <div id="next"></div>
+          </div>
+
+          <div data-when="ready twooffers reassigned offline">
+            <div class="section-head"><h2>Today's jobs</h2><span class="hint" style="margin:0" id="job-count"></span></div>
+            <div id="jobs" data-when="ready twooffers offline"></div>
+            <div id="jobs-moved" data-when="reassigned"></div>
+          </div>
+
+          <div class="state" data-when="empty">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span>
+            <h3>No jobs assigned for today</h3>
+            <a class="btn btn-secondary" href="E201-jobs.html">See upcoming jobs</a>
+          </div>
+
+          <div class="banner grey" data-when="leave">
+            <svg class="ic" aria-hidden="true"><use href="#ph-calendar-check"/></svg>
+            <div><b>You are on leave today</b>New jobs are not sent to you.</div>
+          </div>
+
+          <div class="state" data-when="offlinenone">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+            <h3>Connect once to download today's jobs</h3>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          </div>
+
+          <div class="state" data-when="error">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load your jobs.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+
+          <div class="stack" data-when="loading">
+            <div class="stats three"><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton sk-line" style="width:30%"></span>
+            <span class="skeleton" style="height:210px; border-radius:24px"></span>
+            <span class="skeleton sk-line" style="width:40%"></span>
+            <span class="skeleton" style="height:58px"></span><span class="skeleton" style="height:58px"></span><span class="skeleton" style="height:58px; opacity:.6"></span>
+          </div>
+
+          <div class="foot-links" data-when="ready twooffers reassigned empty offline leave">
+            <a class="row-link" href="E201-jobs.html">Tomorrow's jobs <span id="tomorrow"></span></a>
+            <a class="row-link" href="E1009-end-of-day.html" data-when="ready twooffers reassigned offline">End of day summary</a>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <nav class="tabbar" data-tabs="engineer" data-active="today"></nav>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Start of the day: duty status (<a href="E103-duty-status.html">E103</a>), sync chip (<a href="E102-sync-queue.html">E102</a>),
+offers with their timer, the next job and today's jobs in time order. Works offline from saved jobs; an overlap shows amber on the later job.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  /* engineer wording for job statuses; the customer wording lives in render.js */
+  const STATUS = { 'in-progress': ['In progress', 'blue'], 'on-the-way': ['On the way', 'blue'], scheduled: ['Scheduled', 'outline'],
+    'on-hold': ['On hold', 'amber'], assigned: ['Accepted', 'outline'] };
+  /* ponytail: a second offer only exists to show the two offers edge case */
+  const SECOND_OFFER = { ticket: 'TKT-2026-0120', minutesLeft: 27, slot: { date: '2026-11-24', slot: '3 to 6 PM' }, distanceKm: 9 };
+  const REASSIGNED = { ticket: 'TKT-2026-0132', to: 'anita' };
+
+  const ticket = (n) => data.tickets.find((t) => t.number === n);
+  const siteOf = (m) => data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const companyOf = (m) => data.companies.find((c) => c.id === m.company);
+  const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
+
+  document.getElementById('initials').textContent = me.initials;
+  document.getElementById('name').textContent = me.name;
+  document.getElementById('date').textContent = `${R.dayDate(data.today)} ${data.today.slice(0, 4)}`;
+
+  const waiting = day.sync.filter((s) => s.state === 'waiting').length;
+  const failed = day.sync.filter((s) => s.state === 'failed').length;
+  const chip = document.getElementById('sync-chip');
+  chip.innerHTML = `${R.icon('cloud-arrow-up')}${waiting} waiting to sync${failed ? ` · ${failed} failed` : ''}`;
+  chip.classList.toggle('bad', failed > 0);
+
+  const done = day.today.filter((j) => j.status === 'completed').length;
+  const stat = (href, value, label) => `<a class="stat" href="${href}"><b>${value}</b><span>${label}</span></a>`;
+  document.getElementById('stats').innerHTML = [
+    stat('E201-jobs.html', day.today.length, 'Jobs today'),
+    stat('E1009-end-of-day.html', done, 'Done'),
+    stat('E102-sync-queue.html', waiting + failed, 'To sync'),
+  ].join('');
+
+  /* offers: count down from the minutes left */
+  const offerCard = (o) => {
+    const t = ticket(o.ticket);
+    const m = R.machine(t.machine);
+    return `<div class="offer">
+      <div class="top"><span class="tag red">${R.icon('clock-countdown')}Respond in <span data-left="${o.minutesLeft * 60}">${o.minutesLeft}:00</span></span><span class="mono">${t.number}</span></div>
+      <h3 class="card-title" style="margin-top:12px">New job: ${R.esc(m.model)}</h3>
+      <p class="card-sub">${R.esc(companyOf(m).name)}, ${R.esc(siteOf(m).name)} · ${R.dayDate(o.slot.date)}, ${R.esc(o.slot.slot)} · ${o.distanceKm} km</p>
+      <div class="btn-pair" data-when="ready twooffers reassigned">
+        <a class="btn btn-secondary btn-sm" href="E203-accept-job.html?ticket=${t.number}">Decline</a>
+        <a class="btn btn-primary btn-sm" href="E203-accept-job.html?ticket=${t.number}">Accept</a>
+      </div>
+      <p class="wait" data-when="offline">Connect to respond.</p>
+    </div>`;
+  };
+  document.getElementById('offers').innerHTML = offerCard(day.offer)
+    + `<div data-when="twooffers">${offerCard(SECOND_OFFER)}</div>`;
+  const tick = () => document.querySelectorAll('[data-left]').forEach((el) => {
+    const left = Math.max(0, Number(el.dataset.left) - 1);
+    el.dataset.left = left;
+    el.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+  });
+  window.setInterval(tick, 1000);
+
+  /* next job: the first job not yet being worked on */
+  const next = day.today.find((j) => j.status !== 'in-progress');
+  const nt = ticket(next.ticket);
+  const nm = R.machine(nt.machine);
+  const ns = siteOf(nm);
+  const primary = next.status === 'on-the-way'
+    ? `<a class="btn btn-primary" href="E206-check-in.html?ticket=${nt.number}">Check in at site</a>`
+    : `<a class="btn btn-primary" href="E205-start-travel.html?ticket=${nt.number}">Start travel</a>`;
+  document.getElementById('next').innerHTML = `<div class="next">
+    <div class="top"><span class="when">${R.esc(next.slot)}</span>${R.tag(...STATUS[next.status])}</div>
+    <h3>${R.esc(nm.model)}${nm.nickname ? `, ${R.esc(nm.nickname)}` : ''}</h3>
+    <div class="meta"><span class="mono">${nt.number}</span><span>${R.icon('buildings')}${R.esc(companyOf(nm).name)}</span>
+      <span>${R.icon('map-pin')}${R.esc(ns.name)} · ${next.distanceKm} km${next.etaMin ? `, ${next.etaMin} min` : ''}</span></div>
+    <div class="row-flex">${R.severityTag(nt.severity)}<span class="tag outline">${R.esc(nt.type)}</span></div>
+    <div class="btn-pair">
+      <a class="icon-btn" href="https://maps.google.com/?q=${encodeURIComponent(ns.address)}" aria-label="Navigate">${R.icon('navigation-arrow')}</a>
+      <a class="icon-btn" href="${tel(ns.contact.phone)}" aria-label="Call ${R.esc(ns.contact.name)}">${R.icon('phone')}</a>
+      ${primary}
+    </div>
+  </div>`;
+
+  /* an overlap is flagged on the later job */
+  const jobs = day.today; /* ponytail: data.js already lists them in time order */
+  const row = (j, moved) => {
+    const t = ticket(j.ticket);
+    const m = R.machine(t.machine);
+    const before = jobs[jobs.indexOf(j) - 1];
+    const warn = j.overlapWarning && before
+      ? `<span class="warn">${R.icon('warning')}Overlaps the ${R.esc(before.slot)} job</span>` : '';
+    const movedLine = moved ? `<span class="warn moved">${R.icon('arrows-clockwise')}Moved to ${R.esc(R.engineer(REASSIGNED.to).name)} by Zixom</span>` : '';
+    return `<a class="job row-link" href="E202-job-detail.html?ticket=${t.number}">
+      <span><b>${R.esc(m.nickname || m.model)}</b><span class="sub">${R.esc(j.slot)} · ${R.esc(siteOf(m).name)}</span>${warn}${movedLine}</span>
+      ${moved ? R.tag('Reassigned') : R.tag(...STATUS[j.status])}</a>`;
+  };
+  document.getElementById('jobs').innerHTML = jobs.map((j) => row(j)).join('');
+  document.getElementById('jobs-moved').innerHTML = jobs.map((j) => row(j, j.ticket === REASSIGNED.ticket)).join('');
+  document.getElementById('job-count').textContent = `${jobs.length} jobs`;
+  document.getElementById('tomorrow').textContent = `${day.tomorrow.length} jobs`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

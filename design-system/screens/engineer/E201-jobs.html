@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E201 Jobs list</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tools{display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center}
+.tools .icon-btn{width:50px; height:50px}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:2px 4px 0; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.chip .n{font-size:var(--fs-12); opacity:.7}
+.job .who{display:flex; flex-direction:column; gap:2px}
+.job .who b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .who span{font-size:var(--fs-12); color:var(--text-muted)}
+.job .who .mono{color:var(--slate-700)}
+.job .tags{display:flex; flex-wrap:wrap; gap:6px}
+.job .foot{justify-content:space-between}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E201 Jobs list</b><span>engineer · Jobs tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="overdue" aria-pressed="false">timer nearly due</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="morefail" aria-pressed="false">load more failed</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark" id="initials"></span>
+        <div class="grow"><span class="root-hello" id="today"></span><span class="root-name" id="name"></span></div>
+        <a class="icon-btn glass" href="E102-sync-queue.html" id="sync-btn"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><span class="count" id="sync-count"></span></a>
+      </div>
+      <h1 class="root-title">Jobs</h1>
+    </header>
+
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing saved jobs.</div>
+
+          <div class="chips" role="tablist" aria-label="Job status" id="tabs" data-when="ready overdue filtered noresults loading morefail empty error offline"></div>
+
+          <div class="tools" data-when="ready overdue filtered noresults morefail offline">
+            <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+              <input class="input" placeholder="Ticket, customer or serial" aria-label="Search jobs"></div>
+            <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
+            <button class="icon-btn" type="button" data-open="sort" aria-label="Sort, by time window"><svg class="ic" aria-hidden="true"><use href="#ph-sort-ascending"/></svg></button>
+          </div>
+
+          <div class="chips" data-when="filtered" style="margin-top:-4px">
+            <button class="chip outline" type="button" aria-pressed="false">Machine down <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+            <button class="chip outline" type="button" aria-pressed="false">Warranty <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+          </div>
+
+          <div id="panels" data-when="ready overdue morefail empty offline"></div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+
+          <div data-when="filtered">
+            <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+            <div class="stack-sm" id="filtered" style="margin-top:10px"></div>
+          </div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p>Try a different word or clear the filters.</p>
+            <button class="btn btn-secondary" type="button">Clear filters</button>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:40%; margin:4px"></span>
+            <span class="skeleton" style="height:210px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:210px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:40px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <nav class="tabbar" data-tabs="engineer" data-active="jobs"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="sort" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Sort jobs">
+        <div class="group" role="radiogroup" aria-label="Sort by"><div class="title">Sort jobs</div>
+          <button type="button" role="radio" aria-checked="true" data-close>Time window</button>
+          <button type="button" role="radio" aria-checked="false" data-close>Priority</button>
+          <button type="button" role="radio" aria-checked="false" data-close>Newest</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter jobs</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Date</div>
+          <div class="chips" data-single style="margin-bottom:14px">
+            <button class="chip outline" type="button" aria-pressed="true">Any time</button><button class="chip outline" type="button" aria-pressed="false">Today</button>
+            <button class="chip outline" type="button" aria-pressed="false">This week</button><button class="chip outline" type="button" aria-pressed="false">Last 30 days</button></div>
+          <div class="field-label">Priority</div>
+          <div class="chips" style="margin-bottom:14px" id="f-priority"></div>
+          <div class="field-label">Coverage</div>
+          <div class="chips" style="margin-bottom:14px" id="f-coverage"></div>
+          <div class="field-label">Service type</div>
+          <div class="chips" style="margin-bottom:14px; flex-wrap:wrap; overflow:visible" id="f-types"></div>
+          <div class="field-label">Status</div>
+          <div class="chips" style="flex-wrap:wrap; overflow:visible" id="f-status"></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close id="f-apply"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Only jobs assigned to Sandeep. New jobs show a response timer, red when it is nearly due; empty tabs
+show their own wording. Offline, saved jobs stay searchable and unsent changes carry Waiting to sync.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const $ = (id) => document.getElementById(id);
+  const me = R.engineer(day.engineer);
+  const OVERDUE_MINUTES = 2.7;
+  const URGENT_UNDER_MINUTES = 5;
+
+  /* engineer wording of a ticket status (spec section 11), worth moving to render.js */
+  const ENG_STATUS = {
+    'assigned': ['New job', 'blue'], 'scheduled': ['Scheduled', 'blue'], 'on-the-way': ['On the way', 'blue'],
+    'in-progress': ['In progress', 'blue'], 'on-hold': ['On hold', 'amber'], 'completed': ['Waiting for customer', 'amber'],
+    'closed': ['Closed', 'green'], 'visit-failed': ['Visit failed', 'red'], 'cancelled': ['Cancelled', ''], 'reopened': ['Reopened', 'amber'],
+  };
+  const TABS = [
+    ['new', 'New', ['assigned', 'reopened'], 'No new jobs'],
+    ['upcoming', 'Upcoming', ['scheduled'], 'Nothing scheduled'],
+    ['progress', 'In progress', ['on-the-way', 'in-progress', 'on-hold'], 'No job in progress'],
+    ['completed', 'Completed', ['completed', 'closed', 'visit-failed'], 'No completed jobs yet'],
+    ['all', 'All', null, 'No jobs yet'],
+  ];
+  const EMPTY_ICON = { new: 'tray', upcoming: 'calendar-blank', progress: 'wrench', completed: 'check-circle', all: 'clipboard-text' };
+
+  $('initials').textContent = me.initials;
+  $('name').textContent = me.name;
+  $('today').textContent = new Date(`${data.today}T00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+  const unsynced = day.sync.length;
+  $('sync-count').textContent = unsynced;
+  $('sync-btn').setAttribute('aria-label', `${unsynced} items waiting to sync`);
+
+  const mine = data.tickets.filter((t) => t.engineer === me.id || t.number === day.offer.ticket);
+  const site = (m) => {
+    const company = data.companies.find((c) => c.id === m.company);
+    return { company, site: company.sites.find((s) => s.id === m.site) };
+  };
+  const windowOf = (t) => {
+    if (t.window) return `${({ 0: 'Today', 1: 'Tomorrow' })[R.daysFromToday(t.window.date)] || R.dayDate(t.window.date)}, ${t.window.slot}`;
+    const today = day.today.find((j) => j.ticket === t.number);
+    if (today) return `Today, ${today.slot}`;
+    const report = data.reports.find((r) => r.ticket === t.number);
+    return report ? `Visited ${R.dayDate(report.date)}` : `Raised ${R.dayDate(t.created)}`;
+  };
+  const syncTag = (t) => {
+    const items = day.sync.filter((s) => s.ticket === t.number);
+    if (items.some((s) => s.state === 'failed')) return R.tag('Not synced', 'red', 'warning-circle');
+    return items.length ? R.tag('Waiting to sync', 'outline', 'cloud-arrow-up') : '';
+  };
+  const timer = (minutes) => {
+    const mm = Math.floor(minutes);
+    const ss = String(Math.round((minutes - mm) * 60)).padStart(2, '0');
+    return R.tag(`Respond in ${String(mm).padStart(2, '0')}:${ss}`, minutes < URGENT_UNDER_MINUTES ? 'red' : 'amber', 'clock-countdown');
+  };
+
+  const card = (t, offerMinutes) => {
+    const m = R.machine(t.machine);
+    const { company, site: s } = site(m);
+    const [label, tone] = ENG_STATUS[t.status];
+    const isOffer = t.number === day.offer.ticket;
+    return `<a class="ticket job" href="${isOffer ? 'E203-accept-job.html' : 'E202-job-detail.html'}?ticket=${t.number}">
+      <span class="top"><span class="num mono">${t.number}</span>${R.tag(label, tone)}</span>
+      <span class="who"><b>${R.esc(company.name)}</b><span>${R.esc(s.name)}, ${R.esc(company.city)}</span>
+        <span>${R.esc(m.model)} · <span class="mono">${m.serial}</span></span></span>
+      <p>${R.esc(t.summary)}</p>
+      <span class="tags">${R.coverageTag(t.coverage)}${R.severityTag(t.severity)}${syncTag(t)}</span>
+      <span class="foot"><span>${R.icon('calendar-blank')}${R.esc(windowOf(t))}</span>${isOffer ? timer(offerMinutes) : ''}</span>
+    </a>`;
+  };
+
+  /* tabs and panels; the overdue state repaints the New panel with a nearly expired timer */
+  const inTab = ([, , statuses]) => mine.filter((t) => !statuses || statuses.includes(t.status));
+  const byWindow = (a, b) => windowSortKey(a).localeCompare(windowSortKey(b));
+  const windowSortKey = (t) => t.window?.date || (day.today.some((j) => j.ticket === t.number) ? data.today : t.created);
+  $('tabs').innerHTML = TABS.map((tab, i) => `<button class="chip" type="button" role="tab" aria-selected="${i === 0}"
+    aria-controls="panel-${tab[0]}">${tab[1]} <span class="n">${inTab(tab).length}</span></button>`).join('');
+  const emptyState = ([key, , , text]) => `<div class="state" data-when="empty"><span class="disc">${R.icon(EMPTY_ICON[key])}</span><h3>${text}</h3></div>`;
+  $('panels').innerHTML = TABS.map((tab, i) => {
+    const jobs = inTab(tab).sort(byWindow);
+    const list = (minutes) => jobs.map((t) => card(t, minutes)).join('');
+    return `<div id="panel-${tab[0]}"${i ? ' hidden' : ''}>
+      <p class="count-line" data-when="ready overdue morefail offline"><span><b>${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}</b></span><span>By time window</span></p>
+      <div class="stack-sm" style="margin-top:10px" data-when="ready morefail offline">${list(day.offer.minutesLeft)}</div>
+      <div class="stack-sm" style="margin-top:10px" data-when="overdue">${list(OVERDUE_MINUTES)}</div>
+      ${emptyState(tab)}</div>`;
+  }).join('');
+
+  const filtered = mine.filter((t) => t.severity === 'down' && t.coverage === 'warranty');
+  $('filtered-count').innerHTML = `<b>${filtered.length} ${filtered.length === 1 ? 'job' : 'jobs'}</b> · 2 filters`;
+  $('filtered').innerHTML = filtered.map((t) => card(t, day.offer.minutesLeft)).join('');
+
+  /* filter sheet options from the data */
+  const chip = (label, on = false) => `<button class="chip outline" type="button" aria-pressed="${on}">${R.esc(label)}</button>`;
+  $('f-priority').innerHTML = ['Machine down', 'Production affected', 'Minor'].map((p, i) => chip(p, i === 0)).join('');
+  $('f-coverage').innerHTML = ['Warranty', 'AMC', 'Chargeable'].map((c, i) => chip(c, i === 0)).join('');
+  $('f-types').innerHTML = [...new Set(mine.map((t) => t.type))].map((type) => chip(type)).join('');
+  $('f-status').innerHTML = [...new Set(mine.map((t) => ENG_STATUS[t.status][0]))].map((s) => chip(s)).join('');
+  $('f-apply').textContent = `Show ${filtered.length} ${filtered.length === 1 ? 'job' : 'jobs'}`;
+  document.querySelectorAll('#filter .chips:not([data-single]) .chip').forEach((c) => c.addEventListener('click', () => {
+    c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true'));
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E803 Performance</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.stat.wide{grid-column:1 / -1}
+.stat b small{font-size:var(--fs-16); color:var(--text-muted); margin-left:2px}
+.review{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
+.review .top{display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-12); color:var(--text-muted)}
+.review p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--slate-800)}
+.review .who{display:block; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+.stars{display:inline-flex; gap:2px; color:var(--amber)}
+.stars .ic{width:14px; height:14px; fill:currentColor}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E803 Performance</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="nodata" aria-pressed="false">no data for period</button>
+  <button type="button" data-state="notyet" aria-pressed="false">not available yet</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Performance</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="chips" data-single id="periods"></div>
+
+          <div class="stats" id="stats" data-when="ready offline"></div>
+          <div class="stats" data-when="loading">
+            <span class="skeleton" style="height:84px; border-radius:var(--r-lg); grid-column:1 / -1"></span>
+            <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div class="banner" data-when="notyet"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg><div><b>Numbers not available yet</b>This week's numbers are ready on Monday morning.</div></div>
+
+          <div data-when="ready offline">
+            <div class="section-head" style="margin-bottom:10px"><h2>Recent feedback</h2></div>
+            <div class="stack-sm" id="feedback"></div>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div class="state" data-when="nodata" style="padding-top:40px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chart-line-up"/></svg></span>
+            <h3>No data for this period</h3>
+            <p>Pick another period.</p>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:40px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your numbers. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The engineer's own numbers for a period and the latest customer feedback. Numbers are worked out once a
+day, so a new period can show not available yet.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const p = data.engineerDay.performance;
+  /* page data: other periods for the switch, and customer comments on rated jobs */
+  const PERIODS = ['This week', p.period, 'October 2026', 'Last 3 months'];
+  const COMMENTS = [
+    { ticket: 'TKT-2026-0129', rating: 5, when: '2026-10-30', text: 'Explained the vacuum settings to our operators. Very patient.', by: 'Rakesh Mehta' },
+    { ticket: 'TKT-2026-0128', rating: 4, when: '2026-11-21', text: 'Fixed the heater quickly. Arrived 30 minutes late.', by: 'Pooja Shah' },
+  ];
+
+  $('periods').innerHTML = PERIODS.map((label) => `<button class="chip outline" type="button" aria-pressed="${label === p.period}">${label}</button>`).join('');
+  const stat = (value, label, wide = '') => `<div class="stat ${wide}"><b>${value}</b><span>${label}</span></div>`;
+  $('stats').innerHTML = [
+    stat(p.completed, 'Jobs completed', 'wide'),
+    stat(`${p.avgResponseHours}<small>h</small>`, 'Average response time'),
+    stat(`${p.firstVisitFix}<small>%</small>`, 'Fixed on first visit'),
+    stat(`${p.slaMet}<small>%</small>`, 'Response time met'),
+    stat(p.rating, 'Average rating'),
+  ].join('');
+
+  const stars = (n) => `<span class="stars" aria-label="${n} of 5">${R.icon('star').repeat(n)}</span>`;
+  $('feedback').innerHTML = COMMENTS.map((c) => { const m = R.machine(data.tickets.find((t) => t.number === c.ticket).machine);
+    return `<div class="review"><div class="top">${stars(c.rating)}<span>${R.dayDate(c.when)}</span></div>
+      <p>${R.esc(c.text)}</p><span class="who">${R.esc(c.by)} · ${R.esc(m.nickname || m.model)} · <span class="mono">${c.ticket}</span></span></div>`; }).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

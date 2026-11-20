@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E210 Complete job</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.checks .list-item .disc{background:var(--green-50); color:var(--green)}
+.checks .list-item.miss .disc{background:var(--red-50); color:var(--red)}
+.checks .list-item.miss .sub{color:var(--red)}
+.checks .end .fix{font-size:var(--fs-13); font-weight:600; color:var(--blue)}
+.left{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.left b{color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E210 Complete job</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">2 items missing</button>
+  <button type="button" data-state="allset" aria-pressed="false">all done</button>
+  <button type="button" data-state="estimate" aria-pressed="false">estimate pending</button>
+  <button type="button" data-state="safety" aria-pressed="false">safety checklist missing</button>
+  <button type="button" data-state="done" aria-pressed="false">completed</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">completed, waiting to sync</button>
+  <button type="button" data-state="elsewhere" aria-pressed="false">done on another device</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Complete job</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready allset estimate safety offline elsewhere">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="banner" data-when="elsewhere"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg>
+            <div><b>Already completed on another device</b><button class="link-btn" type="button" data-busy>Refresh</button></div></div>
+          <div class="banner amber" data-when="estimate"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg>
+            <div><b>Extra work is waiting for approval</b><a class="hold" href="E208-hold.html">Put on hold</a> until the customer answers.</div></div>
+          <div class="banner red" data-when="safety"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg>
+            <div><b>Safety checklist not done</b><a class="safety" href="E901-safety-checklist.html">Complete it</a> before you finish.</div></div>
+          <div class="job" id="job"></div>
+          <p class="left" data-when="ready"><b>2 left</b> of 6 checks</p>
+          <p class="left" data-when="allset estimate elsewhere offline"><b>All 6 checks done</b></p>
+          <p class="left" data-when="safety"><b>Blocked</b> until the safety checklist is done</p>
+          <div class="list checks" id="checks-missing" data-when="ready"></div>
+          <div class="list checks" id="checks-done" data-when="allset estimate elsewhere offline safety"></div>
+        </div>
+
+        <div class="state" data-when="done queued" style="padding-top:80px">
+          <span class="disc green" data-when="done"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+          <span class="disc" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3 data-when="done">Job completed</h3>
+          <h3 data-when="queued">Completed, waiting to sync</h3>
+          <p data-when="done">Report sent to the customer for sign off.</p>
+          <p data-when="queued">The report is sent when you are back online.</p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <span class="skeleton" style="height:370px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" disabled data-when="ready safety elsewhere">Mark as completed</button>
+        <button class="btn btn-primary" type="button" data-when="allset offline" data-goto="done">Mark as completed</button>
+        <div class="stack-sm" data-when="estimate">
+          <a class="btn btn-primary hold" href="E208-hold.html">Put on hold</a>
+          <button class="btn btn-secondary" type="button" data-goto="done">Complete anyway</button>
+        </div>
+        <div class="stack-sm" data-when="done queued">
+          <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
+          <a class="btn btn-secondary" href="E102-sync-queue.html" data-when="queued">Open sync queue</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Last step after the report. Each check links to its fix; Mark as completed unlocks when all 6 are done.
+Offline, the job shows Completed, waiting to sync and stays in the <a href="E102-sync-queue.html">sync queue</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  /* sample progress on this job, not in data.js */
+  const PHOTO_COUNT = 4;
+  const MACHINE_STATUS = 'Running';
+  const SIGNER = 'Rakesh Mehta';
+  const TIME_ON_SITE = '2 h 28 min';
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.hold').forEach((a) => { a.href = `E208-hold.html${q}`; });
+  document.querySelectorAll('.safety').forEach((a) => { a.href = `E901-safety-checklist.html${q}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+
+  const parts = data.engineerDay.partsRequests.filter((p) => p.ticket === t.number);
+  const partsText = parts.length
+    ? parts.map((p) => `${p.qty} × ${data.parts.find((x) => x.number === p.part).name}`).join(', ') : 'No parts used';
+  const checkedIn = data.engineerDay.today.find((j) => j.ticket === t.number)?.checkedIn;
+  const inTime = checkedIn && new Date(checkedIn).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  /* [label, done text, missing text, fix page] */
+  const CHECKS = [
+    ['Report sections done', 'Findings, work done, checklist', 'Findings missing', 'E401-report.html'],
+    ['At least 2 photos', `${PHOTO_COUNT} photos added`, '1 photo added', 'E1001-camera.html'],
+    ['Parts reconciled', partsText, 'Parts not confirmed', 'E402-parts-used.html'],
+    ['Machine status set', MACHINE_STATUS, 'Not set', 'E412-machine-status.html'],
+    ['Signature or OTP', `Signed by ${SIGNER}`, 'Not captured', 'E403-signature.html'],
+    ['Time log reviewed', inTime ? `In ${inTime} · ${TIME_ON_SITE}` : TIME_ON_SITE, 'Not reviewed', 'E413-time-log.html'],
+  ];
+  const MISSING = ['Signature or OTP', 'Time log reviewed'];
+  const done = ([label, ok]) => `<div class="list-item"><span class="disc">${R.icon('check')}</span>
+    <b>${label}</b><span class="sub">${R.esc(ok)}</span></div>`;
+  const missing = ([label, , no, href]) => `<a class="list-item miss" href="${href}${q}"><span class="disc">${R.icon('x')}</span>
+    <b>${label}</b><span class="sub">${no}</span><span class="end"><span class="fix">Fix</span>${R.icon('caret-right')}</span></a>`;
+  $('checks-done').innerHTML = CHECKS.map(done).join('');
+  $('checks-missing').innerHTML = CHECKS.map((c) => (MISSING.includes(c[0]) ? missing(c) : done(c))).join('');
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const target = document.querySelector('.screen').dataset.state === 'offline' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

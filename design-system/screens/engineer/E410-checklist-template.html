@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E410 Checklist template</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tpl-head{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.tpl-head b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.tpl-head span span{font-size:var(--fs-12); color:var(--text-muted)}
+.list-item .disc{font:600 var(--fs-13) var(--font-body)}
+.ref{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px}
+.ref .upload span{position:absolute; left:8px; bottom:6px; font-size:var(--fs-11); font-weight:600; color:var(--slate-600)}
+.guide{margin:0; padding-left:20px; font-size:var(--fs-14); line-height:1.6; color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E410 Checklist template</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" data-open="item" aria-pressed="false">item guidance</button>
+  <button type="button" data-state="general" aria-pressed="false">template missing</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E401-report.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Checklist</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready general offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 20 Nov.</div>
+          <div class="banner" data-when="general"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+            <div><b>No checklist for this model</b>Showing the general checklist.</div></div>
+          <div class="tpl-head" id="tpl-head"></div>
+          <div class="list" id="items"></div>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton sk-line grow"></span></div>
+          <span class="skeleton sk-card" style="height:540px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="item" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="item-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="item-title"></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <ul class="guide" id="item-guide"></ul>
+          <div class="ref">
+            <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>Good</span></div>
+            <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>Fail</span></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Zixom's checklist for this machine type, with guidance and reference photos per item. A model without
+a template falls back to the general checklist.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample guidance per item and the general fallback checklist (move to ZX.data.engineerDay) */
+  const GUIDANCE = {
+    'Heater zones and elements': ['Read each zone current with a clamp meter.', 'Fail if any zone is more than 10 percent off.'],
+    'Industrial chains and sprockets': ['Measure stretch over 10 links.', 'Fail above 2 percent stretch or worn sprocket teeth.'],
+    'Timers and relays': ['Run one cycle and watch each relay switch.', 'Fail on chatter, delay or burnt contacts.'],
+    'PID controllers': ['Compare display with a reference probe.', 'Fail if off by more than 3 degrees.'],
+    'Vacuum system': ['Check gauge at full draw.', 'Fail below 0.8 bar or if it drops within 20 minutes.'],
+    'Cooling system': ['Check water flow and fan noise.', 'Fail on blocked lines or a fan that stalls.'],
+    'Safety interlocks': ['Open each guard while running.', 'Fail if the machine does not stop at once. Stop work.'],
+    'Lubrication': ['Check oiler level and grease points.', 'Fail if dry or empty.'],
+    'Air pressure': ['Read the main regulator.', 'Fail outside 5 to 6 bar.'],
+  };
+  const GENERAL = ['Power and wiring', 'Moving parts and guards', 'Heating', 'Controls and display', 'Safety interlocks', 'Cleanliness'];
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const m = R.machine(data.tickets.find((t) => t.number === ticketNumber).machine);
+  $('back').href = `E401-report.html?ticket=${ticketNumber}&section=3`;
+
+  const render = () => {
+    const general = document.querySelector('.screen').dataset.state === 'general';
+    const items = general ? GENERAL : data.engineerDay.checklist;
+    $('tpl-head').innerHTML = `${R.thumb(m, 'sm')}<span><b>${general ? 'General checklist' : m.type}</b><span>${items.length} items · Pass, Fail or Not applicable</span></span>`;
+    $('items').innerHTML = items.map((item, i) => `<button class="list-item" type="button" data-open="item" data-item="${R.esc(item)}">
+      <span class="disc">${i + 1}</span><b>${R.esc(item)}</b><span class="sub">${R.esc((GUIDANCE[item] || ['Look, listen and test.'])[0])}</span>
+      <span class="end">${R.icon('caret-right')}</span></button>`).join('');
+  };
+  const showItem = (item) => {
+    $('item-title').textContent = item;
+    $('item-guide').innerHTML = (GUIDANCE[item] || ['Look, listen and test.', 'Fail if it is not safe or not working.']).map((g) => `<li>${R.esc(g)}</li>`).join('');
+  };
+  render();
+  showItem(data.engineerDay.checklist[1]);
+  document.addEventListener('click', (event) => {
+    const row = event.target.closest('[data-item]');
+    if (row) showItem(row.dataset.item);
+    if (event.target.closest('.plate-states button')) render();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

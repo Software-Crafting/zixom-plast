@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E207 Work in progress</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.clock{display:flex; flex-direction:column; align-items:center; gap:4px; padding:20px 16px; border-radius:24px; background:#fff; border:1px solid var(--line); text-align:center}
+.clock span{font-size:var(--fs-13); color:var(--text-muted)}
+.clock b{font:400 44px var(--font-display); color:var(--slate-900); font-variant-numeric:tabular-nums; letter-spacing:-.01em; line-height:1.15}
+.clock .tags{display:flex; gap:6px; margin-top:8px}
+.job{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.job b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.job span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+a.progress-card{display:block; color:inherit; text-decoration:none}
+.progress-card .row{display:flex; justify-content:space-between; align-items:baseline; font-size:var(--fs-13); color:var(--text-muted)}
+.progress-card .row b{font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.progress-card .meter{margin-top:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E207 Work in progress</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="restored" aria-pressed="false">app restarted</button>
+  <button type="button" data-state="battery" aria-pressed="false">battery low</button>
+  <button type="button" data-state="storage" aria-pressed="false">storage low</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title"></h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready restored battery storage offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Everything is saved on this phone.</div>
+          <div class="banner" data-when="restored"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><div id="restored-text"></div></div>
+          <div class="banner amber" data-when="battery"><svg class="ic" aria-hidden="true"><use href="#ph-lightning"/></svg><div><b>Battery at 12%</b><a class="report-link">Save your report now</a></div></div>
+          <div class="banner red" data-when="storage"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>Phone storage is almost full</b>New photos may not save. <a href="E1014-low-storage.html">Free up space</a></div></div>
+
+          <div class="clock" role="timer" aria-label="Time on site">
+            <span>On site</span><b id="elapsed"></b><span id="since"></span>
+            <div class="tags" id="clock-tags"></div>
+          </div>
+          <div class="card job" id="job"></div>
+          <a class="card progress-card report-link">
+            <div class="row"><b>Checklist</b><span id="checklist-count"></span></div>
+            <div class="meter"><i id="checklist-bar"></i></div>
+          </a>
+          <div class="quick" id="tiles"></div>
+          <div class="list" id="sync-row"></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:150px; border-radius:24px"></span>
+          <span class="skeleton sk-card"></span>
+          <span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:200px; border-radius:var(--r-lg)"></span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready restored battery storage offline">
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr">
+          <a class="btn btn-secondary" id="complete">Complete</a>
+          <a class="btn btn-primary report-link">Open report</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The working screen of a visit. The timer runs from the saved check in time, so it is right after
+an app restart. Every action is saved on the phone first and works offline.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const $ = (id) => document.getElementById(id);
+  const job = day.today.find((j) => j.ticket === (new URLSearchParams(location.search).get('ticket') || '')) || day.today.find((j) => j.checkedIn);
+  const CHECKLIST_DONE = 5;
+
+  const t = data.tickets.find((x) => x.number === job.ticket);
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const checkedIn = new Date(job.checkedIn || data.now); /* just checked in or resumed: the timer starts now */
+  const checkedInTime = checkedIn.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const sync = day.sync.filter((s) => s.ticket === t.number);
+
+  $('title').textContent = t.number;
+  $('back').href = `E202-job-detail.html${q}`;
+  $('complete').href = `E210-complete-job.html${q}`;
+  document.querySelectorAll('.report-link').forEach((a) => { a.href = `E401-report.html${q}`; });
+  $('since').textContent = `Checked in ${checkedInTime} · ${site.name}`;
+  $('restored-text').textContent = `Back where you left off. Timer runs from your check in at ${checkedInTime}.`;
+  $('clock-tags').innerHTML = R.severityTag(t.severity) + R.coverageTag(t.coverage);
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b>
+    <span>${R.esc(m.model)} · ${R.esc(company.name)}</span></span>`;
+  $('checklist-count').textContent = `${CHECKLIST_DONE} of ${day.checklist.length} done`;
+  $('checklist-bar').style.width = `${Math.round((CHECKLIST_DONE / day.checklist.length) * 100)}%`;
+
+  /* live timer from the saved check in time; demo "now" plus the seconds since the page opened */
+  const opened = Date.now();
+  const tick = () => {
+    const seconds = Math.floor((new Date(data.now) - checkedIn + Date.now() - opened) / 1000);
+    $('elapsed').textContent = [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map((n) => String(n).padStart(2, '0')).join(':');
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  const tile = (href, iconName, label) => `<a href="${href}"><span class="disc">${R.icon(iconName)}</span>${label}</a>`;
+  $('tiles').innerHTML = [
+    tile(`E1001-camera.html${q}`, 'camera', 'Add photo'), tile(`E213-notes.html${q}`, 'note-pencil', 'Add note'),
+    tile(`E1004-voice.html${q}`, 'microphone', 'Voice note'), tile(`E501-request-parts.html${q}`, 'package', 'Request part'),
+    tile(`E208-hold.html${q}`, 'pause', 'Hold'), tile(`tel:${site.contact.phone.replace(/\s/g, '')}`, 'phone', 'Call customer'),
+    tile(`E301-machine-history.html?serial=${m.serial}`, 'clock', 'Machine history'), tile(`E905-hazards.html?serial=${m.serial}`, 'warning', 'Hazard notes'),
+  ].join('');
+  $('sync-row').innerHTML = sync.length ? `<a class="list-item" href="E102-sync-queue.html"><span class="disc">${R.icon('cloud-arrow-up')}</span>
+    <b>${sync.length} changes saved on this phone</b><span class="sub">Waiting to sync</span><span class="end">${R.icon('caret-right')}</span></a>` : '';
+  if (!sync.length) $('sync-row').remove();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

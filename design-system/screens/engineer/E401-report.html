@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E401 Visit report form</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.navbar h1 .mono{font-size:var(--fs-16)}
+.wizard .meta .saved{display:inline-flex; align-items:center; gap:5px}
+.wizard .meta .saved .ic{width:14px; height:14px; color:var(--green)}
+.sec-title{display:flex; align-items:center; gap:8px; margin:0 2px 14px; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.req-dot{width:8px; height:8px; border-radius:50%; background:var(--red)}
+.chips.wrap{flex-wrap:wrap; overflow:visible; margin:0; padding:0}
+.ck{padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.ck + .ck{margin-top:8px}
+.ck-top{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.ck-top b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.ck-opts{display:flex; gap:4px; flex-shrink:0}
+.ck-opts button{height:32px; padding:0 11px; border:1px solid var(--line-strong); border-radius:var(--r-pill); background:#fff;
+  color:var(--slate-600); font:600 var(--fs-12) var(--font-body); cursor:pointer}
+.ck-opts button[aria-pressed="true"]{border-color:transparent; background:var(--slate-800); color:#fff}
+.ck-opts button.fail[aria-pressed="true"]{background:var(--red)}
+.ck-opts button.pass[aria-pressed="true"]{background:var(--green)}
+.ck-fail{display:none; grid-template-columns:1fr auto; gap:8px; margin-top:10px}
+.ck[data-result="fail"] .ck-fail{display:grid}
+.ck[data-result="fail"]{border-color:rgba(194,59,59,.3)}
+.ck-fail .input{min-height:44px; font-size:var(--fs-14)}
+.ck-fail .icon-btn{width:44px; height:44px}
+.pline{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.pline b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.pline .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.pline .tags{grid-column:1 / span 2; display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.pline a{grid-column:2; grid-row:1; font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.read{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
+.read p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--slate-900)}
+.btn-row{display:flex; gap:8px}
+.btn-row .btn{flex:1}
+.footer-bar .pair{display:grid; grid-template-columns:1fr 1.5fr; gap:10px}
+.sec-list .list-item .disc{font:600 var(--fs-13) var(--font-body)}
+.sec-list .list-item[aria-current="step"]{background:var(--slate-50)}
+.sec-list .end .ic.done{color:var(--green)}
+.select .req-dot{margin-left:auto}
+a.select{text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E401 Visit report form</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>section</span>
+  <button type="button" data-state="s1" aria-pressed="false">1 visit</button>
+  <button type="button" data-state="s2" aria-pressed="false">2 found</button>
+  <button type="button" data-state="s3" aria-pressed="true">3 checklist</button>
+  <button type="button" data-state="s4" aria-pressed="false">4 work</button>
+  <button type="button" data-state="s5" aria-pressed="false">5 parts</button>
+  <button type="button" data-state="s6" aria-pressed="false">6 time</button>
+  <button type="button" data-state="s7" aria-pressed="false">7 photos</button>
+  <button type="button" data-state="s8" aria-pressed="false">8 status</button>
+  <button type="button" data-state="s9" aria-pressed="false">9 advice</button>
+  <button type="button" data-state="s10" aria-pressed="false">10 remarks</button>
+</div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="general" aria-pressed="false">template missing</button>
+  <button type="button" data-state="safety" data-open="safety-sheet" aria-pressed="false">safety item failed</button>
+  <button type="button" data-state="limit" aria-pressed="false">photo limit</button>
+  <button type="button" data-state="chargeable" aria-pressed="false">chargeable job</button>
+  <button type="button" data-state="old" aria-pressed="false">draft 30+ days</button>
+  <button type="button" data-state="device" aria-pressed="false">other device</button>
+  <button type="button" data-state="s3" data-open="sections" aria-pressed="false">section list</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="s3">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E207-work.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1><span class="mono ticket-no"></span></h1>
+        <button class="icon-btn" type="button" data-open="sections" aria-label="All sections"><svg class="ic" aria-hidden="true"><use href="#ph-list-checks"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard" data-when="s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 offline general safety limit chargeable old loading">
+          <div class="meta"><b id="sec-count"></b><span class="saved"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved">Saved just now</span></span></div>
+          <div class="bars" id="bars"></div>
+        </div>
+
+        <div class="stack">
+          <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+            <div><b>Working offline</b>Everything is saved on this phone.</div></div>
+          <div class="banner amber" data-when="old"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>Draft started 32 days ago</b>Submit it soon. Old drafts are deleted after 60 days.</div></div>
+          <div class="banner" data-when="general"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+            <div><b>No checklist for this model</b>Showing the general checklist.</div></div>
+
+          <!-- 1 Visit information -->
+          <section data-when="s1 old">
+            <h2 class="sec-title">Visit information</h2>
+            <div class="read">
+              <div class="row-flex" id="v-machine"></div>
+              <div class="row-flex" style="flex-wrap:wrap; gap:6px; margin-top:12px" id="v-tags"></div>
+              <dl class="kv" style="margin:8px 0 0" id="v-kv"></dl>
+            </div>
+          </section>
+
+          <!-- 2 Reported and found -->
+          <section data-when="s2">
+            <h2 class="sec-title">Reported and found</h2>
+            <div class="read"><span class="field-label" style="margin:0">Reported by the customer</span><p id="reported"></p></div>
+            <div class="field" style="margin-top:16px"><label for="findings">Findings<span class="req">*</span><span class="counter" id="findings-count"></span></label>
+              <textarea class="textarea" id="findings" maxlength="1500" data-count="findings-count"></textarea></div>
+            <div class="field"><span class="field-label">Root cause</span>
+              <div class="chips wrap" data-single id="causes"></div></div>
+            <div class="field"><label for="fault">Fault code</label><input class="input mono" id="fault" placeholder="Optional"></div>
+          </section>
+
+          <!-- 3 Checklist -->
+          <section data-when="s3 offline general safety">
+            <h2 class="sec-title">Checklist</h2>
+            <div class="row-flex" style="justify-content:space-between; margin:-6px 2px 12px; font-size:var(--fs-13)">
+              <span id="ck-count"></span><a class="link accent" href="E410-checklist-template.html"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-book-open"/></svg>Guidance</a>
+            </div>
+            <div id="checklist"></div>
+          </section>
+
+          <!-- 4 Work done -->
+          <section data-when="s4">
+            <h2 class="sec-title">Work done</h2>
+            <div class="field"><label for="work">What you did<span class="req">*</span><span class="counter" id="work-count"></span></label>
+              <textarea class="textarea" id="work" maxlength="1500" data-count="work-count"></textarea></div>
+            <div class="field"><span class="field-label">Actions</span>
+              <div class="chips wrap" data-multi id="actions"></div></div>
+          </section>
+
+          <!-- 5 Parts -->
+          <section data-when="s5">
+            <h2 class="sec-title">Parts used</h2>
+            <div class="stack-sm" id="parts"></div>
+            <a class="btn btn-secondary" style="margin-top:12px" href="E402-parts-used.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add part</a>
+          </section>
+
+          <!-- 6 Time and charges -->
+          <section data-when="s6 chargeable">
+            <h2 class="sec-title">Time and charges</h2>
+            <div class="list">
+              <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-car-profile"/></svg></span><b>Travel</b><span class="sub" id="t-travel"></span><span class="end" id="t-travel-h"></span></div>
+              <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>Labour</b><span class="sub" id="t-work"></span><span class="end" id="t-labour"></span></div>
+              <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span><b>On site</b><span class="sub" id="t-site"></span><span class="end">Check out on submit</span></div>
+              <a class="list-item" href="E413-time-log.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg></span><b>Edit time log</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+            <div class="banner green" style="margin-top:12px" data-when="s6"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg>
+              <div><b>No charge</b>Covered by warranty. <a href="E408-estimate.html">Estimate extra work</a></div></div>
+            <div class="list" style="margin-top:12px" data-when="chargeable"><a class="list-item" href="E408-estimate.html">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span><b>Chargeable amount <span id="charge-total"></span></b>
+              <span class="sub">From your estimate, incl. GST</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a></div>
+          </section>
+
+          <!-- 7 Photos and videos -->
+          <section data-when="s7 limit">
+            <h2 class="sec-title">Photos and videos</h2>
+            <div class="banner red" style="margin-bottom:12px" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+              <div><b>10 of 10 photos</b>Remove one to add another.</div></div>
+            <div class="files">
+              <div class="files-head"><span><b id="ph-count"></b> · at least 2</span><span>Video optional</span></div>
+              <div id="photos" class="files"></div>
+            </div>
+            <div class="btn-row" style="margin-top:12px">
+              <a class="btn btn-secondary btn-sm" href="E1001-camera.html" data-when="s7"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</a>
+              <button class="btn btn-secondary btn-sm" type="button" disabled data-when="limit"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+              <a class="btn btn-secondary btn-sm" href="E1003-video.html"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-video-camera"/></svg>Add video</a>
+            </div>
+          </section>
+
+          <!-- 8 Machine status -->
+          <section data-when="s8">
+            <h2 class="sec-title">Machine status <span class="req-dot" aria-label="Required"></span></h2>
+            <div class="field"><span class="field-label">After the visit<span class="req">*</span></span>
+              <a class="select" href="E412-machine-status.html"><svg class="ic" aria-hidden="true"><use href="#ph-gauge"/></svg><span class="value placeholder">Choose status</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></a>
+              <span class="hint">Required before submit.</span></div>
+          </section>
+
+          <!-- 9 Recommendations -->
+          <section data-when="s9">
+            <h2 class="sec-title">Recommendations</h2>
+            <div class="list" id="recos"></div>
+            <a class="btn btn-secondary" style="margin-top:12px" href="E411-recommendations.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add recommendation</a>
+          </section>
+
+          <!-- 10 Customer remarks -->
+          <section data-when="s10">
+            <h2 class="sec-title">Customer remarks</h2>
+            <div class="field"><label for="remarks">In the customer's words<span class="counter" id="remarks-count"></span></label>
+              <textarea class="textarea" id="remarks" maxlength="300" data-count="remarks-count" placeholder="Optional"></textarea></div>
+          </section>
+
+          <!-- loading checklist template -->
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:45%; height:22px"></span>
+            <span class="skeleton sk-card" style="height:60px"></span><span class="skeleton sk-card" style="height:60px"></span>
+            <span class="skeleton sk-card" style="height:60px"></span><span class="skeleton sk-card" style="height:60px"></span>
+          </div>
+        </div>
+
+        <div class="state" data-when="device" style="padding-top:110px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+          <h3>Report open on another phone</h3>
+          <p>A job is bound to one device. Ask your manager to move it.</p>
+          <a class="btn btn-secondary" href="E202-job-detail.html">Back to job</a>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 offline general safety limit chargeable old">
+        <div class="pair">
+          <button class="btn btn-secondary" type="button" id="prev">Previous</button>
+          <button class="btn btn-primary" type="button" id="next">Next</button>
+          <a class="btn btn-primary" href="E404-report-review.html" id="review" hidden>Review</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="sections" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sections-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="sections-title">Sections</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body"><div class="list sec-list" id="sec-list"></div></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="safety-sheet" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Safety item failed">
+        <div class="group">
+          <div class="title">Safety interlocks failed<small>Stop work and report it before you continue.</small></div>
+          <button type="button" onclick="location.href='E211-escalate.html'"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Escalate to manager</button>
+          <button class="destructive" type="button" onclick="location.href='E903-incident.html'"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg>Report an incident</button>
+        </div>
+        <button class="cancel" type="button" data-close>Continue report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One section per page; the switch above jumps between the 10 sections. Saved after every field and
+works fully offline. Red dot marks a required section that is not done yet.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample draft for TKT-2026-0126, same as E404, E405 and E409 (move to ZX.data.engineerDay.report) */
+  const DRAFT = {
+    number: 'SR-2026-0126', travelStart: '2026-11-23T08:50', workStart: '2026-11-23T09:40', workEnd: '2026-11-23T11:50',
+    findings: 'Drive chain stretched past its limit and slipping on the main sprocket. The overload relay trips and the HMI shows E-17.',
+    rootCause: 'Wear', faultCode: 'E-17',
+    checklist: { 'Industrial chains and sprockets': ['fail', 'Chain stretched 2.5 percent, replaced'], 'Lubrication': ['fail', 'Chain oiler empty, refilled'], 'Air pressure': ['na'] },
+    work: 'Replaced the 12B drive chain, aligned the sprockets, reset the overload relay and ran 40 cycles without a trip.',
+    actions: ['Replaced', 'Adjusted'],
+    parts: [{ number: 'ZP-SP-003', qty: 1, source: 'Issued by Stores', oldReturned: true, warranty: true }],
+    photos: [['chain-before.jpg', 'Before', 'done'], ['hmi-e17.jpg', 'Before', 'done'], ['chain-after.jpg', 'After', 'uploading'], ['trial-run.jpg', 'After', 'queued']],
+    status: null,
+    recommendations: [['package', 'Parts to order', 'Keep a spare 12B chain set in the store'], ['users', 'Operator advice', 'Check chain tension every week and log it']],
+    remarks: 'Machine running again. Thanks for the quick visit.',
+  };
+  /* engineer's own estimate for the chargeable variant, same lines as E408 */
+  const ESTIMATE_LINES = [['Automatic chain oiler', 1, 3450], ['Labour, oiler fitting, hours', 1.5, 800]];
+  const ESTIMATE_DISCOUNT = 5;
+  const SECTIONS = [['Visit information', false], ['Reported and found', true], ['Checklist', false], ['Work done', true],
+    ['Parts', false], ['Time and charges', false], ['Photos and videos', true], ['Machine status', true],
+    ['Recommendations', false], ['Customer remarks', false]];
+  const incomplete = new Set([8]); /* machine status not chosen yet */
+  const STATE_SECTION = { offline: 3, general: 3, safety: 3, loading: 3, limit: 7, chargeable: 6, old: 1 };
+  const CAUSES = ['Wear', 'Electrical fault', 'Heater failure', 'Pneumatic or vacuum', 'Control or PLC', 'Operator error', 'Other'];
+  const ACTIONS = ['Replaced', 'Repaired', 'Adjusted', 'Cleaned', 'Calibrated', 'Trained operator'];
+  const GENERAL = ['Power and wiring', 'Moving parts and guards', 'Heating', 'Controls and display', 'Safety interlocks', 'Cleanliness'];
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const job = data.engineerDay.today.find((j) => j.ticket === ticket.number);
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const minutes = (a, b) => Math.round((new Date(b) - new Date(a)) / 60000);
+  const duration = (min) => (min >= 60 ? `${Math.floor(min / 60)} h ${min % 60} min` : `${min} min`);
+  const checkIn = job?.checkedIn || DRAFT.workStart;
+
+  document.querySelectorAll('.ticket-no').forEach((el) => { el.textContent = ticket.number; });
+  document.querySelectorAll('a[href^="E4"]').forEach((a) => { a.href = `${a.getAttribute('href')}?ticket=${ticket.number}`; });
+
+  /* 1 */
+  $('v-machine').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b style="display:block; color:var(--slate-900)">${R.esc(m.nickname || m.model)}</b>
+    <span style="font-size:var(--fs-12); color:var(--text-muted)">${R.esc(m.model)} · <span class="mono">${m.serial}</span></span></span>`;
+  $('v-tags').innerHTML = R.coverageTag(ticket.coverage) + R.severityTag(ticket.severity);
+  $('v-kv').innerHTML = `<div><dt>Ticket</dt><dd class="mono">${ticket.number}</dd></div>
+    <div><dt>Customer</dt><dd>${R.esc(company.name)}</dd></div><div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+    <div><dt>Check in</dt><dd>${time(checkIn)}</dd></div><div><dt>Check out</dt><dd>On submit</dd></div>
+    <div><dt>Travel time</dt><dd>${duration(minutes(DRAFT.travelStart, checkIn))}</dd></div>`;
+
+  /* 2 */
+  $('reported').textContent = ticket.summary;
+  $('findings').value = DRAFT.findings;
+  $('fault').value = DRAFT.faultCode;
+  $('causes').innerHTML = CAUSES.map((c) => `<button class="chip outline" type="button" aria-pressed="${c === DRAFT.rootCause}">${c}</button>`).join('');
+
+  /* 3 */
+  const checkRow = (item, [result, remark] = ['pass']) => `<div class="ck" data-result="${result}">
+    <div class="ck-top"><b>${R.esc(item)}</b><span class="ck-opts" data-single role="group" aria-label="${R.esc(item)}">
+      ${[['pass', 'Pass'], ['fail', 'Fail'], ['na', 'N/A']].map(([v, l]) => `<button class="${v}" type="button" data-result="${v}" aria-pressed="${v === result}">${l}</button>`).join('')}</span></div>
+    <div class="ck-fail"><input class="input" aria-label="Remarks for ${R.esc(item)}" placeholder="Remarks, required" value="${R.esc(remark || '')}">
+      <a class="icon-btn" href="E1001-camera.html" aria-label="Add photo">${R.icon('camera')}</a></div></div>`;
+  const renderChecklist = (state) => {
+    const items = state === 'general' ? GENERAL : data.engineerDay.checklist;
+    const results = state === 'safety' ? { ...DRAFT.checklist, 'Safety interlocks': ['fail', 'Door interlock bypassed with a wire'] }
+      : state === 'general' ? {} : DRAFT.checklist;
+    $('checklist').innerHTML = items.map((item) => checkRow(item, results[item])).join('');
+    $('ck-count').textContent = `${items.length} of ${items.length} answered`;
+  };
+
+  /* 4 */
+  $('work').value = DRAFT.work;
+  $('actions').innerHTML = ACTIONS.map((a) => `<button class="chip outline" type="button" aria-pressed="${DRAFT.actions.includes(a)}">${a}</button>`).join('');
+
+  /* 5 */
+  $('parts').innerHTML = DRAFT.parts.map((line) => {
+    const part = data.parts.find((p) => p.number === line.number);
+    return `<div class="pline"><span><b>${R.esc(part.name)}</b><br><span class="sub"><span class="mono">${part.number}</span> · Qty ${line.qty}</span></span>
+      <a href="E402-parts-used.html?ticket=${ticket.number}">Edit</a>
+      <span class="tags">${R.tag(line.source)}${R.tag(line.oldReturned ? 'Old part returned' : 'Old part kept', '')}${line.warranty ? R.tag('Warranty part', 'green') : ''}</span></div>`;
+  }).join('');
+
+  /* 6 */
+  $('t-travel').textContent = `${time(DRAFT.travelStart)} to ${time(checkIn)}`;
+  $('t-travel-h').textContent = duration(minutes(DRAFT.travelStart, checkIn));
+  $('t-work').textContent = `${time(DRAFT.workStart)} to ${time(DRAFT.workEnd)}`;
+  $('t-labour').textContent = duration(minutes(DRAFT.workStart, DRAFT.workEnd));
+  $('t-site').textContent = `Checked in ${time(checkIn)}`;
+  const subtotal = R.totals(ESTIMATE_LINES).subtotal;
+  const discount = Math.round(subtotal * ESTIMATE_DISCOUNT) / 100;
+  $('charge-total').textContent = R.money(R.totals([...ESTIMATE_LINES, ['Discount', 1, -discount]]).total);
+
+  /* 7 */
+  const photoRow = ([name, when, status]) => {
+    const meta = { done: `${R.icon('check-circle')}${when} · Uploaded`, uploading: `${when} · Uploading 64%`, queued: `${when} · Waiting for network` }[status];
+    return `<div class="file" data-status="${status}" data-progress="64"><span class="file-thumb">${R.icon('image')}</span>
+      <div class="file-body"><b>${name}</b><span class="file-meta">${meta}</span>${status === 'uploading' ? '<span class="progress"><i style="width:64%"></i></span>' : ''}</div>
+      <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove">${R.icon('x')}</button></span></div>`;
+  };
+  const renderPhotos = (state) => {
+    const extra = state === 'limit' ? Array.from({ length: 6 }, (_, i) => [`line-2-${i + 5}.jpg`, 'After', 'done']) : [];
+    const photos = [...DRAFT.photos, ...extra];
+    $('photos').innerHTML = photos.map(photoRow).join('');
+    $('ph-count').textContent = `${photos.length} of 10 photos`;
+  };
+
+  /* 9, 10 */
+  $('recos').innerHTML = DRAFT.recommendations.map(([icon, kind, text]) => `<a class="list-item" href="E411-recommendations.html?ticket=${ticket.number}">
+    <span class="disc">${R.icon(icon)}</span><b>${kind}</b><span class="sub">${R.esc(text)}</span><span class="end">${R.icon('caret-right')}</span></a>`).join('');
+  $('remarks').value = DRAFT.remarks;
+
+  /* counters */
+  const count = (field) => { $(field.dataset.count).textContent = `${field.value.length} / ${field.maxLength}`; };
+  document.querySelectorAll('[data-count]').forEach(count);
+
+  /* section list and progress */
+  const sectionOf = (state) => STATE_SECTION[state] || Number(state.slice(1)) || 1;
+  const renderProgress = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    const n = sectionOf(state);
+    $('sec-count').textContent = `Section ${n} of 10`;
+    $('bars').innerHTML = SECTIONS.map((_, i) => `<span class="${i + 1 === n ? 'now' : incomplete.has(i + 1) ? '' : 'done'}"></span>`).join('');
+    $('sec-list').innerHTML = SECTIONS.map(([name, required], i) => {
+      const missing = incomplete.has(i + 1);
+      const sub = i === 0 ? 'Read only' : missing ? 'Required, not done' : required ? 'Required, done' : 'Optional';
+      return `<button class="list-item" type="button" data-goto="s${i + 1}"${i + 1 === n ? ' aria-current="step"' : ''}>
+        <span class="disc">${i + 1}</span><b>${name}</b><span class="sub">${sub}</span>
+        <span class="end">${missing ? '<span class="req-dot" aria-label="Required"></span>' : R.icon('check-circle', 'done')}${R.icon('caret-right')}</span></button>`;
+    }).join('');
+    $('prev').disabled = n === 1;
+    $('prev').dataset.goto = `s${n - 1}`;
+    $('next').dataset.goto = `s${n + 1}`;
+    $('next').hidden = n === 10;
+    $('review').hidden = n !== 10;
+    $('saved').textContent = state === 'offline' ? 'Saved on this phone' : 'Saved just now';
+    renderChecklist(state);
+    renderPhotos(state);
+  };
+
+  /* open on the section from the link (E404 jump links), else where the engineer left off */
+  const start = new URLSearchParams(location.search).get('section');
+  if (start && SECTIONS[start - 1]) {
+    document.querySelector('.screen').dataset.state = `s${start}`;
+    document.querySelectorAll('.plate-states button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === `s${start}` && !b.dataset.open)));
+  }
+  renderProgress();
+
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+    if (event.target.closest('.plate-states button')) renderProgress();
+    const result = event.target.closest('.ck-opts button');
+    if (result) result.closest('.ck').dataset.result = result.dataset.result;
+    const multi = event.target.closest('[data-multi] > button');
+    if (multi) multi.setAttribute('aria-pressed', String(multi.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  /* autosave after each field */
+  let saving;
+  document.querySelector('.scroll').addEventListener('input', (event) => {
+    if (event.target.dataset.count) count(event.target);
+    $('saved').textContent = 'Saving...';
+    clearTimeout(saving);
+    saving = setTimeout(() => { $('saved').textContent = document.querySelector('.screen').dataset.state === 'offline' ? 'Saved on this phone' : 'Saved just now'; }, 700);
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

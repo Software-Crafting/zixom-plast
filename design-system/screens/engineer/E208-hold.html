@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E208 Put on hold</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.jobrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.jobrow b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.jobrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.chips.wrap{flex-wrap:wrap; overflow:visible}
+/* blocks that depend on the chosen reason */
+.if-parts, .if-safety, .if-dated, .if-other{display:none}
+[data-reason="parts"] .if-parts, [data-reason="safety"] .if-safety{display:flex}
+[data-reason="parts"] .if-dated, [data-reason="customer"] .if-dated, [data-reason="other"] .if-other{display:inline}
+[data-reason="parts"] .if-optional, [data-reason="customer"] .if-optional{display:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E208 Put on hold</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">waiting for parts</button>
+  <button type="button" data-state="safety" aria-pressed="false">safety issue</button>
+  <button type="button" data-state="other" aria-pressed="false">other</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="draft" aria-pressed="false">report not finished</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E207-work.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Put on hold</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <form class="stack" id="form" data-reason="parts" onsubmit="return false">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved and sent later.</div>
+          <div class="banner" data-when="draft"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg><div>Your visit report stays as a draft.</div></div>
+          <div class="card jobrow" id="job"></div>
+
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#date-bad">Resume date: pick today or later</a></li><li><a href="#note-bad">Note: write at least 10 characters</a></li></ul></div>
+
+          <div>
+            <div class="field-label">Reason<span class="req" style="color:var(--red)">*</span></div>
+            <div class="chips wrap" data-single id="reasons"></div>
+          </div>
+
+          <div class="banner if-parts"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg><div><b>Need a part?</b><a id="parts-link">Request parts now</a></div></div>
+          <div class="banner red if-safety"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div><b>Report the safety issue too</b><a href="E903-incident.html">Report an incident</a></div></div>
+
+          <div class="field" data-when="ready safety other draft offline">
+            <label for="resume">Expected resume date<span class="req if-dated">*</span><span class="counter if-optional">Optional</span></label>
+            <input class="input" type="date" id="resume"></div>
+          <div class="field has-error" data-when="errors">
+            <label for="date-bad">Expected resume date<span class="req if-dated">*</span><span class="counter if-optional">Optional</span></label>
+            <input class="input" type="date" id="date-bad" aria-invalid="true" aria-describedby="date-err">
+            <span class="error-text" id="date-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Pick today or a later date</span></div>
+
+          <div class="field" data-when="ready safety other draft offline">
+            <label for="note">Note<span class="req if-other">*</span><span class="counter" id="note-count">0 / 300</span></label>
+            <textarea class="textarea" id="note" maxlength="300" placeholder="What is needed to continue"></textarea></div>
+          <div class="field has-error" data-when="errors">
+            <label for="note-bad">Note<span class="req">*</span><span class="counter">5 / 300</span></label>
+            <textarea class="textarea" id="note-bad" aria-invalid="true" aria-describedby="note-err">Later</textarea>
+            <span class="error-text" id="note-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Write at least 10 characters</span></div>
+
+          <div>
+            <div class="field-label">Photo<span class="counter" style="float:right; font-weight:500; color:var(--text-faint)">Optional</span></div>
+            <div class="uploads"><a class="upload add" id="photo" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></a></div>
+          </div>
+          <p class="hint" style="margin:0">The customer and your manager see the reason.</p>
+        </form>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready safety other draft" data-busy id="save">Put on hold</button>
+        <button class="btn btn-primary" type="button" data-when="errors">Put on hold</button>
+        <a class="btn btn-primary" data-when="offline" id="save-offline" data-toast="On hold. Waiting to sync">Put on hold</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Pauses the job with a reason; the ticket stays with Sandeep. Parts and customer waits need a resume
+date, Other needs a note. Waiting for parts offers a parts request, a safety issue offers an incident report.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = data.engineerDay.today.find((j) => j.status === 'in-progress').ticket;
+  const REASONS = [['parts', 'Waiting for parts'], ['customer', 'Waiting for customer'], ['engineer', 'Needs another engineer'],
+    ['safety', 'Safety issue'], ['machine', 'Machine not ready'], ['other', 'Other']];
+  const STATE_REASON = { ready: 'parts', safety: 'safety', other: 'other', errors: 'other', draft: 'parts', offline: 'parts' };
+  const RESUME_DATE = '2026-11-27';
+  const PAST_DATE = '2026-11-20';
+  const SAVE_MS = 900;
+
+  const params = new URLSearchParams(location.search);
+  const t = data.tickets.find((x) => x.number === (params.get('ticket') || DEFAULT_TICKET));
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const q = `?ticket=${t.number}`;
+  const form = $('form');
+
+  $('back').href = `E207-work.html${q}`;
+  $('parts-link').href = `E501-request-parts.html${q}`;
+  $('photo').href = `E1001-camera.html${q}`;
+  $('save-offline').href = `E202-job-detail.html${q}&status=on-hold`;
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}, ${R.esc(company.name)}</b>
+    <span class="mono">${t.number}</span></span>`;
+  $('resume').min = data.today;
+  $('date-bad').value = PAST_DATE;
+
+  $('reasons').innerHTML = REASONS.map(([key, label]) => `<button class="chip outline" type="button" data-reason="${key}" aria-pressed="false">${label}</button>`).join('');
+  const pick = (reason) => {
+    form.dataset.reason = reason;
+    $('reasons').querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.reason === reason)));
+    $('resume').value = ['parts', 'customer'].includes(reason) ? RESUME_DATE : '';
+  };
+  pick('parts');
+  $('reasons').addEventListener('click', (event) => { const c = event.target.closest('.chip'); if (c) pick(c.dataset.reason); });
+  document.addEventListener('click', (event) => {
+    const state = event.target.closest('.plate-states [data-state]')?.dataset.state;
+    if (state) pick(STATE_REASON[state]);
+  });
+  $('note').addEventListener('input', () => { $('note-count').textContent = `${$('note').value.length} / 300`; });
+
+  /* Save: busy, then back to the job, now on hold */
+  $('save').addEventListener('click', () => setTimeout(() => { location.href = `E202-job-detail.html${q}&status=on-hold`; }, SAVE_MS));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

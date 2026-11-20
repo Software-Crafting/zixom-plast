@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E209 Customer not available or site closed</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.wait{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.wait .row-flex{justify-content:space-between; align-items:baseline}
+.wait b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.wait span{font-size:var(--fs-13); color:var(--text-muted)}
+.wait .meter{margin-top:12px}
+.done-meter i{background:var(--green)}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.field.has-error .add-file{border-color:var(--red); background:var(--red-50)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E209 Customer not available</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">waiting, 1 call</button>
+  <button type="button" data-state="canfail" aria-pressed="false">2 calls, 20 min</button>
+  <button type="button" data-state="errors" aria-pressed="false">no gate photo</button>
+  <button type="button" data-state="canfail" aria-pressed="false" data-open="confirm">confirm</button>
+  <button type="button" data-state="failed" aria-pressed="false">visit failed</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">failed, waiting to sync</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Customer not available</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready canfail errors offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 1 thing to continue</b><ul><li><a href="#gate-missing">Add a photo at the gate</a></li></ul></div>
+          <div class="job" id="job"></div>
+
+          <div class="wait" data-when="ready">
+            <div class="row-flex"><b>14 min</b><span>of 20 min wait</span></div>
+            <div class="meter"><i style="width:70%"></i></div>
+            <span class="hint" id="arrived"></span>
+          </div>
+          <div class="wait" data-when="canfail errors offline">
+            <div class="row-flex"><b>20 min</b><span>Wait complete</span></div>
+            <div class="meter done-meter"><i style="width:100%"></i></div>
+            <span class="hint" id="arrived-2"></span>
+          </div>
+
+          <div>
+            <h2 class="sec-title">Call attempts</h2>
+            <div class="list" id="calls-one" data-when="ready"></div>
+            <div class="list" id="calls-two" data-when="canfail errors offline"></div>
+            <a class="btn btn-secondary btn-sm" id="call" href="#" style="width:100%; margin-top:10px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-phone"/></svg><span id="call-label">Call again</span></a>
+          </div>
+
+          <div>
+            <h2 class="sec-title">What happened</h2>
+            <div role="radiogroup" aria-label="What happened">
+              <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg></span><b>Customer not available</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span><b>Site closed</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>No access to the machine</b><span class="mark"></span></button>
+            </div>
+          </div>
+
+          <div>
+            <div class="field" data-when="ready canfail">
+              <span class="field-label">Photo at the gate<span class="req">*</span></span>
+              <div class="files">
+                <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>gate-photo.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 1.8 MB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="offline">
+              <span class="field-label">Photo at the gate<span class="req">*</span></span>
+              <div class="files">
+                <div class="file" data-status="queued"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>gate-photo.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Saved on phone · waiting to sync</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <span class="field-label" id="gate-missing">Photo at the gate<span class="req">*</span></span>
+              <button class="add-file" type="button" data-open="photo">
+                <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+                <span class="grow"><b>Take a photo at the gate</b></span>
+                <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+              </button>
+              <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a photo at the gate</span>
+            </div>
+            <div class="field">
+              <label for="note">Notes<span class="counter">0 / 300</span></label>
+              <textarea class="textarea" id="note" placeholder="For example, security said the plant is shut today"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="state" data-when="failed queued" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Visit marked failed</h3>
+          <p>Zixom and the customer are told. Zixom will reschedule.</p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready">
+          <span class="hint" style="text-align:center; margin:0 0 4px">Call twice and wait 20 minutes to mark failed</span>
+          <button class="btn btn-danger" type="button" disabled>Mark visit failed</button>
+        </div>
+        <div class="stack-sm" data-when="canfail offline">
+          <button class="btn btn-danger" type="button" data-open="confirm">Mark visit failed</button>
+          <a class="btn btn-secondary propose" href="E204-propose-time.html">Propose another time</a>
+        </div>
+        <button class="btn btn-danger" type="button" data-when="errors" disabled>Mark visit failed</button>
+        <a class="btn btn-primary" href="E101-today.html" data-when="failed queued">Back to Today</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="confirm" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="confirm-t">
+        <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+        <h3 id="confirm-t">Mark visit failed?</h3>
+        <p>Zixom and the customer are told.</p>
+        <div class="actions">
+          <button class="btn btn-danger" type="button" data-goto="failed">Mark visit failed</button>
+          <button class="btn btn-secondary" type="button" data-close>Keep waiting</button>
+        </div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a photo">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from Job detail or Check in when no one answers. Mark visit failed unlocks after 2 call
+attempts and a 20 minute wait, with a gate photo. Offline, it is saved and synced later.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0125';
+  /* sample attempt log, not in data.js: arrival and call times */
+  const ARRIVED = '12:36 PM';
+  const CALLS = [['12:38 PM', 'No answer'], ['12:51 PM', 'Switched off']];
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+
+  $('back').href = `E202-job-detail.html?ticket=${t.number}`;
+  document.querySelectorAll('.propose').forEach((a) => { a.href = `E204-propose-time.html?ticket=${t.number}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+  $('arrived').textContent = `Arrived ${ARRIVED}`;
+  $('arrived-2').textContent = `Arrived ${ARRIVED}`;
+  $('call').href = `tel:${site.contact.phone.replace(/\s/g, '')}`;
+  $('call-label').textContent = `Call ${site.contact.name}`;
+
+  const row = ([time, result], i) => `<div class="list-item"><span class="disc">${R.icon('phone')}</span>
+    <b>Attempt ${i + 1}, ${R.esc(site.contact.name)}</b><span class="sub">${time} · ${result}</span></div>`;
+  $('calls-one').innerHTML = CALLS.slice(0, 1).map(row).join('');
+  $('calls-two').innerHTML = CALLS.map(row).join('');
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const target = document.querySelector('.screen').dataset.state === 'offline' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

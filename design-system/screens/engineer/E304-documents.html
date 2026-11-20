@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E304 Documents and manuals</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.list-item .sub .tag{height:20px; margin-left:4px; padding:0 8px; font-size:var(--fs-11)}
+.list-item .meter{grid-column:2; margin-top:8px}
+.list-item.failed .sub{color:var(--red)}
+[data-state="offline"] .list-item.online-only{opacity:.42; pointer-events:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E304 Documents and manuals</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="doc">document actions</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="large">large file warning</button>
+  <button type="button" data-state="downloading" aria-pressed="false">downloading</button>
+  <button type="button" data-state="failed" aria-pressed="false">download failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E302-machine-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Documents</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready downloading failed offline">
+          <p class="who" id="who"></p>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Only saved copies open.</div>
+          <div id="groups"></div>
+        </div>
+
+        <div class="stack-sm" data-when="loading" style="margin-top:12px">
+          <span class="skeleton sk-line" style="width:50%"></span>
+          <span class="skeleton sk-line" style="width:30%; margin-top:14px"></span>
+          <span class="skeleton" style="height:62px"></span><span class="skeleton" style="height:62px"></span><span class="skeleton" style="height:62px"></span>
+          <span class="skeleton sk-line" style="width:30%; margin-top:14px"></span>
+          <span class="skeleton" style="height:62px"></span><span class="skeleton" style="height:62px; opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-files"/></svg></span>
+          <h3>No documents yet</h3><p>Zixom has not added documents for this model.</p>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:90px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load documents. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="doc" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Document actions">
+        <div class="group"><div class="title" id="doc-title"></div>
+          <button type="button" data-close data-toast="Opening document"><svg class="ic" aria-hidden="true"><use href="#ph-eye"/></svg>Open</button>
+          <button type="button" data-close id="doc-download"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download for offline use</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg>Share</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="large" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="large-t">
+        <h3 id="large-t">Download 48 MB?</h3><p>You are on mobile data.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close data-toast="Downloads on Wi-Fi">Wait for Wi-Fi</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close onclick="document.querySelector('[data-state=downloading]').click()">Download now</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Manuals, wiring diagrams, parts lists and checklists for the machine. Each can be saved for offline
+use; files over 25 MB on mobile data ask first. Offline only the saved copies open.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const LARGE_MB = 25;
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  const series = m.model.split(' ')[0];
+
+  /* sample documents per model until Zixom uploads the real ones; saved = offline copy on this phone */
+  const DOCS = [
+    ['Manuals', [['book-open', `${series} operating manual`, 48, false], ['book-open', `${series} service manual`, 22, true]]],
+    ['Diagrams and lists', [['circuitry', 'Wiring diagram', 6, true], ['circuitry', 'Pneumatic diagram', 3, false], ['list-checks', 'Parts list', 2, true]]],
+    ['Checklists', [['clipboard-text', 'Preventive maintenance checklist', 0.4, true], ['clipboard-text', 'Commissioning checklist', 0.3, false]]],
+  ];
+
+  $('back').href = `E302-machine-detail.html?serial=${serial}`;
+  $('who').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${R.esc(serial)}</span>`;
+
+  const row = ([iconName, title, mb, saved], first) => {
+    const size = `PDF, ${mb} MB`;
+    const flow = mb > LARGE_MB ? 'large' : 'doc';
+    const offline = saved ? R.tag('Offline copy', 'green') : '';
+    if (first) {
+      return `<a class="list-item online-only" href="#" data-open="${flow}" data-title="${R.esc(title)}" data-when="ready offline">
+          <span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b><span class="sub">${size}</span><span class="end">${R.icon('caret-right')}</span></a>
+        <div class="list-item" data-when="downloading"><span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b>
+          <span class="sub">Downloading 64% of ${mb} MB</span><span class="meter"><i style="width:64%"></i></span>
+          <span class="end"><button class="icon-btn sm" type="button" aria-label="Cancel download" data-toast="Download cancelled">${R.icon('x', 'ic-18')}</button></span></div>
+        <div class="list-item failed" data-when="failed"><span class="disc">${R.icon('warning-circle')}</span><b>${R.esc(title)}</b>
+          <span class="sub">Download failed</span><span class="end"><button class="btn btn-text" type="button" style="min-height:0; padding:0" onclick="document.querySelector('[data-state=downloading]').click()">Retry</button></span></div>`;
+    }
+    return `<a class="list-item${saved ? '' : ' online-only'}" href="#" data-open="doc" data-title="${R.esc(title)}" data-saved="${saved}">
+      <span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b><span class="sub">${size}${offline}</span><span class="end">${R.icon('caret-right')}</span></a>`;
+  };
+  $('groups').innerHTML = DOCS.map(([group, docs], g) => `<p class="list-title">${group}</p>
+    <div class="list">${docs.map((d, i) => row(d, g === 0 && i === 0)).join('')}</div>`).join('');
+
+  document.addEventListener('click', (event) => {
+    const doc = event.target.closest('[data-title]');
+    if (!doc) return;
+    $('doc-title').textContent = doc.dataset.title;
+    const saved = doc.dataset.saved === 'true';
+    $('doc-download').lastChild.textContent = saved ? 'Remove offline copy' : 'Download for offline use';
+    $('doc-download').dataset.toast = saved ? 'Offline copy removed' : 'Saved for offline use';
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

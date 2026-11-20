@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E705 Holiday calendar</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.month-bar{display:flex; align-items:center; justify-content:space-between}
+.month-bar h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.month-bar .icon-btn{width:40px; height:40px}
+.cal{display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; margin-top:12px; text-align:center}
+.cal .dow{padding:4px 0; font-size:var(--fs-11); font-weight:600; color:var(--text-muted)}
+.cal .d{display:grid; place-items:center; aspect-ratio:1; border-radius:50%; font-size:var(--fs-14); color:var(--slate-800)}
+.cal .d.sun{color:var(--text-faint)}
+.cal .d.today{box-shadow:inset 0 0 0 1.5px var(--slate-800); font-weight:600}
+.cal .d.holiday{background:var(--red-50); color:var(--red); font-weight:600}
+.cal .d.leave{background:var(--blue-50); color:var(--blue); font-weight:600}
+.cal .d.pending{outline:1.5px dashed var(--amber); outline-offset:-3px; color:var(--amber)}
+.legend{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:14px; font-size:var(--fs-12); color:var(--text-muted)}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.legend i{width:12px; height:12px; border-radius:50%}
+.none{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-13); color:var(--text-muted)}
+.list-item.static{cursor:default}
+.list-item .disc.red{background:var(--red-50); color:var(--red)}
+.list-item .disc.blue{background:var(--blue-50); color:var(--blue)}
+.list-item .disc.amber{background:var(--amber-50); color:var(--amber)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E705 Holiday calendar</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" data-month="2026-11" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" data-month="2026-12" aria-pressed="false">month with leave</button>
+  <button type="button" data-state="ready" data-month="2027-02" aria-pressed="false">empty month</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" data-month="2026-11" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E702-leave.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Holiday calendar</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline" style="padding-bottom:40px">
+          <div class="banner grey" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg><div><b>You are offline</b>Showing the last downloaded month.</div></div>
+          <div class="card">
+            <div class="month-bar">
+              <button class="icon-btn" type="button" id="prev" aria-label="Previous month"><svg class="ic" aria-hidden="true"><use href="#ph-caret-left"/></svg></button>
+              <h2 id="month"></h2>
+              <button class="icon-btn" type="button" id="next" aria-label="Next month"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></button>
+            </div>
+            <div class="cal" id="cal"></div>
+            <div class="legend"><span><i style="background:var(--red-50); box-shadow:inset 0 0 0 1.5px var(--red)"></i>Zixom holiday</span>
+              <span><i style="background:var(--blue-50); box-shadow:inset 0 0 0 1.5px var(--blue)"></i>Your leave</span>
+              <span><i style="outline:1.5px dashed var(--amber); outline-offset:-2px"></i>Pending</span></div>
+          </div>
+          <div id="items"></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:390px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Zixom holidays and the engineer's own leave on a month view. Offline it keeps the last downloaded month
+and the month buttons are off.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* page data: Zixom holidays, Gujarat list */
+  const HOLIDAYS = [
+    ['2026-11-09', 'Gujarati New Year'], ['2026-11-10', 'Bhai Bij'], ['2026-12-25', 'Christmas'],
+    ['2027-01-14', 'Uttarayan'], ['2027-01-26', 'Republic Day'], ['2027-03-22', 'Holi'],
+  ];
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const FIRST = '2026-11';
+  const LAST = '2027-03';
+  const iso = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const leaveDays = data.engineerDay.leave.flatMap((l) => {
+    const out = [];
+    for (let n = 0; n <= R.daysFromToday(l.to) - R.daysFromToday(l.from); n += 1) {
+      const d = new Date(`${l.from}T00:00:00`); d.setDate(d.getDate() + n);
+      out.push({ date: iso(d.getFullYear(), d.getMonth(), d.getDate()), leave: l });
+    }
+    return out;
+  });
+  let current = FIRST;
+
+  const render = (ym) => {
+    current = ym;
+    const [y, m] = ym.split('-').map(Number);
+    const month = m - 1;
+    $('month').textContent = `${MONTHS[month]} ${y}`;
+    const offline = document.querySelector('.screen').dataset.state === 'offline';
+    $('prev').disabled = offline || ym === FIRST;
+    $('next').disabled = offline || ym === LAST;
+    const lead = (new Date(y, month, 1).getDay() + 6) % 7; /* weeks start on Monday */
+    const days = new Date(y, month + 1, 0).getDate();
+    const cells = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) => `<span class="dow">${d}</span>`);
+    for (let i = 0; i < lead; i += 1) cells.push('<span></span>');
+    for (let d = 1; d <= days; d += 1) {
+      const date = iso(y, month, d);
+      const hol = HOLIDAYS.find(([h]) => h === date);
+      const lv = leaveDays.find((l) => l.date === date);
+      const cls = ['d', new Date(y, month, d).getDay() === 0 ? 'sun' : '', date === data.today ? 'today' : '',
+        hol ? 'holiday' : '', lv ? (lv.leave.status === 'Approved' ? 'leave' : 'pending') : ''].join(' ');
+      cells.push(`<span class="${cls}"${hol ? ` title="${hol[1]}"` : ''}>${d}</span>`);
+    }
+    $('cal').innerHTML = cells.join('');
+
+    const hols = HOLIDAYS.filter(([h]) => h.startsWith(ym)).map(([date, name]) =>
+      `<div class="list-item static"><span class="disc red">${R.icon('calendar-blank')}</span><b>${name}</b><span class="sub">${R.dayDate(date)} · Zixom holiday</span></div>`);
+    const leaves = data.engineerDay.leave.filter((l) => l.from.startsWith(ym)).map((l) =>
+      `<a class="list-item" href="E706-leave-detail.html?from=${l.from}"><span class="disc ${l.status === 'Approved' ? 'blue' : 'amber'}">${R.icon('calendar-check')}</span>
+        <b>${R.esc(l.reason)}</b><span class="sub">${l.from === l.to ? R.dayDate(l.from) : `${R.dayDate(l.from)} to ${R.dayDate(l.to)}`} · ${l.status}</span>
+        <span class="end">${R.icon('caret-right')}</span></a>`);
+    const all = [...hols, ...leaves];
+    $('items').innerHTML = all.length ? `<div class="list">${all.join('')}</div>` : `<div class="none">No holidays</div>`;
+  };
+  const step = (n) => { const [y, m] = current.split('-').map(Number); const d = new Date(y, m - 1 + n, 1);
+    render(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`); };
+  $('prev').addEventListener('click', () => step(-1));
+  $('next').addEventListener('click', () => step(1));
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    window.setTimeout(() => render(b.dataset.month || current));
+  }));
+  render(FIRST);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

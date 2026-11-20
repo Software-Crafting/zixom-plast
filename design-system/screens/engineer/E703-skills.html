@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E703 Service area and skills</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+.list-item.static{cursor:default}
+.lock{display:inline-flex; align-items:center; gap:4px; margin:0 4px; font-size:var(--fs-12); color:var(--text-muted)}
+.chips.wrap{flex-wrap:wrap; overflow:visible}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E703 Service area and skills</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="empty" aria-pressed="false">not set</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Service area and skills</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <span class="lock"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Set by Zixom. Ask your manager to change.</span>
+          <div>
+            <p class="list-title" style="margin-top:0" id="region"></p>
+            <div class="list" id="areas"></div>
+          </div>
+          <div>
+            <p class="list-title" style="margin-top:4px">Machine types</p>
+            <div class="list" id="types"></div>
+          </div>
+          <div>
+            <p class="list-title" style="margin-top:4px">Skills</p>
+            <div class="chips wrap" id="skills"></div>
+          </div>
+          <div class="list">
+            <a class="list-item" href="E808-certifications.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-certificate"/></svg></span><b>Certifications and training</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-trifold"/></svg></span>
+          <h3>Not set yet</h3>
+          <p>Contact your manager.</p>
+          <a class="btn btn-secondary" href="E1011-team-contacts.html"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg>Team contacts</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:40%; margin:4px"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Read only. Where the engineer is sent and which machines they may work on, both set by Zixom.
+Nothing set shows who to contact.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const me = R.engineer(data.engineerDay.engineer);
+  /* page data: areas inside the region and machine types this engineer is certified for */
+  const AREAS = [['Vatva and Naroda', 'GIDC estates'], ['Sanand', 'GIDC I and II'], ['Changodar', 'Industrial area'], ['Gandhinagar', 'Sector 25 and 28']];
+  const TYPES = ['Thermoforming machine', 'Vacuum forming machine', 'Cup forming machine'];
+  const MACHINE_ICON = { 'Thermoforming machine': 'factory', 'Cup forming machine': 'cube', 'Vacuum forming machine': 'stack' };
+
+  $('region').textContent = `${me.region} region`;
+  $('areas').innerHTML = AREAS.map(([name, sub]) => `<div class="list-item static"><span class="disc">${R.icon('map-pin')}</span>
+    <b>${R.esc(name)}</b><span class="sub">${R.esc(sub)}</span></div>`).join('');
+  $('types').innerHTML = TYPES.map((type) => `<div class="list-item static"><span class="disc">${R.icon(MACHINE_ICON[type])}</span>
+    <b>${R.esc(type)}</b><span class="sub">${data.machines.filter((m) => m.type === type).map((m) => m.model.split(' ')[0]).filter((v, i, a) => a.indexOf(v) === i).join(', ')}</span></div>`).join('');
+  $('skills').innerHTML = me.skills.map((s) => `<span class="chip outline">${R.esc(s)}</span>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

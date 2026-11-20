@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E411 Recommendations</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.reco{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 10px 12px 14px}
+.reco + .reco{border-top:1px solid var(--line)}
+.reco .disc{grid-row:1 / span 2; width:38px; height:38px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.reco b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.reco .sub{grid-column:2; margin-top:2px; font-size:var(--fs-13); line-height:1.4; color:var(--text)}
+.reco .icon-btn{grid-column:3; grid-row:1 / span 2; width:34px; height:34px; border:0; background:var(--slate-100)}
+.reco .follow{grid-column:2; margin-top:6px; font-size:var(--fs-13); font-weight:600; color:var(--blue); text-decoration:none}
+.types{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.types button{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:14px; border-radius:var(--r-lg); background:#fff;
+  border:1px solid var(--line); color:var(--slate-900); font:600 var(--fs-13) var(--font-body); cursor:pointer; text-align:left}
+.types .disc{width:36px; height:36px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E411 Recommendations</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="follow" aria-pressed="false">follow up chosen</button>
+  <button type="button" data-state="ready" data-open="add" aria-pressed="false">add</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back" href="E401-report.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Recommendations</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready follow empty offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved on this phone.</div>
+          <p class="hint" style="margin:-4px 2px 0">Shown in the customer copy.</p>
+          <div class="list" id="recos" data-when="ready follow offline"></div>
+          <div class="state" data-when="empty" style="padding:20px 12px 4px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-list-checks"/></svg></span>
+            <h3>No recommendations</h3>
+            <p>Optional. Add one below.</p>
+          </div>
+          <p class="list-title" style="margin-bottom:0">Add</p>
+          <div class="types" id="types"></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-card" style="height:150px"></span>
+          <span class="skeleton sk-line" style="width:20%"></span>
+          <div class="types"><span class="skeleton sk-card"></span><span class="skeleton sk-card"></span><span class="skeleton sk-card"></span><span class="skeleton sk-card"></span></div>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready follow empty offline">
+        <a class="btn btn-primary back" href="E401-report.html" data-toast="Recommendations saved">Save</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="add" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="add-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="add-title">Operator advice</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="add-text">Recommendation<span class="req">*</span><span class="counter">40 / 200</span></label>
+            <textarea class="textarea" id="add-text" maxlength="200">Clean the vacuum filter at every shift end.</textarea></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close data-toast="Recommendation added">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Follow up visit, parts to order, operator advice and consumables. They print in the customer copy; a
+follow up visit links to <a href="E407-follow-up.html">E407</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const TYPES = [['calendar-check', 'Follow up visit'], ['package', 'Parts to order'], ['users', 'Operator advice'], ['toolbox', 'Consumables']];
+  /* Sample recommendations of the TKT-2026-0126 draft, same as E401 section 9 */
+  const RECOS = [['Parts to order', 'Keep a spare 12B chain set in the store'], ['Operator advice', 'Check chain tension every week and log it']];
+  const FOLLOW = ['Follow up visit', 'Fit the automatic chain oiler once it arrives'];
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  document.querySelectorAll('a.back').forEach((a) => { a.href = `E401-report.html?ticket=${ticketNumber}&section=9`; });
+  const iconOf = (kind) => TYPES.find(([, k]) => k === kind)[0];
+
+  $('types').innerHTML = TYPES.map(([icon, kind]) => `<button type="button" data-open="add" data-kind="${kind}"><span class="disc">${R.icon(icon)}</span>${kind}</button>`).join('');
+  const render = () => {
+    const follow = document.querySelector('.screen').dataset.state === 'follow';
+    const items = follow ? [FOLLOW, ...RECOS] : RECOS;
+    $('recos').innerHTML = items.map(([kind, text]) => `<div class="reco"><span class="disc">${R.icon(iconOf(kind))}</span><b>${kind}</b>
+      <span class="sub">${R.esc(text)}</span>
+      ${kind === FOLLOW[0] ? `<a class="follow" href="E407-follow-up.html?ticket=${ticketNumber}">Create follow up visit ${R.icon('caret-right', 'ic-16')}</a>` : ''}
+      <button class="icon-btn" type="button" aria-label="Remove ${kind}" data-toast="Removed">${R.icon('trash', 'ic-16')}</button></div>`).join('');
+  };
+  render();
+  document.addEventListener('click', (event) => {
+    const type = event.target.closest('[data-kind]');
+    if (type) $('add-title').textContent = type.dataset.kind;
+    if (event.target.closest('.plate-states button')) render();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

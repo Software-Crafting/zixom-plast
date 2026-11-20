@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E902 Site access and contacts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.panel-title{margin:4px 2px 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.addr b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.addr p{margin:4px 0 0; font-size:var(--fs-14); line-height:1.45; color:var(--text)}
+.addr .actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px}
+.addr .actions .btn{width:100%}
+.access{margin:0; font-size:var(--fs-14); line-height:1.5; color:var(--slate-800)}
+.person + .person{margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+.copy{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center}
+.copy + .copy{margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+.copy span{display:block; font-size:var(--fs-12); color:var(--text-muted)}
+.copy b{font-weight:600; color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E902 Site access and contacts</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="jobs"><span>job</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="nocall" aria-pressed="false">phone cannot call</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E202-job-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Site access</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready nocall offline">
+          <p class="who" id="who"></p>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+
+          <div class="card addr" id="addr"></div>
+
+          <div>
+            <h3 class="panel-title">Gate and security</h3>
+            <div class="card-fill" id="access"></div>
+          </div>
+
+          <div>
+            <h3 class="panel-title">Contacts</h3>
+            <div class="card" id="contacts" data-when="ready offline"></div>
+            <div class="card" id="copies" data-when="nocall"></div>
+            <a class="link" style="margin:10px 4px 0" id="unreachable" href="E209-customer-unavailable.html">Contact not reachable? <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-right"/></svg></a>
+          </div>
+
+          <div class="card-fill"><dl class="kv" style="margin:0" id="facts"></dl></div>
+        </div>
+
+        <div class="stack" data-when="loading" style="margin-top:8px">
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:40%"></span><span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:30%"></span><span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:90px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load site details. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">How to get in and who to call at the job's site. Missing access notes say so; a contact who does not
+answer leads to Customer not available. A phone that cannot call shows numbers to copy.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample site facts and operators the demo data does not hold yet */
+  const SITE_FACTS = {
+    vatva: { hours: '8 AM to 8 PM, Mon to Sat', parking: 'Visitor bays inside Gate 2', induction: true },
+    sanand: { hours: '9 AM to 6 PM, Mon to Sat', parking: 'Roadside, outside the shed', induction: false },
+  };
+  const OPERATORS = { 'ZP-TF-2204': [['Mahesh Patel', '+91 98790 44120']], 'ZP-VF-1908': [['Dinesh Rathod', '+91 97250 18833']] };
+
+  const day = data.engineerDay;
+  const ticketNo = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNo);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const facts = SITE_FACTS[site.id];
+  const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
+  const initials = (name) => name.split(' ').map((w) => w[0]).join('');
+
+  $('jobs').insertAdjacentHTML('beforeend', day.today.map(({ ticket: n }) =>
+    `<button type="button" aria-pressed="${n === ticketNo}" onclick="location.search='?ticket=${n}'">${n.slice(-4)}</button>`).join(''));
+  $('back').href = `E202-job-detail.html?ticket=${ticketNo}`;
+  $('unreachable').href = `E209-customer-unavailable.html?ticket=${ticketNo}`;
+  $('who').innerHTML = `<span class="mono">${ticketNo}</span> · ${R.esc(company.name)}`;
+
+  $('addr').innerHTML = `<b>${R.esc(site.name)}</b><p>${R.esc(site.address)}, ${site.pincode}</p>
+    <div class="actions"><a class="btn btn-primary btn-sm" href="#" data-toast="Opening Maps">${R.icon('map-trifold')}Open in Maps</a>
+      <button class="btn btn-secondary btn-sm" type="button" data-toast="Address copied">${R.icon('copy')}Copy</button></div>`;
+
+  $('access').innerHTML = site.access ? `<p class="access">${R.esc(site.access)}</p>`
+    : `<p class="access" style="color:var(--text-muted)">Not provided. Call the customer.</p>`;
+
+  const people = [[site.contact.name, site.contact.phone, 'Site contact'], ...(OPERATORS[m.serial] || []).map(([n, p]) => [n, p, `Operator, ${m.nickname || m.model}`])];
+  $('contacts').innerHTML = people.map(([name, phone, role]) => `<div class="person"><span class="avatar">${initials(name)}</span>
+    <span class="grow"><b>${R.esc(name)}</b><span>${R.esc(role)}</span></span>
+    <a class="icon-btn dark" href="${tel(phone)}" aria-label="Call ${R.esc(name)}">${R.icon('phone')}</a></div>`).join('');
+  $('copies').innerHTML = people.map(([name, phone]) => `<div class="copy"><div><span>${R.esc(name)}</span><b>${phone}</b></div>
+    <button class="btn btn-secondary btn-sm" type="button" data-toast="Number copied">${R.icon('copy', 'ic-16')}Copy</button></div>`).join('');
+
+  $('facts').innerHTML = [['Working hours', facts.hours], ['Parking', facts.parking],
+    ['Safety induction', facts.induction ? '<a class="link accent" style="font-size:inherit" href="E906-induction.html">Needed</a>' : 'Not needed']]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

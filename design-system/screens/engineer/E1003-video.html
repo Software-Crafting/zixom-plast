@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1003 Video</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.screen.cam{background:radial-gradient(ellipse 90% 60% at 50% 40%, #2C3540 0, #141A21 62%, #0B0F13 100%)}
+.cam-top{display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px; padding:6px var(--gutter) 10px}
+.cam-top h1{margin:0; text-align:center; font:400 var(--fs-18) var(--font-display); color:#fff}
+.cam-top h1 span{display:block; margin-top:2px; font:500 var(--fs-12) var(--font-mono); color:rgba(255,255,255,.6)}
+.finder{position:relative; flex:1; min-height:0; margin:0 var(--gutter); border-radius:28px; overflow:hidden; display:grid; place-items:center;
+  background:linear-gradient(160deg, #3A4552 0, #232B34 70%); color:#fff}
+.finder > .ic{width:120px; height:120px; opacity:.14}
+.finder-pills{position:absolute; z-index:2; top:12px; left:12px; right:12px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap}
+.cam-pill{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:var(--r-pill); background:rgba(11,15,19,.55);
+  color:#fff; font-size:var(--fs-12); font-weight:500; text-decoration:none}
+.cam-pill.warn{background:#FFD98A; color:#3D2A00}
+.cam-pill.rec{background:var(--red); font:500 var(--fs-14) var(--font-mono)}
+.cam-pill.rec::before{content:""; width:8px; height:8px; border-radius:50%; background:#fff}
+.play{position:absolute; width:72px; height:72px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.9); color:var(--slate-900)}
+.play .ic{width:30px; height:30px; margin-left:4px}
+.finder-bar{position:absolute; left:16px; right:16px; bottom:16px; height:4px; border-radius:4px; background:rgba(255,255,255,.25)}
+.finder-bar i{display:block; height:100%; border-radius:4px; background:#fff}
+.cam-controls{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:20px var(--gutter) 40px}
+.record{width:78px; height:78px; display:grid; place-items:center; border-radius:50%; border:4px solid #fff; background:transparent; cursor:pointer}
+.record span{width:58px; height:58px; border-radius:50%; background:var(--red)}
+.record.stop span{width:28px; height:28px; border-radius:8px}
+.record:disabled{opacity:.35; cursor:default}
+.cam-review{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:20px var(--gutter) 40px}
+.on-glass{background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.22)}
+.cam-light{background:#fff; color:var(--slate-900); border-color:#fff}
+.cam-body{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 var(--gutter)}
+.cam-body .state h3{color:#fff}
+.cam-body .state p{color:rgba(255,255,255,.72)}
+.cam-body .state .disc{background:rgba(255,255,255,.1); color:#fff}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1003 Video</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="recording" aria-pressed="false">recording</button>
+  <button type="button" data-state="limit" aria-pressed="false">limit reached</button>
+  <button type="button" data-state="preview" aria-pressed="false">preview</button>
+  <button type="button" data-state="large" aria-pressed="false">large video</button>
+  <button type="button" data-state="storage" aria-pressed="false">storage low</button>
+  <button type="button" data-state="denied" aria-pressed="false">camera denied</button>
+</div>
+
+<div class="device">
+  <div class="screen cam" data-state="ready">
+    <div class="status on-dark"></div>
+    <div class="cam-top">
+      <a class="icon-btn glass" href="E207-work.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+      <h1>Video<span id="job"></span></h1><span></span>
+    </div>
+
+    <div class="finder" data-when="ready recording limit preview large storage">
+      <div class="finder-pills">
+        <span class="cam-pill rec" data-when="recording"><span class="clock">00:00</span> / 01:00</span>
+        <span class="cam-pill" data-when="ready">Up to 60 seconds</span>
+        <span class="cam-pill warn" data-when="limit"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-timer"/></svg>60 second limit reached</span>
+        <span class="cam-pill" data-when="preview"><span class="clock">00:42</span> · 18 MB · Saved on this phone</span>
+        <span class="cam-pill warn" data-when="large"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>01:00 · 48 MB · Large video</span>
+        <a class="cam-pill warn" href="E1014-low-storage.html" data-when="storage"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning"/></svg>Storage low, 180 MB left</a>
+      </div>
+      <span data-when="ready recording storage" style="display:contents"><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg></span>
+      <button class="play" type="button" aria-label="Play preview" data-when="limit preview large"><svg class="ic" aria-hidden="true"><use href="#ph-play"/></svg></button>
+      <span class="finder-bar" data-when="recording limit preview large"><i id="bar" style="width:0"></i></span>
+    </div>
+
+    <div class="cam-body" data-when="denied">
+      <div class="state">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-video-camera"/></svg></span>
+        <h3>Camera access is off</h3>
+        <p>Allow the camera and microphone in Settings to record.</p>
+      </div>
+    </div>
+
+    <div class="cam-controls" data-when="ready recording storage">
+      <span></span>
+      <button class="record" type="button" aria-label="Record" id="record"><span></span></button>
+      <span></span>
+    </div>
+
+    <div class="cam-review" data-when="limit preview large">
+      <button class="btn btn-secondary on-glass" type="button" id="retake"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg>Retake</button>
+      <a class="btn btn-primary cam-light" href="E207-work.html" data-when="limit preview">Save</a>
+      <a class="btn btn-primary cam-light" href="../system/S15-mobile-data.html" data-when="large">Save</a>
+    </div>
+
+    <div class="cam-review" data-when="denied" style="grid-template-columns:1fr">
+      <a class="btn btn-primary cam-light" href="../system/S07-permission.html">Open Settings</a>
+    </div>
+    <span class="home-indicator on-dark"></span>
+  </div>
+</div>
+
+<p class="plate-note">One clip up to 60 seconds; the timer runs live and recording stops at the limit. Save keeps the clip on
+the phone; a large clip asks before using mobile data (<a href="../system/S15-mobile-data.html">S15</a>).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LIMIT_SECONDS = 60;
+  const SAMPLE = { recording: 24, limit: 60, preview: 42, large: 60 };
+  const screen = document.querySelector('.screen');
+  let seconds = 0;
+  let timer = null;
+
+  $('job').textContent = ZX.data.engineerDay.today[0].ticket;
+
+  const clock = (s) => (s >= LIMIT_SECONDS ? '01:00' : `00:${String(s).padStart(2, '0')}`);
+  const paint = () => {
+    document.querySelectorAll('.clock').forEach((el) => { el.textContent = clock(seconds); });
+    $('bar').style.width = `${(seconds / LIMIT_SECONDS) * 100}%`;
+    $('record').classList.toggle('stop', screen.dataset.state === 'recording');
+    $('record').setAttribute('aria-label', screen.dataset.state === 'recording' ? 'Stop' : 'Record');
+  };
+  /* switch state without closing anything, like the plate switch */
+  const show = (state) => {
+    screen.dataset.state = state;
+    screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes(state); });
+    document.querySelectorAll('.plate-states button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === state)));
+    paint();
+  };
+  const stop = (state) => { window.clearInterval(timer); timer = null; show(state); };
+
+  $('record').addEventListener('click', () => {
+    if (screen.dataset.state === 'recording') { stop('preview'); return; }
+    seconds = 0;
+    show('recording');
+    timer = window.setInterval(() => {
+      seconds += 1;
+      if (seconds >= LIMIT_SECONDS) { stop('limit'); return; }
+      paint();
+    }, 1000);
+  });
+  $('retake').addEventListener('click', () => { seconds = 0; show('ready'); });
+  document.querySelectorAll('.plate-states button').forEach((b) => b.addEventListener('click', () => {
+    window.clearInterval(timer); timer = null;
+    seconds = SAMPLE[b.dataset.state] || 0;
+    requestAnimationFrame(paint);
+  }));
+  paint();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E102 Sync queue</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.sync-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.sync-head b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.sync-head span{font-size:var(--fs-12); color:var(--text-muted)}
+.sync-head .btn{width:auto; flex-shrink:0}
+.counts{display:flex; justify-content:space-between; align-items:center; margin:2px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.counts .btn{min-height:0; padding:0}
+.item{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:start; padding:14px 2px}
+.item + .item{border-top:1px solid var(--line)}
+.list-title{margin:14px 4px 0}
+.list-title:first-child{margin-top:0}
+.item .disc{align-self:start; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.item b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.item .sub{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.item .why{display:flex; align-items:center; gap:5px; margin-top:6px; font-size:var(--fs-12); font-weight:500}
+.item .why .ic{width:14px; height:14px; flex-shrink:0}
+.item .why.red{color:var(--red)} .item .why.amber{color:var(--amber)}
+.item .act{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.item .act .btn{min-height:34px; width:auto; padding:0 14px; border:1px solid var(--line-strong); border-radius:var(--r-pill); background:#fff; color:var(--slate-900); font:400 var(--fs-13) var(--font-display)}
+.item .act .btn[aria-busy="true"]::after{border-color:var(--slate-200); border-top-color:var(--slate-800)}
+.item .progress{display:block; height:4px; margin-top:8px; border-radius:var(--r-pill); background:var(--slate-100); overflow:hidden}
+.item .progress i{display:block; height:100%; background:var(--blue)}
+.item .end{display:flex; align-items:center; gap:4px; min-height:40px}
+.item .end .icon-btn{width:32px; height:32px; border:0; background:none; margin-right:-6px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E102 Sync queue</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="allstates" aria-pressed="false">every row state</button>
+  <button type="button" data-state="sending" aria-pressed="false" data-toast="Back online">back online, sending</button>
+  <button type="button" data-state="empty" aria-pressed="false">everything synced</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><a class="icon-btn" href="E101-today.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Sync queue</h1><span></span></div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Items send when you are back.</div>
+
+          <div class="sync-head" data-when="ready allstates sending offline">
+            <div><b data-when="ready allstates offline" class="last-sync"></b><b data-when="sending">Sending…</b><span>Items send in the order saved</span></div>
+            <button class="btn btn-primary btn-sm" type="button" data-busy data-when="ready allstates"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Sync now</button>
+            <button class="btn btn-primary btn-sm" type="button" disabled data-when="sending offline"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Sync now</button>
+          </div>
+
+          <div class="counts" data-when="ready offline"><span id="counts"></span><button class="btn btn-text" type="button" data-busy data-when="ready">Retry all</button></div>
+
+          <div id="queue" data-when="ready offline"></div>
+          <div id="queue-all" data-when="allstates"></div>
+          <div id="queue-sending" data-when="sending"></div>
+
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>Everything is synced</h3><p class="last-sync"></p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:72px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:35%; margin-top:10px"></span>
+            <span class="skeleton" style="height:64px"></span><span class="skeleton" style="height:64px"></span><span class="skeleton" style="height:64px; opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not read the queue.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="item-menu" hidden>
+      <div class="action-sheet" role="dialog" aria-labelledby="menu-title">
+        <div class="group">
+          <div class="title" id="menu-title">Item</div>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-eye"/></svg>Open item</button>
+          <button type="button" data-close data-toast="Sending"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Retry</button>
+          <button class="destructive" type="button" id="menu-delete" data-close data-toast="Draft deleted"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg>Delete draft</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Everything saved on the phone that has not reached Zixom, grouped by kind and sent in order. Failed shows the reason and Retry,
+a server rejection needs an edit, and a conflict opens <a href="E1007-sync-conflict.html">E1007</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const LAST_SYNC = '2026-11-23T09:05';
+  /* rows that show the states the demo queue does not have */
+  const MORE = [
+    { kind: 'Reports', title: 'Service report', ticket: 'TKT-2026-0125', saved: '2026-11-23T11:20', state: 'sending', progress: 60 },
+    { kind: 'Reports', title: 'Service report', ticket: 'TKT-2026-0132', saved: '2026-11-22T18:05', state: 'attention', reason: 'Customer signature is missing' },
+    { kind: 'Reports', title: 'Service report draft', ticket: 'TKT-2026-0126', saved: '2026-11-23T11:02', state: 'conflict', reason: 'Zixom changed this job' },
+    { kind: 'Notes', title: 'Note: sprocket teeth worn', ticket: 'TKT-2026-0126', saved: '2026-11-23T10:30', state: 'sent' },
+    { kind: 'Photos', title: 'Video, chain noise, 48 s', ticket: 'TKT-2026-0126', saved: '2026-11-23T10:52', state: 'waiting', reason: 'Waits for Wi-Fi' },
+    { kind: 'Requests', title: 'Leave request', ticket: null, saved: '2026-11-23T08:10', state: 'waiting', drafted: day.leave[1].from },
+  ];
+  const KINDS = [['Reports', 'Reports', 'file-text'], ['Status changes', 'Status changes', 'arrows-clockwise'], ['Notes', 'Notes', 'note-pencil'],
+    ['Photos', 'Photos and videos', 'camera'], ['Requests', 'Requests', 'paper-plane-tilt']];
+  const STATE = { waiting: ['Waiting', 'outline'], sending: ['Sending', 'blue'], sent: ['Sent', 'green'], failed: ['Failed', 'red'],
+    attention: ['Needs attention', 'amber'], conflict: ['Conflict', 'amber'] };
+
+  const clock = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const saved = (iso) => (iso.slice(0, 10) === data.today ? clock(iso) : `${R.ago(iso)}, ${clock(iso)}`);
+  document.querySelectorAll('.last-sync').forEach((el) => { el.textContent = `Last synced ${clock(LAST_SYNC)}`; });
+
+  const actions = (item) => {
+    if (item.state === 'failed') return `<span class="act"><button class="btn btn-text" type="button" data-busy>Retry</button></span>`;
+    if (item.state === 'attention') return `<span class="act"><a class="btn btn-text" href="E401-report.html?ticket=${item.ticket}">Edit</a></span>`;
+    if (item.state === 'conflict') return `<span class="act"><a class="btn btn-text" href="E1007-sync-conflict.html?ticket=${item.ticket}">Resolve</a></span>`;
+    if (item.kind === 'Photos' && item.state !== 'sent') return `<span class="act"><a class="btn btn-text" href="E1008-upload-queue.html">View uploads</a></span>`;
+    return '';
+  };
+  /* submitted reports and status changes are records, only unsent drafts can be deleted */
+  const isDraft = (item) => item.state !== 'sent' && (['Notes', 'Photos'].includes(item.kind) || /draft/i.test(item.title));
+  const row = (item, iconName) => {
+    const why = item.reason ? `<span class="why ${item.state === 'failed' ? 'red' : 'amber'}">${R.icon(item.state === 'failed' ? 'warning-circle' : 'info')}${R.esc(item.reason)}</span>` : '';
+    const ref = item.ticket ? `<span class="mono">${item.ticket}</span> · ` : (item.drafted ? `${R.date(item.drafted)} · ` : '');
+    return `<div class="item"><span class="disc">${R.icon(iconName)}</span>
+      <span><b>${R.esc(item.title)}</b><span class="sub">${ref}Saved ${saved(item.saved)}</span>${why}
+        ${item.state === 'sending' ? `<span class="progress"><i style="width:${item.progress}%"></i></span>` : ''}${actions(item)}</span>
+      <span class="end">${R.tag(...STATE[item.state])}
+        <button class="icon-btn" type="button" data-open="item-menu" data-title="${R.esc(item.title)}" data-draft="${isDraft(item)}" aria-label="More for ${R.esc(item.title)}">${R.icon('dots-three')}</button></span>
+    </div>`;
+  };
+  const grouped = (items) => KINDS.map(([kind, label, iconName]) => {
+    const rows = items.filter((i) => i.kind === kind);
+    return rows.length ? `<p class="list-title">${label}</p>${rows.map((i) => row(i, iconName)).join('')}` : '';
+  }).join('');
+
+  document.getElementById('queue').innerHTML = grouped(day.sync);
+  document.getElementById('queue-all').innerHTML = grouped([...day.sync, ...MORE]);
+  /* back online: the oldest item sends first, the rest wait their turn */
+  const oldestFirst = [...day.sync].sort((a, b) => a.saved.localeCompare(b.saved));
+  document.getElementById('queue-sending').innerHTML = grouped(oldestFirst.map((i, n) => (n === 0 ? { ...i, state: 'sending', progress: 70, reason: '' } : i)));
+  const waiting = day.sync.filter((s) => s.state === 'waiting').length;
+  const failed = day.sync.filter((s) => s.state === 'failed').length;
+  document.getElementById('counts').textContent = `${waiting} waiting · ${failed} failed`;
+
+  /* the menu names the item; a submitted item cannot be deleted */
+  document.addEventListener('click', (event) => {
+    const opener = event.target.closest('[data-open="item-menu"]');
+    if (!opener) return;
+    document.getElementById('menu-title').textContent = opener.dataset.title;
+    document.getElementById('menu-delete').hidden = opener.dataset.draft !== 'true';
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

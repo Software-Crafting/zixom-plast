@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E707 Change working hours request</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.two{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:start}
+.two .field{margin-top:0}
+.two .input{min-width:0; width:100%}
+.two + .field, .field + .two{margin-top:16px}
+.days{flex-wrap:wrap; overflow:visible}
+.days .chip{min-width:48px; justify-content:center}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E707 Change working hours request</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="pending" aria-pressed="false">pending request</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E702-leave.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Change working hours</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. The request is sent when you are back online.</div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">
+            <div><dt>Now</dt><dd class="now-hours"></dd></div>
+            <div data-when="pending"><dt>Asked for</dt><dd id="asked"></dd></div>
+            <div data-when="pending"><dt>Status</dt><dd><span class="tag amber"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>Waiting for Mr Kapoor</span></dd></div>
+          </dl></div>
+
+          <div class="banner grey" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div>One request at a time. You can ask again after Mr Kapoor decides.</div></div>
+          <button class="btn btn-secondary" type="button" data-when="pending" data-open="withdraw">Withdraw request</button>
+
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to send</b>
+            <ul><li><a href="#end-bad">End time must be after the start time</a></li><li><a href="#reason-bad">Give a reason of at least 10 characters</a></li></ul></div>
+
+          <div data-when="ready errors offline">
+            <div class="field">
+              <span class="field-label">Working days<span class="req">*</span></span>
+              <div class="chips days" id="days"></div>
+            </div>
+            <div class="two" style="margin-top:16px">
+              <div class="field"><label for="start">Start<span class="req">*</span></label><input class="input" id="start" type="time" value="08:00"></div>
+              <div class="field" data-when="ready offline"><label for="end">End<span class="req">*</span></label><input class="input" id="end" type="time" value="17:00"></div>
+              <div class="field has-error" data-when="errors"><label for="end-bad">End<span class="req">*</span></label>
+                <input class="input" id="end-bad" type="time" value="07:00" aria-invalid="true" aria-describedby="end-err">
+                <span class="error-text" id="end-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>After the start time</span></div>
+            </div>
+            <div class="field" data-when="ready offline" style="margin-top:16px"><label for="reason">Reason<span class="req">*</span><span class="counter">52 / 300</span></label>
+              <textarea class="textarea" id="reason">Earlier start to reach Sanand before the morning shift.</textarea></div>
+            <div class="field has-error" data-when="errors" style="margin-top:16px"><label for="reason-bad">Reason<span class="req">*</span><span class="counter">5 / 300</span></label>
+              <textarea class="textarea" id="reason-bad" aria-invalid="true" aria-describedby="reason-err">Early</textarea>
+              <span class="error-text" id="reason-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Give a reason of at least 10 characters</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready errors offline">
+        <button class="btn btn-primary" type="button" data-busy data-toast="Request sent to Mr Kapoor"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send to manager</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="withdraw" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Withdraw request">
+        <div class="group"><div class="title">Withdraw your working hours request?</div>
+          <button class="destructive" type="button" data-close data-toast="Request withdrawn">Withdraw request</button></div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Asks the manager to change the usual days and hours. Only one request can be open; while it waits the
+form is replaced by its status.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  /* page data: usual hours (same as E702) and the asked change */
+  const NOW = 'Mon to Sat, 9 AM to 6 PM';
+  const ASKED = 'Mon to Sat, 8 AM to 5 PM';
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const OFF = 'Sun';
+  document.querySelectorAll('.now-hours').forEach((el) => { el.textContent = NOW; });
+  document.getElementById('asked').textContent = ASKED;
+  document.getElementById('days').innerHTML = DAYS.map((d) => `<button class="chip outline" type="button" aria-pressed="${d !== OFF}">${d}</button>`).join('');
+  document.getElementById('days').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

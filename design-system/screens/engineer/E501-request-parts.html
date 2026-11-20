@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E501 Request parts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.part{display:grid; grid-template-columns:44px 1fr auto; column-gap:12px; align-items:center; padding:12px; border-radius:var(--r-lg);
+  background:#fff; border:1px solid var(--line)}
+.part + .part, .part + .add-part{margin-top:8px}
+.part b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part .meta{display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; margin-top:4px; font-size:var(--fs-12); color:var(--text-muted)}
+.part .lead{grid-column:1 / -1; margin-top:10px; font-size:var(--fs-12); color:var(--amber)}
+.add-part{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.field.has-error .add-part{border-color:var(--red); background:var(--red-50)}
+.pick{display:grid; grid-template-columns:44px 1fr auto; column-gap:12px; align-items:center; width:100%; padding:12px 0; border:0;
+  background:none; font:inherit; text-align:left; cursor:pointer}
+.pick + .pick{border-top:1px solid var(--line)}
+.pick b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.pick .meta{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.pick-list{max-height:330px; overflow-y:auto; margin-top:8px}
+.sent{padding-top:60px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E501 Request parts</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="picker">pick a part</button>
+  <button type="button" data-state="outofstock" aria-pressed="false">out of stock</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">duplicate request</button>
+  <button type="button" data-state="notlisted" aria-pressed="false">part not listed</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on send</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="drafted" aria-pressed="false">saved as draft</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E207-work.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Request parts</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready outofstock duplicate notlisted errors sending offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved as a draft until you are online.</div>
+          <div class="error-summary" role="alert" style="margin:0" data-when="errors">
+            <b>Fix 2 things to send</b>
+            <ul><li><a href="#parts-bad">Add at least one part</a></li><li><a href="#urgency-bad">Choose when you need it</a></li></ul>
+          </div>
+
+          <div class="card-fill"><dl class="kv" style="margin:0" id="job"></dl></div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label" id="parts-bad">Parts<span class="req">*</span></span>
+            <div data-when="ready sending offline" id="parts-ready"></div>
+            <div data-when="outofstock" id="parts-out"></div>
+            <div data-when="duplicate">
+              <div class="banner" style="margin-bottom:8px"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+                <div><b>Already requested on this job</b><a href="E502-parts-requests.html" id="dup-link"></a></div></div>
+              <div id="parts-dup"></div>
+            </div>
+            <div data-when="notlisted">
+              <div class="part" style="grid-template-columns:44px 1fr">
+                <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+                <span><b>Part not listed</b><span class="meta">Stores will identify it from the photo</span></span>
+              </div>
+              <div class="field" style="margin:12px 0 0"><label for="free">Describe the part<span class="req">*</span></label>
+                <input class="input" id="free" value="Chain guide strip, nylon, 600 mm"></div>
+              <div class="files" style="margin-top:4px">
+                <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>chain-guide.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Added · 1.6 MB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="has-error" data-when="errors">
+              <button class="add-part" type="button" data-open="picker"><span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+                <b class="grow">Add a part</b><svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg></button>
+              <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add at least one part</span>
+            </div>
+            <button class="add-part" type="button" data-open="picker" style="margin-top:8px" data-when="ready outofstock duplicate notlisted offline">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></span><b class="grow">Add another part</b></button>
+          </div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label" id="urgency-bad">Needed<span class="req">*</span></span>
+            <div role="radiogroup" aria-label="Urgency" data-when="ready outofstock duplicate notlisted sending offline">
+              <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg></span><b>For this visit</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span><b>For the next visit</b><span class="mark"></span></button>
+            </div>
+            <div role="radiogroup" aria-label="Urgency" data-when="errors">
+              <button class="choice" role="radio" aria-checked="false" type="button" style="border-color:var(--red)"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg></span><b>For this visit</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button" style="border-color:var(--red)"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span><b>For the next visit</b><span class="mark"></span></button>
+              <span class="error-text"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose when you need it</span>
+            </div>
+          </div>
+
+          <div class="field" style="margin:0">
+            <span class="field-label">Deliver to<span class="req">*</span></span>
+            <div class="segment" role="tablist" aria-label="Deliver to">
+              <button role="tab" aria-selected="true">Site</button><button role="tab" aria-selected="false">Engineer</button><button role="tab" aria-selected="false">Courier</button>
+            </div>
+          </div>
+
+          <div class="field" style="margin:0">
+            <label for="note">Note<span class="counter" id="note-count">0 / 200</span></label>
+            <textarea class="textarea" id="note" maxlength="200" placeholder="For example, bring the matching sprocket"></textarea>
+          </div>
+        </div>
+
+        <div class="state sent" data-when="sent">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Request sent</h3>
+          <p><span class="mono">SPR-2026-0032</span>. Stores will update you.</p>
+        </div>
+        <div class="state sent" data-when="drafted">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Saved as a draft</h3>
+          <p>It sends when you are online.</p>
+          <span class="tag outline" style="margin-top:14px"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready outofstock notlisted" onclick="document.querySelector('[data-state=sending]').click()">Send request</button>
+        <button class="btn btn-primary" type="button" data-when="errors">Send request</button>
+        <a class="btn btn-primary" href="E502-parts-requests.html" data-when="duplicate">View existing request</a>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Send request</button>
+        <button class="btn btn-primary" type="button" data-when="offline" onclick="document.querySelector('[data-state=drafted]').click()">Save draft</button>
+        <a class="btn btn-primary" href="E502-parts-requests.html" data-when="sent drafted">My parts requests</a>
+        <a class="btn btn-text" href="#" id="back-job" data-when="sent drafted" style="width:100%; margin-top:6px">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="picker" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="picker-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="picker-t">Add a part</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+          <input class="input" placeholder="Part name or number" aria-label="Search parts">
+          <a class="icon-btn" href="E1005-scan.html" aria-label="Scan part barcode"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-barcode"/></svg></a></div>
+        <div class="pick-list" id="pick-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Ask Stores for parts for this job, no prices. Out of stock shows the lead time and can still be
+requested; the same part already requested on this job links to it. Offline saves a draft that waits to sync.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample Stores lead times for parts that are not on the shelf */
+  const LEAD = { 'ZP-SP-003': '10 to 12 days', 'ZP-SP-004': '5 to 7 days' };
+
+  const ticketNo = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNo);
+  const m = R.machine(ticket.machine);
+  const part = (number) => data.parts.find((p) => p.number === number);
+  const existing = data.engineerDay.partsRequests.find((r) => r.ticket === ticketNo) || data.engineerDay.partsRequests[0];
+
+  $('back').href = `E207-work.html?ticket=${ticketNo}`;
+  $('back-job').href = `E202-job-detail.html?ticket=${ticketNo}`;
+  $('job').innerHTML = `<div><dt>Job</dt><dd class="mono">${ticketNo}</dd></div><div><dt>Machine</dt><dd>${R.esc(m.nickname || m.model)}</dd></div>`;
+
+  const stepper = (qty) => `<span class="stepper"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button>
+    <output value="${qty}">${qty}</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span>`;
+  const partRow = (p, qty) => `<div class="part"><span class="thumb sm">${R.icon('package')}</span>
+    <span><b>${R.esc(p.name)}</b><span class="meta"><span class="mono">${p.number}</span>${R.stockTag(p.stock)}</span></span>${stepper(qty)}
+    ${LEAD[p.number] ? `<span class="lead">Lead time ${LEAD[p.number]}. You can still request it.</span>` : ''}</div>`;
+
+  $('parts-ready').innerHTML = partRow(part('ZP-SP-002'), 2);
+  $('parts-out').innerHTML = partRow(part('ZP-SP-003'), 1);
+  $('parts-dup').innerHTML = partRow(part(existing.part), existing.qty);
+  $('dup-link').textContent = `${existing.number}, ${existing.status}`;
+
+  $('pick-list').innerHTML = data.parts.map((p) => `<button class="pick" type="button" data-close data-toast="${R.esc(p.name)} added">
+      <span class="thumb sm">${R.icon('package')}</span>
+      <span><b>${R.esc(p.name)}</b><span class="meta"><span class="mono">${p.number}</span>${LEAD[p.number] ? ` · Lead time ${LEAD[p.number]}` : ''}${p.replacedBy ? ` · Use ${p.replacedBy}` : ''}</span></span>
+      ${R.stockTag(p.stock)}</button>`).join('')
+    + `<button class="pick" type="button" data-close onclick="document.querySelector('[data-state=notlisted]').click()">
+      <span class="thumb sm">${R.icon('file-search')}</span><span><b>Part not listed</b><span class="meta">Describe it and add a photo</span></span>${R.icon('caret-right', 'ic-16')}</button>`;
+
+  $('note').addEventListener('input', () => { $('note-count').textContent = `${$('note').value.length} / 200`; });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

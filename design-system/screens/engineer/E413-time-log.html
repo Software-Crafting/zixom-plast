@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E413 Edit time log</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.trow{display:grid; grid-template-columns:38px 1fr 128px; gap:12px; align-items:center; padding:12px 14px}
+.trow + .trow{border-top:1px solid var(--line)}
+.trow .disc{width:38px; height:38px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.trow b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.trow .was{font-size:var(--fs-12); color:var(--text-muted)}
+.trow .was.changed{color:var(--amber); font-weight:600}
+.trow .input{min-height:44px; padding:0 10px; font-size:var(--fs-14)}
+.totals{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.totals .stat b{font-size:var(--fs-22)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E413 Edit time log</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="small" aria-pressed="false">small edit</button>
+  <button type="button" data-state="big" aria-pressed="false">edit over 30 min</button>
+  <button type="button" data-state="short" aria-pressed="false">reason too short</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back" href="E401-report.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Time log</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready small big short offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved on this phone.</div>
+          <div class="totals">
+            <div class="stat"><b id="travel-total"></b><span>Travel</span></div>
+            <div class="stat"><b id="labour-total"></b><span>Labour</span></div>
+          </div>
+          <div class="list" id="rows"></div>
+          <div class="banner amber" id="flag" hidden><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Flagged for your manager</b>Edits over 30 minutes need a reason.</div></div>
+          <div class="field" id="reason-field" hidden><label for="reason">Reason<span class="req">*</span><span class="counter" id="reason-count"></span></label>
+            <textarea class="textarea" id="reason" maxlength="300" style="min-height:84px"></textarea>
+            <span class="error-text" id="reason-error" hidden><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Write at least 10 characters</span></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <div class="totals"><span class="skeleton sk-card"></span><span class="skeleton sk-card"></span></div>
+          <span class="skeleton sk-card" style="height:270px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready small big short offline">
+        <button class="btn btn-primary" type="button" id="save">Save</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Original and edited times side by side. An edit over 30 minutes needs a reason of at least 10
+characters and is flagged for the manager. Change a time to try it.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const FLAG_MINUTES = 30;
+  const MIN_REASON = 10;
+  /* Sample time log of the TKT-2026-0126 draft (same as E401). Check in comes from the job */
+  const job = data.engineerDay.today.find((j) => j.ticket === (new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126'));
+  const ROWS = [
+    ['travelStart', 'car-profile', 'Travel started', '08:50'],
+    ['arrived', 'map-pin', 'Checked in', job.checkedIn.slice(11, 16)],
+    ['workStart', 'wrench', 'Work started', '09:40'],
+    ['workEnd', 'check-circle', 'Work finished', '11:50'],
+  ];
+  const PRESETS = { small: { workEnd: '12:05' }, big: { workStart: '09:00' }, short: { workStart: '09:00' } };
+  const REASONS = { big: 'Started on the chain before checking in; the gate log shows 8:58.', short: 'Forgot' };
+  document.querySelectorAll('a.back').forEach((a) => { a.href = `E401-report.html?ticket=${job.ticket}&section=6`; });
+
+  const mins = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+  const label = (hhmm) => new Date(`${data.today}T${hhmm}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const duration = (min) => (min >= 60 ? `${Math.floor(min / 60)} h ${min % 60} min` : `${min} min`);
+  $('rows').innerHTML = ROWS.map(([key, icon, name, original]) => `<div class="trow"><span class="disc">${R.icon(icon)}</span>
+    <span><b>${name}</b><span class="was" id="was-${key}"></span></span>
+    <input class="input" type="time" id="${key}" value="${original}" data-original="${original}" aria-label="${name}"></div>`).join('');
+
+  const update = () => {
+    let flagged = false;
+    ROWS.forEach(([key]) => {
+      const input = $(key);
+      const diff = Math.abs(mins(input.value) - mins(input.dataset.original));
+      flagged ||= diff > FLAG_MINUTES;
+      $(`was-${key}`).textContent = diff ? `Was ${label(input.dataset.original)}` : 'Not edited';
+      $(`was-${key}`).classList.toggle('changed', diff > 0);
+    });
+    $('travel-total').textContent = duration(mins($('arrived').value) - mins($('travelStart').value));
+    $('labour-total').textContent = duration(mins($('workEnd').value) - mins($('workStart').value));
+    $('flag').hidden = !flagged;
+    $('reason-field').hidden = !flagged;
+    $('reason-count').textContent = `${$('reason').value.length} / 300`;
+    return flagged;
+  };
+  const showError = (show) => { $('reason-error').hidden = !show; $('reason-field').classList.toggle('has-error', show); };
+  const render = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    ROWS.forEach(([key]) => { $(key).value = PRESETS[state]?.[key] || $(key).dataset.original; });
+    $('reason').value = REASONS[state] || '';
+    update();
+    showError(state === 'short');
+  };
+  render();
+
+  document.querySelector('.scroll').addEventListener('input', () => { update(); showError(false); });
+  $('save').addEventListener('click', () => {
+    if (update() && $('reason').value.trim().length < MIN_REASON) { showError(true); return; }
+    location.href = document.querySelector('a.back').href;
+  });
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) render(); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

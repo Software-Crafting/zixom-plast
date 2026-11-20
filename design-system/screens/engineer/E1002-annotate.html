@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1002 Annotate photo</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.canvas-wrap{position:relative; aspect-ratio:4 / 5; border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--line); background:var(--slate-200)}
+.canvas-wrap canvas{display:block; width:100%; height:100%; touch-action:none; cursor:crosshair}
+.canvas-wrap .tag{position:absolute; top:12px; left:12px}
+.draw-bar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:14px}
+.draw-bar .chips{gap:6px}
+.draw-bar .chip{height:36px; padding:0 12px}
+.draw-bar .icon-btn:disabled{opacity:.4}
+.foot-pair{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1002 Annotate photo</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="large" aria-pressed="false">large photo</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="error" aria-pressed="false">cannot open</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="discard">discard</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E1001-camera.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Annotate photo</h1><span></span>
+      </div>
+      <div class="scroll with-footer" style="padding-bottom:130px">
+        <div class="stack-sm" data-when="ready large offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved on this phone.</div>
+          <div class="banner grey" data-when="large"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg><div><b>Large photo, 24 MP</b>Shown smaller while you draw. Original kept.</div></div>
+          <div class="canvas-wrap">
+            <canvas id="canvas" aria-label="Photo. Drag to draw"></canvas>
+            <span class="tag" id="photo-tag"></span>
+          </div>
+          <div class="draw-bar">
+            <div class="chips" data-single aria-label="Tool" id="tools">
+              <button class="chip outline" type="button" aria-pressed="true" data-tool="arrow">Arrow</button>
+              <button class="chip outline" type="button" aria-pressed="false" data-tool="circle">Circle</button>
+              <button class="chip outline" type="button" aria-pressed="false" data-tool="text">Text</button>
+            </div>
+            <div class="row-flex" style="gap:6px">
+              <button class="icon-btn" type="button" aria-label="Undo" id="undo"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button>
+              <button class="icon-btn" type="button" aria-label="Clear" id="clear"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-image-off"/></svg></span>
+          <h3>Could not open this photo</h3>
+          <p>The photo is still saved on this phone.</p>
+          <a class="btn btn-secondary" href="E1001-camera.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar foot-pair" data-when="ready large offline">
+        <button class="btn btn-secondary" type="button" data-open="discard">Discard</button>
+        <button class="btn btn-primary" type="button" data-toast="Saved on this phone. Original kept.">Save</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="text-sheet" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="text-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="text-t">Add text</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="field"><label for="label-text">Label<span class="counter">40 max</span></label>
+          <input class="input" id="label-text" maxlength="40" value="Worn sprocket"></div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" id="add-text">Add</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="discard" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="discard-t">
+        <h3 id="discard-t">Discard your drawing?</h3><p>The original photo is kept.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep editing</button>
+          <a class="btn btn-text" href="E1001-camera.html" style="color:var(--red); width:100%">Discard</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Drag on the photo to draw an arrow or a circle; Text opens a field above the keyboard. Annotations are
+saved as a copy on the phone and the original is kept.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const INK = getComputedStyle(document.documentElement).getPropertyValue('--red').trim() || '#C23B3B';
+  const canvas = $('canvas');
+  const ctx = canvas.getContext('2d');
+  const shapes = [];
+  let draft = null;
+  let pendingText = null;
+
+  const machine = ZX.render.machine(ZX.data.tickets.find((t) => t.number === ZX.data.engineerDay.today[0].ticket).machine);
+  $('photo-tag').textContent = `Fault · ${machine.nickname}`;
+
+  const tool = () => document.querySelector('#tools [aria-pressed="true"]').dataset.tool;
+
+  /* placeholder photo: a chain and sprocket drawn in greys, never a real image */
+  const drawPhoto = (w, h) => {
+    const bg = ctx.createLinearGradient(0, 0, w, h);
+    bg.addColorStop(0, '#8B97A4'); bg.addColorStop(1, '#4B5764');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 10;
+    ctx.beginPath(); ctx.arc(w * 0.38, h * 0.48, w * 0.2, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(w * 0.38, h * 0.48, w * 0.06, 0, Math.PI * 2); ctx.stroke();
+    ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(30,38,46,.45)';
+    ctx.beginPath(); ctx.moveTo(w * 0.38, h * 0.48 - w * 0.24); ctx.lineTo(w * 1.05, h * 0.3);
+    ctx.moveTo(w * 0.38, h * 0.48 + w * 0.24); ctx.lineTo(w * 1.05, h * 0.66); ctx.stroke();
+  };
+  const drawShape = (s) => {
+    ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (s.type === 'arrow') {
+      const angle = Math.atan2(s.y2 - s.y1, s.x2 - s.x1);
+      const head = 16;
+      ctx.beginPath(); ctx.moveTo(s.x1, s.y1); ctx.lineTo(s.x2, s.y2);
+      ctx.moveTo(s.x2, s.y2); ctx.lineTo(s.x2 - head * Math.cos(angle - 0.45), s.y2 - head * Math.sin(angle - 0.45));
+      ctx.moveTo(s.x2, s.y2); ctx.lineTo(s.x2 - head * Math.cos(angle + 0.45), s.y2 - head * Math.sin(angle + 0.45));
+      ctx.stroke();
+    }
+    if (s.type === 'circle') {
+      ctx.beginPath();
+      ctx.ellipse((s.x1 + s.x2) / 2, (s.y1 + s.y2) / 2, Math.abs(s.x2 - s.x1) / 2, Math.abs(s.y2 - s.y1) / 2, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    if (s.type === 'text') {
+      ctx.font = '600 17px Inter, sans-serif';
+      const width = ctx.measureText(s.text).width;
+      ctx.fillStyle = '#fff'; ctx.fillRect(s.x1 - 6, s.y1 - 18, width + 12, 26);
+      ctx.fillStyle = INK; ctx.fillText(s.text, s.x1, s.y1);
+    }
+  };
+  const redraw = () => {
+    const { width, height } = canvas.getBoundingClientRect();
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    drawPhoto(width, height);
+    shapes.forEach(drawShape);
+    if (draft) drawShape(draft);
+    $('undo').disabled = shapes.length === 0;
+    $('clear').disabled = shapes.length === 0;
+  };
+  const resize = () => {
+    const { width, height } = canvas.getBoundingClientRect();
+    if (!width) return;
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    redraw();
+  };
+
+  const point = (e) => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  canvas.addEventListener('pointerdown', (e) => {
+    const p = point(e);
+    if (tool() === 'text') { pendingText = p; $('text-sheet').hidden = false; return; }
+    canvas.setPointerCapture(e.pointerId);
+    draft = { type: tool(), x1: p.x, y1: p.y, x2: p.x, y2: p.y };
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!draft) return;
+    const p = point(e);
+    draft.x2 = p.x; draft.y2 = p.y;
+    redraw();
+  });
+  canvas.addEventListener('pointerup', () => {
+    if (!draft) return;
+    if (Math.hypot(draft.x2 - draft.x1, draft.y2 - draft.y1) > 8) shapes.push(draft);
+    draft = null;
+    redraw();
+  });
+  $('add-text').addEventListener('click', () => {
+    const text = $('label-text').value.trim();
+    if (text && pendingText) shapes.push({ type: 'text', text, x1: pendingText.x, y1: pendingText.y });
+    pendingText = null;
+    $('text-sheet').querySelector('[data-close]').click();
+    redraw();
+  });
+  $('undo').addEventListener('click', () => { shapes.pop(); redraw(); });
+  $('clear').addEventListener('click', () => { shapes.length = 0; redraw(); });
+
+  /* sample marks so the screen reads as annotated on first open */
+  const { width, height } = canvas.getBoundingClientRect();
+  shapes.push({ type: 'circle', x1: width * 0.2, y1: height * 0.48 - width * 0.22, x2: width * 0.56, y2: height * 0.48 + width * 0.22 },
+    { type: 'arrow', x1: width * 0.86, y1: height * 0.82, x2: width * 0.58, y2: height * 0.6 },
+    { type: 'text', text: 'Worn teeth', x1: width * 0.5, y1: height * 0.9 });
+  new ResizeObserver(resize).observe(canvas);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

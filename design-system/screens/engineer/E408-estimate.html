@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E408 Create an estimate on site</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.head-card{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.head-card b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.head-card .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.lines{border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); overflow:hidden}
+.eline{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:12px 14px; color:inherit; text-decoration:none; width:100%; border:0; background:none; text-align:left; font:inherit; cursor:pointer}
+.eline + .eline{border-top:1px solid var(--line)}
+.eline b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.eline .q{font-size:var(--fs-12); color:var(--text-muted)}
+.eline .amt{grid-column:2; grid-row:1 / span 2; align-self:center; display:flex; align-items:center; gap:6px; font-size:var(--fs-14); font-weight:500; color:var(--slate-900)}
+.eline .amt .ic{width:16px; height:16px; color:var(--slate-400)}
+.eline.covered{cursor:default}
+.eline.covered .amt{color:var(--text-muted)}
+.disc-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.disc-row.has-error{border-color:var(--amber); box-shadow:0 0 0 4px var(--amber-50)}
+.disc-row b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.disc-row .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.money .disc span:last-child{color:var(--green)}
+.footer-bar .pair{display:grid; grid-template-columns:1fr 1.6fr; gap:10px}
+.footer-bar{background:#fff; box-shadow:0 -8px 20px -16px rgba(24,34,45,.4)}
+.footer-bar .total{margin-bottom:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E408 Create an estimate on site</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="approval" aria-pressed="false">discount needs approval</button>
+  <button type="button" data-state="ready" data-open="add-line" aria-pressed="false">add line</button>
+  <button type="button" data-state="invalid" data-open="add-line" aria-pressed="false">line error</button>
+  <button type="button" data-state="ready" data-open="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="approved" aria-pressed="false">approved</button>
+  <button type="button" data-state="rejected" aria-pressed="false">rejected</button>
+  <button type="button" data-state="noanswer" aria-pressed="false">no answer 24 h</button>
+  <button type="button" data-state="expired" aria-pressed="false">expired</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E401-report.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Estimate</h1><span></span>
+      </div>
+      <div class="scroll with-footer" style="padding-bottom:240px">
+        <div class="stack" data-when="ready approval invalid approved rejected noanswer expired offline">
+          <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+            <div><b>You are offline</b>Kept as a draft and sent when you are online.</div></div>
+          <div class="banner amber" data-when="approval"><svg class="ic" aria-hidden="true"><use href="#ph-percent"/></svg>
+            <div><b>This discount needs approval</b>Above 5 percent it goes to your manager first.</div></div>
+          <div class="banner green" data-when="approved"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>
+            <div><b>Customer approved</b><span class="approved-at"></span> Go ahead with the work.</div></div>
+          <div class="banner red" data-when="rejected"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>
+            <div><b>Customer rejected</b>"Price is too high." Finish the covered work and note it in the report.</div></div>
+          <div class="banner amber" data-when="noanswer"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>No answer for 24 hours</b>We reminded the customer and told your manager.</div></div>
+          <div class="banner red" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>Estimate expired</b>Send a new one if the work is still needed.</div></div>
+
+          <div class="head-card" id="head"></div>
+
+          <div>
+            <p class="list-title" style="margin-top:0">Lines</p>
+            <div class="lines" id="lines"></div>
+            <button class="btn btn-secondary btn-sm" type="button" style="width:100%; margin-top:8px" data-open="add-line"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add line</button>
+          </div>
+
+          <div class="disc-row" id="disc-row">
+            <span><b>Discount</b><span class="sub">Up to 5 percent without approval</span></span>
+            <span class="stepper lg" id="disc-stepper"><button type="button" data-pct="-1" aria-label="Less discount"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output id="pct"></output><button type="button" data-pct="1" aria-label="More discount"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span>
+          </div>
+
+          <div class="money" id="money"></div>
+
+          <dl class="kv" style="margin:0 2px" id="validity"></dl>
+
+          <div class="field"><label for="note">Note to the customer<span class="counter" id="note-count"></span></label>
+            <textarea class="textarea" id="note" maxlength="300"></textarea></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-card" style="height:70px"></span>
+          <span class="skeleton sk-card" style="height:240px"></span>
+          <span class="skeleton sk-card" style="height:70px"></span><span class="skeleton sk-card" style="height:140px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready approval invalid approved rejected noanswer expired offline">
+        <div class="total"><span>Total incl. GST</span><b class="est-total"></b></div>
+        <div class="pair" data-when="ready invalid">
+          <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button>
+          <button class="btn btn-primary" type="button" data-open="sent">Send to customer</button>
+        </div>
+        <div class="pair" data-when="approval">
+          <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button>
+          <button class="btn btn-primary" type="button" data-open="sent" data-manager>Send to manager</button>
+        </div>
+        <div class="pair" data-when="offline">
+          <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button>
+          <button class="btn btn-primary" type="button" disabled>Send to customer</button>
+        </div>
+        <a class="btn btn-primary job-link" href="E202-job-detail.html" data-when="approved rejected noanswer">Back to job</a>
+        <button class="btn btn-primary" type="button" data-goto="ready" data-when="expired">Make a new estimate</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="add-line" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="add-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="add-title">Add line</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="chips" data-single style="margin-bottom:14px">
+            <button class="chip outline" type="button" aria-pressed="false">Labour</button><button class="chip outline" type="button" aria-pressed="true">Part</button>
+            <button class="chip outline" type="button" aria-pressed="false">Travel</button><button class="chip outline" type="button" aria-pressed="false">Other</button>
+          </div>
+          <div class="field" id="desc-field"><label for="desc">Description<span class="req">*</span></label><input class="input" id="desc" maxlength="100">
+            <span class="error-text" data-when="invalid"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 3 to 100 characters</span></div>
+          <div class="row-flex" style="margin-top:16px; align-items:flex-start">
+            <div class="field grow" style="margin:0"><span class="field-label">Quantity</span>
+              <span class="stepper lg"><button type="button" data-step="-1" aria-label="Less"><svg class="ic" aria-hidden="true"><use href="#ph-minus"/></svg></button><output value="1">1</output><button type="button" data-step="1" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg></button></span></div>
+            <div class="field grow" style="margin:0"><label for="rate">Rate, before GST</label>
+              <div class="input-group"><span class="prefix">₹</span><input class="input" id="rate" inputmode="decimal" value="1450"></div>
+              <span class="hint">From the rate list</span></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close data-toast="Line added">Add line</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="sent" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="sent-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg></span>
+        <h3 id="sent-title">Estimate sent</h3>
+        <p id="sent-text"></p>
+        <div class="actions"><a class="btn btn-primary job-link" href="E202-job-detail.html">Back to job</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Extra work quoted on site. Warranty covered lines show zero and are locked; discount up to 5 percent
+goes straight to the customer, above that to the manager first. Valid 3 days.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample estimate for extra work on TKT-2026-0126. covered: under warranty, rate shows zero.
+     The chargeable lines are the same as E401 section 6 (move to ZX.data.estimates as a draft) */
+  const LINES = [
+    { text: 'Industrial chain set, 12B', qty: 1, rate: 0, covered: true },
+    { text: 'Labour, chain replacement, hours', qty: 2, rate: 0, covered: true },
+    { text: 'Automatic chain oiler', qty: 1, rate: 3450 },
+    { text: 'Labour, oiler fitting, hours', qty: 1.5, rate: 800 },
+  ];
+  const NOTE = 'The chain wore out because the oiler is missing. Fitting one is not covered by warranty.';
+  const DISCOUNT_LIMIT = 5;
+  const VALID_DAYS = 3;
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const number = `QT-2026-${String(Math.max(...data.estimates.map((e) => Number(e.number.slice(-4)))) + 1).padStart(4, '0')}`;
+  const validUntil = (() => { const d = new Date(`${data.today}T00:00:00`); d.setDate(d.getDate() + VALID_DAYS); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+  $('back').href = `E401-report.html?ticket=${ticket.number}&section=6`;
+  document.querySelectorAll('.job-link').forEach((a) => { a.href = `E202-job-detail.html?ticket=${ticket.number}`; });
+  document.querySelectorAll('.approved-at').forEach((el) => { el.textContent = 'Approved in the app, 12:20 PM.'; });
+
+  $('head').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b>
+    <span class="sub"><span class="mono">${number}</span> · <span class="mono">${ticket.number}</span></span>
+    <span class="row-flex" style="gap:6px; margin-top:6px">${R.coverageTag(ticket.coverage)}${R.tag(R.esc(company.name))}</span></span>`;
+  $('lines').innerHTML = LINES.map((l) => `<button class="eline${l.covered ? ' covered' : ''}" type="button" ${l.covered ? 'disabled' : 'data-open="add-line"'}>
+    <b>${R.esc(l.text)}</b><span class="q">${l.qty} x ${R.money(l.rate)}</span>
+    <span class="amt">${l.covered ? R.tag('Covered', 'green') : ''}${R.money(l.qty * l.rate)}${R.icon(l.covered ? 'lock-simple' : 'caret-right')}</span></button>`).join('');
+  $('note').value = NOTE;
+  $('note-count').textContent = `${NOTE.length} / 300`;
+  $('validity').innerHTML = `<div><dt>Valid for</dt><dd>${VALID_DAYS} days, until ${R.dayDate(validUntil)}</dd></div>`;
+
+  let pct = DISCOUNT_LIMIT;
+  const render = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    if (state === 'approval' && pct <= DISCOUNT_LIMIT) pct = 8;
+    if (state !== 'approval' && pct > DISCOUNT_LIMIT) pct = DISCOUNT_LIMIT;
+    const lines = LINES.map((l) => [l.text, l.qty, l.rate]);
+    const { subtotal } = R.totals(lines);
+    const discount = Math.round(subtotal * pct) / 100;
+    const t = R.totals([...lines, ['Discount', 1, -discount]]);
+    $('pct').textContent = `${pct}%`;
+    $('disc-row').classList.toggle('has-error', pct > DISCOUNT_LIMIT);
+    $('money').innerHTML = `<div><span>Subtotal</span><span>${R.money(subtotal)}</span></div>
+      <div class="disc"><span>Discount ${pct}%</span><span>- ${R.money(discount)}</span></div>
+      <div><span>GST 18%</span><span>${R.money(t.gst)}</span></div>
+      <div class="total"><span>Total</span><span>${R.money(t.total)}</span></div>`;
+    document.querySelectorAll('.est-total').forEach((el) => { el.textContent = R.money(t.total); });
+    $('desc').value = state === 'invalid' ? 'Oi' : 'Automatic chain oiler';
+    $('desc-field').classList.toggle('has-error', state === 'invalid');
+    $('disc-stepper').querySelectorAll('button').forEach((b) => { b.disabled = ['approved', 'rejected', 'noanswer', 'expired'].includes(state); });
+  };
+  render();
+
+  document.addEventListener('click', (event) => {
+    const step = event.target.closest('[data-pct]');
+    if (step) {
+      pct = Math.min(20, Math.max(0, pct + Number(step.dataset.pct)));
+      const want = pct > DISCOUNT_LIMIT ? 'approval' : 'ready';
+      if (document.querySelector('.screen').dataset.state !== want) document.querySelector(`.plate-states [data-state="${want}"]:not([data-open])`).click();
+      render();
+    }
+    const send = event.target.closest('[data-open="sent"]');
+    if (send) {
+      const manager = send.hasAttribute('data-manager');
+      $('sent-title').textContent = manager ? 'Sent to your manager' : 'Estimate sent';
+      $('sent-text').textContent = manager ? `${number} goes to the customer once ${data.support.manager} approves the discount.`
+        : `${number} is with the customer to approve in the app. We will tell you the answer.`;
+    }
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+    if (event.target.closest('.plate-states button')) render();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

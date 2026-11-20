@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1010 Weekly summary</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.week{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px; border-radius:var(--r-pill); background:#fff; border:1px solid var(--line)}
+.week b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.week .icon-btn{border:0; background:var(--slate-100)}
+.week .icon-btn:disabled{opacity:.35; cursor:not-allowed}
+#stats .stat:last-child{grid-column:1 / -1}
+.days{padding:4px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1010 Weekly summary</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="empty" aria-pressed="false">no data for the week</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><a class="icon-btn" href="E803-performance.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Weekly summary</h1><span></span></div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="week" data-when="ready empty offline loading">
+            <button class="icon-btn sm" type="button" id="prev" aria-label="Previous week"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-caret-left"/></svg></button>
+            <b id="week-label"></b>
+            <button class="icon-btn sm" type="button" id="next" aria-label="Next week"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-caret-right"/></svg></button>
+          </div>
+
+          <div class="stats" id="stats" data-when="ready offline"></div>
+          <div data-when="ready offline">
+            <p class="list-title" style="margin-top:0">By day</p>
+            <dl class="kv days" id="days" style="margin:0"></dl>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:60px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chart-line-up"/></svg></span>
+            <h3>No jobs this week</h3><p>Pick another week.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <div class="stats"><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton" style="height:240px; border-radius:var(--r-lg)"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this week.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Jobs, hours, first visit fix rate, SLA met and rating for one week, Monday to Sunday, with a line per day. The arrows change the week.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  /* completed weeks, oldest first; days are [date, jobs, hours] */
+  const WEEKS = [
+    { from: '2026-11-09', to: '2026-11-15', jobs: 10, hours: 34, firstVisitFix: 80, slaMet: 90, rating: 4.6,
+      days: [['2026-11-09', 2, 7], ['2026-11-10', 2, 6.5], ['2026-11-11', 1, 4], ['2026-11-12', 2, 6.5], ['2026-11-13', 2, 7], ['2026-11-14', 1, 3]] },
+    { from: '2026-11-16', to: '2026-11-22', jobs: 11, hours: 38, firstVisitFix: 82, slaMet: 91, rating: 4.8,
+      days: [['2026-11-16', 2, 7.5], ['2026-11-17', 3, 8], ['2026-11-18', 1, 4.5], ['2026-11-19', 2, 6.5], ['2026-11-20', 2, 7], ['2026-11-21', 1, 4.5]] },
+  ];
+  let index = WEEKS.length - 1;
+
+  const short = (iso) => R.date(iso).split(' ').slice(0, 2).join(' ');
+  const hours = (h) => `${Math.floor(h)} h${h % 1 ? ` ${Math.round((h % 1) * 60)} min` : ''}`;
+  const stat = (value, label) => `<span class="stat"><b>${value}</b><span>${label}</span></span>`;
+  const show = () => {
+    const w = WEEKS[index];
+    document.getElementById('week-label').textContent = `${short(w.from)} to ${short(w.to)}`;
+    document.getElementById('stats').innerHTML = stat(w.jobs, 'Jobs') + stat(hours(w.hours), 'Hours on jobs')
+      + stat(`${w.firstVisitFix}%`, 'First visit fix') + stat(`${w.slaMet}%`, 'SLA met') + stat(w.rating, 'Average rating');
+    document.getElementById('days').innerHTML = w.days.map(([d, jobs, h]) => `<div><dt>${R.dayDate(d)}</dt>
+      <dd>${jobs} ${jobs === 1 ? 'job' : 'jobs'} · ${hours(h)}</dd></div>`).join('');
+    document.getElementById('prev').disabled = index === 0;
+    document.getElementById('next').disabled = index === WEEKS.length - 1;
+  };
+  document.getElementById('prev').addEventListener('click', () => { index -= 1; show(); });
+  document.getElementById('next').addEventListener('click', () => { index += 1; show(); });
+  show();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

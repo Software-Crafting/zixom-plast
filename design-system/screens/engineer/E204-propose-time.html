@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E204 Propose a different time</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.jobrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.jobrow b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.jobrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.chips.wrap{flex-wrap:wrap; overflow:visible}
+.sent{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.sent .disc{grid-row:1 / span 2; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--amber-50); color:var(--amber)}
+.sent b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.sent p{grid-column:2; margin:4px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E204 Propose a different time</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="waiting" aria-pressed="false">waiting for customer</button>
+  <button type="button" data-state="declined" aria-pressed="false">customer declined</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Propose a time</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. It is sent when you are back online.</div>
+          <div class="banner red" data-when="declined"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg><div><b id="declined-title"></b>Pick another time.</div></div>
+          <div class="card jobrow" id="job"></div>
+
+          <div class="sent" data-when="waiting"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+            <b>Waiting for the customer</b><p id="waiting-text"></p></div>
+
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#slots-bad">Pick a time window</a></li><li><a href="#reason-bad">Choose a reason</a></li></ul></div>
+
+          <div data-when="ready errors declined offline">
+            <div class="field-label" id="month"></div>
+            <div class="dates" data-single id="dates"></div>
+            <div class="field-label" style="margin-top:16px" id="slots-bad">Time window<span class="req" style="color:var(--red)">*</span></div>
+            <div class="slots" data-single id="slots"></div>
+            <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Pick a time window</span>
+
+            <div class="field-label" style="margin-top:20px" id="reason-bad">Reason<span class="req" style="color:var(--red)">*</span></div>
+            <div class="chips wrap" data-single id="reasons"></div>
+            <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose a reason</span>
+
+            <div class="field" style="margin-top:20px">
+              <label for="note">Message to the customer<span class="counter">Optional</span></label>
+              <textarea class="textarea" id="note" placeholder="For example, the part reaches us on Tuesday"></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="ready errors declined" data-busy id="send">Send to customer</button>
+        <button class="btn btn-primary" type="button" data-when="offline" data-toast="Saved. Waiting to sync">Send to customer</button>
+        <a class="btn btn-secondary" data-when="waiting" id="back-job">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Ask the customer for another visit time. Past windows are disabled; the job keeps its time until
+the customer agrees, and a decline comes back as a notification.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = data.engineerDay.offer.ticket;
+  const SLOTS = [['9 to 12', 12], ['12 to 3', 15], ['3 to 6', 18]];
+  const DAYS_SHOWN = 7;
+  const CLOSED_DAY = 0; /* sites work Monday to Saturday */
+  const REASONS = ['Another job then', 'Travel time', 'Parts not ready', 'Customer asked', 'Other'];
+  const PROPOSED = { date: '2026-11-25', slot: '9 to 12 AM', slotIndex: 0, reason: 'Another job then' };
+  const DECLINED = { date: '2026-11-25', slot: '9 to 12 AM' };
+
+  const params = new URLSearchParams(location.search);
+  const t = data.tickets.find((x) => x.number === (params.get('ticket') || DEFAULT_TICKET));
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const slot = t.window || data.engineerDay.offer.slot;
+  const screen = document.querySelector('.screen');
+
+  $('back').href = `E202-job-detail.html?ticket=${t.number}`;
+  $('back-job').href = `E202-job-detail.html?ticket=${t.number}`;
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(company.name)}, ${R.esc(site.name)}</b>
+    <span><span class="mono" style="display:inline">${t.number}</span> · Now ${R.dayDate(slot.date)}, ${slot.slot}</span></span>`;
+  $('waiting-text').textContent = `You proposed ${R.dayDate(PROPOSED.date)}, ${PROPOSED.slot}.`;
+  $('declined-title').textContent = `The customer declined ${R.dayDate(DECLINED.date)}, ${DECLINED.slot}`;
+
+  /* dates from today; past windows today and the closed day are disabled */
+  const start = new Date(`${data.today}T00:00`);
+  const nowHour = new Date(data.now).getHours();
+  $('month').textContent = start.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const days = Array.from({ length: DAYS_SHOWN }, (_, i) => new Date(start.getTime() + i * 86400000));
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  $('dates').innerHTML = days.map((d) => `<button class="date" type="button" data-date="${iso(d)}" ${d.getDay() === CLOSED_DAY ? 'disabled' : `aria-pressed="${iso(d) === PROPOSED.date}"`}>
+    <span>${d.toLocaleDateString('en-GB', { weekday: 'short' })}</span><b>${d.getDate()}</b></button>`).join('');
+  const paintSlots = (date) => {
+    $('slots').innerHTML = SLOTS.map(([label, endHour], i) => {
+      const past = date === data.today && endHour <= nowHour + 1;
+      return `<button class="slot" type="button" ${past ? 'disabled' : `aria-pressed="${date === PROPOSED.date && i === PROPOSED.slotIndex && screen.dataset.state !== 'errors'}"`}>${label}</button>`;
+    }).join('');
+  };
+  paintSlots(PROPOSED.date);
+  $('dates').addEventListener('click', (event) => { const d = event.target.closest('.date:not(:disabled)'); if (d) paintSlots(d.dataset.date); });
+  const paintReasons = () => {
+    $('reasons').innerHTML = REASONS.map((r) => `<button class="chip outline" type="button" aria-pressed="${r === PROPOSED.reason && screen.dataset.state !== 'errors'}">${r}</button>`).join('');
+  };
+  paintReasons();
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) { paintSlots(PROPOSED.date); paintReasons(); } });
+
+  /* Send: busy, then the waiting state */
+  $('send').addEventListener('click', () => setTimeout(() => document.querySelector('.plate-states [data-state="waiting"]').click(), 900));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

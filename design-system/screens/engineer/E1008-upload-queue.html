@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1008 Upload queue</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.setting{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); cursor:pointer}
+.setting b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.setting span.sub{font-size:var(--fs-12); color:var(--text-muted)}
+.list-title{margin:6px 4px 0}
+.files-head .btn{min-height:0; padding:0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1008 Upload queue</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="mobile" aria-pressed="false">paused on mobile data</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="confirm">remove from a submitted report</button>
+  <button type="button" data-state="empty" aria-pressed="false">all uploaded</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><a class="icon-btn" href="E102-sync-queue.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Upload queue</h1><span></span></div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Uploads start when you are back.</div>
+          <div class="banner amber" data-when="mobile">
+            <svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg>
+            <div><b>Paused on mobile data</b><a href="../system/S15-mobile-data.html">Upload now</a></div>
+          </div>
+
+          <label class="setting" data-when="ready mobile offline"><span><b>Pause on mobile data</b><span class="sub">Photos and videos wait for Wi-Fi</span></span>
+            <span class="switch"><input type="checkbox" checked aria-label="Pause on mobile data"><span></span></span></label>
+
+          <div class="files" id="files" data-when="ready"></div>
+          <div class="files" id="files-mobile" data-when="mobile"></div>
+          <div class="files" id="files-offline" data-when="offline"></div>
+
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>All uploads done</h3><p>Photos and videos reached Zixom.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:58px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:45%; margin-top:8px"></span>
+            <span class="skeleton" style="height:66px"></span><span class="skeleton" style="height:66px"></span><span class="skeleton" style="height:66px; opacity:.6"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not read the upload queue.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="confirm" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="confirm-title">
+        <h3 id="confirm-title">Remove this photo?</h3><p id="confirm-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep photo</button>
+          <button class="btn btn-text" type="button" style="color:var(--red); width:100%" data-close data-toast="Photo removed">Remove</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every photo and video waiting to upload, per job, with pause, resume, retry and remove. Uploads continue in the background;
+removing one from a submitted report asks first.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const SUBMITTED = 'TKT-2026-0132';
+  /* the files behind the photo items in engineerDay.sync, plus one from a report already submitted */
+  const UPLOADS = [
+    { ticket: 'TKT-2026-0126', name: 'before-chain-drive.jpg', size: '2.4 MB', status: 'uploading', progress: 64 },
+    { ticket: 'TKT-2026-0126', name: 'fault-sprocket.jpg', size: '2.1 MB', status: 'queued' },
+    { ticket: 'TKT-2026-0126', name: 'part-chain-12b.jpg', size: '1.9 MB', status: 'failed', progress: 20 },
+    { ticket: 'TKT-2026-0126', name: 'nameplate.jpg', size: '1.2 MB', status: 'done' },
+    { ticket: 'TKT-2026-0126', name: 'chain-noise.mp4', size: '38 MB · 48 s', status: 'paused', progress: 30, video: true },
+    { ticket: SUBMITTED, name: 'after-cooling-fan.jpg', size: '2.0 MB', status: 'queued' },
+  ];
+
+  const btn = (action, iconName, label, extra = '') => `<button class="icon-btn" type="button" ${action} aria-label="${label}"${extra}>${R.icon(iconName)}</button>`;
+  const remove = (u) => (u.ticket === SUBMITTED ? btn('data-open="confirm"', 'x', 'Remove') : btn('data-file="remove"', 'x', 'Remove'));
+  const META = {
+    uploading: (u) => [`Uploading ${u.progress}% · ${u.size}`, btn('data-file="pause"', 'pause', 'Pause')],
+    queued: (u) => [`Waiting · ${u.size}`, ''],
+    paused: (u) => [`Paused at ${u.progress || 0}% · Wi-Fi only`, btn('data-file="resume"', 'play', 'Resume')],
+    failed: () => [`${R.icon('warning-circle')}Upload failed. Tap to retry`, btn('data-file="retry"', 'rotate-ccw', 'Retry')],
+    done: (u) => [`${R.icon('check-circle')}Uploaded · ${u.size}`, ''],
+  };
+  const file = (u, status = u.status) => {
+    const [meta, action] = META[status](u);
+    const bar = ['uploading', 'paused'].includes(status) ? `<span class="progress"><i style="width:${u.progress || 0}%"></i></span>` : '';
+    return `<div class="file" data-status="${status}"${u.progress ? ` data-progress="${u.progress}"` : ''}>
+      <span class="file-thumb">${R.icon(u.video ? 'video-camera' : 'image')}</span>
+      <div class="file-body"><b>${R.esc(u.name)}</b><span class="file-meta">${meta}</span>${bar}</div>
+      <span class="actions">${action}${remove(u)}</span></div>`;
+  };
+  const jobTitle = (n) => {
+    const m = R.machine(data.tickets.find((t) => t.number === n).machine);
+    return `<p class="list-title"><span class="mono">${n}</span> · ${R.esc(m.nickname || m.model)}${n === SUBMITTED ? ' · Report submitted' : ''}</p>`;
+  };
+  const render = (statusFor) => {
+    const done = UPLOADS.filter((u) => statusFor(u) === 'done').length;
+    const failed = UPLOADS.filter((u) => statusFor(u) === 'failed').length;
+    const head = `<div class="files-head"><span><b>${done} of ${UPLOADS.length} uploaded</b>${failed ? ` · ${failed} failed` : ''}</span>
+      ${failed ? '<button class="btn btn-text" type="button" data-busy>Retry all</button>' : ''}</div>`;
+    const tickets = [...new Set(UPLOADS.map((u) => u.ticket))];
+    return head + tickets.map((n) => jobTitle(n) + UPLOADS.filter((u) => u.ticket === n).map((u) => file(u, statusFor(u))).join('')).join('');
+  };
+  document.getElementById('files').innerHTML = render((u) => u.status);
+  /* on mobile data only the files already sent stay done; the rest pause */
+  document.getElementById('files-mobile').innerHTML = render((u) => (u.status === 'done' ? 'done' : 'paused'));
+  document.getElementById('files-offline').innerHTML = render((u) => (u.status === 'done' ? 'done' : 'queued'));
+  document.getElementById('confirm-text').textContent = `It is part of the submitted report for ${SUBMITTED}.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

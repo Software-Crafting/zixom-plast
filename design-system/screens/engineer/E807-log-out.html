@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E807 Log out</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+.alert .meter{margin-top:16px}
+.alert .hint{display:block; margin-top:8px}
+.alert .danger-text{width:100%; color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E807 Log out</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="blocked">unsent items</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="syncing">syncing</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="discard">discard</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="confirm">all sent</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="offline-alert">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark eng-initials"></span>
+        <div class="grow"><span class="root-hello" id="today"></span><span class="root-name" id="name"></span></div>
+      </div>
+      <h1 class="root-title">Profile</h1>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="list">
+            <span class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></span><b>Settings</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+            <span class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Help and training</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+            <span class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg></span><b>About this app</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+          </div>
+          <div class="list">
+            <span class="list-item danger"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>Log out</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+    <nav class="tabbar" data-tabs="engineer" data-active="profile"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="blocked" data-initial hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="bl-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+        <h3 id="bl-t">You have unsent items</h3><p><span class="waiting"></span> items are waiting to sync. Log out after they are sent.</p>
+        <div class="actions">
+          <button class="btn btn-primary" type="button" data-open="syncing">Sync now</button>
+          <a class="btn btn-text" href="E802-profile.html" style="width:100%">Cancel</a>
+          <button class="btn btn-text danger-text" type="button" data-open="discard">Discard and log out</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="syncing" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="sy-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
+        <h3 id="sy-t">Sending</h3><p>2 of <span class="waiting"></span> sent. Keep the app open.</p>
+        <div class="meter"><i style="width:66%"></i></div>
+        <div class="actions"><button class="btn btn-primary" type="button" data-open="confirm">Continue</button></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="discard" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="dc-t">
+        <span class="disc red"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-trash"/></svg></span>
+        <h3 id="dc-t">Discard <span class="waiting"></span> items?</h3><p id="dc-list"></p>
+        <div class="actions">
+          <a class="btn btn-primary" href="E802-profile.html">Keep them</a>
+          <a class="btn btn-text danger-text" href="../access/A03-sign-in.html">Discard and log out</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="confirm" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="cf-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-sign-out"/></svg></span>
+        <h3 id="cf-t">Log out?</h3><p>You will need an OTP to sign in again.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="E802-profile.html">Cancel</a>
+          <a class="btn btn-text danger-text" href="../access/A03-sign-in.html">Log out</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="offline-alert" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="of-t">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+        <h3 id="of-t">You are offline</h3><p><span class="waiting"></span> items cannot be sent yet. Log out when you are back online.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="E802-profile.html">OK</a>
+          <button class="btn btn-text danger-text" type="button" data-open="discard">Discard and log out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Log out is blocked while items wait to sync, so a report is never lost silently. Sync now sends them;
+discarding needs a second, explicit confirmation.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  const waiting = day.sync.filter((s) => s.state === 'waiting');
+  document.querySelectorAll('.eng-initials').forEach((el) => { el.textContent = me.initials; });
+  document.getElementById('name').textContent = me.name;
+  document.getElementById('today').textContent = R.dayDate(data.today);
+  document.querySelectorAll('.waiting').forEach((el) => { el.textContent = waiting.length; });
+  const kinds = [...new Set(waiting.map((s) => s.kind.toLowerCase()))];
+  document.getElementById('dc-list').textContent = `Your ${kinds.join(', ').replace(/, ([^,]*)$/, ' and $1')} for ${waiting[0].ticket} will be lost.`;
+  /* one alert at a time: a button that opens the next alert closes its own */
+  document.addEventListener('click', (e) => { const b = e.target.closest('.overlay [data-open]'); if (b) b.closest('.overlay').hidden = true; });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

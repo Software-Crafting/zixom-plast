@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1004 Voice to text</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.dictate-field{position:relative}
+.dictate-field .textarea{padding-right:56px}
+.dictate-field .icon-btn{position:absolute; right:8px; bottom:8px}
+.levels{display:flex; align-items:center; justify-content:center; gap:5px; height:36px; margin:4px 0 10px; color:var(--red);
+  font-size:var(--fs-13); font-weight:500}
+.levels i{width:5px; border-radius:3px; background:var(--red)}
+.levels span{margin-left:8px}
+.transcript{min-height:132px}
+.screen[data-state="denied"] .dictate-field .icon-btn{opacity:.4}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1004 Voice to text</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="dictate">ready</button>
+  <button type="button" data-state="listening" aria-pressed="false" data-open="dictate">listening</button>
+  <button type="button" data-state="done" aria-pressed="false" data-open="dictate">text ready</button>
+  <button type="button" data-state="noisy" aria-pressed="false" data-open="dictate">could not understand</button>
+  <button type="button" data-state="nospeech" aria-pressed="false" data-open="dictate">speech offline</button>
+  <button type="button" data-state="denied" aria-pressed="false" data-open="dictate">microphone denied</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E207-work.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Visit report</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="card row-flex" id="job"></div>
+          <div class="field dictate-field"><label for="findings">Findings<span class="req">*</span></label>
+            <textarea class="textarea" id="findings" placeholder="What you found"></textarea>
+            <button class="icon-btn dark" type="button" data-open="dictate" aria-label="Dictate findings"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg></button></div>
+          <div class="field dictate-field"><label for="work">Work done<span class="req">*</span></label>
+            <textarea class="textarea" id="work" placeholder="What you did"></textarea>
+            <button class="icon-btn" type="button" data-open="dictate" aria-label="Dictate work done"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg></button></div>
+        </div>
+      </div>
+      <div class="footer-bar"><button class="btn btn-primary" type="button" disabled>Next</button></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="dictate" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="dictate-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="dictate-t">Dictate findings</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+
+        <div class="state" data-when="denied" style="padding:4px 0 8px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg></span>
+          <h3>Microphone access is off</h3>
+          <p>Allow it in Settings, or type instead.</p>
+        </div>
+
+        <div data-when="ready listening done noisy nospeech">
+          <div class="banner red" data-when="noisy" style="margin-bottom:12px"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>Could not understand, try again</b>Move away from the noise or hold the phone closer.</div></div>
+          <div class="banner amber" data-when="nospeech" style="margin-bottom:12px"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg><div><b>Voice typing is offline</b>Type for now. Your text is saved on this phone.</div></div>
+          <div class="levels" data-when="listening" aria-label="Listening">
+            <i style="height:10px"></i><i style="height:22px"></i><i style="height:34px"></i><i style="height:18px"></i><i style="height:28px"></i><i style="height:12px"></i><span>Listening</span>
+          </div>
+          <label class="sr-only" for="transcript">Dictated text</label>
+          <textarea class="textarea transcript" id="transcript" placeholder="Tap Start and speak"></textarea>
+        </div>
+
+        <div class="stack-sm" style="margin-top:16px">
+          <button class="btn btn-primary" type="button" id="start" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg>Start</button>
+          <button class="btn btn-danger" type="button" id="stop" data-when="listening"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg>Stop</button>
+          <button class="btn btn-primary" type="button" id="retry" data-when="noisy"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg>Try again</button>
+          <button class="btn btn-primary" type="button" id="insert" data-when="done nospeech">Insert</button>
+          <button class="btn btn-secondary" type="button" id="again" data-when="done"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg>Speak more</button>
+          <a class="btn btn-primary" href="../system/S07-permission.html" data-when="denied">Open Settings</a>
+          <button class="btn btn-secondary" type="button" data-close data-when="denied">Type instead</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Dictation for findings or notes in the visit report. Start, speak, Stop, edit the text, then Insert puts it
+in the field. Microphone denied goes to <a href="../system/S07-permission.html">S07</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const WORD_MS = 180;
+  /* sample dictation, not in data.js */
+  const SPOKEN = 'Drive chain is slack by about 12 mm. Two sprocket teeth are worn on the left side. Error E-17 clears after re tensioning.';
+  const screen = document.querySelector('.screen');
+  const ticket = ZX.data.tickets.find((t) => t.number === ZX.data.engineerDay.today[0].ticket);
+  const machine = R.machine(ticket.machine);
+  let typing = null;
+
+  $('job').innerHTML = `${R.thumb(machine)}<div class="grow"><b class="mono" style="font-size:var(--fs-13)">${R.esc(ticket.number)}</b>
+    <div class="card-sub" style="margin:2px 0 0">${R.esc(machine.nickname)} · ${R.esc(machine.model)}</div></div>`;
+
+  /* switch state without closing the sheet, like the plate switch */
+  const show = (state) => {
+    screen.dataset.state = state;
+    screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes(state); });
+    document.querySelectorAll('.plate-states button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === state)));
+  };
+  const listen = () => {
+    const base = $('transcript').value ? `${$('transcript').value} ` : '';
+    const words = SPOKEN.split(' ');
+    let i = 0;
+    show('listening');
+    typing = window.setInterval(() => {
+      i += 1;
+      $('transcript').value = base + words.slice(0, i).join(' ');
+      if (i === words.length) stop();
+    }, WORD_MS);
+  };
+  const stop = () => { window.clearInterval(typing); show('done'); };
+
+  $('start').addEventListener('click', listen);
+  $('retry').addEventListener('click', listen);
+  $('again').addEventListener('click', listen);
+  $('stop').addEventListener('click', stop);
+  $('insert').addEventListener('click', () => {
+    $('findings').value = $('transcript').value;
+    $('dictate').querySelector('[data-close]').click();
+  });
+  /* plate states show sample text where the state has some */
+  const SAMPLE = { listening: SPOKEN.split(' ').slice(0, 9).join(' '), done: SPOKEN, noisy: '', nospeech: '', ready: '' };
+  document.querySelectorAll('.plate-states button').forEach((b) => b.addEventListener('click', () => {
+    window.clearInterval(typing);
+    $('transcript').value = SAMPLE[b.dataset.state] ?? '';
+  }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

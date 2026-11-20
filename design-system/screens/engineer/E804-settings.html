@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E804 Settings</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+label.list-item{cursor:default}
+.sync{padding:16px}
+.sync .row-flex{justify-content:space-between}
+.sync b{font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.sync p{margin:2px 0 0; font-size:var(--fs-12); color:var(--text-muted)}
+.sync .meter{margin-top:12px}
+.sync .fail{display:flex; align-items:center; gap:6px; margin-top:12px; font-size:var(--fs-13); color:var(--red)}
+.sync .fail a{margin-left:auto}
+.version{margin:22px 0 0; text-align:center; font-size:var(--fs-12); color:var(--text-faint)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E804 Settings</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="syncing" aria-pressed="false">syncing</button>
+  <button type="button" data-state="failed" aria-pressed="false">sync failures</button>
+  <button type="button" data-state="notifoff" aria-pressed="false">notifications off</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Settings</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Sync starts when you are back online.</div>
+          <div class="banner amber" data-when="notifoff"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+            <div><b>Notifications are off</b>You will miss new jobs. <a href="#">Open Settings</a></div></div>
+
+          <div class="card sync">
+            <div class="row-flex">
+              <div><b id="sync-title"></b><p id="sync-sub"></p></div>
+              <button class="btn btn-primary btn-sm" type="button" data-when="ready failed notifoff" data-busy data-toast="Sync started">Sync now</button>
+              <button class="btn btn-primary btn-sm" type="button" data-when="offline" disabled>Sync now</button>
+            </div>
+            <div data-when="syncing"><div class="meter"><i style="width:66%"></i></div><p style="margin-top:8px" id="sync-progress"></p></div>
+            <div class="fail" data-when="failed"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg><span id="fail-text"></span><a class="link" href="E102-sync-queue.html">View</a></div>
+          </div>
+
+          <div>
+            <p class="list-title" style="margin-top:4px">Alerts</p>
+            <div class="list">
+              <a class="list-item" href="E811-alert-sounds.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Notification alerts</b>
+                <span class="sub" data-when="ready syncing failed offline">Push and email</span><span class="sub" data-when="notifoff" style="color:var(--red)">Off in phone settings</span>
+                <span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+
+          <div>
+            <p class="list-title" style="margin-top:4px">Security</p>
+            <div class="list">
+              <label class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg></span><b>App lock</b><span class="sub">Required for engineers</span>
+                <span class="end"><span class="switch"><input type="checkbox" checked disabled aria-label="App lock"><span></span></span></span></label>
+            </div>
+          </div>
+
+          <div>
+            <p class="list-title" style="margin-top:4px">Data</p>
+            <div class="list">
+              <label class="list-item"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Download over Wi-Fi only</b><span class="sub">Manuals and large photos</span>
+                <span class="end"><span class="switch"><input type="checkbox" checked aria-label="Download over Wi-Fi only"><span></span></span></span></label>
+              <button class="list-item" type="button" data-open="quality"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span><b>Photo quality</b><span class="end" id="quality-value">Standard<svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></button>
+              <a class="list-item" href="E1006-offline-data.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-stack"/></svg></span><b>Saved data</b><span class="sub">On this phone</span><span class="end">412 MB<svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+
+          <div class="list">
+            <a class="list-item" href="E810-update-notes.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-megaphone"/></svg></span><b>What's new</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+          <p class="version">Zixom Connect 1.0.0 (104)</p>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="quality" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="q-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="q-title">Photo quality</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Photo quality">
+          <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span><b>Standard</b><p>About 1 MB a photo</p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span><b>High</b><p>About 4 MB a photo. Slower to send</p><span class="mark"></span></button>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">App settings for the engineer. App lock is always on. Sync now sends the queue and shows progress and
+failures; notifications off in the phone shows the EC-27 banner.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { sync } = ZX.data.engineerDay;
+  const $ = (id) => document.getElementById(id);
+  const waiting = sync.filter((s) => s.state === 'waiting').length;
+  const failed = sync.filter((s) => s.state === 'failed');
+  const screen = document.querySelector('.screen');
+  const paint = () => {
+    const state = screen.dataset.state;
+    $('sync-title').textContent = state === 'syncing' ? 'Sending' : `${waiting} items waiting`;
+    $('sync-sub').textContent = state === 'syncing' ? `2 of ${waiting} sent` : `Last synced ${R.ago(sync[0].saved)}`;
+  };
+  $('sync-progress').textContent = 'Keep the app open';
+  $('fail-text').textContent = `${failed.length} failed. ${failed[0].reason}`;
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => window.setTimeout(paint)));
+  paint();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

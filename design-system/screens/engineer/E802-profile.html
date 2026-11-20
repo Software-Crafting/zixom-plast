@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E802 Profile</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.me{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; align-items:center}
+.me .photo{position:relative; grid-row:1 / span 2}
+.me .photo .icon-btn{position:absolute; right:-6px; bottom:-6px; width:30px; height:30px}
+.me .photo .icon-btn .ic{width:16px; height:16px}
+.me h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.me p{margin:0; font-size:var(--fs-13); color:var(--text-muted)}
+.me .kv{grid-column:1 / -1; margin-top:10px}
+.me .row-flex{grid-column:1 / -1; flex-wrap:wrap; margin-top:4px}
+.list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
+.lock{display:inline-flex; align-items:center; gap:4px; margin:10px 4px 0; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E802 Profile</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="photofail" aria-pressed="false">photo failed</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark eng-initials"></span>
+        <div class="grow"><span class="root-hello" id="today"></span><span class="root-name eng-name"></span></div>
+        <a class="icon-btn glass" href="E804-settings.html" aria-label="Settings"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></a>
+      </div>
+      <h1 class="root-title">Profile</h1>
+    </header>
+
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="banner red" data-when="photofail"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Photo not uploaded</b><button class="link-btn" type="button" data-busy>Try again</button></div></div>
+
+          <div data-when="ready photofail offline">
+            <div class="card me">
+              <span class="photo"><span class="avatar lg eng-initials"></span>
+                <button class="icon-btn dark" type="button" data-open="photo" aria-label="Change photo"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></button></span>
+              <h2 class="eng-name"></h2>
+              <p id="designation"></p>
+              <dl class="kv" id="facts"></dl>
+            </div>
+            <span class="lock"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Set by Zixom. Ask your manager to change.</span>
+          </div>
+
+          <div class="stack" data-when="loading">
+            <span class="skeleton" style="height:230px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:240px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div data-when="ready photofail offline">
+            <p class="list-title" style="margin-top:4px">Work</p>
+            <div class="list">
+              <a class="list-item" href="E701-schedule.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span><b>Schedule</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E702-leave.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span><b>Leave and availability</b><span class="sub" id="leave-sub"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E703-skills.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-trifold"/></svg></span><b>Service area and skills</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E502-parts-requests.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span><b>Parts requests</b><span class="end" id="parts-count"></span></a>
+              <a class="list-item" href="E406-drafts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg></span><b>Drafts and unsent reports</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E803-performance.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chart-line-up"/></svg></span><b>Performance</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E1010-weekly-summary.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-list-checks"/></svg></span><b>Weekly summary</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E1006-offline-data.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Offline data</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E1011-team-contacts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span><b>Team contacts</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+
+            <p class="list-title">App</p>
+            <div class="list">
+              <a class="list-item" href="E804-settings.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></span><b>Settings</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E805-help.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Help and training</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="E806-report-problem.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Report a problem</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" href="../system/S09-about.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg></span><b>About this app</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+
+            <div class="list" style="margin-top:18px">
+              <a class="list-item danger" href="E807-log-out.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>Log out</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <nav class="tabbar" data-tabs="engineer" data-active="profile"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Change photo">
+        <div class="group">
+          <div class="title">Profile photo</div>
+          <button type="button" data-close data-toast="Photo updated">Take photo</button>
+          <button type="button" data-close data-toast="Photo updated">Choose from gallery</button>
+          <button class="destructive" type="button" data-close data-toast="Photo removed">Remove photo</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">The engineer's own card and everything outside a job. Only the photo can be changed here; the phone
+number goes through a request to Zixom (<a href="E809-change-phone.html">E809</a>).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const me = R.engineer(day.engineer);
+  const fill = (cls, text) => document.querySelectorAll(cls).forEach((el) => { el.textContent = text; });
+  fill('.eng-initials', me.initials);
+  fill('.eng-name', me.name);
+  document.getElementById('today').textContent = R.dayDate(data.today);
+  document.getElementById('designation').textContent = `${me.designation} · ${me.experience}`;
+
+  document.getElementById('facts').innerHTML = `
+    <div><dt>Employee code</dt><dd class="mono">${R.esc(me.code)}</dd></div>
+    <div><dt>Region</dt><dd>${R.esc(me.region)}</dd></div>
+    <div><dt>Phone</dt><dd><a href="E809-change-phone.html" style="color:inherit; text-decoration:none">${R.esc(me.phone)}</a></dd></div>
+    <div><dt>Skills</dt><dd>${me.skills.map(R.esc).join(', ')}</dd></div>`;
+
+  const pending = day.leave.filter((l) => l.status === 'Pending').length;
+  document.getElementById('leave-sub').textContent = pending ? `${pending} request waiting for approval` : '';
+  const openParts = day.partsRequests.filter((p) => p.status !== 'Delivered').length;
+  document.getElementById('parts-count').innerHTML = `${openParts}${R.icon('caret-right')}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E905 Machine hazard notes</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.hazard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.hazard .disc{grid-row:1 / span 2; width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--amber-50); color:var(--amber)}
+.hazard b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.hazard p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E905 Machine hazard notes</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="acknowledged" aria-pressed="false">acknowledged</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">no notes</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E302-machine-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Hazard notes</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <p class="who" id="who"></p>
+        <div class="stack" style="margin-top:12px" data-when="ready acknowledged offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+          <div class="banner green" data-when="acknowledged"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><div><b id="ack-t"></b>Saved on this job.</div></div>
+          <p class="list-title" style="margin:0">This model</p>
+          <div class="stack-sm" id="model"></div>
+          <p class="list-title" style="margin:6px 0 0" id="site-title"></p>
+          <div class="stack-sm" id="site"></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>
+          <h3>No hazard notes on record</h3><p>Follow standard safety rules.</p>
+        </div>
+
+        <div class="stack-sm" data-when="loading" style="margin-top:12px">
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load hazard notes. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="ready offline">
+        <button class="btn btn-primary" type="button" onclick="document.querySelector('[data-state=acknowledged]').click()">I have read these</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Known hazards for this model and this site, also shown as a card in Job detail and above the safety
+checklist. Acknowledge saves the time on the job. Works offline.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const me = data.engineerDay.engineer;
+  /* sample hazard notes per machine type and per site until Zixom supplies them */
+  const HOT = ['fire', 'Hot surfaces', 'Heaters reach 400 °C. Wait 30 minutes after switch off.'];
+  const VOLT = ['lightning', 'High voltage', '415 V in the main panel. Lock out at the isolator.'];
+  const AIR = ['gauge', 'Pressure', 'Compressed air at 6 bar. Bleed the line before opening.'];
+  const HAZARDS = {
+    'Thermoforming machine': [HOT, VOLT, AIR, ['gear-six', 'Moving parts', 'Chain drive and platen can move on residual air.']],
+    'Cup forming machine': [HOT, VOLT, AIR],
+    'Vacuum forming machine': [HOT, VOLT, ['gauge', 'Vacuum', 'Release the vacuum before opening the clamp frame.']],
+    'Plastic crusher': [VOLT, ['gear-six', 'Rotating blades', 'Blades coast for 2 minutes after stop.']],
+  };
+  const SITE_HAZARDS = {
+    vatva: [['truck', 'Forklift lane', 'Forklifts pass behind Line 2. Wear the hi-vis vest.']],
+    sanand: [['warning', 'Chemicals', 'Mould release spray stored next to the tray line.']],
+  };
+
+  const mySerials = new Set(data.tickets.filter((t) => t.engineer === me).map((t) => t.machine));
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+
+  $('machines').insertAdjacentHTML('beforeend', data.machines.filter((x) => mySerials.has(x.serial)).map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+  $('back').href = `E302-machine-detail.html?serial=${serial}`;
+  $('who').innerHTML = `${R.esc(m.model)} · <span class="mono">${R.esc(serial)}</span>`;
+  $('site-title').textContent = site.name;
+  $('ack-t').textContent = `Acknowledged at 12:00 PM`;
+
+  const card = ([iconName, title, text]) => `<div class="hazard"><span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b><p>${R.esc(text)}</p></div>`;
+  $('model').innerHTML = HAZARDS[m.type].map(card).join('');
+  $('site').innerHTML = (SITE_HAZARDS[site.id] || []).map(card).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

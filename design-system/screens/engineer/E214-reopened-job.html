@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E214 Reopened job</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.quote{margin:0; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); font-size:var(--fs-14); line-height:1.5; color:var(--slate-900)}
+.quote span{display:block; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+.prev{padding:4px 16px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.prev p{margin:4px 0 0; font-size:var(--fs-13); line-height:1.5; color:var(--text)}
+.prev p b{font-weight:600; color:var(--slate-900)}
+.prev .btn{margin-top:12px; width:100%}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E214 Reopened job</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="other" aria-pressed="false">last visit by another engineer</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="decline">decline</button>
+  <button type="button" data-state="accepted" aria-pressed="false">accepted</button>
+  <button type="button" data-state="declined" aria-pressed="false">declined</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">accepted, waiting to sync</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Reopened job</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready other offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><div><b id="reopened-by"></b><span id="visit"></span></div></div>
+          <div class="job" id="job"></div>
+          <div>
+            <h2 class="sec-title">Customer's reason</h2>
+            <p class="quote" id="reason"></p>
+          </div>
+          <div>
+            <h2 class="sec-title">Previous visit</h2>
+            <div class="prev">
+              <dl class="kv" style="margin:0">
+                <div><dt>Report</dt><dd class="mono" id="prev-number"></dd></div>
+                <div><dt>Date</dt><dd id="prev-date"></dd></div>
+                <div><dt>Engineer</dt><dd><span class="tag blue" data-when="ready offline">You</span><span class="tag" id="prev-other" data-when="other"></span></dd></div>
+              </dl>
+              <p><b>Found:</b> <span id="prev-found"></span></p>
+              <p><b>Done:</b> <span id="prev-work"></span></p>
+              <a class="btn btn-secondary btn-sm" id="prev-link" href="E405-report-submitted.html"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-file-text"/></svg>Open previous report</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="state" data-when="accepted queued" style="padding-top:80px">
+          <span class="disc green" data-when="accepted"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span>
+          <span class="disc" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Job accepted</h3>
+          <p id="accepted-text"></p>
+          <span class="tag amber" style="margin-top:14px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
+        </div>
+        <div class="state" data-when="declined" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></span>
+          <h3>Job declined</h3>
+          <p>Zixom will assign another engineer.</p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:60px; border-radius:var(--r-md)"></span>
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-card"></span>
+          <span class="skeleton" style="height:230px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr" data-when="ready other offline">
+          <button class="btn btn-secondary" type="button" data-open="decline">Decline</button>
+          <button class="btn btn-primary" type="button" data-goto="accepted">Accept</button>
+        </div>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="accepted queued">Open job</a>
+        <a class="btn btn-primary" href="E101-today.html" data-when="declined">Back to Today</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="decline" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="decline-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="decline-t">Why are you declining?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="chips" data-single style="flex-wrap:wrap; margin:0; padding:0">
+            <button class="chip outline" type="button" aria-pressed="true">Not available</button>
+            <button class="chip outline" type="button" aria-pressed="false">Too far</button>
+            <button class="chip outline" type="button" aria-pressed="false">Skill not matching</button>
+            <button class="chip outline" type="button" aria-pressed="false">On leave</button>
+            <button class="chip outline" type="button" aria-pressed="false">Other</button>
+          </div>
+          <div class="field" style="margin-top:16px"><label for="decline-note">Comment<span class="counter">0 / 300</span></label>
+            <textarea class="textarea" id="decline-note" placeholder="Anything Zixom should know"></textarea></div>
+        </div>
+        <button class="btn btn-danger" type="button" style="margin-top:16px" data-goto="declined">Decline job</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown when the customer reopens a closed job within 7 days. Zixom offers it to the same engineer
+where possible, with the customer's reason and the previous report.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0132';
+  /* sample reopen details and the previous visit report, not in data.js */
+  const REOPENED = { by: 'rakesh', at: '2026-11-22T09:15' };
+  const PREVIOUS = { number: 'SR-2026-0132', date: '2026-11-12', otherEngineer: 'anita',
+    found: 'Cooling fan bearing dry and noisy.', work: 'Cleaned and greased the bearing. Ran 1 hour with no noise.' };
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const slot = data.engineerDay.today.find((j) => j.ticket === t.number)?.slot;
+  const visit = slot ? `Today, ${slot}` : 'Zixom will confirm the time';
+  const by = data.users.find((u) => u.id === REOPENED.by);
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+  $('reopened-by').textContent = `Reopened by ${by.name}, ${R.dayDate(REOPENED.at)}`;
+  $('visit').textContent = `Visit: ${visit}`;
+  $('reason').innerHTML = `${R.esc(t.summary)}<span>${R.esc(by.name)}, ${R.esc(by.designation)}</span>`;
+  $('prev-number').textContent = PREVIOUS.number;
+  $('prev-date').textContent = R.date(PREVIOUS.date);
+  $('prev-other').textContent = R.engineer(PREVIOUS.otherEngineer).name;
+  $('prev-found').textContent = PREVIOUS.found;
+  $('prev-work').textContent = PREVIOUS.work;
+  $('prev-link').href = `E405-report-submitted.html${q}`;
+  $('accepted-text').textContent = `${t.number} is on your list. ${visit}.`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    const offline = document.querySelector('.screen').dataset.state === 'offline';
+    const target = offline && go.dataset.goto === 'accepted' ? 'queued' : go.dataset.goto;
+    document.querySelector(`.plate-states [data-state="${target}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

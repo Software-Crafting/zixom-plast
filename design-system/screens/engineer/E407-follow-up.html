@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E407 Create a follow up visit</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.chips.wrap{flex-wrap:wrap; overflow:visible; margin:0 0 10px; padding:0}
+.mline{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:12px 14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.mline b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mline span span{font-size:var(--fs-12); color:var(--text-muted)}
+.pline{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.pline b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.pline .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.pline .icon-btn{width:34px; height:34px; border:0; background:var(--slate-100)}
+.section-label{margin:22px 2px 8px; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E407 Create a follow up visit</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="invalid" aria-pressed="false">reason missing</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="ready" data-open="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">duplicate blocked</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E411-recommendations.html" id="back" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Follow up visit</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div data-when="ready invalid sending duplicate offline">
+          <div class="stack">
+            <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+              <div><b>You are offline</b>Saved here and sent when you are online.</div></div>
+            <div class="banner red" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+              <div><b>A follow up is already open</b><span id="dup-text"></span> <a href="E202-job-detail.html" id="dup-link">View job</a></div></div>
+            <div class="error-summary" role="alert" data-when="invalid"><b>Fix 1 thing to send</b><ul><li><a href="#reason">Say why the visit is needed</a></li></ul></div>
+            <div class="mline" id="mline"></div>
+          </div>
+
+          <p class="section-label">Reason<span style="color:var(--red)">*</span></p>
+          <div class="chips wrap" data-single id="reasons"></div>
+          <div class="field" id="reason-field">
+            <textarea class="textarea" id="reason" maxlength="300" aria-label="Reason" style="min-height:90px"></textarea>
+            <span class="error-text" data-when="invalid"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Say why the visit is needed</span>
+          </div>
+
+          <p class="section-label">Suggested date</p>
+          <div class="dates" data-single id="dates"></div>
+          <div class="slots" data-single style="margin-top:10px">
+            <button class="slot" type="button" aria-pressed="true">9 to 12</button>
+            <button class="slot" type="button" aria-pressed="false">12 to 3</button>
+            <button class="slot" type="button" aria-pressed="false">3 to 6</button>
+          </div>
+
+          <p class="section-label">Parts needed</p>
+          <div class="stack-sm" id="parts"></div>
+          <a class="btn btn-secondary btn-sm" style="width:100%; margin-top:8px" href="E402-parts-used.html" id="add-part"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add part</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-card" style="height:70px"></span>
+          <span class="skeleton sk-line" style="width:25%"></span><span class="skeleton sk-card" style="height:130px"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-card" style="height:80px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:110px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready invalid sending duplicate offline">
+        <button class="btn btn-primary" type="button" data-open="sent" data-when="ready">Send for scheduling</button>
+        <button class="btn btn-primary" type="button" disabled data-when="invalid duplicate">Send for scheduling</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Sending</button>
+        <a class="btn btn-primary" href="E401-report.html" data-when="offline" data-toast="Saved. Sends when you are online">Save follow up</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="sent" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="sent-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="sent-title">Sent for scheduling</h3>
+        <p>Follow up <span class="mono" id="new-number"></span>. The customer is told.</p>
+        <div class="actions"><a class="btn btn-primary" href="E401-report.html" id="to-report">Back to report</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Creates a follow up ticket for the same machine and customer from the report. A second open follow up
+for the same machine is blocked.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample follow up drafted from the report recommendations */
+  const FOLLOW_UP = { reason: 'Parts to fit', text: 'Fit the automatic chain oiler once it arrives and recheck chain tension.', date: '2026-11-26', parts: [['ZP-SP-003', 1]] };
+  const REASONS = ['Parts to fit', 'Check after repair', 'Operator training', 'Other'];
+
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  const ticket = data.tickets.find((t) => t.number === ticketNumber);
+  const m = R.machine(ticket.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const q = `ticket=${ticket.number}`;
+  $('back').href = `E411-recommendations.html?${q}`;
+  $('to-report').href = `E401-report.html?${q}&section=9`;
+  $('add-part').href = `E402-parts-used.html?${q}`;
+  document.querySelector('[data-when="offline"][href^="E401"]').href = `E401-report.html?${q}&section=9`;
+
+  $('mline').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(company.name)}, ${R.esc(site.name)} · from <span class="mono">${ticket.number}</span></span></span>`;
+
+  const next = `TKT-2026-${String(Math.max(...data.tickets.map((t) => Number(t.number.slice(-4)))) + 1).padStart(4, '0')}`;
+  $('new-number').textContent = next;
+  $('dup-text').textContent = `${next} for this machine.`;
+  $('dup-link').href = `E202-job-detail.html?ticket=${next}`;
+
+  $('reasons').innerHTML = REASONS.map((r) => `<button class="chip outline" type="button" aria-pressed="${r === FOLLOW_UP.reason}">${r}</button>`).join('');
+
+  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(`${data.today}T00:00:00`); d.setDate(d.getDate() + i + 1); return d; });
+  $('dates').innerHTML = days.map((d) => {
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const [day, num] = R.dayDate(iso).split(' ');
+    return `<button class="date" type="button" ${d.getDay() === 0 ? 'disabled' : `aria-pressed="${iso === FOLLOW_UP.date}"`}><span>${day}</span><b>${num}</b></button>`;
+  }).join('');
+
+  $('parts').innerHTML = FOLLOW_UP.parts.map(([number, qty]) => {
+    const p = data.parts.find((x) => x.number === number);
+    return `<div class="pline"><span class="thumb sm" aria-hidden="true">${R.icon('package')}</span>
+      <span><b>${R.esc(p.name)}</b><span class="sub"><span class="mono">${p.number}</span> · Qty ${qty}</span></span>
+      <button class="icon-btn" type="button" aria-label="Remove ${R.esc(p.name)}">${R.icon('x', 'ic-16')}</button></div>`;
+  }).join('');
+
+  const render = () => {
+    const invalid = document.querySelector('.screen').dataset.state === 'invalid';
+    $('reason').value = invalid ? '' : FOLLOW_UP.text;
+    $('reason-field').classList.toggle('has-error', invalid);
+  };
+  render();
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) render(); });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

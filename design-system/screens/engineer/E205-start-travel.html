@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E205 Start travel</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tags-row{display:flex; flex-wrap:wrap; gap:6px}
+.who b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.who span{display:block; margin-top:3px; font-size:var(--fs-13); line-height:1.45; color:var(--text-muted)}
+.eta{display:flex; align-items:center; gap:14px; margin-top:16px; padding:14px; border-radius:var(--r-lg); background:var(--blue-50)}
+.eta .disc{width:44px; height:44px; display:grid; place-items:center; border-radius:50%; background:#fff; color:var(--blue)}
+.eta b{display:block; font:400 var(--fs-22) var(--font-display); color:var(--blue)}
+.eta span{font-size:var(--fs-13); color:var(--slate-700)}
+.sheet-acts{display:flex; flex-direction:column; gap:8px; margin-top:16px}
+.done{display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; padding:6px 0 4px}
+.done .disc{width:64px; height:64px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue); margin-bottom:6px}
+.done h3{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.done p{margin:0; font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E205 Start travel</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="travel">ready</button>
+  <button type="button" data-state="noloc" aria-pressed="false" data-open="travel">location denied</button>
+  <button type="button" data-state="another" aria-pressed="false" data-open="travel">another job on the way</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="not-today">visit not today</button>
+  <button type="button" data-state="started" aria-pressed="false" data-open="travel">started, undo</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="travel">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title"></h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" id="behind"></div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="travel" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="travel-title">
+        <span class="grabber"></span>
+        <div data-when="ready noloc another offline">
+          <div class="head"><h3 id="travel-title">Start travel</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+          <div class="stack-sm">
+            <div class="banner amber" data-when="noloc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><div><b>Location is off</b>The customer sees On the way without an ETA. <a href="E1013-location-off.html">Turn on</a></div></div>
+            <div class="banner amber" data-when="another"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div id="another-text"></div></div>
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved and sent later.</div>
+          </div>
+          <div class="who" id="who" style="margin-top:12px"></div>
+          <div class="eta" data-when="ready another offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-car-profile"/></svg></span><div><b id="eta"></b><span id="eta-sub"></span></div></div>
+          <p class="hint" data-when="ready another offline">The customer gets your ETA. Location is shared only until you check in.</p>
+          <div class="sheet-acts">
+            <button class="btn btn-primary" type="button" id="start"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Start travel</button>
+            <a class="btn btn-secondary" id="maps"><svg class="ic" aria-hidden="true"><use href="#ph-map-trifold"/></svg>Open in Maps</a>
+            <a class="btn btn-text" style="width:100%" id="cancel">Cancel</a>
+          </div>
+        </div>
+
+        <div data-when="started">
+          <div class="done">
+            <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg></span>
+            <h3>You are on the way</h3>
+            <p id="started-text"></p>
+          </div>
+          <div class="sheet-acts">
+            <a class="btn btn-primary" id="open-job">Open job</a>
+            <a class="btn btn-secondary" id="maps-2"><svg class="ic" aria-hidden="true"><use href="#ph-map-trifold"/></svg>Open in Maps</a>
+            <button class="btn btn-text" style="width:100%" type="button" data-toast="Travel undone" id="undo"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="not-today" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="nt-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+        <h3 id="nt-title"></h3>
+        <p>Start travel now anyway?</p>
+        <div class="actions"><button class="btn btn-primary" type="button" id="start-anyway">Start travel</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Not now</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Tells the customer the engineer is on the way, with an ETA when location is on. A mistaken tap can
+be undone for 2 minutes; the safety checklist comes later, at the site.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const $ = (id) => document.getElementById(id);
+  /* the next scheduled job today on Sandeep's day */
+  const DEFAULT_TICKET = day.today.find((j) => j.status === 'scheduled').ticket;
+  const MINUTES_PER_KM = 3;
+  const UNDO_SECONDS = 120;
+  const LATER_VISIT = 'TKT-2026-0124';
+
+  const params = new URLSearchParams(location.search);
+  const t = data.tickets.find((x) => x.number === (params.get('ticket') || DEFAULT_TICKET));
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const job = day.today.find((j) => j.ticket === t.number);
+  const visit = job ? `Today, ${job.slot}` : `${R.dayDate(t.window.date)}, ${t.window.slot}`;
+  const eta = job ? job.distanceKm * MINUTES_PER_KM : null;
+  const q = `?ticket=${t.number}`;
+  const maps = `https://maps.google.com/?daddr=${encodeURIComponent(`${site.address} ${site.pincode}`)}`;
+  const onTheWay = day.today.find((j) => j.status === 'on-the-way' && j.ticket !== t.number);
+  const later = data.tickets.find((x) => x.number === LATER_VISIT);
+
+  $('title').textContent = t.number;
+  ['back', 'cancel'].forEach((id) => { $(id).href = `E202-job-detail.html${q}`; });
+  $('open-job').href = `E202-job-detail.html${q}&status=on-the-way`;
+  $('maps').href = maps;
+  $('maps-2').href = maps;
+  $('behind').innerHTML = `<div class="tags-row">${R.tag('Scheduled', 'blue')}${R.severityTag(t.severity)}${R.coverageTag(t.coverage)}</div>
+    <div class="card who"><b>${R.esc(company.name)}</b><span>${R.esc(site.name)}, ${R.esc(company.city)}</span></div>
+    <div class="card"><p class="card-sub" style="margin:0">${R.esc(t.summary)}</p></div>`;
+  $('who').innerHTML = `<b>${R.esc(company.name)}, ${R.esc(site.name)}</b><span>${R.esc(site.address)} ${site.pincode}</span>`;
+  $('eta').textContent = eta ? `About ${eta} min` : 'Travel time unknown';
+  $('eta-sub').textContent = `${job ? `${job.distanceKm} km · ` : ''}${visit}`;
+  $('another-text').innerHTML = onTheWay ? `<b>You are already on the way to ${onTheWay.ticket}</b>Starting this one pauses its ETA.` : '';
+  $('nt-title').textContent = `This visit is on ${R.dayDate(later.window.date)}`;
+
+  /* Start: status becomes On the way, with Undo for 2 minutes */
+  let undoLeft = UNDO_SECONDS;
+  const paintUndo = () => { $('undo').textContent = `Undo, ${Math.floor(undoLeft / 60)}:${String(undoLeft % 60).padStart(2, '0')} left`; };
+  paintUndo();
+  setInterval(() => { if (document.querySelector('.screen').dataset.state === 'started') { undoLeft = Math.max(0, undoLeft - 1); paintUndo(); } }, 1000);
+  $('started-text').textContent = eta ? `${site.contact.name} sees your ETA, about ${eta} min.` : 'The customer sees On the way.';
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('.plate-states [data-state="started"]')) { undoLeft = UNDO_SECONDS; paintUndo(); }
+  });
+  $('start').addEventListener('click', () => {
+    delete $('start').dataset.toast;
+    if (document.querySelector('.screen').dataset.state === 'offline') { $('start').dataset.toast = 'Saved. Waiting to sync'; return; }
+    document.querySelector('.plate-states [data-state="started"]').click();
+  });
+  $('start-anyway').addEventListener('click', () => document.querySelector('.plate-states [data-state="started"]').click());
+  $('undo').addEventListener('click', () => document.querySelector('.plate-states [data-state="ready"]').click());
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

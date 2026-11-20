@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E1007 Sync conflict</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job-line{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.field-card{padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.field-card h3{margin:0 0 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.versions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.ver{display:flex; flex-direction:column; gap:6px; padding:12px; border:1.5px solid var(--line); border-radius:var(--r-md); background:var(--field);
+  text-align:left; font:inherit; color:inherit; cursor:pointer}
+.ver .who{display:flex; align-items:center; gap:6px; font-size:var(--fs-12); font-weight:600; color:var(--text-muted)}
+.ver .who .mark{width:16px; height:16px; border-radius:50%; border:1.5px solid var(--slate-300)}
+.ver[aria-checked="true"]{border-color:var(--slate-800); background:#fff}
+.ver[aria-checked="true"] .mark{border:5px solid var(--slate-800)}
+.ver:disabled{opacity:.45; cursor:not-allowed}
+.ver p{margin:0; font-size:var(--fs-13); line-height:1.45; color:var(--slate-900)}
+.ver small{font-size:var(--fs-11); color:var(--text-faint)}
+.merged{margin:10px 0 0; font-size:var(--fs-12); color:var(--text-muted)}
+.merge .textarea{ min-height:96px; font-size:var(--fs-13)}
+.all{grid-template-columns:1fr 1fr}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E1007 Sync conflict</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="merge" aria-pressed="false">merge report text</button>
+  <button type="button" data-state="cancelled" aria-pressed="false">job cancelled</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><a class="icon-btn" href="E102-sync-queue.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Sync conflict</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Choices send when you are back.</div>
+          <div data-when="ready merge cancelled offline">
+            <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div><b>This job was changed while you were offline</b><span id="changed-by"></span></div></div>
+            <p class="job-line" style="margin-top:10px" id="job"></p>
+          </div>
+          <div class="btn-pair all" data-when="ready merge offline">
+            <button class="btn btn-secondary btn-sm" type="button" data-pick="mine">Keep all mine</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-pick="latest">Take all latest</button>
+          </div>
+          <div class="stack-sm" id="fields" data-when="ready offline"></div>
+          <div class="stack-sm" id="fields-merge" data-when="merge"></div>
+          <div class="stack-sm" id="fields-cancelled" data-when="cancelled"></div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:64px"></span>
+            <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+          </div>
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load the latest version.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready merge offline"><a class="btn btn-primary" href="E102-sync-queue.html">Save choices</a></div>
+      <div class="footer-bar" data-when="cancelled"><a class="btn btn-primary" href="E102-sync-queue.html">Take latest</a></div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Your version and the latest version side by side for each changed field. Report text can be merged by editing,
+a cancelled job can only take latest, and anything left unresolved stays in the <a href="E102-sync-queue.html">sync queue</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const params = new URLSearchParams(location.search);
+  const ticket = data.tickets.find((t) => t.number === (params.get('ticket') || 'TKT-2026-0126'));
+  const m = R.machine(ticket.machine);
+  const part = (n) => data.parts.find((p) => p.number === n).name;
+  /* the conflicting edits: what the engineer saved offline and what Zixom saved meanwhile */
+  const CHANGED = { by: 'Neha, Zixom support', at: '2026-11-23T11:20' };
+  const FIELDS = [
+    { label: 'Findings', text: true,
+      mine: 'Chain drive trips on E-17. Chain slack by 4 mm, sprocket teeth worn.',
+      latest: 'Chain drive trips on E-17. Customer says it started after lubrication.' },
+    { label: 'Visit window', mine: `${R.dayDate(data.today)}, 9 to 12 AM`, latest: `${R.dayDate(data.today)}, 12 to 3 PM` },
+    { label: 'Contact person', mine: 'Rakesh Mehta', latest: 'Pooja Shah' },
+  ];
+  /* parts lines merge by part number, so they never need a choice */
+  const PARTS = [['ZP-SP-003', 1], ['ZP-SP-002', 1]];
+
+  const clock = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  document.getElementById('changed-by').textContent = `${CHANGED.by}, ${clock(CHANGED.at)}`;
+  document.getElementById('job').innerHTML = `<span class="mono">${ticket.number}</span> · ${R.esc(m.nickname || m.model)}`;
+
+  const version = (who, text, checked, disabled = false) => `<button class="ver" role="radio" type="button" aria-checked="${checked}"${disabled ? ' disabled' : ''}>
+    <span class="who"><span class="mark"></span>${who}</span><p>${R.esc(text)}</p>${who === 'Latest version' ? `<small>${clock(CHANGED.at)}</small>` : ''}</button>`;
+  const card = (f, { merge = false, cancelled = false } = {}) => `<div class="field-card"><h3>${f.label}</h3>
+    <div class="versions" role="radiogroup" aria-label="${f.label}">${version('Your version', f.mine, !cancelled && !(merge && f.text), cancelled)}${version('Latest version', f.latest, cancelled)}</div>
+    ${merge && f.text ? `<div class="merge"><span class="field-label" style="margin-top:12px">Merged text</span><textarea class="textarea" aria-label="Merged findings">${R.esc(`${f.mine} ${f.latest.split('. ').slice(1).join('. ')}`)}</textarea></div>` : ''}</div>`;
+  const partsCard = `<div class="field-card"><h3>Parts used</h3>
+    <dl class="kv" style="margin:0">${PARTS.map(([n, q]) => `<div><dt>${R.esc(part(n))}</dt><dd>${q}</dd></div>`).join('')}</dl>
+    <p class="merged">Lines merged by part number.</p></div>`;
+  const statusCard = `<div class="field-card"><h3>Job status</h3><div class="versions" role="radiogroup" aria-label="Job status">
+    ${version('Your version', 'Work in progress', false, true)}${version('Latest version', 'Cancelled by Zixom', true)}</div></div>`;
+
+  document.getElementById('fields').innerHTML = FIELDS.map((f) => card(f)).join('') + partsCard;
+  document.getElementById('fields-merge').innerHTML = FIELDS.map((f) => card(f, { merge: true })).join('') + partsCard;
+  document.getElementById('fields-cancelled').innerHTML = statusCard + FIELDS.map((f) => card(f, { cancelled: true })).join('');
+
+  /* Keep all mine and Take all latest set every field at once */
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-pick]');
+    if (!button) return;
+    const index = button.dataset.pick === 'mine' ? 0 : 1;
+    document.querySelectorAll('.versions').forEach((group) => {
+      group.querySelectorAll('.ver').forEach((v, i) => v.setAttribute('aria-checked', String(i === index)));
+    });
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

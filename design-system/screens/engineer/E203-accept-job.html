@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E203 Accept or decline</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.ring{display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0 4px}
+.ring .dial{position:relative; width:148px; height:148px}
+.ring svg{width:100%; height:100%; transform:rotate(-90deg)}
+.ring circle{fill:none; stroke-width:10}
+.ring .track{stroke:var(--slate-200)}
+.ring .left{stroke:var(--amber); stroke-linecap:round}
+.ring.red .left{stroke:var(--red)}
+.ring .read{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.ring .read span{font-size:var(--fs-12); color:var(--text-muted)}
+.ring .read b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900); font-variant-numeric:tabular-nums}
+.ring.red .read b{color:var(--red)}
+.ring p{margin:0; font-size:var(--fs-13); color:var(--text-muted)}
+.job{display:flex; flex-direction:column; gap:12px}
+.job .who b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.job .who span{display:flex; align-items:center; gap:6px; margin-top:4px; font-size:var(--fs-13); color:var(--text-muted)}
+.job .tags{display:flex; flex-wrap:wrap; gap:6px}
+.job p{margin:0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.mrow b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.chips.wrap{flex-wrap:wrap; overflow:visible}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E203 Accept or decline</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">counting down</button>
+  <button type="button" data-state="critical" aria-pressed="false">under 5 minutes</button>
+  <button type="button" data-state="clash" aria-pressed="false">clashes with a job</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="decline">decline</button>
+  <button type="button" data-state="declineerr" aria-pressed="false" data-open="decline">decline errors</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="expired" aria-pressed="false">offer expired</button>
+  <button type="button" data-state="withdrawn" aria-pressed="false">withdrawn</button>
+  <button type="button" data-state="taken" aria-pressed="false">taken by another</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E201-jobs.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New job</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready critical clash declineerr offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your answer is sent later.</div>
+          <div class="ring" id="ring" role="timer" aria-live="off">
+            <div class="dial"><svg viewBox="0 0 148 148" aria-hidden="true"><circle class="track" cx="74" cy="74" r="62"/><circle class="left" id="arc" cx="74" cy="74" r="62"/></svg>
+              <div class="read"><span>Respond in</span><b id="clock"></b></div></div>
+            <p id="ring-note"></p>
+          </div>
+          <div class="card job" id="job"></div>
+          <a class="link accent" id="propose" style="justify-content:center">Propose another time <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-right"/></svg></a>
+        </div>
+
+        <div class="state" data-when="expired" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg></span>
+          <h3>This job was reassigned</h3>
+          <p>The time to respond has ended.</p>
+          <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
+        </div>
+        <div class="state" data-when="withdrawn" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
+          <h3>This job was reassigned</h3>
+          <p>Zixom withdrew the offer.</p>
+          <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
+        </div>
+        <div class="state" data-when="taken" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span>
+          <h3>Another engineer took this job</h3>
+          <p>They accepted it first.</p>
+          <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
+        </div>
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="width:148px; height:148px; border-radius:50%; align-self:center"></span>
+          <span class="skeleton" style="height:260px; border-radius:var(--r-lg)"></span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready critical clash declineerr offline">
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr">
+          <button class="btn btn-secondary" type="button" data-open="decline">Decline</button>
+          <button class="btn btn-primary" type="button" id="accept">Accept</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="decline" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="d-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="d-title">Decline this job?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="error-summary" role="alert" style="margin-bottom:14px" data-when="declineerr"><b>Fix 1 thing to continue</b>
+            <ul><li><a href="#d-comment">Comment: write at least 10 characters</a></li></ul></div>
+          <div class="field-label">Reason<span class="req" style="color:var(--red)">*</span></div>
+          <div class="chips wrap" data-single id="reasons"></div>
+          <div class="field" style="margin-top:16px" data-when="ready critical clash offline">
+            <label for="d-note">Comment<span class="counter">Optional</span></label>
+            <textarea class="textarea" id="d-note" placeholder="Anything Zixom should know"></textarea></div>
+          <div class="field has-error" style="margin-top:16px" data-when="declineerr">
+            <label for="d-comment">Comment<span class="req">*</span><span class="counter">6 / 300</span></label>
+            <textarea class="textarea" id="d-comment" aria-invalid="true" aria-describedby="d-err">Family</textarea>
+            <span class="error-text" id="d-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Write at least 10 characters</span></div>
+        </div>
+        <a class="btn btn-danger" href="E201-jobs.html" style="margin-top:16px">Decline job</a>
+      </div>
+    </div>
+
+    <div class="overlay center" id="clash-alert" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="clash-title">
+        <span class="disc" style="background:var(--amber-50); color:var(--amber)"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-warning"/></svg></span>
+        <h3 id="clash-title">You have another job then</h3>
+        <p id="clash-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-open="accepted">Accept anyway</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Go back</button></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="accepted" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ok-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="ok-title">Job accepted</h3>
+        <p id="ok-text"></p>
+        <div class="actions"><a class="btn btn-primary" id="view-job">View job</a>
+          <a class="btn btn-text" style="width:100%" href="E201-jobs.html">Done</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Answer an offer within 30 minutes; the ring counts down live. Decline needs a reason and a comment
+for Other. Offline answers are queued and count only if the offer was still open.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const offer = data.engineerDay.offer;
+  const $ = (id) => document.getElementById(id);
+  const RESPONSE_SECONDS = 30 * 60;
+  const CRITICAL_SECONDS_LEFT = 4 * 60 + 10;
+  const SUBMIT_MS = 900;
+  const REASONS = ['Not available', 'Too far', 'Skill or machine not covered', 'On leave', 'Other'];
+
+  const params = new URLSearchParams(location.search);
+  const t = data.tickets.find((x) => x.number === (params.get('ticket') || offer.ticket));
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const visit = `${R.dayDate(offer.slot.date)}, ${offer.slot.slot}`;
+  const q = `?ticket=${t.number}`;
+  const screen = document.querySelector('.screen');
+
+  $('job').innerHTML = `
+    <div class="tags">${R.severityTag(t.severity)}${R.coverageTag(t.coverage)}</div>
+    <div class="who"><b>${R.esc(company.name)}</b>
+      <span>${R.icon('map-pin', 'ic-16')}${R.esc(site.name)}, ${R.esc(company.city)} · ${offer.distanceKm} km away</span></div>
+    <div class="mrow">${R.thumb(m, 'sm')}<span><b>${R.esc(m.model)}</b><span class="mono">${m.serial}</span></span></div>
+    <p>${R.esc(t.summary)}</p>
+    <dl class="kv" style="margin:0"><div><dt>Ticket</dt><dd class="mono">${t.number}</dd></div><div><dt>Requested visit</dt><dd>${R.esc(visit)}</dd></div><div><dt>Type</dt><dd>${R.esc(t.type)}</dd></div></dl>`;
+  $('ring-note').textContent = `Accept confirms ${visit}`;
+  $('propose').href = `E204-propose-time.html${q}`;
+  $('view-job').href = `E202-job-detail.html${q}&status=scheduled`;
+  $('ok-text').textContent = `Visit ${visit}. The customer is told.`;
+  $('clash-text').textContent = `It overlaps ${visit}.`;
+  $('reasons').innerHTML = REASONS.map((r) => `<button class="chip outline" type="button" aria-pressed="false">${r}</button>`).join('');
+  document.querySelectorAll('[data-state="declineerr"]').forEach((b) => b.addEventListener('click', () => {
+    [...$('reasons').children].forEach((c) => c.setAttribute('aria-pressed', String(c.textContent === 'Other')));
+  }));
+  if (params.get('decline')) $('decline').dataset.initial = '';
+
+  /* live countdown: the ring empties over 30 minutes; at zero the offer expires (EC-53) */
+  const CIRCUMFERENCE = 2 * Math.PI * 62;
+  $('arc').style.strokeDasharray = CIRCUMFERENCE;
+  let left = offer.minutesLeft * 60;
+  let criticalLeft = CRITICAL_SECONDS_LEFT;
+  const paint = () => {
+    const critical = screen.dataset.state === 'critical';
+    const seconds = critical ? criticalLeft : left;
+    $('ring').classList.toggle('red', critical);
+    $('clock').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    $('arc').style.strokeDashoffset = CIRCUMFERENCE * (1 - seconds / RESPONSE_SECONDS);
+    if (seconds === 0) document.querySelector('.plate-states [data-state="expired"]').click();
+  };
+  paint();
+  setInterval(() => { left = Math.max(0, left - 1); criticalLeft = Math.max(0, criticalLeft - 1); paint(); }, 1000);
+  document.addEventListener('click', (event) => { if (event.target.closest('.plate-states button')) paint(); });
+
+  /* Accept: busy, then the clash warning first if there is one, else the result */
+  $('accept').addEventListener('click', (event) => {
+    const button = event.currentTarget;
+    delete button.dataset.toast;
+    if (screen.dataset.state === 'clash') { $('clash-alert').hidden = false; return; }
+    if (screen.dataset.state === 'offline') {
+      button.dataset.toast = 'Saved. Waiting to sync';
+      return;
+    }
+    button.setAttribute('aria-busy', 'true');
+    setTimeout(() => { button.removeAttribute('aria-busy'); $('accepted').hidden = false; }, SUBMIT_MS);
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

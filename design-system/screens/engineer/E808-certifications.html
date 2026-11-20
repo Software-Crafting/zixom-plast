@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E808 Certifications and training</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item.expired{background:var(--red-50)}
+.list-item.expired .disc{background:#fff; color:var(--red)}
+.list-item.static{cursor:default}
+.list-item .disc.green{background:var(--green-50); color:var(--green)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E808 Certifications and training</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="cert">certificate open</button>
+  <button type="button" data-state="empty" aria-pressed="false">not set</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E703-skills.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Certifications and training</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready offline" style="padding-bottom:40px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="banner red" id="expired-banner"></div>
+          <div>
+            <p class="list-title" style="margin-top:4px">Certificates</p>
+            <div class="list" id="certs"></div>
+          </div>
+          <div>
+            <p class="list-title" style="margin-top:4px">Training done</p>
+            <div class="list" id="training"></div>
+          </div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-certificate"/></svg></span>
+          <h3>Not set yet</h3>
+          <p>Contact your manager.</p>
+          <a class="btn btn-secondary" href="E1011-team-contacts.html"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg>Team contacts</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:190px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="cert" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="c-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="c-title"></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body"><div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="c-facts"></dl></div></div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Certificate saved to Downloads"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Download PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Machine types the engineer is certified for, with expiry dates, and training done. Expired certificates
+are highlighted at the top.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  /* page data: certificates and training records */
+  const CERTS = [
+    { name: 'Electrical safety', number: 'ZP-CRT-0142', issued: '2024-11-01', expires: '2026-10-31' },
+    { name: 'AFM thermoforming range', number: 'ZP-CRT-0118', issued: '2025-04-12', expires: '2027-04-11' },
+    { name: 'Vacuum forming, SVF range', number: 'ZP-CRT-0121', issued: '2025-06-03', expires: '2027-06-02' },
+    { name: 'PLC and HMI, level 2', number: 'ZP-CRT-0133', issued: '2024-12-15', expires: '2026-12-14' },
+  ];
+  const TRAINING = [['CFM-450 cup former, new model', '2026-09-18'], ['Lock out and tag out refresher', '2026-07-02'], ['Zixom Connect app', '2026-11-02']];
+  const SOON = 30;
+
+  const status = (c) => {
+    const left = R.daysFromToday(c.expires);
+    if (left < 0) return R.tag('Expired', 'red');
+    if (left <= SOON) return R.tag(`Ends in ${left} days`, 'amber');
+    return '';
+  };
+  const sorted = [...CERTS].sort((a, b) => a.expires.localeCompare(b.expires));
+  $('certs').innerHTML = sorted.map((c) => `<button class="list-item${R.daysFromToday(c.expires) < 0 ? ' expired' : ''}" type="button" data-open="cert" data-cert="${c.number}">
+    <span class="disc">${R.icon('certificate')}</span><b>${R.esc(c.name)}</b><span class="sub">Valid until ${R.date(c.expires)}</span>
+    <span class="end">${status(c)}${R.icon('caret-right')}</span></button>`).join('');
+  $('training').innerHTML = TRAINING.map(([name, when]) => `<div class="list-item static"><span class="disc green">${R.icon('check-circle')}</span>
+    <b>${R.esc(name)}</b><span class="sub">${R.date(when)}</span></div>`).join('');
+
+  const expired = CERTS.filter((c) => R.daysFromToday(c.expires) < 0);
+  $('expired-banner').innerHTML = `${R.icon('warning-circle')}<div><b>${expired[0].name} expired</b>Ask your manager to book a renewal.</div>`;
+
+  const open = (number) => {
+    const c = CERTS.find((x) => x.number === number);
+    $('c-title').textContent = c.name;
+    $('c-facts').innerHTML = `<div><dt>Number</dt><dd class="mono">${c.number}</dd></div><div><dt>Issued</dt><dd>${R.date(c.issued)}</dd></div>
+      <div><dt>Valid until</dt><dd>${R.date(c.expires)}</dd></div>`;
+  };
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-cert]'); if (b) open(b.dataset.cert); });
+  open(sorted[0].number);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E219 Job timeline</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.log{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.log .row-link{display:block; color:inherit; text-decoration:none}
+.log .timeline .tag{display:inline-flex; margin-top:6px; font-size:var(--fs-12); color:var(--amber)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E219 Job timeline</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready, 3 waiting to sync</button>
+  <button type="button" data-state="synced" aria-pressed="false">all synced</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Timeline</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" data-when="ready synced offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
+          <div class="job" id="job"></div>
+          <div class="log"><ol class="timeline" id="events"></ol></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:480px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Every event on the job with time, and place when location is allowed. Events saved offline show
+Waiting to sync until the <a href="E102-sync-queue.html">sync queue</a> sends them.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  /* sample events before check in, not in data.js */
+  const EARLY = [
+    { at: '2026-11-23T07:50', title: 'Assigned by Zixom' },
+    { at: '2026-11-23T07:52', title: 'Accepted' },
+    { at: '2026-11-23T08:40', title: 'Travel started', place: 'Naroda, Ahmedabad' },
+  ];
+  const CHECK_IN_PLACE = 'GIDC Vatva, within 300 m';
+  /* engineer wording for ticket statuses (spec status model) */
+  const ENGINEER_STATUS = { assigned: 'New assignment', scheduled: 'Upcoming', 'on-the-way': 'On the way', 'in-progress': 'In progress',
+    'on-hold': 'On hold', completed: 'Completed, waiting for customer', closed: 'Closed', 'visit-failed': 'Visit failed',
+    cancelled: 'Cancelled', reopened: 'Reopened' };
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const day = data.engineerDay;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+
+  /* events from data.js: check in, parts requests, sync queue items, customer replies */
+  const waiting = (title) => day.sync.some((s) => s.ticket === t.number && s.title.startsWith(title) && s.state === 'waiting');
+  const checkedIn = day.today.find((j) => j.ticket === t.number)?.checkedIn;
+  const events = [
+    ...(checkedIn ? EARLY : []),
+    ...(checkedIn ? [{ at: checkedIn, title: 'Checked in', place: CHECK_IN_PLACE, sync: waiting('Checked in') }] : []),
+    ...day.partsRequests.filter((p) => p.ticket === t.number).map((p) => ({ at: p.when, title: `Part requested, ${p.number}`, href: `E218-job-parts.html${q}` })),
+    ...day.sync.filter((s) => s.ticket === t.number && s.kind === 'Notes').map((s) => ({ at: s.saved, title: 'Note added', href: `E213-notes.html${q}`, sync: s.state === 'waiting' })),
+    ...day.inbox.filter((n) => n.sub.startsWith(t.number) && n.title === 'Customer replied').map((n) => ({ at: n.when, title: 'Customer replied', href: `E213-notes.html${q}` })),
+    ...day.sync.filter((s) => s.ticket === t.number && s.kind === 'Photos').map((s) => ({ at: s.saved, title: `${s.title.split(',')[0]} added`, href: `E220-attachments.html${q}`, sync: s.state === 'waiting' })),
+  ].sort((a, b) => a.at.localeCompare(b.at));
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const SYNC_TAG = `<span data-when="ready offline">${R.tag('Waiting to sync', 'amber', 'cloud-arrow-up')}</span>`;
+  const body = (e) => `<b>${R.esc(e.title)}</b><span>${R.dayDate(e.at)}, ${time(e.at)}${e.place ? ` · ${R.esc(e.place)}` : ''}</span>${e.sync ? SYNC_TAG : ''}`;
+  $('events').innerHTML = events.map((e) => `<li class="done"><span class="dot"></span>
+      ${e.href ? `<a class="row-link" href="${e.href}">${body(e)}</a>` : `<div>${body(e)}</div>`}</li>`).join('')
+    + `<li class="now"><span class="dot"></span><div><b>${ENGINEER_STATUS[t.status]}</b><span>Now</span></div></li>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

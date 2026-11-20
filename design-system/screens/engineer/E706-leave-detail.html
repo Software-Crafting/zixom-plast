@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E706 Leave detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.leave-head{text-align:center; padding:6px 0 4px}
+.leave-head h2{margin:10px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.leave-head p{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.quote{margin:0; padding:14px 16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-14); line-height:1.5; color:var(--slate-800)}
+.quote span{display:block; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+.none{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-13); color:var(--text-muted)}
+.footer-bar .btn-pair{grid-template-columns:1fr 1fr}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E706 Leave detail</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="pick"><span>leave</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E702-leave.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Leave</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes are sent when you are back online.</div>
+          <div class="leave-head" id="head"></div>
+          <div id="banner"></div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+          <div id="comment"></div>
+          <div>
+            <p class="list-title" style="margin-top:4px" id="jobs-title"></p>
+            <div id="jobs"></div>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+          <h3>We cannot find this leave</h3>
+          <p>It may have been cancelled.</p>
+          <a class="btn btn-secondary" href="E702-leave.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="footer" data-when="ready offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="cancel" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel leave">
+        <div class="group"><div class="title" id="cancel-title"></div>
+          <button class="destructive" type="button" id="cancel-do" data-close data-toast="Leave cancelled">Cancel request</button></div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="edit" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ed-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ed-title">Edit request</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="ed-from">From<span class="req">*</span></label><input class="input" id="ed-from" type="date"></div>
+          <div class="field"><label for="ed-to">To<span class="req">*</span></label><input class="input" id="ed-to" type="date"></div>
+          <div class="field"><label for="ed-reason">Reason<span class="req">*</span></label><textarea class="textarea" id="ed-reason" rows="2"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Request updated">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One leave request via <code>?from=</code>. Pending requests can be edited or cancelled; approved leave
+is fixed. Jobs on those days are listed for reassigning.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const day = data.engineerDay;
+  /* page data: the rejected request also on E702, one pending request that falls on jobs, and manager comments */
+  const EXTRA = [
+    { from: '2026-11-09', to: '2026-11-09', reason: 'Personal work', status: 'Rejected', approver: 'Mr Kapoor', decided: '2026-11-05' },
+    { from: '2026-11-26', to: '2026-11-26', reason: 'Medical check up', status: 'Pending', approver: 'Mr Kapoor' },
+  ];
+  const COMMENTS = { '2026-12-04': 'Approved. Anita covers Ahmedabad on these days.', '2026-11-09': 'Two machine down calls that day. Please pick another date.' };
+  const TONE = { Approved: 'green', Pending: 'amber', Rejected: 'red' };
+  const ICON = { Approved: 'check-circle', Pending: 'hourglass', Rejected: 'circle-x' };
+  const all = [...day.leave, ...EXTRA];
+  const from = new URLSearchParams(location.search).get('from') || day.leave[0].from;
+  const leave = all.find((l) => l.from === from);
+
+  $('pick').insertAdjacentHTML('beforeend', all.map((l) => `<button type="button" data-from="${l.from}" aria-pressed="${l.from === from}">
+    ${l.status.toLowerCase()}, ${R.date(l.from).replace(' 2026', '')}</button>`).join(''));
+  $('pick').addEventListener('click', (e) => { const b = e.target.closest('[data-from]'); if (b) location.search = `?from=${b.dataset.from}`; });
+  if (!leave) { document.querySelector('.screen').dataset.state = 'notfound'; return; }
+
+  const days = R.daysFromToday(leave.to) - R.daysFromToday(leave.from) + 1;
+  const span = leave.from === leave.to ? R.dayDate(leave.from) : `${R.dayDate(leave.from)} to ${R.dayDate(leave.to)}`;
+  $('head').innerHTML = `${R.tag(leave.status, TONE[leave.status], ICON[leave.status])}<h2>${span}</h2>
+    <p>${days} day${days > 1 ? 's' : ''} · ${R.esc(leave.reason)}</p>`;
+  $('facts').innerHTML = `<div><dt>From</dt><dd>${R.date(leave.from)}</dd></div><div><dt>To</dt><dd>${R.date(leave.to)}</dd></div>
+    <div><dt>Approver</dt><dd>${R.esc(leave.approver)}</dd></div>`;
+  if (COMMENTS[leave.from]) $('comment').innerHTML = `<p class="quote">"${R.esc(COMMENTS[leave.from])}"<span>${R.esc(leave.approver)}</span></p>`;
+  if (leave.status === 'Approved') $('banner').innerHTML = `<div class="banner grey">${R.icon('lock-simple')}<div>Approved leave cannot be edited. Ask ${R.esc(leave.approver)} to change it.</div></div>`;
+
+  const hit = data.tickets.filter((t) => t.engineer === day.engineer && t.window && t.window.date >= leave.from && t.window.date <= leave.to);
+  $('jobs-title').textContent = 'Jobs on these days';
+  $('jobs').innerHTML = hit.length
+    ? `<div class="banner amber" style="margin-bottom:10px">${R.icon('warning')}<div><b>${hit.length} job${hit.length > 1 ? 's' : ''} need${hit.length > 1 ? '' : 's'} reassigning</b>Your manager reassigns ${hit.length > 1 ? 'them' : 'it'} if approved.</div></div>
+      <div class="list">${hit.map((t) => { const m = R.machine(t.machine);
+        return `<a class="list-item" href="E202-job-detail.html?ticket=${t.number}"><span class="disc">${R.icon('wrench')}</span>
+          <b>${R.esc(m.nickname || m.model)}</b><span class="sub">${R.dayDate(t.window.date)}, ${t.window.slot} · <span class="mono">${t.number}</span></span>
+          <span class="end">${R.icon('caret-right')}</span></a>`; }).join('')}</div>`
+    : '<div class="none">No jobs on these days</div>';
+
+  $('cancel-title').textContent = `Cancel leave on ${span}?`;
+  $('ed-from').value = leave.from;
+  $('ed-to').value = leave.to;
+  $('ed-reason').value = leave.reason;
+  if (leave.status === 'Pending') {
+    $('footer').innerHTML = `<div class="btn-pair"><button class="btn btn-secondary" type="button" data-open="cancel">Cancel request</button>
+      <button class="btn btn-primary" type="button" data-open="edit">${R.icon('pencil-simple')}Edit</button></div>`;
+  } else if (leave.status === 'Approved' && R.daysFromToday(leave.from) > 0) {
+    $('footer').innerHTML = `<button class="btn btn-secondary" type="button" data-open="cancel">Cancel leave</button>`;
+    $('cancel-title').textContent = `Cancel approved leave on ${span}? ${leave.approver} will be told.`;
+    $('cancel-do').textContent = 'Cancel leave';
+  } else {
+    $('footer').remove();
+  }
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

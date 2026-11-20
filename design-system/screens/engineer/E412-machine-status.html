@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E412 Machine status after visit</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.navbar h1 .mono{font-size:var(--fs-16)}
+.choice .disc.ok{background:var(--green-50); color:var(--green)}
+.choice .disc.warn{background:var(--amber-50); color:var(--amber)}
+.choice .disc.bad{background:var(--red-50); color:var(--red)}
+.choice[aria-checked="true"] .disc{color:#fff}
+.choice[aria-checked="true"] .disc.ok{background:var(--green)}
+.choice[aria-checked="true"] .disc.warn{background:var(--amber)}
+.choice[aria-checked="true"] .disc.bad{background:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E412 Machine status after visit</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" data-open="status-sheet" aria-pressed="true">running</button>
+  <button type="button" data-state="issue" data-open="status-sheet" aria-pressed="false">running with issue</button>
+  <button type="button" data-state="down" data-open="status-sheet" aria-pressed="false">not running</button>
+  <button type="button" data-state="noreason" data-open="status-sheet" aria-pressed="false">reason missing</button>
+  <button type="button" data-state="offline" data-open="status-sheet" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back" href="E401-report.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1><span class="mono ticket-no"></span></h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="wizard"><div class="meta"><b>Section 8 of 10</b><span>Saved just now</span></div>
+          <div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
+        <h2 class="large-title" style="font-size:var(--fs-22)">Machine status</h2>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="status-sheet" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="st-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="st-title">Machine after the visit</h3><a class="icon-btn sm back" href="E401-report.html" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></a></div>
+        <div class="body">
+          <div role="radiogroup" aria-label="Machine status">
+            <button class="choice" role="radio" type="button" data-goto="ready" aria-checked="false"><span class="disc ok"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span><b>Running</b><p>Working normally</p><span class="mark"></span></button>
+            <button class="choice" role="radio" type="button" data-goto="issue" aria-checked="false"><span class="disc warn"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Running with issue</b><p>Working, needs attention</p><span class="mark"></span></button>
+            <button class="choice" role="radio" type="button" data-goto="down" aria-checked="false"><span class="disc bad"><svg class="ic" aria-hidden="true"><use href="#ph-circle-x"/></svg></span><b>Not running</b><p>Needs a follow up</p><span class="mark"></span></button>
+          </div>
+          <div class="field" style="margin-top:16px" id="reason-field" data-when="issue down noreason">
+            <label for="reason">Reason<span class="req">*</span><span class="counter" id="reason-count"></span></label>
+            <textarea class="textarea" id="reason" maxlength="300" style="min-height:84px"></textarea>
+            <span class="error-text" data-when="noreason"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Say what is wrong</span>
+          </div>
+          <div class="banner red" style="margin-top:12px" data-when="down noreason"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg>
+            <div><b>Your manager is told</b>Add a follow up visit in Recommendations.</div></div>
+          <p class="hint" data-when="offline">Saved on this phone. Sends with the report.</p>
+        </div>
+        <a class="btn btn-primary back" style="margin-top:18px" href="E401-report.html" data-when="ready issue down offline">Save</a>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" disabled data-when="noreason">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Required before submit. Running with issue and Not running need a reason; Not running flags the job
+for the manager.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  /* Sample reasons for the two states that need one */
+  const REASONS = { issue: 'Runs, but the chain is noisy at full speed. Watch it this week.', down: 'Main drive motor burnt. Machine stopped until the motor is replaced.' };
+  const STATE_CHOICE = { ready: 'ready', offline: 'ready', issue: 'issue', down: 'down', noreason: 'down' };
+  const ticketNumber = new URLSearchParams(location.search).get('ticket') || 'TKT-2026-0126';
+  document.querySelectorAll('.ticket-no').forEach((el) => { el.textContent = ticketNumber; });
+  document.querySelectorAll('a.back').forEach((a) => { a.href = `E401-report.html?ticket=${ticketNumber}&section=8`; });
+
+  const render = () => {
+    const state = document.querySelector('.screen').dataset.state;
+    document.querySelectorAll('[role="radio"]').forEach((c) => c.setAttribute('aria-checked', String(c.dataset.goto === STATE_CHOICE[state])));
+    $('reason').value = REASONS[state] || '';
+    $('reason-count').textContent = `${$('reason').value.length} / 300`;
+    $('reason-field').classList.toggle('has-error', state === 'noreason');
+  };
+  render();
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+    if (event.target.closest('.plate-states button')) render();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

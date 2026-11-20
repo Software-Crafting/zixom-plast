@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E223 Customer feedback</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.score{padding:20px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); text-align:center}
+.score b{display:block; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.stars{display:inline-flex; gap:4px; margin-top:8px}
+.stars .ic{width:28px; height:28px; color:var(--slate-300)}
+.stars .on{color:var(--amber); fill:currentColor}
+.score .tags-row{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:14px}
+.quote{margin:0; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); font-size:var(--fs-14); line-height:1.5; color:var(--slate-900)}
+.quote span{display:block; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E223 Customer feedback</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">rated 5</button>
+  <button type="button" data-state="low" aria-pressed="false">low rating, manager note</button>
+  <button type="button" data-state="waiting" aria-pressed="false">no feedback yet</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="E202-job-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Customer feedback</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready low waiting offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved 8:05 AM.</div>
+          <div class="job" id="job"></div>
+        </div>
+        <div class="stack" style="margin-top:16px" data-when="ready offline" id="good"></div>
+        <div class="stack" style="margin-top:16px" data-when="low" id="low"></div>
+        <div class="state" data-when="waiting" style="padding-top:48px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h3>Waiting for the customer</h3>
+          <p id="window"></p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-card"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="ready low offline" data-toast="Acknowledged">Acknowledge</a>
+        <a class="btn btn-secondary back-job" href="E202-job-detail.html" data-when="waiting">Back to job</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">The rating and comment the customer gave after closing. A low rating (2 or less) shows the service
+manager's follow up note; until the customer rates, it shows Waiting for the customer.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0129';
+  const RATING_WINDOW_DAYS = 7;
+  /* sample feedback, not in data.js. The rating itself is ticket.rating */
+  const FEEDBACK = { at: '2026-10-30T15:20', liked: ['On time', 'Explained well', 'Clean work'],
+    comment: 'Quick visit and a clear explanation of the vacuum readings.' };
+  const LOW = { rating: 2, liked: [], comment: 'Engineer came 2 hours late and did not call ahead.',
+    managerNote: 'Spoke to the customer. Please send a Running late update when you are delayed.', noteAt: '2026-10-31T10:05' };
+  const CLOSED_ON = '2026-11-20';
+
+  const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
+  const t = data.tickets.find((x) => x.number === number);
+  if (!t) { location.replace('../system/S05-not-found.html'); return; }
+  if (t.engineer !== data.engineerDay.engineer) { location.replace('../system/S06-no-access.html'); return; }
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const q = `?ticket=${t.number}`;
+  const by = site.contact.name;
+
+  $('back').href = `E202-job-detail.html${q}`;
+  document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
+  $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
+    <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
+  if (!t.rating) document.querySelector('.screen').dataset.state = 'waiting';
+
+  const LABEL = ['', 'Poor', 'Below expectations', 'Okay', 'Good', 'Excellent'];
+  const stars = (n) => `<span class="stars" aria-label="${n} of 5 stars">${[1, 2, 3, 4, 5].map((i) => R.icon('star', i <= n ? 'on' : '')).join('')}</span>`;
+  const view = (rating, f) => `<div class="score"><b>${LABEL[rating]}</b>${stars(rating)}
+      ${f.liked.length ? `<div class="tags-row">${f.liked.map((l) => R.tag(l, 'green')).join('')}</div>` : ''}</div>
+    <div><h2 class="sec-title">Comment</h2>
+      <p class="quote">${R.esc(f.comment)}<span>${R.esc(by)} · ${R.dayDate(FEEDBACK.at)}</span></p></div>`;
+  $('good').innerHTML = view(t.rating || 5, FEEDBACK);
+  $('low').innerHTML = view(LOW.rating, LOW) + `<div class="banner amber">${R.icon('users')}
+      <div><b>Note from ${R.esc(data.support.manager)}</b>${R.esc(LOW.managerNote)}</div></div>`;
+  const closes = new Date(new Date(CLOSED_ON).getTime() + RATING_WINDOW_DAYS * 86400000).toISOString();
+  $('window').textContent = `${by} can rate until ${R.dayDate(closes)}.`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

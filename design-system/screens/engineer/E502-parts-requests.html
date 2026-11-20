@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E502 My parts requests</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.fab.pushed{bottom:34px}
+.req .foot{flex-wrap:wrap}
+.reason{margin:0; padding:10px 12px; border-radius:var(--r-md); background:var(--red-50); font-size:var(--fs-13); color:var(--slate-800)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E502 My parts requests</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="detail">open dispatched</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E802-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Parts requests</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:84px" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Updated 11:42 AM.</div>
+          <div class="segment" role="tablist" aria-label="Active or closed">
+            <button role="tab" aria-selected="true" aria-controls="tab-active">Active</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-closed">Closed</button>
+          </div>
+          <div class="stack-sm" id="tab-active"></div>
+          <div class="stack-sm" id="tab-closed" hidden></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:100px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+          <h3>No parts requests</h3><p>Request parts from a job.</p>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:140px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:140px; border-radius:var(--r-lg); opacity:.6"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load your requests. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+    </div>
+    <a class="fab pushed" href="E501-request-parts.html" data-when="ready empty"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Request parts</a>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="detail" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="detail-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="detail-t" class="mono"></h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div id="detail-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every parts request Sandeep sent, with Stores' status. Issued or dispatched parts ask him to confirm
+receipt; a rejection shows the reason. Offline shows the saved list.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const FLOW = ['Requested', 'Approved', 'Issued', 'Dispatched', 'Delivered'];
+  const TONE = { Requested: 'blue', Approved: 'blue', Issued: 'amber', Dispatched: 'amber', Delivered: 'green', Rejected: 'red' };
+  const CLOSED = ['Delivered', 'Rejected'];
+  const AWAITING = ['Issued', 'Dispatched'];
+  /* sample only: requests in the statuses data.js does not show yet */
+  const MORE = [
+    { number: 'SPR-2026-0028', ticket: 'TKT-2026-0125', part: 'ZP-SP-001', qty: 2, urgency: 'This visit', deliverTo: 'Courier', status: 'Dispatched', when: '2026-11-21T14:20', courier: 'Blue Dart 7710 2244 18' },
+    { number: 'SPR-2026-0027', ticket: 'TKT-2026-0124', part: 'ZP-SP-002', qty: 1, urgency: 'Next visit', deliverTo: 'Engineer', status: 'Issued', when: '2026-11-20T11:00' },
+    { number: 'SPR-2026-0026', ticket: 'TKT-2026-0130', part: 'ZP-SP-005', qty: 1, urgency: 'Next visit', deliverTo: 'Site', status: 'Rejected', when: '2026-11-13T09:30', reason: 'Discontinued. Request ZP-SP-006 instead.' },
+  ];
+  const requests = [...data.engineerDay.partsRequests, ...MORE].sort((a, b) => b.when.localeCompare(a.when));
+  const part = (number) => data.parts.find((p) => p.number === number);
+
+  const card = (r) => {
+    const p = part(r.part);
+    return `<button class="ticket req" type="button" data-req="${r.number}" style="text-align:left; font:inherit; border:1px solid var(--line); width:100%">
+      <span class="top"><span class="num mono">${r.number}</span>${R.tag(r.status, TONE[r.status])}</span>
+      <h3>${R.esc(p.name)}</h3>
+      <p>Qty ${r.qty} · ${r.urgency === 'This visit' ? 'For this visit' : 'For the next visit'} · To ${r.deliverTo.toLowerCase()}</p>
+      ${AWAITING.includes(r.status) ? `<span class="tag outline">${R.icon('check-circle')}Confirm when received</span>` : ''}
+      <span class="foot"><span>${R.icon('wrench')}<span class="mono">${r.ticket}</span></span><span>${R.icon('clock')}${R.ago(r.when)}</span></span></button>`;
+  };
+  $('tab-active').innerHTML = requests.filter((r) => !CLOSED.includes(r.status)).map(card).join('');
+  $('tab-closed').innerHTML = requests.filter((r) => CLOSED.includes(r.status)).map(card).join('');
+
+  const open = (r) => {
+    const p = part(r.part);
+    const reached = FLOW.indexOf(r.status);
+    $('detail-t').textContent = r.number;
+    $('detail-body').innerHTML = `
+      <dl class="kv" style="margin:0">
+        <div><dt>Part</dt><dd>${R.esc(p.name)}</dd></div><div><dt>Quantity</dt><dd>${r.qty}</dd></div>
+        <div><dt>Job</dt><dd class="mono">${r.ticket}</dd></div><div><dt>Deliver to</dt><dd>${r.deliverTo}</dd></div>
+        ${r.courier ? `<div><dt>Courier</dt><dd>${R.esc(r.courier)}</dd></div>` : ''}</dl>
+      ${r.status === 'Rejected' ? `<p class="reason" style="margin-top:12px"><b>Rejected.</b> ${R.esc(r.reason)}</p>`
+        : `<ol class="timeline" style="margin-top:14px">${FLOW.map((s, i) => `<li class="${i < reached ? 'done' : i === reached ? 'now' : 'todo'}"><span class="dot"></span>
+          <div><b>${s}</b>${i === 0 ? `<span>${R.dayDate(r.when)}</span>` : ''}</div></li>`).join('')}</ol>`}
+      ${AWAITING.includes(r.status) ? '<button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Marked as received">Confirm received</button>' : ''}
+      ${r.status === 'Rejected' ? `<a class="btn btn-secondary" style="margin-top:16px" href="E501-request-parts.html?ticket=${r.ticket}">Request again</a>` : ''}`;
+  };
+  open(requests.find((r) => r.status === 'Dispatched'));
+
+  document.addEventListener('click', (event) => {
+    const item = event.target.closest('[data-req]');
+    if (!item) return;
+    open(requests.find((r) => r.number === item.dataset.req));
+    $('detail').hidden = false;
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

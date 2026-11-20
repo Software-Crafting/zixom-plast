@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E202 Job detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tags-row{display:flex; flex-wrap:wrap; gap:6px}
+.raised{margin:10px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.scard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.scard .disc{grid-row:1 / span 2; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.scard.amber .disc{background:var(--amber-50); color:var(--amber)}
+.scard.red .disc{background:var(--red-50); color:var(--red)}
+.scard.green .disc{background:var(--green-50); color:var(--green)}
+.scard b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); line-height:1.35}
+.scard p{grid-column:2; margin:4px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.sec .card{display:flex; flex-direction:column; gap:12px}
+.sec .kv div{padding:8px 0}
+.mrow{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
+.mrow b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.addr{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; font-size:var(--fs-14); line-height:1.45; color:var(--slate-800)}
+.addr > .ic{color:var(--slate-500)}
+.note{margin:0; padding:10px 12px; border-radius:var(--r-md); background:var(--slate-50); font-size:var(--fs-13); line-height:1.45; color:var(--slate-700)}
+.desc{margin:0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.links .list-item{min-height:54px}
+.links .list-item .disc, .links .list-item .end{grid-row:auto}
+.acts{display:flex; flex-wrap:wrap; gap:10px}
+.acts .btn{flex:1 1 40%; padding:0 12px}
+.acts .wide{flex-basis:100%}
+.acts:has(.icon-btn) .btn{flex-basis:0}
+.acts .icon-btn{width:54px; height:54px}
+.upload.failed .state{padding:0}
+.acts .hint{flex-basis:100%; margin:0; text-align:center}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E202 Job detail</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="ticket-switch"><span>job</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="refresh" aria-pressed="false">updated by Zixom</button>
+  <button type="button" data-state="mediafail" aria-pressed="false">photo failed</button>
+  <button type="button" data-state="nocall" aria-pressed="false">phone cannot call</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="cancelled">cancelled while open</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="noaccess" aria-pressed="false">not your job</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="E201-jobs.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Job</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body"></div>
+
+        <div class="stack" data-when="loading">
+          <div class="row-flex"><span class="skeleton sk-line" style="width:30%"></span><span class="skeleton sk-line" style="width:25%"></span></div>
+          <span class="skeleton" style="height:84px; border-radius:24px"></span>
+          <span class="skeleton" style="height:220px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="noaccess" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3>You don't have access to this</h3>
+          <p>This job is not assigned to you.</p>
+          <a class="btn btn-secondary" href="E201-jobs.html">Go back</a>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>We cannot find this</h3>
+          <p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="E201-jobs.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="actions" data-when="ready refresh mediafail nocall offline"></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Job actions">
+        <div class="group"><div class="title" id="more-title">Job</div>
+          <button type="button" data-close data-toast="Copied">Copy ticket number</button>
+          <button type="button" data-close id="call-support">Call Zixom support</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="work-more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="More job actions">
+        <div class="group" id="work-more-list"><div class="title">More actions</div></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="cancelled" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="cancelled-title">
+        <span class="disc red"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-x"/></svg></span>
+        <h3 id="cancelled-title">This job was cancelled</h3>
+        <p>Zixom cancelled it while you had it open.</p>
+        <div class="actions"><a class="btn btn-primary" id="ack" href="E215-job-cancelled.html">See details</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One assigned job; pick a job above for each status. Open with <code>?ticket=TKT-2026-0126</code>,
+add <code>&amp;status=</code> to preview another step. The action bar shows only the steps allowed now.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const day = data.engineerDay;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0126';
+  const READY = 'ready refresh mediafail nocall offline';
+
+  /* engineer wording of a ticket status (spec section 11), worth moving to render.js. at-site is the step between check in and Start work */
+  const ENG_STATUS = {
+    'assigned': ['New job', 'blue'], 'scheduled': ['Scheduled', 'blue'], 'on-the-way': ['On the way', 'blue'],
+    'at-site': ['At site', 'blue'], 'at-site-safe': ['At site', 'blue'],
+    'in-progress': ['In progress', 'blue'], 'on-hold': ['On hold', 'amber'], 'completed': ['Waiting for customer', 'amber'],
+    'closed': ['Closed', 'green'], 'visit-failed': ['Visit failed', 'red'], 'cancelled': ['Cancelled', ''], 'reopened': ['Reopened', 'amber'],
+  };
+
+  /* sample data not in data.js yet: photo counts, notes, site hours, reopen reason */
+  const PHOTOS = { 'TKT-2026-0123': 3, 'TKT-2026-0126': 4, 'TKT-2026-0132': 1 };
+  const NOTES = { 'TKT-2026-0126': 3, 'TKT-2026-0127': 2, 'TKT-2026-0123': 1 };
+  const SITE_HOURS = 'Mon to Sat, 8 AM to 8 PM';
+  const REOPEN_REASON = 'Fan noise came back after two days.';
+
+  const params = new URLSearchParams(location.search);
+  const number = params.get('ticket') || DEFAULT_TICKET;
+  const me = day.engineer;
+  const mine = data.tickets.filter((x) => x.engineer === me);
+  const t = data.tickets.find((x) => x.number === number);
+
+  /* job switch above the frame, plus the at site steps that data.js has no ticket for */
+  const PREVIEWS = [['TKT-2026-0125', 'at-site', 'at site'], ['TKT-2026-0125', 'at-site-safe', 'checklist done']];
+  const switchButtons = [...mine.map((x) => [x.number, '', ENG_STATUS[x.status][0].toLowerCase()]), ...PREVIEWS];
+  $('ticket-switch').insertAdjacentHTML('beforeend', switchButtons.map(([n, s, label]) => `<button type="button" data-ticket="${n}"
+    data-status="${s}" aria-pressed="${n === number && s === (params.get('status') || '')}">${n.slice(-4)} ${label}</button>`).join(''));
+  $('ticket-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-ticket]');
+    if (b) location.search = `?ticket=${b.dataset.ticket}${b.dataset.status ? `&status=${b.dataset.status}` : ''}`;
+  });
+
+  const screen = document.querySelector('.screen');
+  if (!t) { screen.dataset.state = 'notfound'; return; }
+  if (t.engineer !== me) { screen.dataset.state = 'noaccess'; return; }
+
+  const status = params.get('status') || t.status;
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const m = R.machine(t.machine);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const todayJob = day.today.find((j) => j.ticket === t.number);
+  const offer = day.offer.ticket === t.number && status === 'assigned' ? day.offer : null;
+  const slot = t.window || offer?.slot;
+  const visit = slot ? `${R.dayDate(slot.date)}, ${slot.slot}` : todayJob && `Today, ${todayJob.slot}`;
+  const report = data.reports.find((r) => r.ticket === t.number);
+  const sync = day.sync.filter((s) => s.ticket === t.number);
+  const parts = day.partsRequests.filter((p) => p.ticket === t.number);
+  const q = `?ticket=${t.number}`;
+
+  $('title').textContent = t.number;
+  $('more-title').textContent = t.number;
+  $('ack').href = `E215-job-cancelled.html${q}`;
+  $('call-support').textContent = `Call Zixom support, ${data.support.phone}`;
+
+  /* ---------- banners ---------- */
+  const banners = `
+    <div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Showing the saved job.</div>
+    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div>Zixom updated this job. <button class="link-btn" type="button" data-busy>Refresh</button></div></div>
+    ${sync.some((s) => s.state === 'failed') ? `<div class="banner red" data-when="${READY}">${R.icon('warning-circle')}<div><b>A change was not synced</b>${R.esc(sync.find((s) => s.state === 'failed').reason)}. <a href="E102-sync-queue.html">Review</a></div></div>` : ''}`;
+
+  /* ---------- header ---------- */
+  const syncTag = sync.length ? R.tag('Waiting to sync', 'outline', 'cloud-arrow-up') : '';
+  const timerTag = offer ? R.tag(`Respond in ${String(offer.minutesLeft).padStart(2, '0')}:00`, 'amber', 'clock-countdown') : '';
+  const header = `<div><div class="tags-row">${R.tag(...ENG_STATUS[status])}${R.severityTag(t.severity)}${R.coverageTag(t.coverage)}${timerTag}${syncTag}</div>
+    <p class="raised">${R.esc(t.type)} · Raised ${R.dayDate(t.created)}, ${time(t.created)}</p></div>`;
+
+  /* ---------- status card: where the job is and the next step ---------- */
+  const CARD = {
+    'assigned': ['clock-countdown', 'amber', 'New job. Please respond', 'Accept or decline before the timer ends.'],
+    'scheduled': ['calendar-check', 'blue', `Visit on ${visit}`, 'Start travel when you leave for the site.'],
+    'on-the-way': ['navigation-arrow', 'blue', 'On the way', t.eta ? `The customer sees your ETA, ${t.eta} min.` : 'Check in when you reach the site.'],
+    'at-site': ['hard-hat', 'blue', 'At site', 'Finish the safety checklist to start work.'],
+    'at-site-safe': ['shield-check', 'green', 'Safety checklist done', 'You can start work.'],
+    'in-progress': ['wrench', 'blue', 'Work in progress', todayJob?.checkedIn ? `On site since ${time(todayJob.checkedIn)}.` : 'Fill the report as you work.'],
+    'on-hold': ['clock', 'amber', `On hold: ${t.holdReason}`, 'Resume when you are ready to continue.'],
+    'completed': ['check-circle', 'amber', 'Completed, waiting for customer', 'It closes by itself in 3 days.'],
+    'closed': ['seal-check', 'green', 'Closed', t.rating ? `Customer rated it ${t.rating} of 5.` : ''],
+    'visit-failed': ['warning-circle', 'red', 'Visit failed', 'Zixom will reschedule it.'],
+    'reopened': ['arrows-clockwise', 'amber', 'Reopened by the customer', REOPEN_REASON],
+  };
+  const [cIcon, cTone, cHead, cNext] = CARD[status];
+  const statusCard = `<div class="scard ${cTone}"><span class="disc">${R.icon(cIcon)}</span><b>${R.esc(cHead)}</b>${cNext ? `<p>${R.esc(cNext)}</p>` : ''}</div>`;
+
+  /* ---------- customer and site ---------- */
+  const tel = site.contact.phone.replace(/\s/g, '');
+  const customer = `<div class="sec"><h2>Customer and site</h2><div class="card">
+      <div class="person"><span class="avatar">${R.esc(site.contact.name.split(' ').map((w) => w[0]).join(''))}</span>
+        <span class="grow"><b>${R.esc(site.contact.name)}</b><span>${R.esc(company.name)}</span></span>
+        <a class="icon-btn" href="https://wa.me/${tel.slice(1)}" aria-label="WhatsApp ${R.esc(site.contact.name)}">${R.icon('whatsapp-logo')}</a>
+        <a class="icon-btn dark" href="tel:${tel}" aria-label="Call ${R.esc(site.contact.name)}" data-when="ready refresh mediafail offline">${R.icon('phone')}</a>
+        <button class="icon-btn dark" type="button" data-toast="Number copied" aria-label="Copy ${R.esc(site.contact.phone)}" data-when="nocall">${R.icon('copy')}</button>
+      </div>
+      <div class="addr">${R.icon('map-pin')}<span><b style="font-weight:600">${R.esc(site.name)}</b><br>${R.esc(site.address)} ${site.pincode}</span>
+        <a class="btn btn-secondary btn-sm" href="https://maps.google.com/?q=${encodeURIComponent(`${site.address} ${site.pincode}`)}">Maps</a></div>
+      <dl class="kv" style="margin:0"><div><dt>Working hours</dt><dd>${SITE_HOURS}</dd></div></dl>
+      ${site.access ? `<p class="note">${R.esc(site.access)}</p>` : ''}
+    </div>
+    <div class="list links" style="margin-top:8px"><a class="list-item" href="E902-site-access.html${q}"><span class="disc">${R.icon('identification-card')}</span>
+      <b>Site access and contacts</b><span class="end">${R.icon('caret-right')}</span></a></div></div>`;
+
+  /* ---------- machine ---------- */
+  const COVERAGE_LINE = {
+    warranty: () => `Warranty until ${R.date(m.warrantyEnd)}`,
+    amc: () => { const a = R.amc(m.amc); return `${a.plan} AMC until ${R.date(a.end)}`; },
+    chargeable: () => 'Chargeable. Extra parts need estimate approval',
+  };
+  const earlier = data.tickets.filter((x) => x.machine === m.serial && x.number !== t.number && ['completed', 'closed'].includes(x.status))
+    .map((x) => data.reports.find((r) => r.ticket === x.number)?.date || x.created).sort().pop();
+  const machine = `<div class="sec"><h2>Machine</h2><div class="card">
+      <div class="mrow">${R.thumb(m, 'sm')}<span><b>${R.esc(m.model)}</b><span>${R.esc(m.type)} · <span class="mono" style="display:inline">${m.serial}</span></span></span></div>
+      <dl class="kv" style="margin:0">
+        <div><dt>Installed</dt><dd>${m.installed ? R.date(m.installed) : 'Not recorded'}</dd></div>
+        <div><dt>Last service</dt><dd>${earlier ? R.date(earlier) : 'None recorded'}</dd></div>
+        <div><dt>Coverage</dt><dd>${COVERAGE_LINE[t.coverage]()}</dd></div>
+      </dl></div>
+    <div class="list links" style="margin-top:8px">
+      <a class="list-item" href="E301-machine-history.html?serial=${m.serial}"><span class="disc">${R.icon('clock')}</span><b>Machine history</b><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="E905-hazards.html?serial=${m.serial}"><span class="disc">${R.icon('warning')}</span><b>Hazard notes</b><span class="end">${R.icon('caret-right')}</span></a>
+    </div></div>`;
+
+  /* ---------- issue ---------- */
+  const errorCode = t.summary.match(/\bE-\d+\b/)?.[0];
+  const photoCount = PHOTOS[t.number] || 0;
+  const tile = `<div class="upload">${R.icon('image', 'ic-28')}</div>`;
+  const failedTile = '<button class="upload failed" type="button" aria-label="Photo did not load, retry" data-busy>'
+    + `${R.icon('arrows-clockwise', 'ic-24')}<span class="state">Retry</span></button>`;
+  const issue = `<div class="sec"><h2>Issue</h2><div class="card">
+      <p class="desc">${R.esc(t.summary)}</p>
+      <dl class="kv" style="margin:0">
+        <div><dt>Category</dt><dd>${R.esc(t.type)}</dd></div>
+        ${t.severity ? `<div><dt>Severity</dt><dd>${R.severityTag(t.severity)}</dd></div>` : ''}
+        <div><dt>Error code</dt><dd${errorCode ? ' class="mono"' : ''}>${errorCode || 'None reported'}</dd></div>
+      </dl>
+      ${photoCount ? `<div class="uploads" data-when="ready refresh nocall offline">${tile.repeat(photoCount)}</div>
+        <div class="uploads" data-when="mediafail">${tile.repeat(photoCount - 1)}${failedTile}</div>` : ''}
+    </div></div>`;
+
+  /* ---------- schedule ---------- */
+  const CONFIRMED_FROM = ['scheduled', 'on-the-way', 'at-site', 'at-site-safe', 'in-progress'];
+  const schedule = visit ? `<div class="sec"><h2>Schedule</h2><div class="card"><dl class="kv" style="margin:0">
+      <div><dt>Requested</dt><dd>${R.esc(visit)}</dd></div>
+      <div><dt>Confirmed</dt><dd>${CONFIRMED_FROM.includes(status) ? R.esc(visit) : status === 'assigned' ? 'After you accept' : 'Not booked'}</dd></div>
+    </dl></div></div>` : '';
+
+  /* ---------- job links ---------- */
+  const row = (href, iconName, label, end = '') => `<a class="list-item" href="${href}${q}"><span class="disc">${R.icon(iconName)}</span>
+    <b>${label}</b><span class="end">${end}${R.icon('caret-right')}</span></a>`;
+  const links = `<div class="sec"><h2>Job</h2><div class="list links">
+      ${row('E216-briefing.html', 'book-open', 'Briefing')}
+      ${row('E218-job-parts.html', 'package', 'Parts on this job', parts.length || '')}
+      ${row('E213-notes.html', 'note-pencil', 'Notes', NOTES[t.number] || '')}
+      ${row('E219-timeline.html', 'list-checks', 'Timeline')}
+      ${row('E220-attachments.html', 'paperclip', 'Attachments', photoCount || '')}
+    </div></div>`;
+
+  $('body').innerHTML = banners + header + statusCard + customer + machine + issue + schedule + links;
+  $('body').dataset.when = READY;
+
+  /* ---------- action bar by status (spec E202 and section 11) ---------- */
+  const go = (label, file, cls = 'btn-primary', extra = '') => `<a class="btn ${cls}" href="${file}${q}${extra}">${label}</a>`;
+  const ACTIONS = {
+    'assigned': [go('Decline', 'E203-accept-job.html', 'btn-secondary', '&decline=1'), go('Accept', 'E203-accept-job.html')],
+    'scheduled': [go('Propose time', 'E204-propose-time.html', 'btn-secondary'), go('Reassign', 'E212-reassign.html', 'btn-secondary'),
+      go('Start travel', 'E205-start-travel.html', 'btn-primary wide')],
+    'on-the-way': [go('Running late', 'E217-running-late.html', 'btn-secondary'), go('Check in', 'E206-check-in.html')],
+    'at-site': [go('Safety checklist', 'E901-safety-checklist.html', 'btn-primary wide'),
+      '<button class="btn btn-secondary wide" type="button" disabled>Start work</button>', '<p class="hint">Start work opens after the safety checklist.</p>'],
+    'at-site-safe': [go('Start work', 'E207-work.html', 'btn-primary wide')],
+    'in-progress': ['<button class="icon-btn" type="button" data-open="work-more" aria-label="More actions">' + R.icon('dots-three') + '</button>',
+      go('Complete', 'E210-complete-job.html', 'btn-secondary'), go('Open report', 'E401-report.html')],
+    'on-hold': [go('Resume', 'E207-work.html', 'btn-primary wide')],
+    'completed': [go('View report', 'E405-report-submitted.html', 'btn-primary wide')],
+    'reopened': [go('Accept', 'E214-reopened-job.html', 'btn-primary wide')],
+  };
+  const actions = ACTIONS[status];
+  if (actions) $('actions').innerHTML = `<div class="acts">${actions.join('')}</div>`;
+  else $('actions').remove();
+  const sheetLink = (label, file, iconName) => `<button type="button" data-go="${file}${q}">${R.icon(iconName)}${label}</button>`;
+  $('work-more-list').insertAdjacentHTML('beforeend', [sheetLink('Put on hold', 'E208-hold.html', 'pause'),
+    sheetLink('Request parts', 'E501-request-parts.html', 'package'), sheetLink('Escalate or ask for help', 'E211-escalate.html', 'lifebuoy')].join(''));
+  $('work-more-list').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-go]');
+    if (b) location.href = b.dataset.go;
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

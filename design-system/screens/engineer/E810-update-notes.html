@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - E810 App update notes</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.list-item.static{cursor:default}
+.list-item.static .sub{line-height:1.4}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>E810 App update notes</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">after update</button>
+  <button type="button" data-state="settings" aria-pressed="false">from Settings</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <span data-when="ready"></span>
+        <a class="icon-btn" href="E804-settings.html" aria-label="Back" data-when="settings"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>What's new</h1>
+        <a class="icon-btn" href="E101-today.html" aria-label="Close" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a>
+        <span data-when="settings"></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding:16px 20px 8px">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-megaphone"/></svg></span>
+          <h3 id="version"></h3>
+          <p id="released"></p>
+        </div>
+        <div class="list" id="notes" style="margin-top:12px"></div>
+      </div>
+      <div class="footer-bar" data-when="ready"><a class="btn btn-primary" href="E101-today.html">Close</a></div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown once after the app updates, then kept under Settings, What's new. Notes ship with the app, so they
+open offline.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  /* page data: this release, same version as S09 */
+  const RELEASE = { version: '1.0.0 (104)', date: '2026-11-20', notes: [
+    ['cloud-arrow-up', 'Reports send by themselves', 'Fill a report with no network. It goes when you are back online.'],
+    ['clock-countdown', 'Louder new job alerts', 'Pick a sound in Settings. New jobs always ring.'],
+    ['calendar-check', 'Leave in the app', 'Request leave and see which jobs need reassigning.'],
+  ] };
+  document.getElementById('version').textContent = `Version ${RELEASE.version}`;
+  document.getElementById('released').textContent = `Released ${R.date(RELEASE.date)}`;
+  document.getElementById('notes').innerHTML = RELEASE.notes.map(([icon, title, sub]) => `<div class="list-item static">
+    <span class="disc">${R.icon(icon)}</span><b>${title}</b><span class="sub">${sub}</span></div>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>
