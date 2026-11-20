@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1304 What is new</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.changes{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px}
+.changes li{display:grid; grid-template-columns:40px 1fr; column-gap:12px; align-items:center}
+.changes .disc{grid-row:1 / span 2; width:40px; height:40px; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); color:var(--slate-800)}
+.changes b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.changes span{font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1304 What is new</b><span>once after an app update</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="whatsnew">ready</button>
+  <button type="button" data-state="minor" aria-pressed="false">minor update, skipped</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark">RM</span>
+        <div class="grow"><span class="root-name">Shree Packaging Industries</span></div>
+        <a class="icon-btn glass" href="C1001-notifications.html" aria-label="Notifications"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></a>
+      </div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar"><div class="stack" style="margin-top:12px" id="home"></div></div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="home"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="whatsnew" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="wn-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="wn-title">What is new</h3><span class="tag blue" id="version"></span></div>
+        <ul class="changes" id="changes"></ul>
+        <button class="btn btn-primary" type="button" style="margin-top:22px" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown once over Home after an update with new features; a minor update skips it. Got it closes it
+for good.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+
+  /* Sample data not in data.js yet (move there): release notes of the update, matching S14 */
+  const VERSION = '1.1.0';
+  const CHANGES = [
+    ['calendar-check', 'Reschedule AMC visits', 'Move a visit without calling us.'],
+    ['file-pdf', 'Faster report downloads', 'Service reports open in a second.'],
+    ['bell', 'Quiet hours', 'No notifications from 9 PM to 7 AM.'],
+    ['wrench', 'Bug fixes', 'Smoother photo uploads on slow networks.'],
+  ];
+  $('version').textContent = `Version ${VERSION}`;
+  $('changes').innerHTML = CHANGES.map(([iconName, title, text]) => `<li><span class="disc">${R.icon(iconName, 'ic-18')}</span>
+    <b>${title}</b><span>${text}</span></li>`).join('');
+
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0123');
+  $('home').innerHTML = `<div class="section-head"><h2>Active request</h2></div>${R.ticketCard(ticket, `C508-request-detail.html?ticket=${ticket.number}`)}
+    ${R.machineCard(R.machine('ZP-TF-2204'), 'C202-machine-detail.html?serial=ZP-TF-2204')}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>
