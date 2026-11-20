@@ -88,6 +88,9 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
   with `data-open="id"` also opens that overlay, for states that are a sheet or dialog.
 - Overlays: an `.overlay` inside `.screen`, opened by `data-open="id"`, closed by `data-close`.
 - Toast: `data-toast="Request saved as a draft"` on the trigger.
+- Search: any `.search` filters the list under it (after 2 characters, 300 ms pause), shows a spinner then a clear
+  button, and a Clear search state when nothing matches. `data-search-item` marks custom rows; `data-search="own"`
+  opts out. A filter button always sits on the same row as a search input.
 - Tab roots: wrap the header and sheet in `.root-scroll` so the header scrolls away with the content.
 - Uploads: `.files > .file[data-status]`, statuses queued, uploading, paused, done, failed, too-large,
   wrong-type, duplicate, missing; buttons with `data-file="pause|resume|retry|remove"` work.

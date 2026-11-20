@@ -2,7 +2,7 @@
 
 .card{padding:16px; border-radius:var(--r-lg); background:var(--card); border:1px solid var(--line)}
 .card-fill{padding:16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
-.card-float{padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-lift)}
+.card-float{padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-soft)}
 .card-title{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .card-sub{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted); line-height:1.45}
 

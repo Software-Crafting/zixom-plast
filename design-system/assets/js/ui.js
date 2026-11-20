@@ -129,6 +129,49 @@
     }
   });
 
+  /* ---------- search: filters the list below it (spec: after 2 characters and a 300 ms pause) ----------
+     A spinner shows while it searches, then a clear button. No match shows a Clear search state.
+     Put data-search="own" on a .search whose page handles searching itself. */
+  const SEARCH_ITEMS = '.machine, .ticket, .list-item, .file, .pay, .inv, .part-row, .notif, .alert-card, .choice, [data-search-item]';
+  const MIN_CHARS = 2;
+  const PAUSE_MS = 300;
+  document.querySelectorAll('.search').forEach((box) => {
+    const input = box.querySelector('input');
+    if (!input || box.dataset.search === 'own') return;
+    input.insertAdjacentHTML('afterend', `<span class="search-spin" hidden></span>
+      <button class="search-clear" type="button" aria-label="Clear search" hidden>${icon('x')}</button>`);
+    const spin = box.querySelector('.search-spin');
+    const clear = box.querySelector('.search-clear');
+    const scope = box.closest('.bottom-sheet') || box.closest('.root-scroll, .scroll') || document;
+    const items = [...scope.querySelectorAll(SEARCH_ITEMS)].filter((el) => !box.contains(el) && !el.closest('.overlay:not(:has(.search))') && !el.parentElement.closest(SEARCH_ITEMS));
+    if (!items.length) return;
+    const empty = document.createElement('div');
+    empty.className = 'state search-empty';
+    empty.hidden = true;
+    empty.innerHTML = `<span class="disc">${icon('magnifying-glass')}</span><h3>No matching results</h3>
+      <p>Try a different word.</p><button class="btn btn-secondary" type="button">Clear search</button>`;
+    /* only items in the state on screen count; the empty state sits after the last of them */
+    const visible = () => items.filter((el) => !el.closest('[data-when][hidden]'));
+    let timer;
+    const show = (query) => {
+      const active = visible();
+      let shown = 0;
+      active.forEach((item) => { const match = !query || item.textContent.toLowerCase().includes(query); item.hidden = !match; shown += match; });
+      if (active.length) active[active.length - 1].parentElement.after(empty);
+      empty.hidden = shown > 0 || !query;
+    };
+    const reset = () => { input.value = ''; show(''); clear.hidden = true; spin.hidden = true; input.focus(); };
+    input.addEventListener('input', () => {
+      window.clearTimeout(timer);
+      const query = input.value.trim().toLowerCase();
+      if (query.length < MIN_CHARS) { show(''); spin.hidden = true; clear.hidden = !query; return; }
+      spin.hidden = false; clear.hidden = true;
+      timer = window.setTimeout(() => { show(query); spin.hidden = true; clear.hidden = false; }, PAUSE_MS);
+    });
+    clear.addEventListener('click', reset);
+    empty.querySelector('button').addEventListener('click', reset);
+  });
+
   /* ---------- quantity stepper ---------- */
   const MIN_QTY = 1;
   const MAX_QTY = 99;

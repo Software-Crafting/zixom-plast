@@ -188,4 +188,48 @@ ZX.data = {
       recommendations: 'Replace zone 3 element at the next AMC visit; it reads 8 percent low.',
       signedBy: 'Rakesh Mehta, Plant head', signedAt: '2026-11-21T16:52', chargeable: false },
   ],
+
+  /* engineer app: Sandeep Yadav's day (spec section 16 engineer data) */
+  engineerDay: {
+    engineer: 'sandeep', duty: 'on-job',
+    offer: { ticket: 'TKT-2026-0123', minutesLeft: 18, slot: { date: '2026-11-24', slot: '12 to 3 PM' }, distanceKm: 24 },
+    today: [
+      { ticket: 'TKT-2026-0126', slot: '9 to 12 AM', status: 'in-progress', checkedIn: '2026-11-23T09:32', distanceKm: 0 },
+      { ticket: 'TKT-2026-0125', slot: '12 to 3 PM', status: 'on-the-way', etaMin: 35, distanceKm: 18 },
+      { ticket: 'TKT-2026-0132', slot: '3 to 6 PM', status: 'scheduled', distanceKm: 6, overlapWarning: false },
+      { ticket: 'TKT-2026-0127', slot: '4 to 6 PM', status: 'on-hold', distanceKm: 22, overlapWarning: true },
+    ],
+    tomorrow: ['TKT-2026-0123', 'TKT-2026-0124', 'TKT-2026-0120'],
+    sync: [
+      { kind: 'Photos', title: '4 photos, Line 2 former', ticket: 'TKT-2026-0126', saved: '2026-11-23T10:58', state: 'waiting' },
+      { kind: 'Notes', title: 'Note: chain tension reading', ticket: 'TKT-2026-0126', saved: '2026-11-23T10:41', state: 'waiting' },
+      { kind: 'Status changes', title: 'Checked in', ticket: 'TKT-2026-0126', saved: '2026-11-23T09:32', state: 'waiting' },
+      { kind: 'Status changes', title: 'Visit failed', ticket: 'TKT-2026-0130', saved: '2026-11-22T17:20', state: 'failed',
+        reason: 'Zixom moved this visit while you were offline' },
+    ],
+    partsRequests: [
+      { number: 'SPR-2026-0031', ticket: 'TKT-2026-0126', part: 'ZP-SP-003', qty: 1, urgency: 'This visit', deliverTo: 'Site', status: 'Requested', when: '2026-11-23T10:15' },
+      { number: 'SPR-2026-0030', ticket: 'TKT-2026-0127', part: 'ZP-SP-004', qty: 1, urgency: 'Next visit', deliverTo: 'Engineer', status: 'Approved', when: '2026-11-18T12:40' },
+      { number: 'SPR-2026-0029', ticket: 'TKT-2026-0128', part: 'ZP-SP-001', qty: 1, urgency: 'This visit', deliverTo: 'Site', status: 'Delivered', when: '2026-11-19T16:05' },
+    ],
+    leave: [
+      { from: '2026-12-04', to: '2026-12-05', reason: 'Family function', status: 'Approved', approver: 'Mr Kapoor' },
+      { from: '2026-12-18', to: '2026-12-18', reason: 'Personal work', status: 'Pending', approver: 'Mr Kapoor' },
+    ],
+    inbox: [
+      { icon: 'clock-countdown', title: 'New job, respond in 18 min', sub: 'TKT-2026-0123 · CFM-450 Cup Former, Sanand', when: '2026-11-23T11:42', unread: true, urgent: true },
+      { icon: 'chat-text', title: 'Customer replied', sub: 'TKT-2026-0126 · "Spare chain is in the store room"', when: '2026-11-23T10:50', unread: true },
+      { icon: 'package', title: 'Parts approved', sub: 'SPR-2026-0030 · PID temperature controller', when: '2026-11-22T15:10', unread: true },
+      { icon: 'arrows-clockwise', title: 'Job reassigned to Anita', sub: 'TKT-2026-0119 · Nova Cups, Pune', when: '2026-11-21T09:05', unread: false },
+      { icon: 'users', title: 'Message from Mr Kapoor', sub: 'Please close Friday reports by 7 PM', when: '2026-11-20T18:30', unread: false },
+      { icon: 'calendar-check', title: 'Leave approved', sub: '4 to 5 Dec, family function', when: '2026-11-19T11:00', unread: false },
+    ],
+    performance: { period: 'November 2026', completed: 46, avgResponseHours: 3.1, firstVisitFix: 82, slaMet: 94, rating: 4.7 },
+    /* checklist template for the thermoforming range (Pass, Fail or Not applicable) */
+    checklist: ['Heater zones and elements', 'Industrial chains and sprockets', 'Timers and relays', 'PID controllers',
+      'Vacuum system', 'Cooling system', 'Safety interlocks', 'Lubrication', 'Air pressure'],
+    safety: ['Power is isolated and locked out', 'Heaters have cooled to a safe temperature',
+      'Compressed air and hydraulic pressure are released', 'Guards and interlocks are in place', 'Work area is clear',
+      'I am wearing the required protective equipment'],
+  },
 };

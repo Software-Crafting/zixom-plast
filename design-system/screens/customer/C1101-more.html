@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1101 More menu</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.me{display:flex; align-items:center; gap:14px; margin-top:16px; padding:16px; border-radius:24px; background:#fff;
+  box-shadow:var(--shadow-soft); color:inherit; text-decoration:none}
+a.me.row-link{padding-right:44px}
+a.me.row-link::after{right:16px}
+.me b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.me .sub{display:block; margin-top:3px; font-size:var(--fs-13); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.me .tag{margin-top:8px}
+.list + .list-title{margin-top:22px}
+.list-item:not(:has(.sub)) b{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1101 More menu</b><span>More tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready, primary contact</button>
+  <button type="button" data-state="member" aria-pressed="false">member, one company</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">profile failed</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <h1 class="root-title" style="margin:0; flex:1">More</h1>
+          <a class="icon-btn glass" href="C1001-notifications.html" aria-label="Notifications, 4 unread"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg><span class="count" data-when="ready member offline error">4</span></a>
+        </div>
+        <a class="me row-link" href="C1102-profile.html" id="me-primary" data-when="ready offline"></a>
+        <a class="me row-link" href="C1102-profile.html" id="me-member" data-when="member"></a>
+        <div class="me" data-when="loading">
+          <span class="skeleton sk-circle" style="width:64px; height:64px"></span>
+          <span class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:85%"></span></span>
+        </div>
+        <div class="me" data-when="error">
+          <span class="grow" style="font-size:var(--fs-13)">Couldn't load your profile.</span>
+          <button class="btn btn-text" type="button" data-busy>Retry</button>
+        </div>
+      </header>
+
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="offline-strip" style="margin:12px 0 0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+          <p class="list-title">Orders and documents</p>
+          <div class="list">
+            <a class="list-item" href="C701-parts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span><b>Spare parts</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C707-orders.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-truck"/></svg></span><b>Orders and requests</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C901-documents.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span><b>Documents</b><span class="sub">Manuals, certificates, reports</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1701-downloads.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Downloads</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1001-notifications.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Notifications</b><span class="end"><span data-when="ready member offline error">4</span><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+
+          <p class="list-title">Company</p>
+          <div class="list">
+            <a class="list-item" href="C1105-team.html" data-when="ready loading error offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg></span><b>Team members</b><span class="end"><span id="team-count"></span><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1103-company.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Company details</b><span class="sub" id="company-name"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1104-sites.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span><b>Sites and plants</b><span class="end"><span id="site-count"></span><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1113-companies.html" data-when="ready loading error offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-stack"/></svg></span><b>Companies</b><span class="end"><span id="company-count"></span><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+
+          <p class="list-title">Account</p>
+          <div class="list">
+            <a class="list-item" href="C1107-security.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span><b>Security</b><span class="sub">App lock, signed in devices</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1108-settings.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></span><b>Settings</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1115-data-privacy.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span><b>Data and privacy</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+
+          <p class="list-title">Help</p>
+          <div class="list">
+            <a class="list-item" href="C604-faq.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-question"/></svg></span><b>Help and FAQ</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C605-contact.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg></span><b>Contact Zixom</b><span class="sub" id="support-line"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1112-report-problem.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-text"/></svg></span><b>Report a problem</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+
+          <p class="list-title">About</p>
+          <div class="list">
+            <a class="list-item" href="C1109-legal.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Legal and policies</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1116-about-zixom.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>About Zixom</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="../system/S09-about.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg></span><b>About this app</b><span class="sub">Version 1.0.0 (104)</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+
+          <div class="list" style="margin-top:22px">
+            <a class="list-item danger" href="C1110-delete-account.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Delete account</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item danger" href="C1111-log-out.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-sign-out"/></svg></span><b>Log out</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="more"></nav>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Profile card, then every More item. Team members shows only to the primary contact and Companies only
+when the person belongs to more than one company.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const company = data.companies.find((c) => c.id === 'shree');
+  const user = (id) => data.users.find((u) => u.id === id);
+  const PAGE_ONLY_PEOPLE = 2; /* ponytail: the invited and disabled people live in C1105's page data; only their count shows here */
+
+  const card = (u) => {
+    const primary = u.companies.find((c) => c.id === company.id).primary;
+    return `<span class="avatar lg">${R.esc(u.initials)}</span>
+      <span class="grow"><b>${R.esc(u.name)}</b><span class="sub">${R.esc(u.designation)} · ${R.esc(company.name)}</span>
+      ${primary ? R.tag('Primary contact', 'blue') : ''}</span>`;
+  };
+  $('me-primary').innerHTML = card(user('rakesh'));
+  $('me-member').innerHTML = card(user('pooja'));
+
+  const members = data.users.filter((u) => u.companies.some((c) => c.id === company.id)).length + PAGE_ONLY_PEOPLE;
+  $('team-count').textContent = members;
+  $('company-name').textContent = company.name;
+  $('site-count').textContent = company.sites.length;
+  $('company-count').textContent = user('rakesh').companies.length;
+  $('support-line').textContent = `${data.support.hours} · ${data.support.phone}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

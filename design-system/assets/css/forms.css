@@ -42,6 +42,12 @@
 .search .input:focus{box-shadow:none}
 .search > .ic{color:var(--slate-500)}
 .search .icon-btn{width:38px; height:38px; border:0; background:var(--slate-100)}
+/* search progress: a spinner while it searches, then a clear button */
+.search-spin{display:block; width:18px; height:18px; flex-shrink:0; margin-right:10px; border-radius:50%; border:2px solid var(--slate-200);
+  border-top-color:var(--slate-700); animation:spin .7s linear infinite}
+.search-clear{width:28px; height:28px; flex-shrink:0; margin-right:6px; display:grid; place-items:center; border:0; border-radius:50%;
+  background:var(--wash); color:var(--slate-700); cursor:pointer}
+.search-clear .ic{width:14px; height:14px}
 
 /* one time code */
 .otp{display:grid; grid-template-columns:repeat(6, 1fr); gap:8px}
