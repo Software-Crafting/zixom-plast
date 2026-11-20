@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1506 Site picker</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.sites{margin-top:12px}
+.add-site{display:flex; width:100%; margin-top:10px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1506 Site picker</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="sites">ready</button>
+  <button type="button" data-state="noresults" aria-pressed="false" data-open="sites">no results</button>
+  <button type="button" data-state="empty" aria-pressed="false" data-open="sites">no sites yet</button>
+  <button type="button" data-state="loading" aria-pressed="false" data-open="sites">loading</button>
+  <button type="button" data-state="error" aria-pressed="false" data-open="sites">error</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="sites">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C505-raise-media.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 4 of 5</b><span>Visit details</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span></span></div></div>
+        <div class="field"><span class="field-label">Site<span class="req">*</span></span>
+          <button class="select" type="button" data-open="sites"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value placeholder">Choose a site</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+        <div class="field"><label for="contact">Contact person<span class="req">*</span></label><input class="input" id="contact" value="Rakesh Mehta"></div>
+      </div>
+      <div class="footer-bar"><button class="btn btn-primary" type="button" disabled>Next</button></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="sites" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="st-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="st-title">Choose a site</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 10px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved sites.</div>
+        <div class="search" data-when="ready noresults offline"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+          <input class="input" placeholder="Site name or pincode" aria-label="Search sites" id="q"></div>
+        <div class="body sites">
+          <div role="radiogroup" aria-label="Sites" id="site-list" data-when="ready offline"></div>
+          <div class="state" data-when="noresults" style="padding:20px 10px">
+            <h3 style="margin:0">No matching results</h3><p>Nothing matches "Naroda". Try a different word.</p></div>
+          <div class="state" data-when="empty" style="padding:12px 10px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span>
+            <h3>No sites yet</h3><p>Add the address where the machine is.</p></div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
+          </div>
+          <div class="inline-retry" data-when="error">Couldn't load your sites.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+        </div>
+        <a class="btn btn-secondary add-site" href="C1507-add-site.html" data-when="ready noresults error"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
+        <a class="btn btn-primary add-site" href="C1507-add-site.html" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
+        <button class="btn btn-primary" type="button" style="margin-top:10px" data-close data-when="ready offline">Select</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Saved sites of the current company with address and contact, opened from Site in
+<a href="C506-raise-visit.html">C506</a>. No sites yet leads to <a href="C1507-add-site.html">C1507</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const company = ZX.data.companies.find((c) => c.id === 'shree');
+  document.getElementById('site-list').innerHTML = company.sites.map((s, i) => `<button class="choice site" role="radio" aria-checked="${i === 0}" type="button">
+    <span class="disc">${R.icon('buildings')}</span><b>${R.esc(s.name)}</b>
+    <p>${R.esc(s.address)}, ${R.esc(s.pincode)}<br>${R.esc(s.contact.name)} · ${R.esc(s.contact.phone)}</p><span class="mark"></span></button>`).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

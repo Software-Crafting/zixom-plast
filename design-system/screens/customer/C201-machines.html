@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C201 My machines</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tools{display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center}
+.tools .icon-btn{width:50px; height:50px}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:2px 4px 0; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C201 My machines</b><span>Machines tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+<header class="root-head">
+      <div class="root-bar">
+        <h1 class="root-title" style="margin:0; flex:1">Machines</h1>
+        <a class="icon-btn glass" href="C205-scan-qr.html" aria-label="Scan a machine QR"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></a>
+      </div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <nav class="segment" role="tablist" aria-label="Machines or AMC">
+            <a role="tab" aria-selected="true" href="#">Machines</a>
+            <a role="tab" aria-selected="false" href="C401-amc.html">AMC</a>
+          </nav>
+
+          <div class="tools" data-when="ready filtered noresults loading error">
+            <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+              <input class="input" id="q" placeholder="Model, serial or site" aria-label="Search machines"></div>
+            <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
+            <button class="icon-btn" type="button" data-open="sort" aria-label="Sort, by name"><svg class="ic" aria-hidden="true"><use href="#ph-sort-ascending"/></svg></button>
+          </div>
+
+          <div class="chips" data-when="filtered" style="margin-top:-4px">
+            <button class="chip outline" type="button" aria-pressed="false">In warranty <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+            <button class="chip outline" type="button" aria-pressed="false">Vatva plant <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+          </div>
+
+          <div data-when="ready">
+            <p class="count-line"><span><b>6 machines</b> · 2 sites</span><span>Sorted by name</span></p>
+            <div class="stack-sm" id="all" style="margin-top:10px"></div>
+          </div>
+          <div data-when="filtered">
+            <p class="count-line"><span><b>2 of 6 machines</b></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+            <div class="stack-sm" id="filtered" style="margin-top:10px"></div>
+          </div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p>Nothing matches "AFM-2000". Try a different word or clear the filters.</p>
+            <button class="btn btn-secondary" type="button">Clear search</button>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:48px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span>
+            <h3>No machines yet</h3>
+            <p>Add a machine to see its history, warranty and service.</p>
+            <a class="btn btn-primary" href="C203-add-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:40%; margin:4px"></span>
+            <span class="skeleton" style="height:118px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:118px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:118px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:118px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:36px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your machines. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab" href="C203-add-machine.html" data-when="ready filtered noresults"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a></div>
+
+    <nav class="tabbar" data-tabs="customer" data-active="machines"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter machines</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Site</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">All sites</button><button class="chip outline" type="button" aria-pressed="false">Vatva plant</button><button class="chip outline" type="button" aria-pressed="false">Sanand plant</button></div>
+          <div class="field-label">Machine type</div>
+          <div class="chips" style="margin-bottom:14px; flex-wrap:wrap; overflow:visible"><button class="chip outline" type="button" aria-pressed="false">Thermoforming</button><button class="chip outline" type="button" aria-pressed="false">Cup forming</button><button class="chip outline" type="button" aria-pressed="false">Vacuum forming</button><button class="chip outline" type="button" aria-pressed="false">Crusher</button></div>
+          <div class="field-label">Warranty</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">Any</button><button class="chip outline" type="button" aria-pressed="false">In warranty</button><button class="chip outline" type="button" aria-pressed="false">Out of warranty</button></div>
+          <div class="field-label">AMC</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">Any</button><button class="chip outline" type="button" aria-pressed="false">Under AMC</button><button class="chip outline" type="button" aria-pressed="false">No AMC</button></div>
+          <label class="check"><input type="checkbox">Has an open request</label>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close>Show 6 machines</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="sort" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Sort machines">
+        <div class="group"><div class="title">Sort machines</div>
+          <button type="button" data-close>Name ✓</button><button type="button" data-close>Installed date, newest</button><button type="button" data-close>Warranty ending soonest</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="quick" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Machine actions">
+        <div class="group"><div class="title" id="quick-title">Line 1 former</div>
+          <button type="button" data-close>Raise service</button><button type="button" data-close>Claim warranty</button><button type="button" data-close>Share card</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every machine the company owns. Search across model, serial and site; filters show as removable
+chips. 200 machines load 20 at a time. A machine waiting for verification shows a grey Pending chip and opens a limited
+detail. Long press a card for quick actions. AMC opens the AMC segment (C401).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const LONG_PRESS_MS = 500;
+  const byName = [...ZX.data.machines].sort((a, b) => (a.nickname || a.model).localeCompare(b.nickname || b.model));
+  const card = (m) => R.machineCard(m, `C202-machine-detail.html?serial=${m.serial}`);
+  document.getElementById('all').innerHTML = byName.map(card).join('');
+  document.getElementById('filtered').innerHTML = byName
+    .filter((m) => m.site === 'vatva' && m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0).map(card).join('');
+
+  /* long press a card: quick actions sheet */
+  let timer;
+  document.addEventListener('pointerdown', (event) => {
+    const machine = event.target.closest('.machine');
+    if (!machine) return;
+    timer = window.setTimeout(() => {
+      document.getElementById('quick-title').textContent = machine.querySelector('.nick')?.textContent || machine.querySelector('h3').textContent;
+      document.getElementById('quick').hidden = false;
+    }, LONG_PRESS_MS);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((type) => document.addEventListener(type, () => window.clearTimeout(timer)));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

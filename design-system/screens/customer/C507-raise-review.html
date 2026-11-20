@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C507 Raise request: review and submit</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C503 to C507 wizard */
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+/* this page */
+.rcard{padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff}
+.rcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
+.rcard h2{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.rcard .top a{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.rcard .kv div{padding:8px 0}
+.rcard .text{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.mline{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; margin-bottom:12px}
+.mline b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mline .mono{font-size:var(--fs-12); color:var(--text-muted)}
+.mini{display:flex; gap:6px}
+.mini .upload{width:52px; height:52px; aspect-ratio:auto}
+.terms{margin:0 4px; text-align:center; font-size:var(--fs-12); color:var(--text-muted)}
+.terms a{color:var(--blue); font-weight:600; text-decoration:none}
+.next-steps{margin:14px 0 0; padding:0; list-style:none; text-align:left; font-size:var(--fs-13); color:var(--slate-700)}
+.next-steps li{display:flex; gap:10px; align-items:center; padding:6px 0}
+.next-steps .n{width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); font:600 var(--fs-11) var(--font-body)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C507 Raise request: review and submit</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="ready" data-open="success" aria-pressed="false">submitted</button>
+  <button type="button" data-state="changed" aria-pressed="false">coverage changed</button>
+  <button type="button" data-state="mediafail" aria-pressed="false">upload failed</button>
+  <button type="button" data-state="ready" data-open="duplicate" aria-pressed="false">duplicate</button>
+  <button type="button" data-state="ready" data-open="notsure" aria-pressed="false">network dropped</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C506-raise-visit.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 5 of 5</b><span>Review and submit</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+            <div><b>You are offline</b>Your request is kept as a draft. Machine down? <a href="C1502-urgent-request.html">Send an urgent request</a></div></div>
+          <div class="banner amber" data-when="changed"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Coverage changed since step 1</b><span id="changed-text"></span></div></div>
+          <div class="banner red" data-when="mediafail"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>1 photo did not upload</b><button class="link-btn" type="button" data-busy>Retry</button> or submit without it.</div></div>
+
+          <div class="rcard">
+            <div class="top"><h2>Machine and coverage</h2><a href="C503-raise-machine.html" data-keep>Edit</a></div>
+            <div class="mline" id="mline"></div>
+            <div id="coverage"></div>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Issue</h2><a href="C504-raise-issue.html" data-keep>Edit</a></div>
+            <dl class="kv" style="margin:0" id="issue"></dl>
+            <p class="text" id="issue-text"></p>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Photos and videos</h2><a href="C505-raise-media.html" data-keep>Edit</a></div>
+            <div class="mini" id="media"></div>
+          </div>
+
+          <div class="rcard">
+            <div class="top"><h2>Visit details</h2><a href="C506-raise-visit.html" data-keep>Edit</a></div>
+            <dl class="kv" style="margin:0" id="visit"></dl>
+          </div>
+          <p class="terms">By submitting you agree to the <a href="C1109-legal.html">service terms</a></p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-open="success" data-when="ready changed mediafail">Submit request</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Saving...</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit request</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="success" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ok-title">
+        <span class="disc green"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+        <h3 id="ok-title">Request submitted</h3>
+        <p>Your request number is <span class="mono" id="new-number"></span>.</p>
+        <ol class="next-steps">
+          <li><span class="n">1</span>Zixom reviews your request</li>
+          <li><span class="n">2</span>We assign an engineer</li>
+          <li><span class="n">3</span>You get the visit time by notification</li>
+        </ol>
+        <div class="actions"><a class="btn btn-primary" id="view-request" href="C508-request-detail.html">View request</a>
+          <a class="btn btn-text" style="width:100%" href="C501-support.html">Done</a></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="duplicate" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="dup-title">
+        <h3 id="dup-title">You already raised this</h3>
+        <p id="dup-text"></p>
+        <div class="actions"><a class="btn btn-primary" id="dup-view" href="C508-request-detail.html">View request</a>
+          <button class="btn btn-text" style="width:100%" type="button" data-close>Back to review</button></div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="notsure" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="ns-title">
+        <h3 id="ns-title">We are not sure this was sent</h3>
+        <p>We will check before you send it again. Your draft is kept.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-busy>Check again</button>
+          <button class="btn btn-text" style="width:100%" type="button" data-close>Close</button></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave request">
+        <div class="group"><div class="title">Leave this request? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C501-support.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C501-support.html'">Discard request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 5: check and send. Charges follow the coverage. Offline keeps a draft; a dropped network
+never shows success (EC-03); a duplicate links to the open request (EC-41).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ENDED = ['closed', 'cancelled'];
+  /* Sample values not in data.js yet (move there): visit fee, and the draft entered in C504 to C506 */
+  const VISIT_FEE = 700;
+  const DRAFT = { type: 'Breakdown or repair', category: 'Heating', state: 'Running with a problem', severity: 'production',
+    description: 'Heater zone 2 takes 25 minutes to reach temperature. Cups come out soft on one side.',
+    photos: 4, video: '0:42', documents: 1, slots: [['2026-11-25', '9 to 12'], ['2026-11-26', '12 to 3']], induction: 'No' };
+
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-CF-2011';
+  const m = R.machine(serial);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+  const coverageOf = (x) => {
+    if (x.warrantyEnd && R.daysFromToday(x.warrantyEnd) >= 0) return 'warranty';
+    const contract = x.amc && R.amc(x.amc);
+    return contract && contract.status !== 'expired' ? 'amc' : 'chargeable';
+  };
+  const coverage = coverageOf(m);
+  const contract = m.amc && R.amc(m.amc);
+  const BANNER = {
+    warranty: `<div class="banner green">${R.icon('shield-check')}<div><b>Under warranty</b>No charge for covered work.</div></div>`,
+    amc: contract && `<div class="banner">${R.icon('seal-check')}<div><b>Under AMC</b>No charge for included visits. ${contract.visitsIncluded - contract.visitsUsed} of ${contract.visitsIncluded} left.</div></div>`,
+    chargeable: `<div class="banner grey">${R.icon('currency-inr')}<div><b>Chargeable</b>Visit fee ${R.money(VISIT_FEE)} plus parts and labour. Extra work needs your approval. <a href="C1504-charges.html">See charges</a></div></div>`,
+  };
+  $('mline').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span>`;
+  $('coverage').innerHTML = BANNER[coverage];
+  $('changed-text').textContent = `This visit is now chargeable: visit fee ${R.money(VISIT_FEE)} plus parts and labour.`;
+
+  $('issue').innerHTML = `<div><dt>Type</dt><dd>${DRAFT.type}</dd></div><div><dt>Category</dt><dd>${DRAFT.category}</dd></div>
+    <div><dt>Machine</dt><dd>${DRAFT.state}</dd></div><div><dt>Severity</dt><dd>${R.severityTag(DRAFT.severity)}</dd></div>`;
+  $('issue-text').textContent = DRAFT.description;
+
+  const tile = (icon) => `<div class="upload">${R.icon(icon, 'ic-24')}</div>`;
+  $('media').innerHTML = tile('image').repeat(DRAFT.photos) + tile('video-camera') + tile('file-pdf');
+
+  $('visit').innerHTML = `<div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+    <div><dt>Contact</dt><dd>${R.esc(site.contact.name)}</dd></div>
+    ${DRAFT.slots.map(([date, slot], i) => `<div><dt>${i ? '' : 'Times'}</dt><dd>${R.dayDate(date)}, ${slot}</dd></div>`).join('')}
+    <div><dt>Safety induction</dt><dd>${DRAFT.induction}</dd></div>`;
+
+  const nextNumber = `TKT-2026-${String(Math.max(...data.tickets.map((t) => Number(t.number.slice(-4)))) + 1).padStart(4, '0')}`;
+  $('new-number').textContent = nextNumber;
+  $('view-request').href = `C508-request-detail.html?ticket=${nextNumber}&machine=${serial}&coverage=${coverage}`;
+
+  const existing = data.tickets.filter((t) => t.machine === serial && !ENDED.includes(t.status))
+    .sort((a, b) => b.created.localeCompare(a.created))[0];
+  $('dup-text').textContent = existing ? `${existing.number} is open for this machine.` : '';
+  if (existing) $('dup-view').href = `C508-request-detail.html?ticket=${existing.number}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

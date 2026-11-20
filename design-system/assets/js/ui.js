@@ -12,9 +12,9 @@
   const BUSY_MS = 900;
 
   /* ---------- status bar (prototype chrome): takes the page colour; dark text unless a page marks it on-dark ---------- */
-  const SIGNALS = `<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path fill="currentColor" d="M1 8h2.6v3.4H1zM5.4 5.8H8v5.6H5.4zM9.8 3.4h2.6v8H9.8zM14.2 1h2.6v10.4h-2.6z"/></svg>
-    <svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path fill="currentColor" d="M8 2.6c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .8 10.4 10.4 0 0 0 .8 3.7L2 5c1.6-1.5 3.7-2.4 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.6 6.6 0 0 0 8 4.4a6.6 6.6 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zm0 3.5L10 8a2.9 2.9 0 0 0-4 0z"/></svg>
-    <svg width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><rect x=".6" y=".6" width="22" height="10.8" rx="3.4" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.2" y="2.2" width="17" height="7.6" rx="2" fill="currentColor"/><path d="M24.2 4.2v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".4"/></svg>`;
+  const SIGNALS = `<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3.2" height="4" rx="1" fill="currentColor"/><rect x="4.9" y="5.6" width="3.2" height="6.4" rx="1" fill="currentColor"/><rect x="9.8" y="3" width="3.2" height="9" rx="1" fill="currentColor"/><rect x="14.7" y="0" width="3.2" height="12" rx="1" fill="currentColor"/></svg>
+    <svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path fill="currentColor" d="M8 2.3c2.4 0 4.6.9 6.3 2.5.2.2.5.2.7 0l1-1c.2-.2.2-.5 0-.7A11.3 11.3 0 0 0 8 0C5 0 2.2 1.2.1 3.1c-.2.2-.2.5 0 .7l1 1c.2.2.5.2.7 0A9 9 0 0 1 8 2.3zm0 3.6c1.4 0 2.6.5 3.6 1.4.2.2.5.2.7 0l1-1c.2-.2.2-.5 0-.7A7.6 7.6 0 0 0 8 3.6a7.6 7.6 0 0 0-5.2 2c-.2.2-.2.5 0 .7l1 1c.2.2.5.2.7 0 .9-.9 2.2-1.4 3.5-1.4zm2.4 2.5a.5.5 0 0 0 0-.7A3.5 3.5 0 0 0 8 7c-.9 0-1.8.4-2.4 1-.2.2-.2.5 0 .7l2 2c.2.2.6.2.8 0z"/></svg>
+    <svg width="27" height="13" viewBox="0 0 27 13" aria-hidden="true"><rect x=".5" y=".5" width="22.5" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".35"/><rect x="2.2" y="2.2" width="19" height="8.6" rx="2.4" fill="currentColor"/><path d="M24.6 4.4c.9.3 1.5 1.1 1.5 2.1s-.6 1.8-1.5 2.1z" fill="currentColor" opacity=".4"/></svg>`;
   document.querySelectorAll('.status:empty').forEach((bar) => {
     bar.innerHTML = `<span>9:41</span><span class="signals">${SIGNALS}</span>`;
     const screen = bar.closest('.screen');

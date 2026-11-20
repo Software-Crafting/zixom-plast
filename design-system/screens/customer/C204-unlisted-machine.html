@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C204 Report an unlisted machine</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.add-file{display:flex; align-items:center; gap:12px; width:100%; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:inherit; text-align:left; cursor:pointer}
+.add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.add-file span span{font-size:var(--fs-12); color:var(--text-muted)}
+.add-file > .ic{color:var(--slate-400)}
+.field.has-error .add-file{border-color:var(--red); background:var(--red-50)}
+.sent{padding-top:48px}
+.sent .machine{margin-top:24px; text-align:left; width:100%}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C204 Report an unlisted machine</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="uploading" aria-pressed="false">uploading, one failed</button>
+  <button type="button" data-state="badfile" aria-pressed="false">too large, wrong type</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="submitted" aria-pressed="false">pending verification</button>
+  <button type="button" data-state="rejected" aria-pressed="false">rejected, resubmit</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C203-add-machine.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Report an unlisted machine</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div data-when="ready errors uploading badfile submitting rejected offline">
+          <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your form is kept.</div>
+          <div class="banner red" style="margin-bottom:16px" data-when="rejected"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b id="rejected-title"></b>Nameplate photo is not readable. Add a clear one.</div></div>
+          <p class="lede" style="margin-top:0" data-when="ready errors uploading badfile submitting offline">For second hand or older machines. Zixom verifies it.</p>
+
+          <div class="error-summary" role="alert" style="margin-top:16px" data-when="errors">
+            <b>Fix 2 things to continue</b>
+            <ul><li><a href="#serial-bad">Serial number: enter 6 to 20 letters or digits</a></li><li><a href="#plate-bad">Add a photo of the nameplate</a></li></ul>
+          </div>
+
+          <div style="margin-top:20px">
+            <div class="field">
+              <label for="model">Model<span class="counter">If known</span></label>
+              <input class="input" id="model" placeholder="For example, AFM-650">
+            </div>
+
+            <div class="field" data-when="ready uploading badfile submitting rejected offline">
+              <label for="serial">Serial number<span class="req">*</span></label>
+              <input class="input mono" id="serial" autocapitalize="characters">
+              <span class="hint">On the nameplate. 6 to 20 letters or digits.</span>
+            </div>
+            <div class="field has-error" data-when="errors">
+              <label for="serial-bad">Serial number<span class="req">*</span></label>
+              <input class="input mono" id="serial-bad" value="TF25" aria-invalid="true" aria-describedby="serial-err">
+              <span class="error-text" id="serial-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 6 to 20 letters or digits</span>
+            </div>
+
+            <div class="field">
+              <label for="year">Year of purchase<span class="req">*</span></label>
+              <input class="input" id="year" inputmode="numeric" maxlength="4">
+            </div>
+
+            <div class="field">
+              <span class="field-label">Site<span class="req">*</span></span>
+              <button class="select" type="button" data-open="site"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value" id="site-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Contact person<span class="req">*</span></span>
+              <button class="select" type="button" data-open="contact"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg><span class="value" id="contact-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+            </div>
+
+            <div class="field" data-when="ready submitting offline">
+              <span class="field-label">Nameplate photo<span class="req">*</span></span>
+              <div class="files">
+                <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>nameplate.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 2.1 MB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="uploading">
+              <span class="field-label">Nameplate photo<span class="req">*</span></span>
+              <div class="files">
+                <div class="file" data-status="uploading" data-progress="64"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                  <div class="file-body"><b>nameplate.jpg</b><span class="file-meta">Uploading 64% · 2.1 MB</span><span class="progress"><i style="width:64%"></i></span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="badfile">
+              <span class="field-label">Nameplate photo<span class="req">*</span></span>
+              <div class="files">
+                <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+                  <div class="file-body"><b>IMG_4410.HEIC</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB. Choose a smaller file</span></div>
+                  <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field has-error" data-when="errors rejected">
+              <span class="field-label" id="plate-bad">Nameplate photo<span class="req">*</span></span>
+              <button class="add-file" type="button" data-open="photo">
+                <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+                <span class="grow"><b>Add a photo of the nameplate</b><span>Serial and model must be readable</span></span>
+                <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+              </button>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a photo of the nameplate</span>
+            </div>
+
+            <div class="field" data-when="ready submitting rejected offline">
+              <span class="field-label">Purchase invoice<span class="counter">Optional</span></span>
+              <div class="files">
+                <div class="file" data-status="done"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+                  <div class="file-body"><b>purchase-invoice.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 640 KB</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="uploading">
+              <span class="field-label">Purchase invoice<span class="counter">Optional</span></span>
+              <div class="files">
+                <div class="file" data-status="failed" data-progress="20"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+                  <div class="file-body"><b>purchase-invoice.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+                  <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="badfile">
+              <span class="field-label">Purchase invoice<span class="counter">Optional</span></span>
+              <div class="files">
+                <div class="file" data-status="wrong-type"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+                  <div class="file-body"><b>purchase-invoice.docx</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Use PDF, JPG or PNG</span></div>
+                  <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+              </div>
+            </div>
+            <div class="field" data-when="errors">
+              <span class="field-label">Purchase invoice<span class="counter">Optional</span></span>
+              <button class="add-file" type="button" data-open="photo">
+                <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+                <span class="grow"><b>Add the invoice</b><span>PDF, JPG or PNG up to 10 MB</span></span>
+                <svg class="ic ic-16" aria-hidden="true"><use href="#ph-plus"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="state sent" data-when="submitted">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h3>Sent for verification</h3>
+          <p>We will notify you once it is linked.</p>
+          <div id="pending-card" style="width:100%"></div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="#" data-when="ready errors badfile" onclick="document.querySelector('[data-state=submitting]').click()">Submit for verification</a>
+        <button class="btn btn-primary" type="button" data-when="uploading" data-open="partial">Submit for verification</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit for verification</button>
+        <button class="btn btn-primary" type="button" data-when="rejected" onclick="document.querySelector('[data-state=submitting]').click()">Resubmit</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit for verification</button>
+        <a class="btn btn-primary" href="C201-machines.html" data-when="submitted">View my machines</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="site" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="site-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="site-t">Choose site</h3><a class="btn btn-text" href="C1507-add-site.html">Add site</a></div>
+        <div class="body" role="radiogroup" aria-label="Sites" id="site-list"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="contact" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="contact-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="contact-t">Contact person</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Contact person" id="contact-list"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add a file">
+        <div class="group">
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg>Take photo</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg>Choose from library</button>
+          <button type="button" data-close><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg>Choose a file</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay center" id="partial" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="partial-t">
+        <h3 id="partial-t">Send without the invoice?</h3><p>It did not upload. You can add it later.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close onclick="document.querySelector('[data-state=submitting]').click()">Send without it</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Retry upload</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">For a serial Zixom cannot find. Submit adds the machine to the list as Pending verification. A
+rejected request shows the reason and opens the form again; a failed upload can be retried or left out.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* the machine this report becomes once sent: the pending one in the demo data */
+  const machine = data.machines.find((m) => m.status === 'pending');
+  const company = data.companies.find((c) => c.id === machine.company);
+  const site = company.sites.find((s) => s.id === machine.site);
+  /* sample only: what the customer typed, and the date Zixom rejected the first try */
+  const PURCHASE_YEAR = '2024';
+  const REJECTED_ON = '2026-11-21';
+
+  $('model').value = machine.model.split(' ')[0];
+  $('serial').value = machine.serial;
+  $('year').value = PURCHASE_YEAR;
+  $('site-value').textContent = site.name;
+  $('contact-value').textContent = site.contact.name;
+  $('rejected-title').textContent = `Not verified on ${R.dayDate(REJECTED_ON)}`;
+  $('pending-card').innerHTML = R.machineCard(machine, `C202-machine-detail.html?serial=${machine.serial}`);
+
+  const choice = (lead, title, sub, checked) => `<button class="choice" role="radio" aria-checked="${checked}" type="button" data-close>
+    <span class="disc">${lead}</span><b>${R.esc(title)}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+  $('site-list').innerHTML = company.sites.map((s) => choice(R.icon('factory'), s.name, s.address, s.id === site.id)).join('');
+  $('contact-list').innerHTML = data.users.filter((u) => u.companies.some((c) => c.id === company.id))
+    .map((u) => choice(R.esc(u.initials), u.name, u.mobile, u.name === site.contact.name)).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C801 Payments hub</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.owe{margin-top:16px; padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-lift)}
+.owe .label{font-size:var(--fs-13); color:var(--text-muted)}
+.owe .big{display:block; margin-top:4px; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.owe .over{display:block; margin-top:4px; font-size:var(--fs-13); font-weight:600; color:var(--red)}
+.owe .clear{display:block; margin-top:4px; font-size:var(--fs-13); color:var(--green); font-weight:600}
+.owe .btn{margin-top:14px}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.count-line .btn-text{min-height:0; padding:0; display:inline-flex; gap:6px; align-items:center}
+/* invoice row */
+.inv{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; row-gap:10px; padding:14px; border-radius:var(--r-lg);
+  background:#fff; border:1px solid var(--line); color:inherit; text-decoration:none}
+.inv.overdue{border-color:rgba(194,59,59,.35); background:linear-gradient(180deg, var(--red-50), #fff 70%)}
+.inv .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.inv .main{min-width:0}
+.inv .main b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900); line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.inv .main .mono{display:block; margin-top:3px; font-size:var(--fs-12); color:var(--text-muted)}
+.inv .amt{text-align:right; font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap}
+.inv .foot{grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:10px;
+  border-top:1px dashed var(--line-strong); font-size:var(--fs-12); color:var(--text-muted)}
+.inv .foot .bad{color:var(--red); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C801 Payments hub</b><span>Payments tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">nothing to pay</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <h1 class="root-title" style="margin:0; flex:1">Payments</h1>
+          <a class="icon-btn glass" href="C808-payment-history.html" aria-label="Payment history"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></a>
+          <button class="icon-btn glass" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+        </div>
+        <div class="owe" data-when="ready filtered noresults offline">
+          <span class="label">Total outstanding</span>
+          <b class="big" id="outstanding"></b>
+          <span class="over" id="overdue"></span>
+          <a class="btn btn-primary" href="C1607-select-invoices.html" data-when="ready filtered noresults">Pay all due</a>
+          <button class="btn btn-primary" type="button" disabled data-when="offline">Pay all due</button>
+        </div>
+        <div class="owe" data-when="empty">
+          <span class="label">Total outstanding</span>
+          <b class="big" id="zero"></b>
+          <span class="clear">All paid up</span>
+        </div>
+        <div class="owe" data-when="loading error">
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="display:block; height:30px; width:60%; margin-top:10px"></span>
+          <span class="skeleton" style="display:block; height:54px; margin-top:14px; border-radius:var(--r-pill)"></span>
+        </div>
+      </header>
+
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="stack" style="margin-top:16px">
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+            <div class="segment" role="tablist" aria-label="Invoices" data-when="ready filtered noresults offline empty">
+              <button role="tab" aria-selected="true" aria-controls="p-due" id="t-due">Due</button>
+              <button role="tab" aria-selected="false" aria-controls="p-paid" id="t-paid">Paid</button>
+              <button role="tab" aria-selected="false" aria-controls="p-est" id="t-est">Estimates</button>
+            </div>
+
+            <div data-when="ready filtered offline">
+              <div id="p-due" class="stack-sm">
+                <p class="count-line" data-when="ready offline"><span><b id="due-count"></b> · by due date</span>
+                  <button class="btn btn-text" type="button" data-open="filter"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg>Filter</button></p>
+                <div data-when="filtered">
+                  <div class="chips" style="margin-bottom:6px"><button class="chip outline" type="button" aria-pressed="false">Parts <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+                  <p class="count-line"><span><b id="filtered-count"></b></span><button class="btn btn-text" type="button">Clear filters</button></p>
+                </div>
+                <div class="stack-sm" id="due" data-when="ready offline"></div>
+                <div class="stack-sm" id="due-filtered" data-when="filtered"></div>
+              </div>
+              <div id="p-paid" class="stack-sm" hidden></div>
+              <div id="p-est" class="stack-sm" hidden></div>
+            </div>
+
+            <div class="state" data-when="noresults">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+              <h3>No matching results</h3>
+              <p>Try a different date or type.</p>
+              <button class="btn btn-secondary" type="button">Clear filters</button>
+            </div>
+
+            <div class="state" data-when="empty">
+              <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+              <h3>Nothing to pay</h3>
+              <p>New invoices will show here.</p>
+            </div>
+
+            <div class="stack-sm" data-when="loading">
+              <span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span>
+              <span class="skeleton" style="height:112px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:112px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:112px; border-radius:var(--r-lg); opacity:.6"></span>
+            </div>
+
+            <div class="state" data-when="error">
+              <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+              <h3>Something went wrong</h3>
+              <p>We could not load this. Please try again in a moment.</p>
+              <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+              <span class="code mono">ZC-500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="payments"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Billing">
+        <div class="group">
+          <div class="title">Billing</div>
+          <button type="button" data-go="C808-payment-history.html">Payment history</button>
+          <button type="button" data-go="C813-statement.html">Account statement</button>
+          <button type="button" data-go="C810-refunds.html">Refunds</button>
+          <button type="button" data-go="C1603-credit-notes.html">Credit notes</button>
+          <button type="button" data-go="C1608-bank-transfer.html">Bank transfer details</button>
+          <button type="button" data-go="C811-billing-details.html">Billing details</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter invoices</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Type</div>
+          <div class="chips" data-single style="margin-bottom:14px"><button class="chip outline" type="button" aria-pressed="true">All</button><button class="chip outline" type="button" aria-pressed="false">Service</button><button class="chip outline" type="button" aria-pressed="false">AMC</button><button class="chip outline" type="button" aria-pressed="false">Parts</button><button class="chip outline" type="button" aria-pressed="false">Other</button></div>
+          <div class="field-label">Issued</div>
+          <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">Any time</button><button class="chip outline" type="button" aria-pressed="false">This month</button><button class="chip outline" type="button" aria-pressed="false">Last 3 months</button></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close>Show invoices</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">What the company owes, overdue first. Due lists every unpaid invoice; Processing and Awaiting
+verification ones open without Pay now. Pay all due opens <a href="C1607-select-invoices.html">C1607</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const TYPE_ICON = { Service: 'wrench', Parts: 'package', AMC: 'seal-check', Other: 'receipt' };
+  const STATUS_ORDER = { overdue: 0, due: 1, processing: 2, verification: 3 };
+  const payable = (i) => ['due', 'overdue'].includes(i.status);
+
+  const dueNote = (i) => {
+    const days = R.daysFromToday(i.due);
+    if (i.status === 'overdue') return `<span class="bad">Overdue by ${-days} days</span>`;
+    if (i.status === 'processing') return 'Payment being confirmed';
+    if (i.status === 'verification') return 'Proof sent, Zixom is checking';
+    if (i.lastAttempt === 'failed') return '<span class="bad">Last payment failed</span>';
+    if (i.paid) return `${R.money(i.paid)} paid, balance left`;
+    return `Due ${R.dayDate(i.due)}`;
+  };
+  const paidOn = (i) => {
+    const p = data.payments.find((x) => x.invoice === i.number && x.status === 'paid');
+    return p ? `Paid ${R.date(p.when)}` : 'Paid';
+  };
+  const row = (i, note) => `<a class="inv ${i.status === 'overdue' ? 'overdue' : ''}" href="C802-invoice-detail.html?invoice=${i.number}">
+    <span class="disc">${R.icon(TYPE_ICON[i.type] || 'receipt')}</span>
+    <span class="main"><b>${R.esc(i.title)}</b><span class="mono">${i.number}</span></span>
+    <span class="amt">${R.money(R.balance(i) || i.amount)}</span>
+    <span class="foot"><span>${note}</span>${R.invoiceTag(i.status)}</span></a>`;
+
+  const open = data.invoices.filter((i) => i.status !== 'paid')
+    .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.due.localeCompare(b.due));
+  const outstanding = open.filter(payable).reduce((sum, i) => sum + R.balance(i), 0);
+  const overdue = open.filter((i) => i.status === 'overdue');
+
+  $('outstanding').textContent = R.money(outstanding);
+  $('zero').textContent = R.money(0);
+  $('overdue').textContent = `${R.money(overdue.reduce((s, i) => s + R.balance(i), 0))} overdue · ${overdue.length} invoice${overdue.length === 1 ? '' : 's'}`;
+  $('due-count').textContent = `${open.length} invoices`;
+  $('due').innerHTML = open.map((i) => row(i, dueNote(i))).join('');
+
+  const parts = open.filter((i) => i.type === 'Parts');
+  $('filtered-count').textContent = `${parts.length} of ${open.length} invoices`;
+  $('due-filtered').innerHTML = parts.map((i) => row(i, dueNote(i))).join('');
+
+  const paid = data.invoices.filter((i) => i.status === 'paid');
+  $('p-paid').innerHTML = paid.map((i) => row(i, paidOn(i))).join('');
+
+  $('p-est').innerHTML = data.estimates.filter((e) => e.status === 'shared').map((e) => {
+    const m = R.machine(data.tickets.find((t) => t.number === e.ticket).machine);
+    return `<a class="inv" href="C509-estimate.html?ticket=${e.ticket}">
+      <span class="disc">${R.icon('currency-inr')}</span>
+      <span class="main"><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${e.number}</span></span>
+      <span class="amt">${R.money(R.totals(e.lines).total)}</span>
+      <span class="foot"><span>Valid until ${R.dayDate(e.validUntil)}</span>${R.tag('Waiting for approval', 'amber')}</span></a>`;
+  }).join('');
+
+  $('t-due').textContent = `Due ${open.length}`;
+  $('t-paid').textContent = `Paid ${paid.length}`;
+  $('t-est').textContent = `Estimates ${data.estimates.filter((e) => e.status === 'shared').length}`;
+
+  /* action sheet rows that navigate */
+  document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => { location.href = b.dataset.go; }));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

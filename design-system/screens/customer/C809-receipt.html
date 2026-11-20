@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C809 Receipt detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* paper receipt: white card on grey, dashed rows, scalloped torn bottom edge */
+.sheet.on-grey{background:var(--slate-100)}
+.sheet.on-grey .footer-bar{background:linear-gradient(180deg, rgba(238,240,243,0), var(--slate-100) 30%)}
+.receipt{--notch:7px; padding:22px 18px 30px; border-radius:var(--r-lg) var(--r-lg) 0 0; background:#fff; text-align:center;
+  -webkit-mask:radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% / calc(2 * var(--notch)) 100% repeat-x;
+  mask:radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% / calc(2 * var(--notch)) 100% repeat-x}
+.receipt .check{width:52px; height:52px; margin:0 auto; display:grid; place-items:center; border-radius:50%; background:var(--green-50); color:var(--green)}
+.receipt h2{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.receipt .note{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.receipt .amount{display:block; margin:14px 0 16px; font:400 32px var(--font-display); color:var(--slate-900); letter-spacing:-.01em}
+.receipt dl{margin:0; text-align:left}
+.receipt dl div{display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-top:1.5px dashed var(--slate-200); font-size:var(--fs-14)}
+.receipt dt{color:var(--text-muted)}
+.receipt dd{margin:0; max-width:62%; text-align:right; color:var(--slate-900); font-weight:500; overflow-wrap:anywhere}
+.receipt dd.mono{font-size:var(--fs-13)}
+.receipt dd a{color:var(--blue); text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C809 Receipt detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="pick"><span>receipt</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet on-grey">
+      <div class="navbar">
+        <a class="icon-btn" href="C808-payment-history.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Receipt</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Download needs the internet.</div>
+        <div class="receipt" data-when="ready offline" id="stub"></div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:520px; border-radius:var(--r-lg); background-color:#fff"></span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span>
+          <h3>We cannot find this receipt</h3><p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="C808-payment-history.html">Go back</a>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready offline">
+        <div class="btn-pair">
+          <button class="icon-btn" type="button" aria-label="Share receipt"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="btn btn-primary" type="button" data-toast="Receipt saved to Downloads" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download</button>
+          <button class="btn btn-primary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Any receipt via <code>?receipt=</code>. Share opens the phone's share sheet; if it fails,
+<a href="../system/S17-share-failed.html">S17</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'RCP-2026-0650';
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  const params = new URLSearchParams(location.search);
+
+  /* sample: the payment just made in the demo flow, same record as C805; amount comes from its invoices */
+  const justPaidInvoices = (params.get('invoice') || 'INV-2026-0981').split(',');
+  const JUST_PAID = { receipt: 'RCP-2026-0653', invoice: justPaidInvoices.join(', '), method: 'UPI, Google Pay', txn: 'pay_Ob1XsQe4Hd8F',
+    when: '2026-11-23T12:04', status: 'paid',
+    amount: justPaidInvoices.reduce((s, n) => s + R.balance(data.invoices.find((i) => i.number === n)), 0) };
+  const receipts = [...data.payments.filter((p) => p.receipt), JUST_PAID];
+
+  const number = params.get('receipt') || DEFAULT;
+  $('pick').insertAdjacentHTML('beforeend', receipts.map((p) =>
+    `<button type="button" data-receipt="${p.receipt}" aria-pressed="${p.receipt === number}">${p.receipt.slice(-4)} ${p.method.split(',')[0]}</button>`).join(''));
+  $('pick').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-receipt]');
+    if (b) location.search = `?receipt=${b.dataset.receipt}`;
+  });
+
+  const p = receipts.find((r) => r.receipt === number);
+  if (!p) { document.querySelector('.screen').dataset.state = 'notfound'; return; }
+  const company = data.companies.find((c) => c.id === 'shree');
+  const firstInvoice = data.invoices.find((i) => i.number === p.invoice.split(', ')[0]);
+  const isBank = p.method.startsWith('Bank transfer');
+
+  $('stub').innerHTML = `<span class="check">${R.icon('check', 'ic-28')}</span>
+    <h2>Payment received</h2><p class="note mono">${p.receipt}</p>
+    <b class="amount">${R.money(p.amount)}</b>
+    <dl>
+      <div><dt>Invoice</dt><dd>${p.invoice.split(', ').map((n) => `<a class="mono" href="C802-invoice-detail.html?invoice=${n}">${n}</a>`).join('<br>')}</dd></div>
+      <div><dt>For</dt><dd>${R.esc(firstInvoice.title)}</dd></div>
+      <div><dt>Method</dt><dd>${R.esc(isBank ? 'Bank transfer' : p.method)}</dd></div>
+      <div><dt>${isBank ? 'UTR' : 'Transaction ID'}</dt><dd class="mono">${R.esc(p.txn.replace('UTR ', ''))}</dd></div>
+      <div><dt>Date</dt><dd>${R.date(p.when)}, ${time(p.when)}</dd></div>
+      <div><dt>Paid to</dt><dd>Zixom Plast${isBank ? '' : ' via Razorpay'}</dd></div>
+      <div><dt>Paid by</dt><dd>${R.esc(company.name)}</dd></div>
+      <div><dt>GSTIN</dt><dd class="mono">${company.gstin}</dd></div>
+    </dl>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -32,14 +32,15 @@ body.plate{font-family:var(--font-body); color:var(--text); background:#DDE1E5;
 
 /* iPhone status bar with the Dynamic Island. ui.js fills it and picks its look from the screen:
    white with dark text on pushed screens, transparent with white text over the gradient on tab roots. */
-.status{position:relative; z-index:30; height:54px; flex-shrink:0; display:flex; align-items:flex-start;
-  justify-content:space-between; padding:17px 32px 0 40px; font:600 16px var(--font-body); color:var(--slate-900)}
-.status::after{content:""; position:absolute; left:50%; top:11px; width:122px; height:36px; transform:translateX(-50%);
+.status{position:relative; z-index:30; height:54px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+  padding:0 30px 0 38px; font:600 16px/1 var(--font-body); letter-spacing:-.01em; color:var(--slate-900)}
+.status::after{content:""; position:absolute; left:50%; top:11px; width:106px; height:32px; transform:translateX(-50%);
   border-radius:20px; background:#000}
-.status .signals{display:flex; align-items:center; gap:6px; margin-top:2px}
-.status.on-sheet{background:var(--surface-top)}
+.status .signals{display:flex; align-items:center; gap:6px}
+.status .signals svg{display:block}
 .status.on-dark{color:#fff}
-.screen:has(> .status.on-sheet) > .sheet{border-radius:0; box-shadow:none}
+/* pushed screens: no band behind the status bar, the page grey runs from the top */
+.screen:has(> .status.on-sheet) > .sheet{border-radius:0; box-shadow:none; background:transparent}
 
 .home-indicator{position:absolute; z-index:40; left:50%; bottom:8px; transform:translateX(-50%);
   width:134px; height:5px; border-radius:var(--r-pill); background:var(--slate-900); opacity:.85; pointer-events:none}

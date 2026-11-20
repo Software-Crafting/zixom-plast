@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1512 Call engineer</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.backdrop-eta{padding:20px; border-radius:24px; background:linear-gradient(160deg, var(--slate-700), var(--slate-900)); color:#fff}
+.backdrop-eta b{display:block; font:400 44px var(--font-display)}
+.backdrop-eta span{font-size:var(--fs-14); color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1512 Call engineer</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="call">ready</button>
+  <button type="button" data-state="closed" aria-pressed="false" data-open="call">job closed</button>
+  <button type="button" data-state="nocall" aria-pressed="false" data-open="call">phone cannot call</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Track engineer</h1><span></span>
+      </div>
+      <div class="scroll"><div class="backdrop-eta"><b class="eta"></b><span>Engineer on the way</span></div></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="call" data-initial>
+      <div class="action-sheet" role="dialog" aria-label="Call">
+        <div class="group">
+          <button type="button" data-close data-when="ready" class="call-eng"></button>
+          <button type="button" data-close data-when="ready closed">Call Zixom support</button>
+          <button type="button" data-close data-when="nocall" data-toast="Copied" class="copy-eng"></button>
+          <button type="button" data-close data-when="nocall" data-toast="Copied" class="copy-zixom"></button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Action sheet from Call on the engineer card, <a href="C516-track.html">C516</a> and
+<a href="C1511-engineer-profile.html">C1511</a>. The engineer's number hides once the job closes; a phone that cannot call offers Copy.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0125');
+  const engineer = R.engineer(ticket.engineer);
+  const fill = (cls, text) => document.querySelectorAll(cls).forEach((el) => { el.textContent = text; });
+  fill('.eta', `${ticket.eta} min`);
+  fill('.call-eng', `Call ${engineer.name}`);
+  fill('.copy-eng', `Copy ${engineer.phone}`);
+  fill('.copy-zixom', `Copy ${ZX.data.support.phone}`);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

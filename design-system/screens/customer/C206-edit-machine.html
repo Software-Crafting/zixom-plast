@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C206 Edit machine</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.found{padding:16px; border-radius:24px; background:var(--field)}
+.found .row-flex{gap:12px}
+.found h3{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.found p{margin:3px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.input-group .suffix{font-size:var(--fs-14); color:var(--text-muted)}
+.locked-head{display:flex; align-items:center; gap:8px; margin:28px 2px 0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.locked-head .ic{color:var(--slate-500)}
+.locked .kv dd{color:var(--slate-600)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C206 Edit machine</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">no changes</button>
+  <button type="button" data-state="edited" aria-pressed="false">edited</button>
+  <button type="button" data-state="edited" aria-pressed="false" data-open="discard">back with changes</button>
+  <button type="button" data-state="error" aria-pressed="false">hours too low</button>
+  <button type="button" data-state="saving" aria-pressed="false">saving</button>
+  <button type="button" data-state="conflict" aria-pressed="false">changed by Zixom</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back-link" href="C202-machine-detail.html" aria-label="Back" data-when="ready saving offline"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <button class="icon-btn" type="button" aria-label="Back" data-open="discard" data-when="edited error conflict"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></button>
+        <h1>Edit machine</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to save.</div>
+        <div class="banner amber" style="margin-bottom:16px" data-when="conflict"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>
+          <div><b>This was updated</b>Zixom changed the site. Refresh to see the latest.</div></div>
+
+        <div class="found"><div class="row-flex" id="hero"></div></div>
+
+        <div style="margin-top:20px">
+          <div class="field">
+            <label for="nick">Nickname<span class="counter" id="nick-count"></span></label>
+            <input class="input" id="nick" maxlength="40" placeholder="For example, Line 1 former">
+          </div>
+          <div class="field">
+            <span class="field-label">Site</span>
+            <button class="select" type="button" data-open="site"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value" id="site-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          </div>
+          <div class="field">
+            <span class="field-label">Contact person</span>
+            <button class="select" type="button" data-open="contact"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg><span class="value" id="contact-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          </div>
+          <div class="field" data-when="ready edited saving conflict offline">
+            <label for="hours">Running hours</label>
+            <div class="input-group"><svg class="ic" aria-hidden="true"><use href="#ph-gauge"/></svg><input class="input" id="hours" inputmode="numeric"><span class="suffix">hours</span></div>
+            <span class="hint" id="hours-hint"></span>
+          </div>
+          <div class="field has-error" data-when="error">
+            <label for="hours-bad">Running hours</label>
+            <div class="input-group"><svg class="ic" aria-hidden="true"><use href="#ph-gauge"/></svg><input class="input" id="hours-bad" inputmode="numeric" aria-invalid="true" aria-describedby="hours-err"><span class="suffix">hours</span></div>
+            <span class="error-text" id="hours-err"></span>
+          </div>
+          <div class="field">
+            <label for="notes">Notes<span class="counter" id="notes-count"></span></label>
+            <textarea class="textarea" id="notes" maxlength="500" placeholder="For example, runs only on night shift"></textarea>
+          </div>
+        </div>
+
+        <div class="locked">
+          <h2 class="locked-head"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Set by Zixom</h2>
+          <p class="hint" style="margin-top:4px">Call support to correct these.</p>
+          <div class="card-fill" style="margin-top:10px"><dl class="kv" style="margin:0" id="locked"></dl></div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" disabled data-when="ready offline">Save</button>
+        <a class="btn btn-primary save-link" href="C202-machine-detail.html" data-when="edited" data-toast="Machine updated">Save</a>
+        <button class="btn btn-primary" type="button" data-when="error" disabled>Save</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="saving">Save</button>
+        <button class="btn btn-primary" type="button" data-when="conflict" data-toast="Showing the latest" onclick="document.querySelector('[data-state=ready]').click()">Refresh</button>
+        <button class="btn btn-text" type="button" style="width:100%" data-when="conflict" onclick="document.querySelector('.plate-states [data-state=edited]').click()">Keep my changes</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="discard" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="discard-t">
+        <h3 id="discard-t">Discard this form?</h3><p>Your changes will be lost.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Keep editing</button>
+          <a class="btn btn-text back-link" href="C202-machine-detail.html" aria-label="Back, discard changes" style="color:var(--red); width:100%">Discard</a></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="site" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="site-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="site-t">Choose site</h3><a class="btn btn-text" href="C1507-add-site.html">Add site</a></div>
+        <div class="body" role="radiogroup" aria-label="Sites" id="site-list"></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="contact" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="contact-t">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="contact-t">Contact person</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Contact person" id="contact-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Edits what the company owns; model, serial and dates stay with Zixom. Leaving with changes asks
+first. If Zixom saved the machine meanwhile, the edits stay in the form until the person refreshes or keeps them.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample only: when running hours were last logged, and a note on the machine */
+  const LAST_LOG = '2026-11-20';
+  const NOTE = 'Mould change takes 40 minutes. Keep spare heater element in store.';
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const people = data.users.filter((u) => u.companies.some((c) => c.id === company.id));
+  const detail = `C202-machine-detail.html?serial=${serial}`;
+
+  $('machines').insertAdjacentHTML('beforeend', data.machines.map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+  document.querySelectorAll('.back-link, .save-link').forEach((a) => { a.href = detail; });
+
+  $('hero').innerHTML = `${R.thumb(m)}<div><h3>${R.esc(m.model)}</h3><p class="mono">${R.esc(serial)}</p></div>`;
+  $('nick').value = m.nickname;
+  $('nick-count').textContent = `${m.nickname.length} / 40`;
+  $('site-value').textContent = site.name;
+  $('contact-value').textContent = site.contact.name;
+  $('notes').value = NOTE;
+  $('notes-count').textContent = `${NOTE.length} / 500`;
+  const hours = m.runningHours;
+  $('hours').value = hours ? hours.toLocaleString('en-IN') : '';
+  $('hours').placeholder = 'Not recorded yet';
+  $('hours-hint').textContent = hours ? `Last logged ${hours.toLocaleString('en-IN')} on ${R.dayDate(LAST_LOG)}` : 'Read it from the HMI';
+  $('hours-bad').value = hours ? (hours - 340).toLocaleString('en-IN') : '';
+  $('hours-err').innerHTML = `${R.icon('warning-circle', 'ic-16')}Enter ${hours ? hours.toLocaleString('en-IN') : 'a number'} or more`;
+
+  const fixed = (iso) => (iso ? R.date(iso) : 'Not set yet');
+  $('locked').innerHTML = [['Model', R.esc(m.model)], ['Serial', `<span class="mono">${R.esc(serial)}</span>`],
+    ['Installed on', fixed(m.installed)], ['Commissioned on', fixed(m.commissioned)], ['Warranty ends', fixed(m.warrantyEnd)]]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+  const choice = (lead, title, sub, checked) => `<button class="choice" role="radio" aria-checked="${checked}" type="button" data-close>
+    <span class="disc">${lead}</span><b>${R.esc(title)}</b><p>${R.esc(sub)}</p><span class="mark"></span></button>`;
+  $('site-list').innerHTML = company.sites.map((s) => choice(R.icon('factory'), s.name, s.address, s.id === site.id)).join('');
+  $('contact-list').innerHTML = people.map((u) => choice(R.esc(u.initials), u.name, u.mobile, u.name === site.contact.name)).join('');
+
+  $('nick').addEventListener('input', (event) => { $('nick-count').textContent = `${event.target.value.length} / 40`; });
+  $('notes').addEventListener('input', (event) => { $('notes-count').textContent = `${event.target.value.length} / 500`; });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

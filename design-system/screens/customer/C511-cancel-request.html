@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C511 Cancel request</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.choice:not(:has(p)) b{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C511 Cancel request</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="confirm">confirm</button>
+  <button type="button" data-state="cancelled" aria-pressed="false">cancelled</button>
+  <button type="button" data-state="started" aria-pressed="false">work started</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Cancel request</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline started">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to cancel.</div>
+          <div id="ticket"></div>
+
+          <div class="banner amber" data-when="started"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg>
+            <div><b>Work has started</b>This request can no longer be cancelled. Ask Zixom instead.</div></div>
+
+          <div data-when="ready offline">
+            <div class="field-label">Why are you cancelling?</div>
+            <div role="radiogroup" aria-label="Reason">
+              <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span><b>Problem solved itself</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg></span><b>Fixed by our own team</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span><b>Visit time does not suit</b><p>Reschedule may suit better</p><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></span><b>Raised by mistake</b><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></span><b>Other</b><span class="mark"></span></button>
+            </div>
+            <div class="banner green" style="margin-top:14px"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg>
+              <div>No charge. The engineer has not started travel.</div></div>
+          </div>
+        </div>
+
+        <div class="state" data-when="cancelled" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Request cancelled</h3>
+          <p id="cancelled-text"></p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton sk-line" style="width:45%"></span>
+          <span class="skeleton" style="height:66px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:66px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:66px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready">
+          <button class="btn btn-danger" type="button" data-open="confirm">Cancel request</button>
+          <a class="btn btn-secondary" href="C508-request-detail.html">Keep request</a>
+        </div>
+        <button class="btn btn-danger" type="button" disabled data-when="offline">Cancel request</button>
+        <a class="btn btn-primary" href="C602-ask.html" data-when="started"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+        <div class="stack-sm" data-when="cancelled">
+          <a class="btn btn-primary" href="C502-requests.html">Back to requests</a>
+          <a class="btn btn-secondary" href="C503-raise-machine.html">Raise again</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="confirm" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel request">
+        <div class="group">
+          <div class="title" id="confirm-title"></div>
+          <button class="destructive" type="button" data-goto="cancelled">Cancel request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Allowed until the engineer starts travel, so no charge applies; after that only a question to Zixom.
+Confirmation is an action sheet naming the ticket.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0123');
+  const engineer = R.engineer(ticket.engineer);
+  document.getElementById('ticket').innerHTML = R.ticketCard(ticket, 'C508-request-detail.html');
+  document.getElementById('confirm-title').textContent = `Cancel ${ticket.number}? ${engineer.name} will be told.`;
+  document.getElementById('cancelled-text').textContent = `${ticket.number} is cancelled. ${engineer.name} has been told.`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

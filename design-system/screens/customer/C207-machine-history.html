@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C207 Machine history</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{margin:0 2px; font-size:var(--fs-13); color:var(--text-muted)}
+.month{margin:22px 2px 10px; font-size:var(--fs-12); font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted)}
+.hist{list-style:none; margin:0; padding:0}
+.hist li{position:relative; display:grid; grid-template-columns:36px 1fr; column-gap:12px; padding-bottom:10px}
+.hist li::before{content:""; position:absolute; left:17px; top:38px; bottom:0; width:2px; background:var(--slate-200)}
+.hist li:last-child::before{display:none}
+.hist .disc{width:36px; height:36px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff;
+  box-shadow:inset 0 0 0 1px var(--line-strong); color:var(--slate-700)}
+.hist .disc .ic{width:17px; height:17px}
+.hist a{display:grid; grid-template-columns:1fr auto; gap:2px 8px; padding:10px 12px; border-radius:var(--r-md); background:#fff;
+  color:inherit; text-decoration:none; box-shadow:inset 0 0 0 1px var(--line)}
+.hist a b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.hist a time{font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap}
+.hist a span{grid-column:1 / -1; font-size:var(--fs-12); color:var(--text-muted); line-height:1.45}
+.hist a .tag{justify-self:start; margin-top:4px}
+.range{margin-right:2px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C207 Machine history</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="more" aria-pressed="false">loading older</button>
+  <button type="button" data-state="moreerror" aria-pressed="false">older failed</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="gone">entry removed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C202-machine-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Machine history</h1><span></span>
+      </div>
+      <div class="scroll">
+        <p class="who" id="who"></p>
+
+        <div data-when="ready more moreerror">
+          <div class="chips" style="margin-top:12px">
+            <button class="chip outline range" type="button" data-open="range"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span id="range-label">All time</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          </div>
+          <div class="chips" data-single id="kinds" style="margin-top:6px"></div>
+          <div id="list"></div>
+          <div class="state" id="noresults" hidden>
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-funnel"/></svg></span>
+            <h3>No matching results</h3><p>Try a different type or date range.</p>
+            <button class="btn btn-secondary" type="button" id="clear">Clear filters</button>
+          </div>
+          <div style="margin-top:14px" id="older">
+            <button class="btn btn-secondary" type="button" data-when="ready" onclick="document.querySelector('[data-state=more]').click()">Load older</button>
+            <button class="btn btn-secondary" type="button" aria-busy="true" data-when="more">Load older</button>
+            <div class="inline-retry" data-when="moreerror">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          </div>
+        </div>
+
+        <div data-when="loading" class="stack" style="margin-top:16px">
+          <div class="row-flex"><span class="skeleton" style="width:90px; height:38px; border-radius:var(--r-pill)"></span><span class="skeleton" style="width:70px; height:38px; border-radius:var(--r-pill)"></span><span class="skeleton" style="width:80px; height:38px; border-radius:var(--r-pill)"></span></div>
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+          <span class="skeleton sk-line" style="width:30%"></span>
+          <div class="row-flex"><span class="skeleton sk-circle"></span><span class="skeleton grow" style="height:64px; border-radius:var(--r-md)"></span></div>
+        </div>
+
+        <div class="state" data-when="empty" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+          <h3>No history yet</h3><p>Visits, repairs and parts appear here.</p>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="range" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Date range">
+        <div class="group" role="radiogroup" id="ranges"><div class="title">Date range</div></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="gone" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="gone-t">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-search"/></svg></span>
+          <h3 id="gone-t">We cannot find this</h3><p>It may have been removed.</p></div>
+        <button class="btn btn-primary" type="button" style="margin-top:20px" data-close>Go back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Everything that happened to one machine, newest first, grouped by month. Filter by type and date
+range. Older entries load in pages of 20 with an inline retry. An entry removed by Zixom shows a not found sheet.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const KINDS = { service: ['Service', 'wrench'], repair: ['Repairs', 'hammer'], parts: ['Parts', 'package'],
+    warranty: ['Warranty', 'shield-check'], amc: ['AMC', 'seal-check'], note: ['Notes', 'note-pencil'], install: ['Installation', 'factory'] };
+  const TICKET_KIND = { 'Breakdown or repair': 'repair', 'Spare part fitting': 'parts' };
+  const RANGES = [['All time', null], ['Last 30 days', 30], ['Last 6 months', 182], ['Last 12 months', 365]];
+
+  /* sample only: history the demo data does not hold yet */
+  const PAST_VISITS = { 'ZP-TF-2310': [{ ticket: 'TKT-2026-0117', when: '2026-11-17', type: 'Calibration or trial', summary: 'Heater zone calibration' }] };
+  const CLAIMS = { 'ZP-TF-2204': [{ number: 'WCL-2026-0042', when: '2026-11-19', summary: 'Chain drive tripping, more information asked' }] };
+  const NOTES = { 'ZP-TF-2310': [{ when: '2026-11-12', by: 'pooja', text: 'Mould changed to the 6 cavity tray.' }],
+    'ZP-CF-2011': [{ when: '2026-10-02', by: 'rakesh', text: 'Running only the night shift until Diwali.' }] };
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2310';
+  const m = R.machine(serial);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const entry = (query) => `C208-history-entry.html?${query}`;
+
+  $('machines').insertAdjacentHTML('beforeend', data.machines.map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+  $('back').href = `C202-machine-detail.html?serial=${serial}`;
+  $('who').innerHTML = `${R.esc(m.nickname || m.model)} · <span class="mono">${R.esc(serial)}</span>`;
+
+  /* ---------- build the events ---------- */
+  const DONE = ['closed', 'completed', 'cancelled', 'visit-failed'];
+  const tickets = data.tickets.filter((t) => t.machine === serial);
+  const events = [
+    ...tickets.map((t) => ({ kind: TICKET_KIND[t.type] || 'service', when: t.created.slice(0, 10), title: t.type,
+      sub: `${t.number} · ${t.summary}`, tag: DONE.includes(t.status) && t.status !== 'completed' ? '' : R.ticketTag(t.status),
+      href: entry(`ticket=${t.number}`) })),
+    ...(PAST_VISITS[serial] || []).map((v) => ({ kind: 'service', when: v.when, title: v.type, sub: `${v.ticket} · ${v.summary}`,
+      href: entry(`ticket=${v.ticket}`) })),
+    ...data.reports.filter((r) => tickets.some((t) => t.number === r.ticket)).flatMap((r) => r.parts.map(([number, name]) => ({
+      kind: 'parts', when: r.date, title: 'Part replaced', sub: `${name} · ${number}`, href: entry(`ticket=${r.ticket}`) }))),
+    ...(CLAIMS[serial] || []).map((c) => ({ kind: 'warranty', when: c.when, title: 'Warranty claim', sub: `${c.number} · ${c.summary}`,
+      tag: R.tag('Information needed', 'amber'), href: 'C308-claim.html' })),
+    ...(NOTES[serial] || []).map((n) => ({ kind: 'note', when: n.when, title: 'Note',
+      sub: `${data.users.find((u) => u.id === n.by).name}: ${n.text}`, href: entry(`note=1&serial=${serial}`) })),
+  ];
+  if (m.amc) {
+    const contract = R.amc(m.amc);
+    for (let i = 0; i < contract.visitsUsed; i += 1) {
+      const when = new Date(`${contract.start}T00:00:00`);
+      when.setMonth(when.getMonth() + i * 3);
+      const iso = `${when.getFullYear()}-${String(when.getMonth() + 1).padStart(2, '0')}-15`;
+      if (iso <= data.today) events.push({ kind: 'amc', when: iso, title: 'AMC visit', sub: `${contract.number} · Visit ${i + 1} of ${contract.visitsIncluded}`, href: 'C406-amc-visits.html' });
+    }
+  }
+  if (m.commissioned) {
+    events.push({ kind: 'install', when: m.commissioned, title: 'Commissioned', sub: 'Operators trained on site', href: 'C1408-commissioning.html' },
+      { kind: 'install', when: m.installed, title: 'Installed', sub: site.name, href: 'C1408-commissioning.html' });
+  }
+  events.sort((a, b) => b.when.localeCompare(a.when));
+
+  /* ---------- filters ---------- */
+  let kind = 'all';
+  let days = null;
+  const kindsPresent = Object.keys(KINDS).filter((k) => k !== 'install' && events.some((e) => e.kind === k));
+  $('kinds').innerHTML = [['all', 'All'], ...kindsPresent.map((k) => [k, KINDS[k][0]])]
+    .map(([k, label]) => `<button class="chip" type="button" data-kind="${k}" aria-pressed="${k === 'all'}">${label}</button>`).join('');
+  $('ranges').insertAdjacentHTML('beforeend', RANGES.map(([label, d], i) =>
+    `<button type="button" role="radio" aria-checked="${i === 0}" data-days="${d ?? ''}" data-close>${label}</button>`).join(''));
+
+  const row = (e) => `<li><span class="disc">${R.icon(KINDS[e.kind][1])}</span><a href="${e.href}">
+    <b>${R.esc(e.title)}</b><time>${R.dayDate(e.when)}</time><span>${R.esc(e.sub)}</span>${e.tag || ''}</a></li>`;
+  const render = () => {
+    const shown = events.filter((e) => (kind === 'all' || e.kind === kind) && (days === null || -R.daysFromToday(e.when) <= days));
+    const months = [...new Set(shown.map((e) => e.when.slice(0, 7)))];
+    $('list').innerHTML = months.map((ym) => `<h3 class="month">${MONTHS[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}</h3>
+      <ol class="hist">${shown.filter((e) => e.when.startsWith(ym)).map(row).join('')}</ol>`).join('');
+    $('noresults').hidden = shown.length > 0;
+    $('older').hidden = shown.length === 0;
+  };
+  render();
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-kind]');
+    if (chip) { kind = chip.dataset.kind; render(); }
+    const range = event.target.closest('[data-days]');
+    if (range) {
+      days = range.dataset.days ? Number(range.dataset.days) : null;
+      range.parentElement.querySelectorAll('[role=radio]').forEach((b) => b.setAttribute('aria-checked', String(b === range)));
+      $('range-label').textContent = range.textContent;
+      render();
+    }
+    if (event.target.closest('#clear')) {
+      kind = 'all'; days = null;
+      document.querySelectorAll('[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === 'all')));
+      document.querySelector('[data-days=""]').click();
+    }
+  });
+
+  /* a machine with nothing on record opens on the empty state */
+  if (!events.length) {
+    document.querySelector('.screen').dataset.state = 'empty';
+    document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === 'empty')));
+  }
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

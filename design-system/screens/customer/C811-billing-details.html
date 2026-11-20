@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C811 Billing details</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.addr{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.addr .disc{width:38px; height:38px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
+.addr b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.addr p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.addr .tag{margin-top:8px}
+.addr .acts{display:flex; gap:6px; align-self:start}
+.kv dd.mono{font-size:var(--fs-13)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C811 Billing details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="edit" aria-pressed="false" data-open="edit">edit address</button>
+  <button type="button" data-state="gstin" aria-pressed="false" data-open="edit">GSTIN invalid</button>
+  <button type="button" data-state="inuse" aria-pressed="false" data-open="inuse">delete, in use</button>
+  <button type="button" data-state="delete" aria-pressed="false" data-open="delete">delete</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">no address</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C801-payments.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Billing details</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready edit gstin inuse delete offline empty">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes need the internet.</div>
+          <div>
+            <p class="list-title" style="margin-top:0">On your invoices</p>
+            <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="company"></dl></div>
+          </div>
+          <div>
+            <p class="list-title">Billing addresses</p>
+            <div class="stack-sm" id="addresses" data-when="ready edit gstin inuse delete offline"></div>
+            <div class="state" data-when="empty" style="padding:20px 10px">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span>
+              <h3>No billing address yet</h3><p>Add one to show on your invoices.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton sk-line" style="width:35%"></span>
+          <span class="skeleton" style="height:170px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:110px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:110px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready edit gstin inuse delete empty offline">
+        <button class="btn btn-primary" type="button" data-open="edit" data-when="ready edit gstin inuse delete empty"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add address</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add address</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="edit" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="e-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="e-title">Edit billing address</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="a-line">Address<span class="req">*</span></label><input class="input" id="a-line"></div>
+          <div class="field"><label for="a-pin">Pincode<span class="req">*</span></label><input class="input" id="a-pin" inputmode="numeric" maxlength="6"></div>
+          <div class="field"><span class="field-label">State<span class="req">*</span></span>
+            <button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value">Gujarat</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+          <div class="field" data-when="ready edit inuse delete empty offline"><label for="a-gst">GSTIN</label><input class="input mono" id="a-gst"><span class="hint">Optional. Needed for input tax credit.</span></div>
+          <div class="field has-error" data-when="gstin"><label for="a-gst-bad">GSTIN</label>
+            <input class="input mono" id="a-gst-bad" value="24AAAAA0000A1" aria-invalid="true" aria-describedby="a-gst-err">
+            <span class="error-text" id="a-gst-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 15 character GSTIN, like 24AAAAA0000A1Z5</span></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close data-toast="Billing address saved" data-when="ready edit inuse delete empty offline">Save</button>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" disabled data-when="gstin">Save</button>
+      </div>
+    </div>
+
+    <div class="overlay center" id="inuse" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="iu-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-truck"/></svg></span>
+        <h3 id="iu-title">This address is in use</h3>
+        <p>Open order <span class="mono" id="iu-order"></span> uses it. Delete after delivery.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>OK</button></div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="delete" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Delete address">
+        <div class="group"><div class="title">Delete the Sanand plant address?</div>
+          <button class="destructive" type="button" data-close data-toast="Address deleted">Delete address</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Company name, GSTIN and addresses printed on invoices. Changing an issued invoice goes through
+<a href="C1604-invoice-correction.html">C1604</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample: billing state from the GSTIN state code, and the open order shipping to the Vatva address */
+  const STATE = 'Gujarat';
+  const OPEN_ORDER = { number: 'ORD-2026-0209', site: 'vatva' };
+
+  const company = data.companies.find((c) => c.id === 'shree');
+  const me = data.users.find((u) => u.id === 'rakesh');
+  $('company').innerHTML = `<div><dt>Company</dt><dd>${R.esc(company.name)}</dd></div>
+    <div><dt>GSTIN</dt><dd class="mono">${company.gstin}</dd></div>
+    <div><dt>State</dt><dd>${STATE}</dd></div>
+    <div><dt>Invoice contact</dt><dd>${R.esc(me.name)}<br><span style="font-weight:400; color:var(--text-muted)">${R.esc(me.email)}</span></dd></div>`;
+
+  $('addresses').innerHTML = company.sites.map((s, n) => {
+    const inUse = s.id === OPEN_ORDER.site;
+    return `<div class="addr"><span class="disc">${R.icon('buildings')}</span>
+      <span><b>${R.esc(s.name)}</b><p>${R.esc(s.address)}, ${s.pincode}</p>
+        ${n === 0 ? R.tag('Default') : ''}${inUse ? R.tag('Used by an open order', 'outline') : ''}</span>
+      <span class="acts">
+        <button class="icon-btn sm" type="button" data-open="edit" data-fill="${s.id}" aria-label="Edit ${R.esc(s.name)}">${R.icon('pencil-simple', 'ic-18')}</button>
+        <button class="icon-btn sm" type="button" data-open="${inUse ? 'inuse' : 'delete'}" aria-label="Delete ${R.esc(s.name)}">${R.icon('trash', 'ic-18')}</button>
+      </span></div>`;
+  }).join('');
+  $('iu-order').textContent = OPEN_ORDER.number;
+
+  const fill = (site) => { $('a-line').value = site.address; $('a-pin').value = site.pincode; $('a-gst').value = company.gstin; };
+  fill(company.sites[0]);
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fill]');
+    if (b) fill(company.sites.find((s) => s.id === b.dataset.fill));
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

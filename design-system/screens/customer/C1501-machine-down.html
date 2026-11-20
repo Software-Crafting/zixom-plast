@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1501 Machine down emergency</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
+.title-row .root-title{margin:0}
+.down-pill{display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 14px 0 10px; border-radius:var(--r-pill);
+  background:var(--red); color:#fff; font:400 var(--fs-13) var(--font-display)}
+.sos .state{padding:4px 0 0}
+.sos .promise{text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top:12px}
+.copy-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 10px 10px 18px; border-radius:var(--r-pill); background:var(--field)}
+.copy-row b{font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1501 Machine down emergency</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="sos">ready</button>
+  <button type="button" data-state="nocall" aria-pressed="false" data-open="sos">phone cannot call</button>
+  <button type="button" data-state="nonumber" aria-pressed="false" data-open="sos">number not set</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="sos">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark">RM</span>
+        <div class="grow"><span class="root-hello">Good morning, Rakesh</span><span class="root-name">Shree Packaging Industries</span></div>
+        <span class="icon-btn glass"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
+      </div>
+      <div class="title-row"><h1 class="root-title">Home</h1><span class="down-pill"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-siren"/></svg>Machine down?</span></div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="stack-sm" id="alerts"></div>
+          <div class="quick">
+            <a href="C503-raise-machine.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>Raise service</a>
+            <a href="C303-claim-machine.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>Claim warranty</a>
+            <a href="C602-ask.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span>Ask a question</a>
+            <a href="C701-parts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>Order parts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="home"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom sos" id="sos" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sos-title">
+        <span class="grabber"></span>
+        <div class="state">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span>
+          <h3 id="sos-title">Machine down?</h3>
+          <p>Call us now, or send an urgent request.</p>
+          <a class="tag red promise" href="C1505-response-times.html"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>We aim to reach you within 4 hours</a>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-danger tel-link" href="#" data-when="ready offline"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom 24x7</a>
+          <div class="copy-row" data-when="nocall"><b class="support-phone"></b>
+            <button class="btn btn-secondary btn-sm" type="button" data-toast="Copied"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-copy"/></svg>Copy</button></div>
+          <a class="btn btn-secondary" href="C605-contact.html" data-when="nonumber"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact Zixom</a>
+          <a class="btn btn-primary" href="C1502-urgent-request.html"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send an urgent request</a>
+          <span class="hint" style="text-align:center" data-when="offline">The request is sent when you are back online.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from Machine down? on Home and the Support tab. Call stays available offline; a phone that cannot
+call shows the number to copy, and a missing number falls back to <a href="C605-contact.html">C605</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { phone } = ZX.data.support;
+  document.querySelectorAll('.support-phone').forEach((el) => { el.textContent = phone; });
+  document.querySelectorAll('.tel-link').forEach((el) => { el.href = `tel:${phone.replace(/\s/g, '')}`; });
+  document.getElementById('alerts').innerHTML = ZX.data.alerts.slice(0, 2).map(R.alertCard).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

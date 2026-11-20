@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C805 Payment success</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* paper receipt: white card on grey, dashed rows, scalloped torn bottom edge */
+.sheet.on-grey{background:var(--slate-100)}
+.sheet.on-grey .footer-bar{background:linear-gradient(180deg, rgba(238,240,243,0), var(--slate-100) 30%)}
+.receipt{--notch:7px; padding:22px 18px 30px; border-radius:var(--r-lg) var(--r-lg) 0 0; background:#fff; text-align:center;
+  -webkit-mask:radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% / calc(2 * var(--notch)) 100% repeat-x;
+  mask:radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% / calc(2 * var(--notch)) 100% repeat-x}
+.receipt .check{width:52px; height:52px; margin:0 auto; display:grid; place-items:center; border-radius:50%; background:var(--green-50); color:var(--green)}
+.receipt h2{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.receipt .note{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.receipt .amount{display:block; margin:14px 0 16px; font:400 32px var(--font-display); color:var(--slate-900); letter-spacing:-.01em}
+.receipt dl{margin:0; text-align:left}
+.receipt dl div{display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-top:1.5px dashed var(--slate-200); font-size:var(--fs-14)}
+.receipt dt{color:var(--text-muted)}
+.receipt dd{margin:0; max-width:62%; text-align:right; color:var(--slate-900); font-weight:500; overflow-wrap:anywhere}
+.receipt dd.mono{font-size:var(--fs-13)}
+.receipt dd a{color:var(--blue); text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C805 Payment success</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">receipt ready</button>
+  <button type="button" data-state="delayed" aria-pressed="false">receipt delayed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet on-grey">
+      <div class="navbar"><span></span><h1>Payment</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="receipt" style="margin-top:6px">
+          <span class="check"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h2>Payment received</h2>
+          <p class="note" data-when="ready">Thank you. Receipt <span class="mono" id="rcp"></span> is ready.</p>
+          <p class="note" data-when="delayed">Thank you. Your receipt will be in Payment history soon.</p>
+          <b class="amount" id="amount"></b>
+          <dl id="facts"></dl>
+        </div>
+        <div class="banner green" style="margin-top:12px; background:#fff"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><div id="next"></div></div>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm">
+          <a class="btn btn-primary" id="view" href="C809-receipt.html" data-when="ready">View receipt</a>
+          <a class="btn btn-secondary" href="C801-payments.html">Done</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown after the server confirms the payment; a push opens the same screen. Download is on
+<a href="C809-receipt.html">C809</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'INV-2026-0981';
+  /* sample: the payment just made in the demo flow (not in data.js; C809 has the same record) */
+  const JUST_PAID = { receipt: 'RCP-2026-0653', method: 'UPI, Google Pay', txn: 'pay_Ob1XsQe4Hd8F', when: '2026-11-23T12:04' };
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+
+  const params = new URLSearchParams(location.search);
+  const numbers = (params.get('invoices') || params.get('invoice') || DEFAULT).split(',');
+  const invoices = numbers.map((n) => data.invoices.find((i) => i.number === n)).filter(Boolean);
+  const amount = invoices.reduce((s, i) => s + R.balance(i), 0);
+  const [first] = invoices;
+
+  $('rcp').textContent = JUST_PAID.receipt;
+  $('amount').textContent = R.money(amount);
+  $('facts').innerHTML = `<div><dt>${invoices.length > 1 ? 'Invoices' : 'Invoice'}</dt><dd class="mono">${numbers.join('<br>')}</dd></div>
+    <div><dt>Method</dt><dd>${JUST_PAID.method}</dd></div>
+    <div><dt>Transaction ID</dt><dd class="mono">${JUST_PAID.txn}</dd></div>
+    <div><dt>Date</dt><dd>${R.date(JUST_PAID.when)}, ${time(JUST_PAID.when)}</dd></div>`;
+  $('next').innerHTML = invoices.length > 1
+    ? `<b>${invoices.length} invoices now show Paid</b>`
+    : `<b>Invoice now shows Paid</b>${first.for.startsWith('TKT') ? `Request <span class="mono">${first.for}</span> too.` : ''}`;
+  $('view').href = `C809-receipt.html?receipt=${JUST_PAID.receipt}&invoice=${numbers.join(',')}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

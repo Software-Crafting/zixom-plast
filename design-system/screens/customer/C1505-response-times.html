@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1505 Response times</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.targets{display:flex; flex-direction:column; border-radius:var(--r-lg); background:var(--field); padding:4px 16px}
+.targets div{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0}
+.targets div + div{border-top:1.5px dashed var(--slate-300)}
+.targets b{font:400 var(--fs-18) var(--font-display); color:var(--slate-900); white-space:nowrap}
+.support{margin-top:14px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1505 Response times</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="times">ready</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="times">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C503-raise-machine.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 2 of 5</b><span>Service type and issue</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span><span></span><span></span></div></div>
+        <div class="section-head" style="margin:0 2px 10px"><h2>How serious is it?</h2><button class="btn btn-text" type="button" style="min-height:0" data-open="times">Response times</button></div>
+        <div role="radiogroup" aria-label="Severity">
+          <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span><b>Machine down</b><p>Production stopped</p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Production affected</b><p>Running with a problem</p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>Minor</b><p>No impact on output</p><span class="mark"></span></button>
+        </div>
+      </div>
+      <div class="footer-bar"><button class="btn btn-primary" type="button">Next</button></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="times" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="rt-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="rt-title">Response times</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved targets.</div>
+        <p class="lede" style="margin:0 2px 12px">How soon we aim to reach you.</p>
+        <div class="targets">
+          <div><span class="tag red"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg>Machine down</span><b>4 hours</b></div>
+          <div><span class="tag amber"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>Production affected</span><b>1 working day</b></div>
+          <div><span class="tag">Minor</span><b>3 working days</b></div>
+        </div>
+        <div class="banner support"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>
+          <div><b>Support <span class="support-hours"></span></b><a class="tel-link support-phone" href="#"></a> · <a class="mail-link support-email" href="#"></a></div></div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Targets by severity and support hours, from the backend settings (Confirm). Opened from severity in
+<a href="C504-raise-issue.html">C504</a>, the Machine down sheet and Support.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const { phone, email, hours } = ZX.data.support;
+  const fill = (cls, text) => document.querySelectorAll(cls).forEach((el) => { el.textContent = text; });
+  fill('.support-phone', phone);
+  fill('.support-email', email);
+  fill('.support-hours', hours);
+  document.querySelectorAll('.tel-link').forEach((el) => { el.href = `tel:${phone.replace(/\s/g, '')}`; });
+  document.querySelectorAll('.mail-link').forEach((el) => { el.href = `mailto:${email}`; });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

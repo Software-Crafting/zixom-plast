@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C501 Support hub</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.segment .n{display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:var(--r-pill);
+  background:var(--slate-200); color:var(--slate-700); font:700 var(--fs-11) var(--font-body)}
+.segment [aria-selected="true"] .n{background:var(--slate-800); color:#fff}
+.segment a, .segment button{display:flex; align-items:center; justify-content:center}
+.summary{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.summary a{display:flex; flex-direction:column; gap:6px; padding:14px; border-radius:var(--r-lg); background:var(--field); color:inherit; text-decoration:none}
+.summary b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900); line-height:1}
+.summary span{font-size:var(--fs-12); color:var(--text-muted)}
+.summary .warn b{color:var(--amber)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C501 Support hub</b><span>Support tab</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+      <header class="root-head">
+        <div class="root-bar">
+          <h1 class="root-title" style="margin:0; flex:1">Support</h1>
+          <button class="icon-btn glass" type="button" data-open="call" aria-label="Call Zixom support"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></button>
+        </div>
+      </header>
+      <div class="sheet">
+        <div class="scroll with-tabbar">
+          <div class="stack" style="margin-top:16px">
+            <nav class="segment" role="tablist" aria-label="Support sections">
+              <a role="tab" aria-selected="true" href="#">Service<span class="n" id="n-service"></span></a>
+              <a role="tab" aria-selected="false" href="C301-warranty.html">Warranty<span class="n" id="n-warranty"></span></a>
+              <a role="tab" aria-selected="false" href="C601-questions.html">Questions<span class="n" id="n-questions"></span></a>
+            </nav>
+
+            <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+            <div class="summary" id="summary" data-when="ready offline"></div>
+
+            <div data-when="ready offline">
+              <div class="section-head" style="margin-bottom:10px"><h2>Your draft</h2><a href="C1508-drafts.html">All drafts</a></div>
+              <div class="list" id="draft"></div>
+            </div>
+
+            <div data-when="ready offline">
+              <div class="section-head" style="margin-bottom:10px"><h2>Waiting for you</h2><a href="C502-requests.html">All requests <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-up-right"/></svg></a></div>
+              <div class="stack-sm" id="needs-you"></div>
+            </div>
+
+            <div class="state" data-when="empty" style="padding-top:40px">
+              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>
+              <h3>No service requests</h3>
+              <p>When you raise a request it will show here.</p>
+              <a class="btn btn-primary" href="C503-raise-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Raise a request</a>
+            </div>
+
+            <div class="stack" data-when="loading">
+              <div class="summary"><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:76px; border-radius:var(--r-lg)"></span></div>
+              <span class="skeleton" style="height:64px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+            </div>
+
+            <div class="state" data-when="error" style="padding-top:40px">
+              <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+              <h3>Something went wrong</h3>
+              <p>We could not load this screen.</p>
+              <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+              <span class="code mono">ZC-500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab" href="C503-raise-machine.html" data-when="ready empty offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New request</a>
+    <nav class="tabbar" data-tabs="customer" data-active="support"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="call" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group"><div class="title" id="call-title"></div>
+          <button type="button" data-close id="call-phone"></button>
+          <button type="button" data-close id="call-email"></button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Support tab root. Service shows open requests, the saved draft and what waits for you; Warranty
+opens <a href="C301-warranty.html">C301</a>, Questions <a href="C601-questions.html">C601</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ENDED = ['closed', 'cancelled'];
+  const NEEDS_YOU = ['awaiting-info', 'estimate', 'completed', 'visit-failed'];
+
+  /* Sample data not in data.js yet (move there): open claims and questions (spec section 16),
+     and the service request draft saved from C504 */
+  const OPEN_CLAIMS = 3;     /* WCL-2026-0040 submitted, 0041 under review, 0042 information requested */
+  const OPEN_QUESTIONS = 2;  /* QRY-2026-0030 open, 0033 complaint */
+  const DRAFT = { machine: 'ZP-CF-2011', step: 2, edited: '2026-11-23T10:05' };
+
+  const open = data.tickets.filter((t) => !ENDED.includes(t.status));
+  const needsYou = open.filter((t) => NEEDS_YOU.includes(t.status));
+  $('n-service').textContent = R.count(open.length);
+  $('n-warranty').textContent = R.count(OPEN_CLAIMS);
+  $('n-questions').textContent = R.count(OPEN_QUESTIONS);
+
+  $('summary').innerHTML = `<a href="C502-requests.html"><b>${R.count(open.length)}</b><span>Open requests</span></a>
+    <a class="warn" href="C502-requests.html"><b>${R.count(needsYou.length)}</b><span>Waiting for you</span></a>`;
+
+  const dm = R.machine(DRAFT.machine);
+  $('draft').innerHTML = `<a class="list-item" href="C504-raise-issue.html?machine=${dm.serial}">
+    <span class="disc">${R.icon('note-pencil')}</span><b>${R.esc(dm.nickname || dm.model)}</b>
+    <span class="sub">Step ${DRAFT.step} of 5 · ${R.ago(DRAFT.edited)}</span><span class="end">Continue${R.icon('caret-right')}</span></a>`;
+
+  $('needs-you').innerHTML = needsYou.map((t) => R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`)).join('');
+
+  const s = data.support;
+  $('call-title').textContent = `Zixom support, ${s.hours}`;
+  $('call-phone').textContent = `Call ${s.phone}`;
+  $('call-email').textContent = `Email ${s.email}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

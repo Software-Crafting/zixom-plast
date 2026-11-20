@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C804 Payment processing</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.hero{display:flex; flex-direction:column; align-items:center; text-align:center; padding:56px 8px 4px}
+.hero .ring{position:relative; width:96px; height:96px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.hero .ring::after{content:""; position:absolute; inset:-8px; border-radius:50%; border:2px dashed var(--blue-100)}
+.hero h1{margin:22px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.hero p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.hero .amount{margin-top:18px; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C804 Payment processing</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">confirming</button>
+  <button type="button" data-state="slow" aria-pressed="false">over 30 seconds</button>
+  <button type="button" data-state="resumed" aria-pressed="false">app reopened</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span><h1>Payment</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. We will check when you are back.</div>
+        <div class="hero">
+          <span class="ring"><svg class="ic ic-32" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h1 data-when="ready offline">Confirming your payment</h1>
+          <h1 data-when="slow">Still confirming</h1>
+          <h1 data-when="resumed">Checking your payment</h1>
+          <p data-when="ready offline slow">Please do not close the app.</p>
+          <p data-when="resumed">You left during payment. We are asking the bank.</p>
+          <span class="amount" id="amount"></span>
+        </div>
+        <div class="card-fill" style="margin-top:24px; padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+      </div>
+      <div class="footer-bar" data-when="slow">
+        <a class="btn btn-primary" id="check" href="C807-payment-pending.html">Check status</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">No back while the bank confirms. Opened from <a href="C803-pay-method.html">C803</a> with a demo result it
+moves on by itself to <a href="C805-payment-success.html">C805</a>, <a href="C806-payment-failed.html">C806</a> or
+<a href="C807-payment-pending.html">C807</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'INV-2026-0981';
+  const CONFIRM_MS = 2500;
+  const RESULT_PAGE = { success: 'C805-payment-success.html', failed: 'C806-payment-failed.html', pending: 'C807-payment-pending.html' };
+
+  const params = new URLSearchParams(location.search);
+  const numbers = (params.get('invoices') || params.get('invoice') || DEFAULT).split(',');
+  const invoices = numbers.map((n) => data.invoices.find((i) => i.number === n)).filter(Boolean);
+  const query = numbers.length > 1 ? `invoices=${numbers.join(',')}` : `invoice=${numbers[0]}`;
+
+  $('amount').textContent = R.money(invoices.reduce((s, i) => s + R.balance(i), 0));
+  $('facts').innerHTML = `<div><dt>${invoices.length > 1 ? 'Invoices' : 'Invoice'}</dt><dd class="mono">${numbers.join('<br>')}</dd></div>
+    <div><dt>Paid to</dt><dd>Zixom Plast</dd></div>`;
+  $('check').href = `C807-payment-pending.html?${query}`;
+
+  const result = params.get('result');
+  if (RESULT_PAGE[result]) window.setTimeout(() => { location.href = `${RESULT_PAGE[result]}?${query}`; }, CONFIRM_MS);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

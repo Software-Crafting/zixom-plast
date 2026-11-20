@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C102 Search</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.search .clear{width:30px; height:30px; display:grid; place-items:center; border:0; border-radius:50%; background:var(--slate-200); color:var(--slate-700); cursor:pointer}
+.search .clear .ic{width:14px; height:14px}
+.group-head{display:flex; justify-content:space-between; margin:4px 4px 8px; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.group-head span{font-weight:500; color:var(--text-muted)}
+mark{background:var(--blue-50); color:var(--blue); border-radius:4px; padding:0 1px}
+.recent .list-item{min-height:50px}
+.recent .list-item b{grid-row:1 / span 2}
+.search input::-webkit-search-cancel-button{display:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C102 Search</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" data-q="" aria-pressed="true">recent searches</button>
+  <button type="button" data-state="short" data-q="A" aria-pressed="false">1 character</button>
+  <button type="button" data-state="results" data-q="AFM" aria-pressed="false">results</button>
+  <button type="button" data-state="noresults" data-q="AFM-2000" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" data-q="heater" aria-pressed="false">loading</button>
+  <button type="button" data-state="offline" data-q="heater" aria-pressed="false">offline</button>
+  <button type="button" data-state="error" data-q="heater" aria-pressed="false">error</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C101-home.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Search</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+            <input class="input" id="q" type="search" enterkeyhint="search" placeholder="Machines, requests, parts, documents" aria-label="Search" autocomplete="off">
+            <button class="clear" type="button" id="clear" aria-label="Clear search"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+          </div>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Searching saved data only.</div>
+
+          <div class="recent" data-when="ready">
+            <div class="group-head">Recent searches<button class="btn btn-text" type="button" id="clear-recent" style="min-height:0; padding:0">Clear</button></div>
+            <div class="list" id="recent"></div>
+          </div>
+
+          <p class="hint" data-when="short" style="text-align:center; margin-top:24px">Type at least 2 characters.</p>
+
+          <div class="stack" id="results" data-when="results offline"></div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p id="none-text"></p>
+            <a class="btn btn-primary" href="C602-ask.html"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:30%; margin:4px"></span>
+            <span class="skeleton" style="height:60px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:60px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton sk-line" style="width:30%; margin:12px 4px 4px"></span>
+            <span class="skeleton" style="height:60px; border-radius:var(--r-lg)"></span>
+          </div>
+
+          <div class="state" data-when="error">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not search right now.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">One box across machines, request numbers, parts and documents, grouped by type. Starts at 2
+characters; offline searches saved data only. Type in the box to try it.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MIN_CHARS = 2;
+  /* Sample data not in data.js yet (move there): documents (spec section 16) and this person's recent searches */
+  const DOCUMENTS = [
+    ['CFM-450 Cup Former operation manual', 'Manual'], ['AFM-760 Single Station operation manual', 'Manual'],
+    ['AFM-1000 Twin Station operation manual', 'Manual'], ['AMC-2026-0010 contract', 'AMC contract'],
+    ['SR-2026-0128 service report', 'Service report'], ['ZP-TF-2310 warranty certificate', 'Warranty certificate'],
+    ['QT-2026-0041 quotation', 'Quotation'],
+  ];
+  let recent = ['TKT-2026-0122', 'heater element', 'AFM-1000', 'PID controller', 'ZP-CF-2011'];
+
+  const q = $('q');
+  const mark = (text, term) => {
+    const i = text.toLowerCase().indexOf(term.toLowerCase());
+    return i < 0 ? R.esc(text) : `${R.esc(text.slice(0, i))}<mark>${R.esc(text.slice(i, i + term.length))}</mark>${R.esc(text.slice(i + term.length))}`;
+  };
+  const has = (term, ...fields) => fields.some((f) => f && f.toLowerCase().includes(term.toLowerCase()));
+  const row = (href, icon, title, sub, end = '') => `<a class="list-item" href="${href}"><span class="disc">${R.icon(icon)}</span>
+    <b>${title}</b><span class="sub">${sub}</span><span class="end">${end || R.icon('caret-right')}</span></a>`;
+
+  const search = (term) => [
+    ['Machines', data.machines.filter((m) => has(term, m.nickname, m.model, m.serial)).map((m) => row(
+      `C202-machine-detail.html?serial=${m.serial}`, 'factory', mark(m.nickname || m.model, term),
+      `${m.nickname ? `${mark(m.model, term)} · ` : ''}<span class="mono">${mark(m.serial, term)}</span>`))],
+    ['Service requests', data.tickets.filter((t) => has(term, t.number)).map((t) => row(
+      `C508-request-detail.html?ticket=${t.number}`, 'wrench', `<span class="mono">${mark(t.number, term)}</span>`,
+      R.esc(R.machine(t.machine).nickname || R.machine(t.machine).model), R.ticketTag(t.status)))],
+    ['Parts', data.parts.filter((p) => has(term, p.name, p.number)).map((p) => row(
+      `C703-part-detail.html?part=${p.number}`, 'package', mark(p.name, term), `<span class="mono">${mark(p.number, term)}</span>`, R.stockTag(p.stock)))],
+    ['Documents', DOCUMENTS.filter(([title]) => has(term, title)).map(([title, kind]) => row(
+      'C902-document-viewer.html', 'file-text', mark(title, term), kind))],
+  ].filter(([, rows]) => rows.length);
+
+  const pick = (state) => document.querySelector(`.plate-states [data-state="${state}"]`);
+  const render = () => {
+    const term = q.value.trim();
+    $('clear').hidden = !term;
+    const groups = term.length >= MIN_CHARS ? search(term) : [];
+    $('results').innerHTML = groups.map(([name, rows]) => `<div><div class="group-head">${name}<span>${rows.length}</span></div>
+      <div class="list">${rows.join('')}</div></div>`).join('');
+    $('none-text').textContent = `Nothing matches "${term}". Try a different word or ask Zixom.`;
+    if (!term) return 'ready';
+    if (term.length < MIN_CHARS) return 'short';
+    return groups.length ? 'results' : 'noresults';
+  };
+  const renderRecent = () => {
+    $('recent').innerHTML = recent.map((r) => `<button class="list-item" type="button" data-recent="${R.esc(r)}">
+      <span class="disc">${R.icon('clock')}</span><b>${R.esc(r)}</b><span class="end">${R.icon('arrow-up-right')}</span></button>`).join('')
+      || '<p class="hint" style="padding:0 14px 12px">No recent searches.</p>';
+  };
+
+  /* typing switches the state the same way the plate buttons do */
+  q.addEventListener('input', () => {
+    const state = render();
+    const current = document.querySelector('.screen').dataset.state;
+    if (current !== 'offline' || state !== 'results') pick(state).click();
+    q.focus();
+  });
+  document.querySelectorAll('.plate-states [data-q]').forEach((b) => b.addEventListener('click', (event) => {
+    if (!event.isTrusted) return;
+    q.value = b.dataset.q;
+    render();
+  }));
+  $('clear').addEventListener('click', () => { q.value = ''; q.dispatchEvent(new Event('input')); });
+  $('clear-recent').addEventListener('click', () => { recent = []; renderRecent(); });
+  $('recent').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-recent]');
+    if (!b) return;
+    q.value = b.dataset.recent;
+    q.dispatchEvent(new Event('input'));
+  });
+  renderRecent();
+  render();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

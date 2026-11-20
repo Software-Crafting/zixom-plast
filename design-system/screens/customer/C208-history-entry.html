@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C208 History entry detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.rep-head{padding:18px; border-radius:24px; background:var(--field)}
+.rep-head .ids{display:flex; justify-content:space-between; font-size:var(--fs-12); color:var(--text-muted)}
+.rep-head h2{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.rep-head .sub{margin:3px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.rep-head .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.rep-head .kv{margin-top:10px; padding-top:4px; border-top:1.5px dashed var(--slate-300)}
+.rep-head .kv div{padding:8px 0}
+.rep-head .kv div + div{border-top:0}
+.block h3{margin:0 2px 6px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
+.block p{margin:0 2px; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
+.part{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line); background:#fff}
+.part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part span{font-size:var(--fs-12); color:var(--text-muted)}
+.part .tag{grid-column:2; grid-row:1 / span 2; align-self:center}
+.sig{display:flex; align-items:flex-end; gap:12px; padding:12px 14px; border-radius:var(--r-md); background:var(--field)}
+.sig svg{width:120px; height:40px; color:var(--slate-800); border-bottom:1.5px solid var(--slate-300)}
+.sig b{display:block; font-size:var(--fs-13); font-weight:600; color:var(--slate-900)}
+.sig span{display:block; font-size:var(--fs-11); color:var(--text-muted)}
+.cost .money{margin:0}
+.cost .link{margin-top:10px}
+.note-text{margin:0; font-size:var(--fs-16); line-height:1.6; color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C208 History entry detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="entries"><span>entry</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="photo" aria-pressed="false">photo failed</button>
+  <button type="button" data-state="notready" aria-pressed="false">report not ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C207-machine-history.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Service visit</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready photo" id="visit">
+          <div class="rep-head">
+            <div class="ids"><span class="mono" id="ticket-no"></span><span class="mono" id="report-no"></span></div>
+            <h2 id="type"></h2><p class="sub" id="machine"></p>
+            <div class="tags" id="tags"></div>
+            <dl class="kv" id="kv"></dl>
+          </div>
+          <div class="card-fill" style="padding:12px 14px" id="engineer"></div>
+          <div class="block"><h3>Findings</h3><p id="findings"></p></div>
+          <div class="block"><h3>Work done</h3><p id="work"></p></div>
+          <div class="block" id="parts-block"><h3>Parts replaced</h3><div class="stack-sm" id="parts"></div></div>
+          <div class="block"><h3>Photos</h3>
+            <div class="uploads">
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+              <div class="upload" data-when="ready"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+              <button class="upload failed" type="button" data-when="photo" aria-label="Photo did not load, retry"><svg class="ic ic-24" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><span class="state">Retry</span></button>
+            </div>
+          </div>
+          <div class="block"><h3>Signed by</h3><div class="sig" id="sig"></div></div>
+          <div class="block cost"><h3>Cost</h3><div id="cost"></div></div>
+        </div>
+
+        <div class="stack" data-when="ready photo" id="note" hidden>
+          <div class="card-fill">
+            <div class="person"><span class="avatar" id="note-initials"></span><span class="grow"><b id="note-author"></b><span id="note-when"></span></span></div>
+            <p class="note-text" id="note-text" style="margin-top:14px"></p>
+          </div>
+          <div class="block"><h3>Photo</h3>
+            <div class="uploads">
+              <div class="upload" data-when="ready"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
+              <button class="upload failed" type="button" data-when="photo" aria-label="Photo did not load, retry"><svg class="ic ic-24" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><span class="state">Retry</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="state" data-when="notready" style="padding-top:90px">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h3>Report not ready yet</h3>
+          <p>The engineer is still finishing it.</p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:190px; border-radius:24px"></span>
+          <span class="skeleton" style="height:68px"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span><span class="skeleton sk-line" style="width:70%"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div data-when="ready photo" id="visit-actions">
+          <div class="btn-pair">
+            <button class="icon-btn" type="button" aria-label="Share" data-toast="Report shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+            <button class="btn btn-primary" type="button" data-toast="Report saved to Files"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download report</button>
+          </div>
+          <a class="btn btn-text raise" href="C503-raise-machine.html" style="width:100%; margin-top:6px">Raise a related request</a>
+        </div>
+        <div data-when="ready photo" id="note-actions" hidden>
+          <a class="btn btn-primary" href="C1404-edit-note.html"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg>Edit note</a>
+        </div>
+        <a class="btn btn-secondary" href="C508-request-detail.html" data-when="notready" id="open-request">Open request</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">One history entry. A service visit shows the engineer's report, signature and cost with its
+invoice; a note shows its text and author. Until the report is sent it shows Report not ready.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  const SIGNATURE = '<svg viewBox="0 0 140 44" aria-hidden="true"><path d="M6 32c10-18 18-24 22-18s-8 20-2 20 14-22 20-20-4 18 2 18 10-12 16-12 2 10 8 10 14-14 22-16 16 4 30 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+  /* sample only: an older chargeable visit (its invoice INV-2026-0983 is in the demo data) and a machine note */
+  const PAST_TICKETS = [{ number: 'TKT-2026-0117', machine: 'ZP-TF-2310', type: 'Calibration or trial', coverage: 'chargeable',
+    engineer: 'sandeep', summary: 'Heater zone calibration.' }];
+  const PAST_REPORTS = [{ ticket: 'TKT-2026-0117', number: 'SR-2026-0117', date: '2026-11-17', engineer: 'sandeep', timeOnSite: '2 h 30 min',
+    findings: 'Zones 2 and 5 read 12 °C above the set point after the new sheet supplier.',
+    work: 'Recalibrated all 8 heater zones and saved a recipe for 0.8 mm PET.', parts: [], status: 'Running',
+    signedBy: 'Rakesh Mehta, Plant head', signedAt: '2026-11-17T15:10' }];
+  const NOTE = { serial: 'ZP-TF-2310', when: '2026-11-12T17:20', by: 'pooja', text: 'Mould changed to the 6 cavity tray. Cycle time is now 9 seconds.' };
+
+  const isNote = params.has('note');
+  const ticketNo = params.get('ticket') || 'TKT-2026-0128';
+  const here = (query) => `<button type="button" aria-pressed="${location.search === query}" onclick="location.search='${query}'">`;
+  $('entries').insertAdjacentHTML('beforeend', `${here('')}warranty visit</button>${here('?ticket=TKT-2026-0117')}chargeable visit</button>${here(`?note=1&serial=${NOTE.serial}`)}note</button>`);
+  if (!location.search) $('entries').querySelector('button').setAttribute('aria-pressed', 'true');
+
+  if (isNote) {
+    const author = data.users.find((u) => u.id === NOTE.by);
+    const serial = params.get('serial') || NOTE.serial;
+    $('back').href = `C207-machine-history.html?serial=${serial}`;
+    $('title').textContent = 'Note';
+    $('visit').remove(); $('visit-actions').remove();
+    $('note').hidden = false; $('note-actions').hidden = false;
+    $('note-initials').textContent = author.initials;
+    $('note-author').textContent = author.name;
+    $('note-when').textContent = `${R.dayDate(NOTE.when)}, ${time(NOTE.when)}`;
+    $('note-text').textContent = NOTE.text;
+    return;
+  }
+  $('note').remove(); $('note-actions').remove();
+
+  const ticket = [...data.tickets, ...PAST_TICKETS].find((t) => t.number === ticketNo);
+  const report = [...data.reports, ...PAST_REPORTS].find((r) => r.ticket === ticketNo);
+  const m = R.machine(ticket.machine);
+  $('back').href = `C207-machine-history.html?serial=${m.serial}`;
+  document.querySelector('.raise').href = `C503-raise-machine.html?serial=${m.serial}`;
+  $('open-request').href = `C508-request-detail.html?ticket=${ticket.number}`;
+  $('ticket-no').textContent = ticket.number;
+  $('type').textContent = ticket.type;
+  $('machine').textContent = `${m.nickname || m.model}, ${m.model}`;
+
+  /* no report yet: open on the not ready state */
+  if (!report) {
+    document.querySelector('.screen').dataset.state = 'notready';
+    document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === 'notready')));
+    return;
+  }
+  const engineer = R.engineer(report.engineer);
+  $('report-no').textContent = report.number;
+  $('tags').innerHTML = R.coverageTag(ticket.coverage) + R.tag(`Machine ${report.status.toLowerCase()}`, 'green', 'check-circle');
+  $('kv').innerHTML = `<div><dt>Visit date</dt><dd>${R.date(report.date)}</dd></div><div><dt>Time on site</dt><dd>${R.esc(report.timeOnSite)}</dd></div>`;
+  $('engineer').innerHTML = `<div class="person"><span class="avatar">${R.esc(engineer.initials)}</span>
+    <span class="grow"><b>${R.esc(engineer.name)}</b><span>${R.esc(engineer.designation)}</span></span></div>`;
+  $('findings').textContent = report.findings;
+  $('work').textContent = report.work;
+  if (!report.parts.length) $('parts-block').remove();
+  else $('parts').innerHTML = report.parts.map(([number, name, qty, warranty]) => `<div class="part"><b>${R.esc(name)}</b>
+    <span><span class="mono">${R.esc(number)}</span> · Qty ${qty}</span>${warranty ? R.tag('Warranty', 'green') : R.tag('Chargeable')}</div>`).join('');
+  $('sig').innerHTML = `${SIGNATURE}<span class="grow"><b>${R.esc(report.signedBy)}</b><span>${R.dayDate(report.signedAt)}, ${time(report.signedAt)}</span></span>`;
+
+  const invoice = data.invoices.find((i) => i.for === ticket.number);
+  if (invoice) {
+    const { subtotal, gst, total } = R.totals(invoice.lines);
+    $('cost').innerHTML = `<div class="money">
+      ${invoice.lines.map(([label, qty, rate]) => `<div><span>${R.esc(label)}${qty !== 1 ? `, ${qty}` : ''}</span><span>${R.money(qty * rate)}</span></div>`).join('')}
+      <div><span>Subtotal</span><span>${R.money(subtotal)}</span></div><div><span>GST 18%</span><span>${R.money(gst)}</span></div>
+      <div class="total"><span>Total</span><span>${R.money(total)}</span></div></div>
+      <a class="link accent" href="C802-invoice-detail.html?invoice=${invoice.number}">View invoice <span class="mono">${invoice.number}</span>${R.icon('caret-right', 'ic-16')}</a>`;
+  } else {
+    $('cost').innerHTML = `<div class="banner green"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg>
+      <div><b>No charge</b>Covered by ${ticket.coverage === 'amc' ? 'AMC' : 'warranty'}.</div></div>`;
+  }
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

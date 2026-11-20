@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C512 Service report</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.rep-head{padding:18px; border-radius:24px; background:var(--field)}
+.rep-head .ids{display:flex; justify-content:space-between; font-size:var(--fs-12); color:var(--text-muted)}
+.rep-head h2{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.rep-head .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.rep-head .kv{margin-top:10px; padding-top:4px; border-top:1.5px dashed var(--slate-300)}
+.rep-head .kv div{padding:8px 0}
+.rep-head .kv div + div{border-top:0}
+.block h3{margin:0 2px 6px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
+.block p{margin:0 2px; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
+.part{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
+.part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part span{font-size:var(--fs-12); color:var(--text-muted)}
+.part .tag{grid-column:2; grid-row:1 / span 2; align-self:center}
+.photos{grid-template-columns:repeat(4, 1fr)}
+.photos .upload span:not(.state){position:absolute; left:6px; bottom:6px; font-size:10px; font-weight:600; color:var(--slate-600)}
+.sigs{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.sig{padding:12px; border-radius:var(--r-md); background:var(--field)}
+.sig > svg{display:block; width:100%; height:44px; color:var(--slate-800)}
+.sig b{display:block; margin-top:6px; font-size:var(--fs-13); font-weight:600; color:var(--slate-900)}
+.sig span{display:block; font-size:var(--fs-11); color:var(--text-muted)}
+.sig.otp, .sig.refused{display:flex; flex-direction:column; justify-content:flex-end}
+.sig .badge{display:inline-flex; align-items:center; gap:5px; font-size:var(--fs-12); font-weight:600; color:var(--green)}
+.sig.refused .badge{color:var(--amber)}
+.footer-bar:has(.dl-wrap:not([hidden])){background:#fff; box-shadow:0 -8px 20px -16px rgba(24,34,45,.4)}
+.dl{display:flex; flex-direction:column; gap:8px; margin-bottom:12px; font-size:var(--fs-13); color:var(--text-muted)}
+.dl div{display:flex; justify-content:space-between}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C512 Service report</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready, signed</button>
+  <button type="button" data-state="otp" aria-pressed="false">signed by OTP</button>
+  <button type="button" data-state="refused" aria-pressed="false">refused to sign</button>
+  <button type="button" data-state="amended" aria-pressed="false">amended</button>
+  <button type="button" data-state="notready" aria-pressed="false">not ready yet</button>
+  <button type="button" data-state="photo" aria-pressed="false">photo failed</button>
+  <button type="button" data-state="download" aria-pressed="false">downloading PDF</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Service report</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready otp refused amended photo download offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing the saved report.</div>
+          <a class="alert-card amber" href="C513-confirm-completion.html" data-when="ready otp amended photo download">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span><b>Is the issue resolved?</b>
+            <span>Confirm or reopen the request</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+          <div class="banner amber" data-when="amended"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>
+            <div><b id="amended-title"></b>Part number corrected by Zixom.</div></div>
+
+          <div class="rep-head">
+            <div class="ids"><span class="mono rep-number"></span><span class="mono rep-ticket"></span></div>
+            <h2 id="rep-machine"></h2>
+            <div class="tags" id="rep-tags"></div>
+            <dl class="kv" id="rep-kv"></dl>
+          </div>
+
+          <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
+          <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
+          <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          <div class="block"><h3>Parts replaced</h3><div class="stack-sm" id="r-parts"></div></div>
+          <div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div>
+
+          <div class="block"><h3>Before and after</h3>
+            <div class="uploads photos">
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>Before</span></div>
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>Before</span></div>
+              <div class="upload" data-when="ready otp refused amended download offline"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>After</span></div>
+              <button class="upload failed" type="button" data-when="photo" aria-label="Photo did not load, retry"><svg class="ic ic-24" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><span class="state">Retry</span></button>
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span>After</span></div>
+            </div>
+          </div>
+
+          <div class="block"><h3>Signatures</h3>
+            <div class="sigs">
+              <div class="sig" id="sig-engineer"></div>
+              <div class="sig" data-when="ready amended photo download offline" id="sig-customer"></div>
+              <div class="sig otp" data-when="otp" id="sig-otp"></div>
+              <div class="sig refused" data-when="refused" id="sig-refused"></div>
+            </div>
+            <div class="banner amber" style="margin-top:8px" data-when="refused"><svg class="ic" aria-hidden="true"><use href="#ph-signature"/></svg>
+              <div><b>Not signed</b>"Want to see a full shift run first." Zixom will review.</div></div>
+          </div>
+
+          <div class="banner green" id="cost"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg><div><b>No charge</b>Covered by warranty.</div></div>
+        </div>
+
+        <div class="state" data-when="notready" style="padding-top:90px">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h3>Report not ready yet</h3>
+          <p>The engineer is still finishing the report.</p>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:210px; border-radius:24px"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span>
+          <span class="skeleton sk-line" style="width:35%"></span><span class="skeleton sk-line"></span><span class="skeleton sk-line" style="width:70%"></span>
+          <span class="skeleton" style="height:60px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="btn-pair" data-when="ready otp refused amended photo offline">
+          <button class="icon-btn" type="button" aria-label="Share report" data-toast="Report shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="btn btn-primary" type="button" data-goto="download"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download PDF</button>
+        </div>
+        <div class="dl-wrap" data-when="download">
+          <div class="dl"><div><span>Downloading <span class="mono rep-number"></span>.pdf</span><span>4.2 of 7.8 MB</span></div><div class="meter"><i style="width:54%"></i></div></div>
+          <button class="btn btn-secondary" type="button" data-goto="ready">Cancel download</button>
+        </div>
+        <a class="btn btn-secondary" href="C508-request-detail.html" data-when="notready">Back to request</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Customer copy of the visit report. Cost shows only for chargeable work; signed by OTP, refused and
+amended change the signature block. Leads to <a href="C513-confirm-completion.html">C513</a> and, when chargeable, <a href="C802-invoice-detail.html">C802</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const report = ZX.data.reports.find((r) => r.number === 'SR-2026-0128');
+  const ticket = ZX.data.tickets.find((t) => t.number === report.ticket);
+  const machine = R.machine(ticket.machine);
+  const engineer = R.engineer(report.engineer);
+  const customer = ZX.data.users.find((u) => u.id === 'rakesh');
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  /* sample only: when the engineer signed, and the amendment date */
+  const ENGINEER_SIGNED = '2026-11-21T16:48';
+  const AMENDED_ON = '2026-11-22';
+  const SIGNATURE = '<svg viewBox="0 0 140 44" aria-hidden="true"><path d="M6 32c10-18 18-24 22-18s-8 20-2 20 14-22 20-20-4 18 2 18 10-12 16-12 2 10 8 10 14-14 22-16 16 4 30 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+  document.querySelectorAll('.rep-number').forEach((el) => { el.textContent = report.number; });
+  document.querySelectorAll('.rep-ticket').forEach((el) => { el.textContent = ticket.number; });
+  $('rep-machine').textContent = `${machine.nickname || machine.model}, ${machine.model}`;
+  $('rep-tags').innerHTML = R.coverageTag(ticket.coverage) + R.tag(`Machine ${report.status.toLowerCase()}`, 'green', 'check-circle')
+    + `<span data-when="amended">${R.tag(`Amended ${R.dayDate(AMENDED_ON)}`, 'amber')}</span>`;
+  $('rep-kv').innerHTML = `<div><dt>Visit date</dt><dd>${R.date(report.date)}</dd></div>
+    <div><dt>Engineer</dt><dd>${R.esc(engineer.name)}</dd></div><div><dt>Time on site</dt><dd>${R.esc(report.timeOnSite)}</dd></div>`;
+  $('amended-title').textContent = `Amended on ${R.date(AMENDED_ON)}`;
+  $('r-problem').textContent = ticket.summary;
+  $('r-findings').textContent = report.findings;
+  $('r-work').textContent = report.work;
+  $('r-reco').textContent = report.recommendations;
+  $('r-parts').innerHTML = report.parts.map(([number, name, qty, warranty]) => `<div class="part"><b>${R.esc(name)}</b>
+    <span><span class="mono">${R.esc(number)}</span> · Qty ${qty}</span>${warranty ? R.tag('Warranty', 'green') : R.tag('Chargeable')}</div>`).join('');
+
+  $('sig-engineer').innerHTML = `${SIGNATURE}<b>${R.esc(engineer.name)}</b><span>Engineer · ${time(ENGINEER_SIGNED)}</span>`;
+  $('sig-customer').innerHTML = `${SIGNATURE}<b>${R.esc(report.signedBy.split(',')[0])}</b><span>Customer · ${time(report.signedAt)}</span>`;
+  $('sig-otp').innerHTML = `<span class="badge">${R.icon('seal-check', 'ic-16')}Confirmed by OTP</span><b>${R.esc(customer.name)}</b><span>${time(report.signedAt)}</span>`;
+  $('sig-refused').innerHTML = `<span class="badge">${R.icon('warning', 'ic-16')}Refused to sign</span><b>${R.esc(customer.name)}</b><span>${time(report.signedAt)}</span>`;
+  if (report.chargeable) $('cost').hidden = true; /* chargeable reports show the cost summary instead (not in sample data) */
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

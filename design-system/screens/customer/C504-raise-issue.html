@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C504 Raise request: service type and issue</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C503 to C507 wizard */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+.mrow-sm{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r-lg); background:var(--field)}
+.mrow-sm b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mrow-sm .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+/* this page */
+.wrap{flex-wrap:wrap; overflow:visible}
+.mic{display:flex; justify-content:flex-end; margin-top:8px}
+.choice .target{grid-column:2; margin-top:8px}
+.field-block{margin-top:20px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C504 Raise request: service type and issue</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" data-type="breakdown" aria-pressed="true">breakdown</button>
+  <button type="button" data-state="ready" data-type="preventive" aria-pressed="false">preventive, no severity</button>
+  <button type="button" data-state="ready" data-type="training" aria-pressed="false">operator training</button>
+  <button type="button" data-state="errors" data-type="breakdown" aria-pressed="false">errors</button>
+  <button type="button" data-state="afterhours" data-type="breakdown" aria-pressed="false" data-open="after-hours">machine down after hours</button>
+  <button type="button" data-state="offline" data-type="breakdown" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C503-raise-machine.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 2 of 5</b><span>Service type and issue</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span><span></span><span></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. You can submit when back online.</div>
+          <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#severity">Choose how serious it is</a></li><li><a href="#desc">Describe what happened in at least 20 characters</a></li></ul></div>
+          <div class="mrow-sm" id="mrow"></div>
+
+          <div>
+            <div class="field-block" style="margin-top:0">
+              <span class="field-label">Service type<span class="req">*</span></span>
+              <div class="chips wrap" data-single id="types">
+                <button class="chip outline" type="button" data-type="breakdown" aria-pressed="true">Breakdown or repair</button>
+                <button class="chip outline" type="button" data-type="preventive" aria-pressed="false">Preventive maintenance</button>
+                <button class="chip outline" type="button" data-type="installation" aria-pressed="false">Installation or commissioning</button>
+                <button class="chip outline" type="button" data-type="calibration" aria-pressed="false">Calibration or trial</button>
+                <button class="chip outline" type="button" data-type="training" aria-pressed="false">Operator training</button>
+                <button class="chip outline" type="button" data-type="fitting" aria-pressed="false">Spare part fitting</button>
+                <button class="chip outline" type="button" data-type="other" aria-pressed="false">Other</button>
+              </div>
+            </div>
+
+            <div id="breakdown">
+              <div class="field-block">
+                <span class="field-label">Issue category<span class="req">*</span></span>
+                <div class="chips wrap" data-single>
+                  <button class="chip outline" type="button" aria-pressed="false">Mechanical</button>
+                  <button class="chip outline" type="button" aria-pressed="false">Electrical</button>
+                  <button class="chip outline" type="button" aria-pressed="true">Heating</button>
+                  <button class="chip outline" type="button" aria-pressed="false">Vacuum or pneumatic</button>
+                  <button class="chip outline" type="button" aria-pressed="false">Control or PLC</button>
+                  <button class="chip outline" type="button" aria-pressed="false">Other</button>
+                </div>
+              </div>
+              <div class="field-block">
+                <span class="field-label">Machine state<span class="req">*</span></span>
+                <div class="segment" role="tablist" aria-label="Machine state">
+                  <button role="tab" type="button" aria-selected="false" data-down>Stopped</button>
+                  <button role="tab" type="button" aria-selected="true">Running with a problem</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-block" id="severity">
+              <span class="field-label">How serious is it?<span class="req" id="sev-req">*</span></span>
+              <div role="radiogroup" aria-label="Severity" id="sev"></div>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose how serious it is</span>
+            </div>
+
+            <div class="field" id="desc-field" style="margin-top:20px">
+              <label for="desc">What happened<span class="req">*</span><span class="counter" id="count"></span></label>
+              <textarea class="textarea" id="desc" maxlength="1000"></textarea>
+              <span class="hint" id="training-hint" hidden>Add the number of people and the topics.</span>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Describe what happened in at least 20 characters</span>
+              <div class="mic"><button class="btn btn-soft btn-sm" type="button" data-toast="Listening..."><svg class="ic ic-18" aria-hidden="true"><use href="#ph-microphone"/></svg>Speak</button></div>
+            </div>
+
+            <div class="field">
+              <label for="code">Error code on the panel</label>
+              <input class="input mono" id="code" maxlength="20" placeholder="E-17">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C505-raise-media.html" data-keep>Next</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="after-hours" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ah-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span>
+          <h3 id="ah-title">For fastest help call now</h3>
+          <p id="ah-text"></p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-danger" id="ah-call" href="#"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call</a>
+          <button class="btn btn-secondary" type="button" data-close>Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave request">
+        <div class="group"><div class="title">Leave this request? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C501-support.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C501-support.html'">Discard request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 2. Breakdown asks for category, machine state and severity; preventive and installation hide
+severity. Stopped picks Machine down. Draft saves on every change.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample values not in data.js yet (move there): response time targets, spec section 14 */
+  const RESPONSE = { down: '4 hours', production: '1 working day', minor: '3 working days' };
+  const SEVERITIES = [
+    ['down', 'siren', 'Machine down', 'Production stopped.'],
+    ['production', 'warning', 'Production affected', 'Running with a problem.'],
+    ['minor', 'wrench', 'Minor', 'No impact on output.'],
+  ];
+  const NO_SEVERITY = ['preventive', 'installation'];
+  const DESCRIPTION = 'Heater zone 2 takes 25 minutes to reach temperature. Cups come out soft on one side.';
+  const SHORT_DESCRIPTION = 'Not heating';
+
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-CF-2011';
+  const m = R.machine(serial);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('mrow').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span>`;
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  $('ah-text').textContent = `Zixom support, ${data.support.hours}: ${data.support.phone}.`;
+  $('ah-call').href = `tel:${data.support.phone.replace(/\s/g, '')}`;
+
+  $('sev').innerHTML = SEVERITIES.map(([key, icon, title, text]) => `<button class="choice" role="radio" type="button" data-sev="${key}" aria-checked="${key === 'production'}">
+    <span class="disc">${R.icon(icon)}</span><b>${title}</b><p>${text}</p><span class="mark"></span>
+    <span class="target">${R.tag(`Response within ${RESPONSE[key]}`, key === 'down' ? 'red' : 'outline', 'clock')}</span></button>`).join('');
+
+  const desc = $('desc');
+  const count = () => { $('count').textContent = `${desc.value.trim().length} / 1000`; };
+  desc.addEventListener('input', count);
+
+  const setType = (type) => {
+    document.querySelectorAll('#types [data-type]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.type === type)));
+    $('breakdown').hidden = type !== 'breakdown';
+    $('severity').hidden = NO_SEVERITY.includes(type);
+    $('sev-req').hidden = type !== 'breakdown';
+    $('training-hint').hidden = type !== 'training';
+  };
+  $('types').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-type]');
+    if (b) setType(b.dataset.type);
+  });
+  /* Stopped picks Machine down */
+  document.querySelector('[data-down]').addEventListener('click', () => {
+    document.querySelectorAll('[data-sev]').forEach((c) => c.setAttribute('aria-checked', String(c.dataset.sev === 'down')));
+  });
+
+  const setErrors = (on) => {
+    $('desc-field').classList.toggle('has-error', on);
+    desc.value = on ? SHORT_DESCRIPTION : DESCRIPTION;
+    document.querySelectorAll('[data-sev]').forEach((c) => c.setAttribute('aria-checked', String(!on && c.dataset.sev === 'production')));
+    count();
+  };
+  document.querySelectorAll('.plate-states [data-type]').forEach((b) => b.addEventListener('click', () => {
+    setType(b.dataset.type);
+    setErrors(b.dataset.state === 'errors');
+    if (b.dataset.state === 'afterhours') document.querySelector('[data-sev="down"]').click();
+  }));
+  setType('breakdown');
+  setErrors(false);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

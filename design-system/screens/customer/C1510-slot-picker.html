@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1510 Visit slot picker</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.month{display:flex; align-items:center; justify-content:space-between; margin:0 2px 8px}
+.month b{font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.month span{display:flex; gap:6px}
+.month .icon-btn:disabled{opacity:.35; cursor:default}
+.cal{display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; padding:12px; border-radius:24px; background:var(--field)}
+.cal .dow{text-align:center; font-size:var(--fs-11); font-weight:600; color:var(--text-muted); padding-bottom:4px}
+.cal button{position:relative; height:42px; border:0; border-radius:var(--r-pill); background:none; color:var(--slate-900);
+  font:400 var(--fs-16) var(--font-display); cursor:pointer}
+.cal button:disabled{color:var(--slate-400); cursor:not-allowed}
+.cal button.holiday{color:var(--red); opacity:.5}
+.cal button.today{box-shadow:inset 0 0 0 1.5px var(--slate-300)}
+.cal button[aria-pressed="true"]{background:var(--slate-800); color:#fff}
+.cal button.picked::after{content:""; position:absolute; left:50%; bottom:5px; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--blue)}
+.cal button[aria-pressed="true"].picked::after{background:#fff}
+.legend{margin:8px 4px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.chosen{display:flex; flex-direction:column; gap:8px}
+.chosen div{display:flex; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:var(--r-md); border:1px solid var(--line-strong); font-size:var(--fs-14); color:var(--slate-900)}
+.chosen i{width:24px; height:24px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-800); color:#fff; font:600 var(--fs-12) var(--font-body); font-style:normal}
+.chosen span{flex:1}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1510 Visit slot picker</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">2 chosen</button>
+  <button type="button" data-state="none" aria-pressed="false">none chosen</button>
+  <button type="button" data-state="full" aria-pressed="false">3 chosen, full</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C506-raise-visit.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Preferred slots</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready none full offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Dates may have changed.</div>
+          <p class="lede" style="margin:0 2px">Choose up to 3. Zixom confirms one.</p>
+          <div>
+            <div class="month"><b id="month-name"></b><span>
+              <button class="icon-btn sm" type="button" id="prev" aria-label="Previous month"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-caret-left"/></svg></button>
+              <button class="icon-btn sm" type="button" id="next" aria-label="Next month"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-caret-right"/></svg></button></span></div>
+            <div class="cal" id="cal" role="group" aria-label="Dates"></div>
+            <p class="legend" id="legend"></p>
+          </div>
+          <div>
+            <div class="field-label" id="windows-label"></div>
+            <div class="slots" id="windows"></div>
+            <span class="hint" id="full-hint" hidden>You have 3 slots. Remove one to change.</span>
+          </div>
+          <div class="chosen" id="chosen"></div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="height:300px; border-radius:24px"></span>
+          <div class="slots"><span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span><span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span><span class="skeleton" style="height:46px; border-radius:var(--r-pill)"></span></div>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="ready none full offline">
+        <a class="btn btn-primary" href="C506-raise-visit.html" id="confirm"></a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shared by <a href="C506-raise-visit.html">C506</a>, <a href="C510-reschedule.html">C510</a> and
+<a href="C407-reschedule-amc-visit.html">C407</a>. Past days, Sundays, Zixom holidays and windows inside the 4 hour notice
+are disabled; Confirm needs at least 1 slot.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const MAX_SLOTS = 3;
+  const NOTICE_HOURS = 4;
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const WINDOWS = [['9 to 12', '9 to 12 AM', 9], ['12 to 3', '12 to 3 PM', 12], ['3 to 6', '3 to 6 PM', 15]];
+  /* sample only: Zixom holidays from the back office calendar */
+  const HOLIDAYS = { '2026-11-24': 'Guru Nanak Jayanti', '2026-12-25': 'Christmas' };
+  const PRESETS = {
+    ready: [['2026-11-27', '12 to 3'], ['2026-11-28', '9 to 12']],
+    full: [['2026-11-27', '12 to 3'], ['2026-11-28', '9 to 12'], ['2026-11-30', '3 to 6']],
+    none: [],
+  };
+  const now = new Date(ZX.data.now);
+  const iso = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  const ui = { year: 2026, month: 10, day: '2026-11-27', picks: [...PRESETS.ready] };
+
+  const windowOpen = (day, startHour) => new Date(`${day}T${String(startHour).padStart(2, '0')}:00`) - now >= NOTICE_HOURS * 3600000;
+  const dayOpen = (day) => day > ZX.data.today && new Date(`${day}T00:00`).getDay() !== 0 && !HOLIDAYS[day];
+
+  const render = () => {
+    const first = new Date(ui.year, ui.month, 1).getDay();
+    const days = new Date(ui.year, ui.month + 1, 0).getDate();
+    $('month-name').textContent = `${MONTHS[ui.month]} ${ui.year}`;
+    $('prev').disabled = ui.month === 10;
+    $('next').disabled = ui.month === 11;
+    const cells = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => `<span class="dow" aria-hidden="true">${d}</span>`);
+    for (let i = 0; i < first; i += 1) cells.push('<span></span>');
+    for (let d = 1; d <= days; d += 1) {
+      const day = iso(ui.year, ui.month, d);
+      const cls = [HOLIDAYS[day] ? 'holiday' : '', day === ZX.data.today ? 'today' : '', ui.picks.some(([p]) => p === day) ? 'picked' : ''].join(' ');
+      cells.push(`<button type="button" class="${cls}" data-day="${day}" aria-pressed="${day === ui.day}" ${dayOpen(day) ? '' : 'disabled'}
+        aria-label="${R.dayDate(day)}${HOLIDAYS[day] ? `, ${HOLIDAYS[day]}` : ''}">${d}</button>`);
+    }
+    $('cal').innerHTML = cells.join('');
+    const holiday = Object.entries(HOLIDAYS).find(([day]) => Number(day.slice(5, 7)) === ui.month + 1);
+    $('legend').textContent = `Grey: Sundays and past days.${holiday ? ` Red: ${holiday[1]}, Zixom holiday.` : ''}`;
+
+    const full = ui.picks.length >= MAX_SLOTS;
+    $('windows-label').textContent = `Time window, ${R.dayDate(ui.day)}`;
+    $('windows').innerHTML = WINDOWS.map(([key, , start]) => {
+      const on = ui.picks.some(([p, w]) => p === ui.day && w === key);
+      const blocked = !windowOpen(ui.day, start) || (full && !on);
+      return `<button class="slot" type="button" data-window="${key}" aria-pressed="${on}" ${blocked ? 'disabled' : ''}>${key}</button>`;
+    }).join('');
+    $('full-hint').hidden = !full;
+    $('chosen').innerHTML = ui.picks.map(([day, key], i) => `<div><i>${i + 1}</i><span>${R.dayDate(day)}, ${WINDOWS.find(([k]) => k === key)[1]}</span>
+      <button class="icon-btn sm" type="button" data-remove="${i}" aria-label="Remove slot ${i + 1}">${R.icon('x', 'ic-16')}</button></div>`).join('');
+    const n = ui.picks.length;
+    $('confirm').textContent = n ? `Confirm ${n} slot${n > 1 ? 's' : ''}` : 'Choose at least 1 slot';
+    $('confirm').setAttribute('aria-disabled', String(!n));
+  };
+
+  document.addEventListener('click', (event) => {
+    const day = event.target.closest('[data-day]');
+    const win = event.target.closest('[data-window]');
+    const remove = event.target.closest('[data-remove]');
+    if (day) ui.day = day.dataset.day;
+    if (win) {
+      const at = ui.picks.findIndex(([p, w]) => p === ui.day && w === win.dataset.window);
+      if (at >= 0) ui.picks.splice(at, 1); else ui.picks.push([ui.day, win.dataset.window]);
+    }
+    if (remove) ui.picks.splice(Number(remove.dataset.remove), 1);
+    if (event.target.closest('#prev')) ui.month = 10;
+    if (event.target.closest('#next')) ui.month = 11;
+    if (day || win || remove || event.target.closest('#prev, #next')) render();
+  });
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    ui.picks = [...(PRESETS[b.dataset.state] || PRESETS.ready)];
+    ui.month = 10;
+    ui.day = '2026-11-27';
+    render();
+  }));
+  render();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

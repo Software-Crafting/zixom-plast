@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C812 Offline payment proof</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.file{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; align-items:center; padding:12px 14px; border-radius:var(--r-md); background:var(--field)}
+.file .icon-btn{grid-column:3; grid-row:1 / span 2}
+.file .disc{grid-row:1 / span 2; width:38px; height:38px; display:grid; place-items:center; border-radius:10px; background:#fff; color:var(--red)}
+.file b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.file span.sub{grid-column:2; font-size:var(--fs-12); color:var(--text-muted)}
+.add-file{display:flex; align-items:center; justify-content:center; gap:8px; min-height:64px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
+  background:#fff; font:500 var(--fs-14) var(--font-body); color:var(--slate-700); cursor:pointer; width:100%}
+.error-text a{color:inherit}
+.hero{display:flex; flex-direction:column; align-items:center; text-align:center; padding:40px 8px 4px}
+.hero .ring{position:relative; width:96px; height:96px; display:grid; place-items:center; border-radius:50%; background:var(--green-50); color:var(--green)}
+.hero .ring::after{content:""; position:absolute; inset:-8px; border-radius:50%; border:2px dashed var(--green-50)}
+.hero h1{margin:22px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.hero p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C812 Offline payment proof</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="differs">amount differs</button>
+  <button type="button" data-state="utrdup" aria-pressed="false">UTR already submitted</button>
+  <button type="button" data-state="saving" aria-pressed="false">submitting</button>
+  <button type="button" data-state="sent" aria-pressed="false">submitted</button>
+  <button type="button" data-state="rejected" aria-pressed="false">rejected</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, draft</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn back" href="C802-invoice-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Payment proof</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div data-when="ready errors utrdup saving rejected offline">
+          <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved as a draft.</div>
+          <div class="banner red" style="margin-bottom:14px" data-when="rejected"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Zixom could not verify your proof</b><span id="reject-reason"></span> The invoice is due again.</div></div>
+          <div class="error-summary" role="alert" style="margin-bottom:14px" data-when="errors"><b>Fix 2 things to continue</b>
+            <ul><li><a href="#utr-e">Enter the UTR or cheque number</a></li><li><a href="#proof">Add a photo or PDF of the proof</a></li></ul></div>
+
+          <div class="field"><span class="field-label">Invoice<span class="req">*</span></span>
+            <button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg><span class="value mono" id="inv"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+          <div class="field"><label for="amt">Amount paid<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">₹</span><input class="input" id="amt" inputmode="decimal"></div></div>
+          <div class="field"><span class="field-label">Paid by<span class="req">*</span></span>
+            <div class="segment" role="tablist" aria-label="Payment mode"><button role="tab" aria-selected="true">Bank transfer</button><button role="tab" aria-selected="false">UPI</button><button role="tab" aria-selected="false">Cheque</button></div></div>
+
+          <div class="field" data-when="ready saving rejected offline"><label for="utr">UTR or cheque number<span class="req">*</span></label>
+            <input class="input mono" id="utr" value="HDFC0026118302" maxlength="30"></div>
+          <div class="field has-error" data-when="errors"><label for="utr-e">UTR or cheque number<span class="req">*</span></label>
+            <input class="input mono" id="utr-e" aria-invalid="true" aria-describedby="utr-e-err">
+            <span class="error-text" id="utr-e-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 8 to 30 letters or digits</span></div>
+          <div class="field has-error" data-when="utrdup"><label for="utr-d">UTR or cheque number<span class="req">*</span></label>
+            <input class="input mono" id="utr-d" aria-invalid="true" aria-describedby="utr-d-err">
+            <span class="error-text" id="utr-d-err"></span></div>
+
+          <div class="field"><span class="field-label">Payment date<span class="req">*</span></span>
+            <button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="value" id="paid-on"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+
+          <div class="field" id="proof"><span class="field-label">Proof<span class="req">*</span><span class="counter">Photo or PDF, up to 10 MB</span></span>
+            <div class="file" data-when="ready utrdup saving rejected offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
+              <b>Bank slip.pdf</b><span class="sub">412 KB</span>
+              <button class="icon-btn sm" type="button" aria-label="Remove file"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+            <button class="add-file" type="button" data-when="errors" style="border-color:var(--red)"><svg class="ic" aria-hidden="true"><use href="#ph-paperclip"/></svg>Add photo or PDF</button>
+          </div>
+        </div>
+
+        <div data-when="sent">
+          <div class="hero">
+            <span class="ring"><svg class="ic ic-32" aria-hidden="true"><use href="#ph-check"/></svg></span>
+            <h1>Proof submitted</h1>
+            <p>Zixom verifies it within 1 working day.</p>
+          </div>
+          <div class="card-fill" style="margin-top:24px; padding:2px 16px"><dl class="kv" style="margin:0" id="sent-facts"></dl></div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-state-to="sent" data-when="ready">Submit proof</button>
+        <button class="btn btn-primary" type="button" data-when="errors utrdup rejected">Submit proof</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="saving">Saving...</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit proof</button>
+        <a class="btn btn-primary back" href="C802-invoice-detail.html" data-when="sent">View invoice</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="differs" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="d-title">
+        <h3 id="d-title">This amount is different from the invoice</h3>
+        <p id="d-text"></p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close>Submit anyway</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Change amount</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Report a bank transfer, UPI or cheque payment; the invoice shows Awaiting verification until Zixom
+decides. Opened from <a href="C1608-bank-transfer.html">C1608</a> or <a href="C802-invoice-detail.html">C802</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'INV-2026-0981';
+  /* sample: the person's own UTR, the amount typed in "amount differs", and Zixom's rejection reason */
+  const NEW_UTR = 'HDFC0026118302';
+  const TYPED_AMOUNT = 15000;
+  const REJECT_REASON = 'The UTR does not match a credit in our account.';
+
+  const number = (new URLSearchParams(location.search).get('invoice') || DEFAULT).split(',')[0];
+  const inv = data.invoices.find((i) => i.number === number);
+  const balance = R.balance(inv);
+
+  $('inv').textContent = `${inv.number} · ${R.money(balance)}`;
+  $('amt').value = balance.toFixed(2);
+  $('utr').value = NEW_UTR;
+  $('paid-on').textContent = R.date(data.today);
+  $('reject-reason').textContent = ` ${REJECT_REASON}`;
+  $('d-text').textContent = `You entered ${R.money(TYPED_AMOUNT)}. The invoice balance is ${R.money(balance)}.`;
+
+  /* the UTR already used: a bank transfer payment in data.js */
+  const used = data.payments.find((p) => p.txn.startsWith('UTR '));
+  $('utr-d').value = used.txn.replace('UTR ', '');
+  $('utr-d-err').innerHTML = `${R.icon('warning-circle', 'ic-16')}<span>This reference was already submitted. <a href="C809-receipt.html?receipt=${used.receipt}">View receipt</a></span>`;
+
+  $('sent-facts').innerHTML = `<div><dt>Invoice</dt><dd class="mono">${inv.number}</dd></div>
+    <div><dt>Amount</dt><dd>${R.money(balance)}</dd></div>
+    <div><dt>UTR</dt><dd class="mono">${NEW_UTR}</dd></div>
+    <div><dt>Status</dt><dd>${R.invoiceTag('verification')}</dd></div>`;
+  document.querySelectorAll('.back').forEach((a) => { a.href = `C802-invoice-detail.html?invoice=${inv.number}`; });
+  document.querySelector('[data-state-to]').addEventListener('click', () => document.querySelector('.plate-states [data-state="sent"]').click());
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

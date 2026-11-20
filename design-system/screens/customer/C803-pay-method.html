@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C803 Choose payment method</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.money .mono{font-size:var(--fs-13)}
+.apps{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:10px}
+.apps button{height:52px; display:grid; place-items:center; border:1.5px solid var(--line); border-radius:var(--r-md); background:#fff; cursor:pointer}
+.apps button[aria-pressed="true"]{border-color:var(--slate-800)}
+.choice .cards{display:flex; align-items:center; gap:6px}
+.choice .cards img:first-of-type{margin-left:2px}
+/* gateway checkout sheet */
+.gw-top{display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--line)}
+.gw-top .ini{width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:var(--slate-800); color:#fff; font:400 var(--fs-18) var(--font-display)}
+.gw-top b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.gw-top span{font-size:var(--fs-12); color:var(--text-muted)}
+.gw-top .amt{margin-left:auto; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.gw-secure{display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; font-size:var(--fs-12); color:var(--text-muted)}
+.demo{margin-top:16px; padding:12px; border-radius:var(--r-md); border:1.5px dashed var(--slate-300)}
+.demo .field-label{margin-bottom:8px}
+.demo .row{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C803 Choose payment method</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="gateway" aria-pressed="false" data-open="gateway">gateway sheet</button>
+  <button type="button" data-state="loading" aria-pressed="false">creating order</button>
+  <button type="button" data-state="noupi" aria-pressed="false">no UPI app</button>
+  <button type="button" data-state="unavailable" aria-pressed="false">gateway unavailable</button>
+  <button type="button" data-state="changed" aria-pressed="false" data-open="changed">amount changed</button>
+  <button type="button" data-state="busy" aria-pressed="false" data-open="busy">paid on another device</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-toast="Payment cancelled">cancelled</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states" id="pick"><span>paying</span>
+  <button type="button" data-q="?invoice=INV-2026-0981">one invoice</button>
+  <button type="button" data-q="?invoice=INV-2026-0986">partly paid</button>
+  <button type="button" data-q="?invoices=INV-2026-0981,INV-2026-0980">two invoices</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C802-invoice-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Pay</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to pay.</div>
+          <div class="banner red" data-when="unavailable"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Online payment is not available</b>Try again in a few minutes. <button class="link-btn" type="button" data-busy>Retry</button></div></div>
+
+          <div class="money" id="summary"></div>
+
+          <div data-when="ready gateway noupi unavailable changed busy offline">
+            <div class="section-head" style="margin-bottom:10px"><h2>Pay with</h2></div>
+            <div role="radiogroup" aria-label="Payment method">
+              <button class="choice" role="radio" aria-checked="true" type="button" data-when="ready gateway unavailable changed busy offline">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></span><b>UPI</b><p>Pay from your UPI app</p><span class="mark"></span></button>
+            <div data-when="ready gateway unavailable changed busy offline" style="margin:8px 0">
+                            <div class="apps" data-single>
+                <button type="button" aria-pressed="true" aria-label="Google Pay"><img src="../../assets/brand/pay/googlepay.svg" alt="" width="28" height="28"></button>
+                <button type="button" aria-pressed="false" aria-label="PhonePe"><img src="../../assets/brand/pay/phonepe.svg" alt="" width="28" height="28"></button>
+                <button type="button" aria-pressed="false" aria-label="Paytm"><img src="../../assets/brand/pay/paytm.svg" alt="" width="28" height="28"></button>
+                <button type="button" aria-pressed="false" aria-label="Amazon Pay"><img src="../../assets/brand/pay/amazonpay.svg" alt="" width="28" height="28"></button>
+              </div>
+            </div>
+              <button class="choice" role="radio" aria-checked="false" type="button" disabled data-when="noupi">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></span><b>UPI</b><p>No UPI app on this phone</p><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-credit-card"/></svg></span><b>Card</b><p class="cards">Credit or debit <img src="../../assets/brand/pay/visa.svg" alt="Visa" width="28" height="18"><img src="../../assets/brand/pay/mastercard.svg" alt="Mastercard" width="28" height="18"></p><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bank"/></svg></span><b>Net banking</b><p>All major banks</p><span class="mark"></span></button>
+              <button class="choice" role="radio" aria-checked="false" type="button">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wallet"/></svg></span><b>Wallet</b><p>Paytm, PhonePe and more</p><span class="mark"></span></button>
+            </div>
+            <div class="list" style="margin-top:16px">
+              <a class="list-item" id="bank" href="C1608-bank-transfer.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Pay by bank transfer</b><span class="sub">Upload proof after paying</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            </div>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:30%; margin:6px 2px"></span>
+            <span class="skeleton" style="height:74px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:74px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:74px; border-radius:var(--r-lg)"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary pay-label" type="button" data-open="gateway" data-when="ready gateway noupi changed busy"></button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="loading">Paying</button>
+        <button class="btn btn-primary pay-label" type="button" disabled data-when="unavailable offline"></button>
+        <p class="hint" style="text-align:center">Paid to Zixom Plast via Razorpay. No card details stored.</p>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <!-- Razorpay checkout, its own sheet. In the demo it returns success, failure or pending on request -->
+    <div class="overlay bottom" id="gateway" hidden>
+      <div class="bottom-sheet" role="dialog" aria-label="Razorpay checkout">
+        <span class="grabber"></span>
+        <div class="gw-top"><span class="ini">Z</span><span><b>Zixom Plast</b><span>UPI · Google Pay</span></span><span class="amt pay-amount"></span></div>
+        <a class="btn btn-primary" style="margin-top:16px" id="gw-pay" href="C804-payment-processing.html">Open Google Pay</a>
+        <button class="btn btn-text" type="button" style="width:100%; margin-top:4px" data-close data-toast="Payment cancelled">Cancel payment</button>
+        <div class="demo">
+          <span class="field-label">Demo gateway result</span>
+          <div class="row">
+            <a class="btn btn-soft btn-sm" style="width:100%" data-result="success" href="C804-payment-processing.html">Success</a>
+            <a class="btn btn-soft btn-sm" style="width:100%" data-result="failed" href="C804-payment-processing.html">Failure</a>
+            <a class="btn btn-soft btn-sm" style="width:100%" data-result="pending" href="C804-payment-processing.html">Pending</a>
+          </div>
+        </div>
+        <span class="gw-secure"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Secured by Razorpay</span>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="changed" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ch-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span>
+          <h3 id="ch-title">The price changed</h3>
+          <p id="ch-text"></p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary pay-label" type="button" data-close></button>
+          <a class="btn btn-secondary" id="ch-back" href="C802-invoice-detail.html">Go back</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay center" id="busy" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="busy-title">
+        <span class="disc"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+        <h3 id="busy-title">This invoice is being paid</h3>
+        <p>A payment was started on another device. Wait for it to finish.</p>
+        <div class="actions"><a class="btn btn-primary" id="busy-back" href="C802-invoice-detail.html">View invoice</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Amount summary and Razorpay methods. After the gateway returns, the app checks the status with the
+server (<a href="C804-payment-processing.html">C804</a>). A second Pay tap is ignored; closing the app mid payment is EC-43.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'INV-2026-0981';
+  /* sample: the earlier amount shown in the "price changed" sheet (EC-44) */
+  const AMOUNT_BEFORE_CHANGE = 14160;
+
+  const params = new URLSearchParams(location.search);
+  const numbers = (params.get('invoices') || params.get('invoice') || DEFAULT).split(',');
+  const invoices = numbers.map((n) => data.invoices.find((i) => i.number === n)).filter(Boolean);
+  const query = numbers.length > 1 ? `invoices=${numbers.join(',')}` : `invoice=${numbers[0]}`;
+
+  const sum = (fn) => invoices.reduce((s, i) => s + fn(i), 0);
+  const subtotal = sum((i) => R.totals(i.lines).subtotal);
+  const gst = sum((i) => R.totals(i.lines).gst);
+  const paid = sum((i) => i.paid || 0);
+  const toPay = sum(R.balance);
+
+  $('summary').innerHTML = invoices.map((i) => `<div><span class="mono">${i.number}</span><span>${R.money(R.balance(i))}</span></div>`).join('')
+    + `<div><span>Items before GST</span><span>${R.money(subtotal)}</span></div>
+    <div><span>GST 18%</span><span>${R.money(gst)}</span></div>`
+    + (paid ? `<div><span>Already paid</span><span>− ${R.money(paid)}</span></div>` : '')
+    + `<div class="total"><span>Total</span><span>${R.money(toPay)}</span></div>`;
+
+  document.querySelectorAll('.pay-amount').forEach((el) => { el.textContent = R.money(toPay); });
+  document.querySelectorAll('.pay-label').forEach((el) => { el.textContent = `Pay ${R.money(toPay)}`; });
+  $('ch-text').textContent = `Zixom updated the invoice. New amount ${R.money(toPay)}, was ${R.money(AMOUNT_BEFORE_CHANGE)}.`;
+
+  const back = numbers.length > 1 ? 'C1607-select-invoices.html' : `C802-invoice-detail.html?invoice=${numbers[0]}`;
+  ['back', 'ch-back', 'busy-back'].forEach((id) => { $(id).href = back; });
+  $('bank').href = `C1608-bank-transfer.html?${query}`;
+  $('gw-pay').href = `C804-payment-processing.html?${query}&result=success`;
+  document.querySelectorAll('[data-result]').forEach((a) => { a.href = `C804-payment-processing.html?${query}&result=${a.dataset.result}`; });
+
+  document.querySelectorAll('#pick [data-q]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(location.search === b.dataset.q || (!location.search && b.dataset.q === `?invoice=${DEFAULT}`)));
+    b.addEventListener('click', () => { location.search = b.dataset.q; });
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

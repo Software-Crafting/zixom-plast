@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C509 Estimate approval</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.est-head{padding:18px; border-radius:24px; background:var(--field)}
+.est-head .ids{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:var(--fs-12); color:var(--text-muted)}
+.est-head h2{margin:14px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.est-head .sub{margin:3px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.est-head .sum{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:16px; padding-top:14px; border-top:1.5px dashed var(--slate-300)}
+.est-head .sum b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900); line-height:1}
+.est-head .sum s{font-size:var(--fs-14); color:var(--text-muted)}
+.est-head .sum span{font-size:var(--fs-12); color:var(--text-muted)}
+.est-head .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+.lines{list-style:none; margin:0; padding:0 4px}
+.lines li{display:grid; grid-template-columns:1fr auto; column-gap:12px; padding:12px 0}
+.lines li + li{border-top:1px solid var(--line)}
+.lines b{font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.lines .q{grid-column:1; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.lines .amt{grid-column:2; grid-row:1 / span 2; align-self:center; font-size:var(--fs-14); font-weight:500; color:var(--slate-900)}
+.note{display:grid; grid-template-columns:auto 1fr; gap:12px; padding:14px; border-radius:var(--r-lg); border:1px solid var(--line)}
+.note b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.note small{display:block; font-size:var(--fs-12); color:var(--text-muted)}
+.note p{grid-column:1 / span 2; margin:0; font-size:var(--fs-14); line-height:1.55; color:var(--text)}
+.footer-bar .pair{display:grid; grid-template-columns:1fr 1.5fr; gap:10px}
+.reasons{flex-wrap:wrap; overflow:visible; margin:0 0 14px; padding:0}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C509 Estimate approval</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">shared</button>
+  <button type="button" data-state="revised" aria-pressed="false">revised</button>
+  <button type="button" data-state="expired" aria-pressed="false">expired</button>
+  <button type="button" data-state="approved" aria-pressed="false">approved</button>
+  <button type="button" data-state="rejected" aria-pressed="false">rejected</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states"><span>sheets</span>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="approve">approve</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="reject">reject</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Estimate</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready revised expired approved rejected offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to approve or reject.</div>
+
+          <div class="banner amber" data-when="revised"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>
+            <div><b id="revised-title"></b><span id="revised-why"></span></div></div>
+          <div class="banner red" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b>This estimate has expired</b>We will send a new one.</div></div>
+          <div class="banner green" data-when="approved"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>
+            <div><b>You approved this estimate</b><span id="approved-text"></span></div></div>
+          <div class="banner grey" data-when="rejected"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>
+            <div><b>You rejected this estimate</b><span id="rejected-text"></span></div></div>
+
+          <div class="est-head">
+            <div class="ids"><span class="mono" id="est-number"></span><span class="mono" id="est-ticket"></span></div>
+            <h2 id="est-machine"></h2>
+            <p class="sub" id="est-shared"></p>
+            <div class="sum">
+              <s data-when="revised" id="old-total"></s>
+              <b class="est-total"></b><span>incl. GST</span>
+            </div>
+            <div class="tags">
+              <span id="valid-tag" style="display:contents" data-when="ready revised offline"></span>
+              <span class="tag red" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>Expired</span>
+              <span class="tag green" data-when="approved"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg>Approved</span>
+              <span class="tag" data-when="rejected">Rejected</span>
+              <span id="coverage-tag"></span>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-head" style="margin-bottom:4px"><h2>What it covers</h2></div>
+            <ul class="lines" id="lines"></ul>
+          </div>
+          <div class="money" id="money"></div>
+
+          <div class="note" id="note"></div>
+
+          <a class="link accent" href="C602-ask.html" style="align-self:flex-start; margin-left:4px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:190px; border-radius:24px"></span>
+          <span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton sk-line"></span><span class="skeleton sk-line"></span><span class="skeleton sk-line" style="width:80%"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="pair" data-when="ready revised">
+          <button class="btn btn-secondary" type="button" data-open="reject">Reject</button>
+          <button class="btn btn-primary" type="button" data-open="approve">Approve estimate</button>
+        </div>
+        <div data-when="offline">
+          <div class="pair"><button class="btn btn-secondary" type="button" disabled>Reject</button><button class="btn btn-primary" type="button" disabled>Approve estimate</button></div>
+          
+        </div>
+        <a class="btn btn-secondary" href="C602-ask.html" data-when="expired"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+        <a class="btn btn-primary" href="C508-request-detail.html" data-when="approved rejected">View request</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="approve" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="ap-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="ap-title">Approve this estimate?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="money" style="margin-bottom:14px"><div class="total" style="margin:0; padding:0; border:0"><span>Total</span><span class="est-total"></span></div></div>
+        <p class="lede" style="margin:0" id="ap-text"></p>
+        <button class="btn btn-primary" type="button" style="margin-top:20px" data-goto="approved">Approve <span class="est-total"></span></button>
+        <button class="btn btn-text" type="button" style="width:100%; margin-top:6px" data-close>Not now</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="reject" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="rj-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="rj-title">Why are you rejecting it?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="chips reasons" data-single>
+            <button class="chip outline" type="button" aria-pressed="true">Price is too high</button>
+            <button class="chip outline" type="button" aria-pressed="false">Not needed now</button>
+            <button class="chip outline" type="button" aria-pressed="false">We will source the part</button>
+            <button class="chip outline" type="button" aria-pressed="false">Other</button>
+          </div>
+          <div class="field"><label for="rj-comment">Comment<span class="counter">0 / 300</span></label>
+            <textarea class="textarea" id="rj-comment" placeholder="Anything Zixom should know" style="min-height:84px"></textarea></div>
+          <div class="banner grey" style="margin-top:14px"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div id="rj-effect"></div></div>
+        </div>
+        <button class="btn btn-danger" type="button" style="margin-top:16px" data-goto="rejected">Reject estimate</button>
+        <button class="btn btn-text" type="button" style="width:100%; margin-top:6px" data-close>Keep estimate</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Extra charges on a ticket, valid 3 days; anyone in the company can approve. Advance payment continues to <a href="C803-pay-method.html">C803</a>, questions open <a href="C602-ask.html">C602</a>; a second device sees the approved view.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const estimate = ZX.data.estimates.find((e) => e.number === 'QT-2026-0041');
+  const ticket = ZX.data.tickets.find((t) => t.number === estimate.ticket);
+  const machine = R.machine(ticket.machine);
+  const engineer = R.engineer(estimate.by);
+  const { subtotal, gst, total } = R.totals(estimate.lines);
+
+  /* sample only: the version before the revision, labour cut from 3 to 2 hours */
+  const PREVIOUS_LINES = estimate.lines.map(([text, qty, rate]) => [text, text.startsWith('Labour') ? 3 : qty, rate]);
+  const REVISED_WHY = 'Labour cut from 3 to 2 hours after the engineer checked the shaft.';
+
+  $('est-number').textContent = estimate.number;
+  $('est-ticket').textContent = ticket.number;
+  $('est-machine').textContent = `${machine.nickname || machine.model}, ${machine.model.split(' ')[0]}`;
+  $('est-shared').textContent = `Shared ${R.ago(estimate.shared)} by ${engineer.name}`;
+  document.querySelectorAll('.est-total').forEach((el) => { el.textContent = R.money(total); });
+  $('old-total').textContent = R.money(R.totals(PREVIOUS_LINES).total);
+  $('revised-title').textContent = `Revised on ${R.date(estimate.shared)}`;
+  $('revised-why').textContent = REVISED_WHY;
+  const daysLeft = R.daysFromToday(estimate.validUntil);
+  $('valid-tag').innerHTML = R.tag(`Valid until ${R.dayDate(estimate.validUntil)}, ${daysLeft} days left`, 'amber', 'clock-countdown');
+  $('coverage-tag').outerHTML = R.coverageTag(ticket.coverage);
+
+  $('lines').innerHTML = estimate.lines.map(([text, qty, rate]) => `<li><b>${R.esc(text)}</b>
+    <span class="q">${qty} × ${R.money(rate)}</span><span class="amt">${R.money(qty * rate)}</span></li>`).join('');
+  $('money').innerHTML = `<div><span>Subtotal</span><span>${R.money(subtotal)}</span></div>
+    <div><span>GST 18%</span><span>${R.money(gst)}</span></div>
+    <div class="total"><span>Total</span><span>${R.money(total)}</span></div>`;
+  $('note').innerHTML = `<span class="avatar">${R.esc(engineer.initials)}</span>
+    <span><b>${R.esc(engineer.name)}</b><small>${R.esc(engineer.designation)}</small></span><p>${R.esc(estimate.note)}</p>`;
+
+  $('approved-text').textContent = ` Today, 12:04 PM. ${engineer.name} has been told.`;
+  $('rejected-text').textContent = ` Price is too high. The visit closes without the extra work.`;
+  $('ap-text').textContent = `${engineer.name} will be told to go ahead.`;
+  $('rj-effect').textContent = `${engineer.name} will close the visit without the extra work.`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

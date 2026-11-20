@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C101 Home</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
+.title-row .root-title{margin:0}
+.down-pill{display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 14px 0 10px; border-radius:var(--r-pill);
+  background:var(--red); color:#fff; font:400 var(--fs-13) var(--font-display); text-decoration:none;
+  box-shadow:0 8px 18px -10px rgba(194,59,59,.9)}
+.active{padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.active .top{display:flex; justify-content:space-between; align-items:center}
+.active h3{margin:12px 0 0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.active .meta{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:6px; font-size:var(--fs-12); color:var(--text-muted)}
+.active .meta span{display:inline-flex; align-items:center; gap:4px}
+.active .eta{display:flex; align-items:center; gap:12px; margin-top:14px; padding:12px; border-radius:var(--r-md); background:var(--blue-50)}
+.active .eta b{font:400 var(--fs-22) var(--font-display); color:var(--blue); white-space:nowrap}
+.active .eta span{font-size:var(--fs-13); line-height:1.35; color:var(--slate-700)}
+.active .btn-pair{margin-top:14px; grid-template-columns:auto 1fr}
+.first{padding:22px 18px; border-radius:24px; background:var(--field); text-align:center}
+.first .thumb{width:84px; height:84px; margin:0 auto; border-radius:24px; background:#fff}
+.first h3{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.first p{margin:8px auto 0; max-width:270px; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.first .btn{margin-top:18px}
+.first .steps{display:flex; flex-direction:column; gap:10px; margin-top:18px; text-align:left}
+.first .steps div{display:flex; align-items:center; gap:10px; font-size:var(--fs-13); color:var(--slate-700)}
+.first .steps .n{width:24px; height:24px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:#fff; font:600 var(--fs-12) var(--font-body)}
+.news{display:grid; grid-template-columns:auto 1fr; gap:12px; padding:14px; border-radius:var(--r-lg); background:var(--field); color:inherit; text-decoration:none}
+.news .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff; color:var(--slate-800)}
+.news b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.news p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.news time{display:block; margin-top:6px; font-size:var(--fs-11); color:var(--text-faint)}
+.block-error{display:flex; align-items:center; gap:12px; padding:16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-13)}
+.block-error .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:50%; background:var(--red-50); color:var(--red)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C101 Home</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="first" aria-pressed="false">first use, no machines</button>
+  <button type="button" data-state="cardfail" aria-pressed="false">one card failed</button>
+  <button type="button" data-state="notifoff" aria-pressed="false">notifications off</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="root-scroll">
+<header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark" data-when="ready loading cardfail notifoff offline">RM</span>
+        <span class="avatar on-dark" data-when="first">IQ</span>
+        <div class="grow">
+          <span class="root-hello" data-when="ready loading cardfail notifoff offline">Good morning, Rakesh</span>
+          <span class="root-hello" data-when="first">Welcome, Imran</span>
+          <button class="root-switch" type="button" data-open="companies" data-when="ready loading cardfail notifoff offline">
+            <span>Shree Packaging Industries</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          <span class="root-name" data-when="first">Nova Cups Pvt Ltd</span>
+        </div>
+        <a class="icon-btn glass" href="C102-search.html" aria-label="Search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></a>
+        <a class="icon-btn glass" href="C1001-notifications.html" aria-label="Notifications, 4 unread"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg><span class="count" data-when="ready cardfail notifoff offline">4</span></a>
+      </div>
+      <div class="title-row">
+        <h1 class="root-title">Home</h1>
+        <a class="down-pill" href="C1501-machine-down.html"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-siren"/></svg>Machine down?</a>
+      </div>
+    </header>
+
+    <div class="sheet">
+      <div class="scroll with-tabbar">
+        <div class="stack" style="margin-top:16px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <div class="banner amber" data-when="notifoff">
+            <svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+            <div><b>Turn on notifications to get service updates</b>You will miss engineer and payment alerts. <a href="C1002-notification-settings.html">Open Settings</a></div>
+          </div>
+
+          <!-- first use: one card, everything else hidden -->
+          <div class="first" data-when="first">
+            <span class="thumb" aria-hidden="true"><svg class="ic"><use href="#ph-factory"/></svg></span>
+            <h3>Add your first machine</h3>
+            <p>Scan the QR on the nameplate or type the serial number. Warranty and AMC fill in by themselves.</p>
+            <a class="btn btn-primary" href="C203-add-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a>
+            <div class="steps">
+              <div><span class="n">1</span>Find the serial number on the nameplate</div>
+              <div><span class="n">2</span>Confirm the machine and pick its site</div>
+              <div><span class="n">3</span>Raise service, claim warranty, order parts</div>
+            </div>
+          </div>
+
+          <!-- alerts strip: up to 3 -->
+          <div data-when="ready cardfail notifoff offline">
+            <div class="stack-sm" id="alerts"></div>
+            <a class="link" href="C103-alerts.html" style="margin:10px 4px 0" id="alerts-more"></a>
+          </div>
+
+          <div class="stats" id="stats" data-when="ready notifoff offline"></div>
+          <div class="block-error" data-when="cardfail">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <span class="grow">Couldn't load your summary.</span>
+            <button class="btn btn-text" type="button" data-busy>Retry</button>
+          </div>
+
+          <div class="quick" data-when="ready cardfail notifoff offline">
+            <a href="C503-raise-machine.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>Raise service</a>
+            <a href="C303-claim-machine.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>Claim warranty</a>
+            <a href="C602-ask.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span>Ask a question</a>
+            <a href="C701-parts.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>Order parts</a>
+          </div>
+
+          <div data-when="ready cardfail notifoff offline">
+            <div class="section-head" style="margin-bottom:10px"><h2>Active request</h2><a href="C502-requests.html">All requests <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-up-right"/></svg></a></div>
+            <div class="active">
+              <div class="top"><span class="tag blue"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Engineer on the way</span><span class="tag outline">Under AMC</span></div>
+              <h3>Tray line, heater calibration</h3>
+              <div class="meta"><span class="mono">TKT-2026-0125</span><span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-map-pin"/></svg>Sanand plant</span></div>
+              <div class="eta"><b>35 min</b><span>Sandeep Yadav is on the way. Visit window today, 12 to 3 PM.</span></div>
+              <div class="btn-pair">
+                <a class="icon-btn" href="tel:+919909033114" aria-label="Call Sandeep Yadav" style="width:54px; height:54px"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></a>
+                <a class="btn btn-primary" href="C516-track.html">Track engineer</a>
+              </div>
+            </div>
+          </div>
+
+          <div data-when="ready cardfail notifoff offline">
+            <div class="section-head" style="margin-bottom:6px"><h2>Recent activity</h2></div>
+            <div id="activity"></div>
+          </div>
+
+          <div data-when="ready cardfail notifoff offline">
+            <div class="section-head" style="margin-bottom:10px"><h2>From Zixom</h2><a href="C1302-announcements.html">All</a></div>
+            <div id="news"></div>
+          </div>
+
+          <!-- loading: skeletons in the same shapes -->
+          <div class="stack" data-when="loading">
+            <span class="skeleton" style="height:62px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:62px; border-radius:var(--r-lg)"></span>
+            <div class="stats"><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span>
+              <span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:82px; border-radius:var(--r-lg)"></span></div>
+            <span class="skeleton" style="height:220px; border-radius:24px"></span>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <nav class="tabbar" data-tabs="customer" data-active="home"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="companies" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="co-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="co-title">Switch company</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Companies">
+          <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+            <b>Shree Packaging Industries</b><p>Ahmedabad · Primary contact</p><span class="mark"></span></button>
+          <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+            <b>Nova Cups Pvt Ltd</b><p>Pune · Member</p><span class="mark"></span></button>
+        </div>
+        <p class="hint">Switching reloads every tab for that company.</p>
+        <button class="btn btn-primary" type="button" style="margin-top:14px" data-close>Switch</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Answers three questions: is everything running, what needs me, what do I want to do. Up to 3 alerts
+with View all, four summary cards, quick actions, the most recent open request, recent activity and the latest notice.
+Every block loads on its own, so one failure shows only that card's Retry. A person with no machines sees one card.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const MAX_ALERTS = 3;
+
+  document.getElementById('alerts').innerHTML = data.alerts.slice(0, MAX_ALERTS).map(R.alertCard).join('');
+  document.getElementById('alerts-more').innerHTML = `View all ${data.alerts.length} alerts ${R.icon('arrow-right', 'ic-16')}`;
+
+  const open = data.tickets.filter((t) => R.isOpen(t)).length;
+  const ending = data.machines.filter((m) => m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0 && R.daysFromToday(m.warrantyEnd) <= 30).length;
+  const due = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((sum, i) => sum + R.balance(i), 0);
+  const stat = (href, value, label, tone = '') => `<a class="stat ${tone}" href="${href}"><b>${value}</b><span>${label}</span></a>`;
+  document.getElementById('stats').innerHTML = [
+    stat('C201-machines.html', R.count(data.machines.length), 'Machines'),
+    stat('C502-requests.html', R.count(open), 'Open requests'),
+    stat('C301-warranty.html', R.count(ending), 'Warranty ending soon', 'warn'),
+    stat('C801-payments.html', R.money(due).replace('.00', ''), 'Payments due', 'bad'),
+  ].join('');
+
+  document.getElementById('activity').innerHTML = data.activity.map((a) => `<a class="notif" href="C502-requests.html">
+    <span class="disc">${R.icon(a.icon)}</span><span><b>${R.esc(a.title)}</b><p>${R.esc(a.sub)}</p></span><time>${R.ago(a.when)}</time></a>`).join('');
+
+  const notice = data.announcements[0];
+  document.getElementById('news').innerHTML = `<a class="news" href="C1303-announcement.html">
+    <span class="disc">${R.icon('megaphone')}</span><span><b>${R.esc(notice.title)}</b><p>${R.esc(notice.text)}</p>
+    <time>${R.date(notice.when)}</time></span></a>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

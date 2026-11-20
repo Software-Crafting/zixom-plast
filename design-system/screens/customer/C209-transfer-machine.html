@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C209 Machine transfer or removal</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.found{padding:16px; border-radius:24px; background:var(--field)}
+.found .row-flex{gap:12px}
+.found h3{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.found p{margin:3px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.group-title{margin:24px 2px 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.blocked .state{padding:12px 20px 8px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C209 Machine transfer or removal</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="sold" aria-pressed="true">sold</button>
+  <button type="button" data-state="moved" aria-pressed="false">moved</button>
+  <button type="button" data-state="scrapped" aria-pressed="false">scrapped</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="blocked" aria-pressed="false">blocked</button>
+  <button type="button" data-state="pending" aria-pressed="false">pending</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="sold">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C202-machine-detail.html" aria-label="Back" id="back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Transfer or remove</h1><span></span>
+      </div>
+
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your form is kept.</div>
+        <div class="found" data-when="sold moved scrapped errors submitting offline pending"><div class="row-flex" id="hero"></div></div>
+
+        <div data-when="sold moved scrapped errors submitting offline">
+          <div class="error-summary" role="alert" style="margin-top:16px" data-when="errors">
+            <b>Fix 2 things to continue</b>
+            <ul><li><a href="#buyer-bad">Enter the buyer's company name</a></li><li><a href="#mobile-bad">Enter a 10 digit mobile number</a></li></ul>
+          </div>
+
+          <h2 class="group-title">Reason</h2>
+          <div role="radiogroup" aria-label="Reason" id="reasons">
+            <button class="choice" role="radio" aria-checked="true" type="button" data-reason="sold"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-handshake"/></svg></span><b>Sold</b><p>To another company</p><span class="mark"></span></button>
+            <button class="choice" role="radio" aria-checked="false" type="button" data-reason="moved"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Moved to another company</b><p>A group or sister company</p><span class="mark"></span></button>
+            <button class="choice" role="radio" aria-checked="false" type="button" data-reason="scrapped"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Scrapped</b><p>No longer in use anywhere</p><span class="mark"></span></button>
+          </div>
+
+          <div data-when="sold submitting offline">
+            <h2 class="group-title">New owner</h2>
+            <div class="field"><label for="buyer">Company name<span class="req">*</span></label><input class="input" id="buyer" value="Patel Polymers"></div>
+            <div class="field"><label for="person">Contact person<span class="req">*</span></label><input class="input" id="person" value="Hitesh Patel"></div>
+            <div class="field"><label for="mobile">Mobile number<span class="req">*</span></label>
+              <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile" inputmode="numeric" value="98790 55120"></div></div>
+            <div class="field"><label for="gstin">GSTIN<span class="counter">Optional</span></label><input class="input mono" id="gstin" autocapitalize="characters" placeholder="15 characters"></div>
+          </div>
+          <div data-when="errors">
+            <h2 class="group-title">New owner</h2>
+            <div class="field has-error"><label for="buyer-bad">Company name<span class="req">*</span></label>
+              <input class="input" id="buyer-bad" aria-invalid="true" aria-describedby="buyer-err">
+              <span class="error-text" id="buyer-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the buyer's company name</span></div>
+            <div class="field"><label for="person-2">Contact person<span class="req">*</span></label><input class="input" id="person-2" value="Hitesh Patel"></div>
+            <div class="field has-error"><label for="mobile-bad">Mobile number<span class="req">*</span></label>
+              <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile-bad" inputmode="numeric" value="98790 551" aria-invalid="true" aria-describedby="mobile-err"></div>
+              <span class="error-text" id="mobile-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span></div>
+          </div>
+          <div data-when="moved">
+            <h2 class="group-title">Company it moved to</h2>
+            <div class="field"><label for="to">Company name<span class="req">*</span></label><input class="input" id="to" value="Shree Flexipack LLP"></div>
+          </div>
+
+          <h2 class="group-title">Supporting document</h2>
+          <div class="files">
+            <div class="file" data-status="done" data-when="sold errors submitting offline"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-check"/></svg></span>
+              <div class="file-body"><b>sale-agreement.pdf</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>Uploaded · 820 KB</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="uploading" data-progress="48" data-when="moved"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+              <div class="file-body"><b>transfer-letter.pdf</b><span class="file-meta">Uploading 48% · 1.2 MB</span><span class="progress"><i style="width:48%"></i></span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="pause" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            <div class="file" data-status="failed" data-progress="30" data-when="scrapped"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+              <div class="file-body"><b>scrap-certificate.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
+              <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
+          <span class="hint" data-when="sold errors submitting offline">Sale invoice or agreement. PDF, JPG or PNG up to 10 MB.</span>
+          <span class="hint" data-when="moved">Transfer letter on company letterhead.</span>
+          <span class="hint" data-when="scrapped">Scrap certificate or disposal receipt.</span>
+
+          <div class="field" style="margin-top:16px"><label for="notes">Notes<span class="counter">0 / 300</span></label>
+            <textarea class="textarea" id="notes" style="min-height:88px" maxlength="300" placeholder="Anything Zixom should know"></textarea></div>
+        </div>
+
+        <div class="blocked" data-when="blocked">
+          <div class="state">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+            <h3>Close these first</h3>
+            <p>Open requests and dues block a transfer.</p>
+          </div>
+          <div id="blockers"></div>
+        </div>
+
+        <div data-when="pending">
+          <div class="banner" style="margin-top:16px"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+            <div><b>Transfer request pending</b>Zixom will confirm with the new owner.</div></div>
+          <div class="card-fill" style="margin-top:16px"><dl class="kv" style="margin:0" id="pending-kv"></dl></div>
+          <ol class="timeline" style="margin-top:20px">
+            <li class="done"><span class="dot"></span><div><b>Request sent</b><span id="sent-at"></span></div></li>
+            <li class="now"><span class="dot"></span><div><b>Zixom reviews it</b><span>We will notify you</span></div></li>
+            <li class="todo"><span class="dot"></span><div><b>Machine moves to Patel Polymers</b></div></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="sold moved errors" onclick="document.querySelector('[data-state=submitting]').click()">Submit request</button>
+        <button class="btn btn-primary" type="button" data-when="scrapped" data-open="partial">Submit request</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit request</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Submit request</button>
+        <a class="btn btn-secondary" href="C605-contact.html" data-when="blocked"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact Zixom</a>
+        <button class="btn btn-secondary" type="button" data-when="pending" data-open="cancel">Cancel request</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="partial" hidden>
+      <div class="alert" role="alertdialog" aria-labelledby="partial-t">
+        <h3 id="partial-t">Send without the document?</h3><p>It did not upload. Zixom may ask for it.</p>
+        <div class="actions"><button class="btn btn-primary" type="button" data-close onclick="document.querySelector('[data-state=submitting]').click()">Send without it</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Retry upload</button></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="cancel" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel transfer request">
+        <div class="group"><div class="title">Cancel this request?<small>The machine stays with your company.</small></div>
+          <button class="destructive" type="button" data-close data-toast="Request cancelled"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Cancel request</button></div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">For a machine sold, moved to another company or scrapped. Open requests or dues block it with links
+to each. Once sent, the request shows as pending on <a href="C202-machine-detail.html">C202</a> until Zixom confirms.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-PC-1805';
+  const m = R.machine(serial);
+  const name = m.nickname || m.model;
+
+  $('back').href = `C202-machine-detail.html?serial=${serial}`;
+  $('hero').innerHTML = `${R.thumb(m)}<div><h3>${R.esc(name)}</h3><p><span class="mono">${R.esc(serial)}</span>${m.nickname ? ` · ${R.esc(m.model)}` : ''}</p></div>`;
+  $('pending-kv').innerHTML = `<div><dt>Reason</dt><dd>Sold</dd></div><div><dt>New owner</dt><dd>Patel Polymers</dd></div>
+    <div><dt>Sent</dt><dd>${R.dayDate(data.today)}</dd></div>`;
+  $('sent-at').textContent = `${R.dayDate(data.today)}, 11:20 AM · Rakesh Mehta`;
+
+  /* what blocks a transfer: open requests on this machine and unpaid invoices for it */
+  const CLOSED = ['closed', 'cancelled', 'visit-failed'];
+  const open = data.tickets.filter((t) => t.machine === serial && !CLOSED.includes(t.status));
+  const dues = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status) && (i.title.endsWith(`, ${name}`) || i.for === m.amc));
+  $('blockers').innerHTML = (open.length ? `<h2 class="group-title">Open requests</h2><div class="stack-sm">${open
+    .map((t) => R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`)).join('')}</div>` : '')
+    + (dues.length ? `<h2 class="group-title">Dues</h2><div class="list">${dues.map((i) => `<a class="list-item" href="C802-invoice-detail.html?invoice=${i.number}">
+      <span class="disc">${R.icon('receipt')}</span><b>${R.money(R.balance(i))}</b><span class="sub"><span class="mono">${i.number}</span> · Due ${R.dayDate(i.due)}</span>
+      <span class="end">${R.invoiceTag(i.status)}${R.icon('caret-right')}</span></a>`).join('')}</div>` : '');
+
+  /* reason cards and the plate switch move together */
+  const reasons = document.querySelectorAll('[data-reason]');
+  const syncReason = (state) => reasons.forEach((r) => r.setAttribute('aria-checked', String(r.dataset.reason === (['moved', 'scrapped'].includes(state) ? state : 'sold'))));
+  reasons.forEach((r) => r.addEventListener('click', () => document.querySelector(`.plate-states [data-state=${r.dataset.reason}]`).click()));
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => syncReason(b.dataset.state)));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

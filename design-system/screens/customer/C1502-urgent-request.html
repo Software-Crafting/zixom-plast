@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1502 Urgent request</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.stack > .field{margin-top:0}
+.call-line{display:block; margin-top:10px; text-align:center; font-size:var(--fs-13); color:var(--text-muted)}
+.call-line a{color:var(--blue); font-weight:600; text-decoration:none}
+.photo-row{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px}
+.machine-choice .choice{padding:10px 14px}
+.machine-choice .thumb{grid-row:1 / span 2}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1502 Urgent request</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="invalid" aria-pressed="false">missing details</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="sent" aria-pressed="false">sent</button>
+  <button type="button" data-state="duplicate" aria-pressed="false">duplicate blocked</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline, kept</button>
+  <button type="button" data-state="error" aria-pressed="false">send failed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1501-machine-down.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Urgent request</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready invalid sending duplicate offline error">
+          <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
+            <div><b>You are offline</b>We will send this when you are back online. Call <a class="tel-link support-phone" href="#"></a> meanwhile.</div></div>
+          <div class="banner red" data-when="error"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>Couldn't send</b>Try again or call <a class="tel-link support-phone" href="#"></a>.</div></div>
+          <div class="error-summary" role="alert" data-when="invalid"><b>Fix 1 thing to continue</b><ul><li><a href="#problem-bad">Say what happened</a></li></ul></div>
+          <div class="banner red" data-when="ready invalid sending"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg>
+            <div><b>Machine down</b>We aim to reach you within 4 hours.</div></div>
+
+          <div class="field"><span class="field-label">Machine<span class="req">*</span></span>
+            <button class="select" type="button" data-open="machines"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg>
+              <span class="value" id="machine-value"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
+
+          <div data-when="duplicate">
+            <div class="banner red" style="margin-bottom:10px"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+              <div><b>An urgent request is already open</b>We are on it. Follow it here.</div></div>
+            <div id="dup"></div>
+          </div>
+
+          <div class="field" data-when="ready sending offline error"><label for="problem">What happened<span class="req">*</span></label>
+            <input class="input" id="problem" value="Heater zone 2 tripped, machine stopped"></div>
+          <div class="field has-error" data-when="invalid"><label for="problem-bad">What happened<span class="req">*</span></label>
+            <input class="input" id="problem-bad" placeholder="One line is enough" aria-invalid="true" aria-describedby="problem-err">
+            <span class="error-text" id="problem-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Say what happened</span></div>
+
+          <div class="field" data-when="ready invalid sending offline error"><span class="field-label">Photo</span>
+            <div class="photo-row"><button class="upload add" type="button" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button></div></div>
+
+          <div class="field" data-when="ready invalid sending offline error"><label for="phone">Contact phone<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="phone" type="tel" inputmode="numeric"></div></div>
+        </div>
+
+        <div class="state" data-when="sent" style="padding-top:70px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Request submitted</h3>
+          <p>Your request number is <span class="mono">TKT-2026-0133</span>. Zixom on call has been alerted.</p>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-danger" type="button" data-when="ready invalid error" data-goto="sending"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send now</button>
+        <button class="btn btn-danger" type="button" aria-busy="true" data-when="sending">Send now</button>
+        <button class="btn btn-danger" type="button" data-when="offline" data-toast="Saved. We will send it when you are online"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send when online</button>
+        <a class="btn btn-primary" href="C508-request-detail.html" data-when="duplicate">View request</a>
+        <div class="stack-sm" data-when="sent">
+          <a class="btn btn-primary" href="C508-request-detail.html">View request</a>
+          <a class="btn btn-text" href="C101-home.html" style="width:100%">Done</a>
+        </div>
+        <span class="call-line" data-when="ready invalid sending duplicate">Faster by phone? <a class="tel-link support-phone" href="#"></a></span>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="machines" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="m-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="m-title">Which machine?</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body machine-choice" role="radiogroup" aria-label="Machines" id="machine-list"></div>
+        <button class="btn btn-primary" type="button" style="margin-top:14px" data-close>Select</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Four inputs only; the ticket is created with severity Machine down. Offline the form is kept and sent
+later; an open urgent request on the same machine blocks a second one (F13).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { phone } = ZX.data.support;
+  const me = ZX.data.users.find((u) => u.id === 'rakesh');
+  const machines = ZX.data.machines.filter((m) => m.status !== 'pending');
+  const duplicate = ZX.data.tickets.find((t) => t.severity === 'down' && !['closed', 'cancelled'].includes(t.status));
+  const label = (m) => `${m.nickname || m.model}, ${m.serial}`;
+  const chosen = { default: machines[0], duplicate: R.machine(duplicate.machine) };
+
+  document.querySelectorAll('.support-phone').forEach((el) => { el.textContent = phone; });
+  document.querySelectorAll('.tel-link').forEach((el) => { el.href = `tel:${phone.replace(/\s/g, '')}`; });
+  document.getElementById('phone').value = me.mobile.replace('+91 ', '');
+  document.getElementById('dup').innerHTML = R.ticketCard(duplicate, 'C508-request-detail.html');
+  document.getElementById('machine-list').innerHTML = machines.map((m, i) => `<button class="choice" role="radio" aria-checked="${i === 0}" type="button">
+    ${R.thumb(m, 'sm')}<b>${R.esc(m.nickname || m.model)}</b><p class="mono">${R.esc(m.serial)}</p><span class="mark"></span></button>`).join('');
+
+  const showMachine = (state) => { document.getElementById('machine-value').textContent = label(state === 'duplicate' ? chosen.duplicate : chosen.default); };
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => showMachine(b.dataset.state)));
+  showMachine('ready');
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  const goto = (state) => document.querySelector(`.plate-states [data-state="${state}"]`).click();
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (!go) return;
+    goto(go.dataset.goto);
+    if (go.dataset.goto === 'sending') window.setTimeout(() => goto('sent'), 900);
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

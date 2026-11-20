@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C513 Confirm completion</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.ask{text-align:center; padding:6px 8px 0}
+.ask .disc{width:76px; height:76px; margin:0 auto; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.ask .disc.green{background:var(--green-50); color:var(--green)}
+.ask .disc.grey{background:var(--slate-100); color:var(--slate-600)}
+.ask .disc .ic{width:34px; height:34px}
+.ask h2{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.ask p{margin:6px 0 0; font-size:var(--fs-14); color:var(--text)}
+.summary{padding:16px; border-radius:24px; background:var(--field)}
+.summary .top{display:flex; justify-content:space-between; font-size:var(--fs-12); color:var(--text-muted)}
+.summary h3{margin:10px 0 0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.summary p{margin:6px 0 0; font-size:var(--fs-13); line-height:1.5; color:var(--text)}
+.summary .foot{display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1.5px dashed var(--slate-300); font-size:var(--fs-12); color:var(--text-muted)}
+.summary .foot a{display:inline-flex; align-items:center; gap:4px; color:var(--blue); font-weight:600; text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C513 Confirm completion</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="confirmed" aria-pressed="false">confirmed</button>
+  <button type="button" data-state="auto" aria-pressed="false">closed after 3 days</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 class="ticket-no mono"></h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready confirmed auto offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to answer.</div>
+          <div class="ask" data-when="ready offline">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>
+            <h2>Is the issue resolved?</h2>
+            <p id="ask-sub"></p>
+          </div>
+          <div class="ask" data-when="confirmed">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+            <h2>Thanks, request closed</h2>
+            <p>How did the visit go?</p>
+          </div>
+          <div class="ask" data-when="auto">
+            <span class="disc grey"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+            <h2>This request closed by itself</h2>
+            <p id="auto-sub"></p>
+          </div>
+          <div class="summary" id="summary"></div>
+        </div>
+
+        <div class="stack" data-when="loading" style="align-items:center">
+          <span class="skeleton sk-circle" style="width:76px; height:76px"></span>
+          <span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span>
+          <span class="skeleton" style="height:170px; width:100%; border-radius:24px"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready">
+          <button class="btn btn-primary" type="button" data-goto="confirmed"><svg class="ic" aria-hidden="true"><use href="#ph-thumbs-up"/></svg>Yes, resolved</button>
+          <a class="btn btn-secondary" href="C515-reopen.html">Not resolved</a>
+        </div>
+        <div class="stack-sm" data-when="offline">
+          <button class="btn btn-primary" type="button" disabled>Yes, resolved</button>
+          <button class="btn btn-secondary" type="button" disabled>Not resolved</button>
+        </div>
+        <div class="stack-sm" data-when="confirmed">
+          <a class="btn btn-primary" href="C514-rate-service.html"><svg class="ic" aria-hidden="true"><use href="#ph-star"/></svg>Rate the service</a>
+          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%">Later</a>
+        </div>
+        <div class="stack-sm" data-when="auto">
+          <a class="btn btn-primary" href="C514-rate-service.html">Rate the service</a>
+          <a class="btn btn-secondary" href="C515-reopen.html">Reopen request</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Opened from the completion push. Not resolved opens <a href="C515-reopen.html">C515</a>; with no answer the
+ticket closes 3 days after completion and can be reopened for 7 days.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const AUTO_CLOSE_DAYS = 3;
+  const REOPEN_DAYS = 7;
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0128');
+  const report = ZX.data.reports.find((r) => r.ticket === ticket.number);
+  const machine = R.machine(ticket.machine);
+  const engineer = R.engineer(report.engineer);
+  const addDays = (iso, days) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + days);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const closes = addDays(report.date, AUTO_CLOSE_DAYS);
+
+  document.querySelector('.ticket-no').textContent = ticket.number;
+  document.getElementById('ask-sub').textContent = `If we don't hear from you, it closes on ${R.dayDate(closes)}.`;
+  document.getElementById('auto-sub').textContent = `Reopen it until ${R.dayDate(addDays(closes, REOPEN_DAYS))} if the problem is back.`;
+  document.getElementById('summary').innerHTML = `
+    <div class="top"><span class="mono">${R.esc(report.number)}</span><span>${R.dayDate(report.date)}</span></div>
+    <h3>${R.esc(machine.nickname || machine.model)}</h3>
+    <p>${R.esc(report.work)}</p>
+    <div class="foot"><span>${R.esc(engineer.name)} · ${R.esc(report.timeOnSite)}</span>
+      <a href="C512-service-report.html">Report ${R.icon('caret-right', 'ic-16')}</a></div>`;
+
+  /* prototype only: a button inside the phone that moves the screen to another state */
+  document.addEventListener('click', (event) => {
+    const go = event.target.closest('[data-goto]');
+    if (go) document.querySelector(`.plate-states [data-state="${go.dataset.goto}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

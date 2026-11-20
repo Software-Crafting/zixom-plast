@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C813 Account statement</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.range{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.range .select{min-height:48px; font-size:var(--fs-14)}
+.entry{display:grid; grid-template-columns:1fr auto; column-gap:12px; padding:12px 2px}
+.entry + .entry{border-top:1px dashed var(--line-strong)}
+.entry b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.entry .sub{grid-column:1; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.entry .amt{grid-column:2; grid-row:1 / span 2; align-self:center; font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap}
+.entry .amt.in{color:var(--green)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C813 Account statement</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="large" aria-pressed="false">large range</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty range</button>
+  <button type="button" data-state="loading" aria-pressed="false">preparing</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C801-payments.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Account statement</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Download needs the internet.</div>
+          <div class="chips" data-single>
+            <button class="chip outline" type="button" aria-pressed="false">This month</button>
+            <button class="chip outline" type="button" aria-pressed="true" data-when="ready loading error offline">Last 3 months</button>
+            <button class="chip outline" type="button" aria-pressed="false" data-when="large empty">Last 3 months</button>
+            <button class="chip outline" type="button" aria-pressed="false">This financial year</button>
+            <button class="chip outline" type="button" aria-pressed="false">Custom</button>
+          </div>
+          <div class="range">
+            <div><span class="field-label">From</span><button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="value" id="from"></span></button></div>
+            <div><span class="field-label">To</span><button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="value" id="to"></span></button></div>
+          </div>
+
+          <div class="banner amber" data-when="large"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Large range, over 1 year</b>The PDF may take a minute to prepare.</div></div>
+
+          <div class="stack" data-when="ready large offline">
+            <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="sum"></dl></div>
+            <div><p class="list-title" style="margin-top:0">Invoices and payments</p><div id="entries"></div></div>
+          </div>
+
+          <div class="state" data-when="empty">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span>
+            <h3>Nothing in this range</h3><p>No invoices or payments between these dates.</p>
+          </div>
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:56px"></span><span class="skeleton" style="height:56px"></span><span class="skeleton" style="height:56px"></span>
+          </div>
+          <div class="state" data-when="error">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="btn-pair">
+          <button class="icon-btn" type="button" aria-label="Share statement" data-when="ready large"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="Share statement" disabled data-when="empty loading error offline"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="btn btn-primary" type="button" data-toast="Statement saved to Downloads" data-when="ready large"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download PDF</button>
+          <button class="btn btn-primary" type="button" aria-busy="true" data-when="loading">Preparing</button>
+          <button class="btn btn-primary" type="button" disabled data-when="empty error offline"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download PDF</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Invoices and payments for a date range, as a PDF to download or share. Failed and pending attempts
+are left out; they are in <a href="C808-payment-history.html">C808</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* sample ranges: last 3 months (default), over a year (large), and an empty one */
+  const RANGES = { ready: ['2026-08-24', data.today], large: ['2025-04-01', data.today], empty: ['2026-06-01', '2026-07-31'] };
+
+  const show = (state) => {
+    const [from, to] = RANGES[state] || RANGES.ready;
+    $('from').textContent = R.date(from);
+    $('to').textContent = R.date(to);
+    const inRange = (iso) => iso.slice(0, 10) >= from && iso.slice(0, 10) <= to;
+    const invoices = data.invoices.filter((i) => inRange(i.issued));
+    const paid = data.payments.filter((p) => p.status === 'paid' && inRange(p.when));
+    const invoiced = invoices.reduce((s, i) => s + i.amount, 0);
+    const received = paid.reduce((s, p) => s + p.amount, 0);
+    const owed = data.invoices.filter((i) => ['due', 'overdue'].includes(i.status)).reduce((s, i) => s + R.balance(i), 0);
+    $('sum').innerHTML = `<div><dt>Invoiced</dt><dd>${R.money(invoiced)}</dd></div>
+      <div><dt>Received</dt><dd>${R.money(received)}</dd></div><div><dt>Outstanding today</dt><dd>${R.money(owed)}</dd></div>`;
+    const entries = [
+      ...invoices.map((i) => ({ when: i.issued, html: `<b>Invoice <span class="mono">${i.number}</span></b><span class="sub">${R.date(i.issued)} · ${i.type}</span><span class="amt">${R.money(i.amount)}</span>` })),
+      ...paid.map((p) => ({ when: p.when, html: `<b>Payment <span class="mono">${p.receipt}</span></b><span class="sub">${R.date(p.when)} · for <span class="mono">${p.invoice}</span></span><span class="amt in">− ${R.money(p.amount)}</span>` })),
+    ].sort((a, b) => b.when.localeCompare(a.when));
+    $('entries').innerHTML = entries.map((e) => `<div class="entry">${e.html}</div>`).join('');
+  };
+  show('ready');
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => show(b.dataset.state)));
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

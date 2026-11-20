@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C516 Track engineer</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.eta-card{padding:20px; border-radius:24px; background:linear-gradient(160deg, var(--slate-700), var(--slate-900)); color:#fff}
+.eta-card .top{display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-12); color:rgba(255,255,255,.7)}
+.eta-card .tag{background:rgba(255,255,255,.14); color:#fff}
+.eta-card .tag.amber{background:var(--amber-50); color:var(--amber)}
+.eta-card .big{margin:18px 0 0; font:400 44px var(--font-display); line-height:1; letter-spacing:-.02em}
+.eta-card .big.text{font-size:var(--fs-22); line-height:1.3}
+.eta-card p{margin:8px 0 0; font-size:var(--fs-14); color:rgba(255,255,255,.82)}
+.eta-card .window{display:flex; align-items:center; gap:8px; margin-top:16px; padding-top:14px; border-top:1.5px dashed rgba(255,255,255,.22); font-size:var(--fs-13); color:rgba(255,255,255,.82)}
+.eng{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); border:1px solid var(--line)}
+.eng a.who{display:flex; align-items:center; gap:12px; flex:1; min-width:0; color:inherit; text-decoration:none}
+.eng b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.eng small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C516 Track engineer</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">on the way</button>
+  <button type="button" data-state="delayed" aria-pressed="false">running late</button>
+  <button type="button" data-state="noloc" aria-pressed="false">location unavailable</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Track engineer</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready delayed noloc offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:48 AM.</div>
+          <div class="banner amber" data-when="delayed"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
+            <div><b class="late-title"></b>Held up at a previous job.</div></div>
+
+          <div class="eta-card">
+            <div class="top"><span class="mono ticket-no"></span>
+              <span class="tag" data-when="ready noloc offline"><svg class="ic" aria-hidden="true"><use href="#ph-navigation-arrow"/></svg>Engineer on the way</span>
+              <span class="tag amber" data-when="delayed"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>Running late</span></div>
+            <p class="big" data-when="ready offline"><span class="eta-min"></span> min</p>
+            <p class="big" data-when="delayed">70 min</p>
+            <p class="big text" data-when="noloc">Live ETA not available</p>
+            <p data-when="ready offline">Reaching about <span class="eta-at"></span></p>
+            <p data-when="delayed">New time, about 1:10 PM</p>
+            <p data-when="noloc">Expected about <span class="eta-at"></span></p>
+            <div class="window"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="visit-window"></span></div>
+          </div>
+
+          <div class="eng" id="eng"></div>
+
+          <div class="card-fill">
+            <dl class="kv" style="margin:0" id="kv"></dl>
+          </div>
+        </div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton" style="height:200px; border-radius:24px"></span>
+          <span class="skeleton" style="height:70px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:130px; border-radius:var(--r-lg)"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar" data-when="ready delayed noloc offline">
+        <div class="btn-pair">
+          <button class="icon-btn" type="button" aria-label="Share ETA" data-toast="ETA shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <button class="btn btn-primary" type="button" data-open="call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg><span class="call-label"></span></button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="call" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Call">
+        <div class="group">
+          <button type="button" data-close class="call-eng"></button>
+          <button type="button" data-close>Call Zixom support</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">ETA as text only, no map in the first release. Running late (EC-52) and location unavailable change the
+ETA card; the call sheet is <a href="C1512-call-engineer.html">C1512</a>, the engineer row opens <a href="C1511-engineer-profile.html">C1511</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0125');
+  const engineer = R.engineer(ticket.engineer);
+  const machine = R.machine(ticket.machine);
+  const site = ZX.data.companies.find((c) => c.id === machine.company).sites.find((s) => s.id === machine.site);
+  const arrival = new Date(new Date(ZX.data.now).getTime() + ticket.eta * 60000)
+    .toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  const fill = (cls, text) => document.querySelectorAll(cls).forEach((el) => { el.textContent = text; });
+
+  fill('.ticket-no', ticket.number);
+  fill('.eta-min', ticket.eta);
+  fill('.eta-at', arrival);
+  fill('.visit-window', `Visit window today, ${ticket.window.slot}`);
+  fill('.late-title', `${engineer.name.split(' ')[0]} is running late`);
+  fill('.call-label', `Call ${engineer.name.split(' ')[0]}`);
+  fill('.call-eng', `Call ${engineer.name}`);
+  document.getElementById('eng').innerHTML = `<a class="who" href="C1511-engineer-profile.html">
+      <span class="avatar">${R.esc(engineer.initials)}</span>
+      <span class="grow"><b>${R.esc(engineer.name)}</b><small>${R.esc(engineer.designation)} · <span class="rating">${R.icon('star')}${engineer.rating}</span></small></span>
+      ${R.icon('caret-right', 'ic-16')}</a>`;
+  document.getElementById('kv').innerHTML = `<div><dt>Machine</dt><dd>${R.esc(machine.nickname || machine.model)}</dd></div>
+    <div><dt>Work</dt><dd>${R.esc(ticket.type)}</dd></div>
+    <div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+    <div><dt>Coverage</dt><dd>${R.coverageTag(ticket.coverage)}</dd></div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C514 Rate the service</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:4px}
+.who h2{margin:14px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.who p{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.stars{display:flex; justify-content:center; gap:8px; margin-top:4px}
+.stars button{width:48px; height:48px; display:grid; place-items:center; border:0; border-radius:50%; background:var(--slate-100); color:var(--slate-300); cursor:pointer}
+.stars button .ic{width:26px; height:26px}
+.stars button[aria-pressed="true"]{background:var(--amber-50); color:var(--amber)}
+.stars button[aria-pressed="true"] .ic{fill:currentColor}
+.stars[aria-disabled="true"] button{pointer-events:none}
+.star-label{margin:8px 0 0; text-align:center; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.tags-wrap{flex-wrap:wrap; justify-content:center; overflow:visible; margin:0; padding:0}
+.low{padding:16px; border-radius:var(--r-lg); background:var(--red-50)}
+.low h3{margin:0 0 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900); text-align:center}
+.low .chip.outline{background:#fff}
+.low .chip.outline[aria-pressed="true"]{background:var(--slate-800)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C514 Rate the service</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">idle</button>
+  <button type="button" data-state="low" aria-pressed="false">1 or 2 stars</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
+  <button type="button" data-state="thanks" aria-pressed="false">thank you</button>
+  <button type="button" data-state="rated" aria-pressed="false">already rated</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Rate the service</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready low submitting rated offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. We will send it later.</div>
+          <div class="who">
+            <span class="avatar lg eng-initials"></span>
+            <h2 data-when="ready low submitting offline">How was the service?</h2>
+            <h2 data-when="rated">You rated this visit</h2>
+            <p id="who-sub" data-when="ready low submitting offline"></p>
+            <p id="rated-sub" data-when="rated"></p>
+          </div>
+
+          <div>
+            <div class="stars" role="group" aria-label="Rating, 1 to 5 stars" id="stars"></div>
+            <p class="star-label" id="star-label"></p>
+          </div>
+
+          <div class="chips tags-wrap multi" data-when="ready submitting offline rated">
+            <button class="chip outline" type="button" aria-pressed="true">On time</button>
+            <button class="chip outline" type="button" aria-pressed="true">Skilled</button>
+            <button class="chip outline" type="button" aria-pressed="false">Polite</button>
+            <button class="chip outline" type="button" aria-pressed="false">Clean work</button>
+            <button class="chip outline" type="button" aria-pressed="true">Explained well</button>
+          </div>
+
+          <div class="low" data-when="low">
+            <h3>What went wrong?</h3>
+            <div class="chips tags-wrap multi">
+              <button class="chip outline" type="button" aria-pressed="false">Late</button>
+              <button class="chip outline" type="button" aria-pressed="true">Problem not fixed</button>
+              <button class="chip outline" type="button" aria-pressed="false">Rude</button>
+              <button class="chip outline" type="button" aria-pressed="false">Overcharged</button>
+              <button class="chip outline" type="button" aria-pressed="false">Other</button>
+            </div>
+            <a class="btn btn-secondary btn-sm" href="C606-complaint.html" style="display:flex; width:100%; margin-top:12px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-headset"/></svg>Talk to the service manager</a>
+          </div>
+
+          <div class="field" data-when="ready low submitting offline"><label for="comment">Comment<span class="counter">0 / 500</span></label>
+            <textarea class="textarea" id="comment" placeholder="Optional" style="min-height:84px"></textarea></div>
+          <div class="card-fill" data-when="rated" style="font-size:var(--fs-14); color:var(--slate-900)">"Quick and clean. Explained the vacuum settings to our operator."</div>
+        </div>
+
+        <div class="state" data-when="thanks" style="padding-top:90px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <h3>Thank you</h3>
+          <p>Your rating helps us improve.</p>
+        </div>
+
+        <div class="stack" data-when="loading" style="align-items:center">
+          <span class="skeleton sk-circle" style="width:64px; height:64px"></span>
+          <span class="skeleton sk-line" style="width:55%"></span>
+          <span class="skeleton" style="height:48px; width:280px; border-radius:var(--r-pill)"></span>
+          <span class="skeleton" style="height:84px; width:100%"></span>
+        </div>
+
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready low">
+          <button class="btn btn-primary" type="button" data-goto="submitting">Submit</button>
+          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%" data-toast="You can rate for 7 days">Skip</a>
+        </div>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit</button>
+        <div class="stack-sm" data-when="offline">
+          <button class="btn btn-primary" type="button" data-toast="Saved. We will send it when you are online">Submit</button>
+          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%">Skip</a>
+        </div>
+        <a class="btn btn-primary" href="C508-request-detail.html" data-when="thanks rated">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Rated after closing, within 7 days; Skip is remembered. 1 or 2 stars asks what went wrong, alerts Zixom
+support and offers <a href="C606-complaint.html">C606</a>; a rated ticket is read only.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const $ = (id) => document.getElementById(id);
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0128');
+  const rated = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0129'); /* closed and rated */
+  const engineer = R.engineer(ticket.engineer);
+  const machine = (t) => { const m = R.machine(t.machine); return m.nickname || m.model; };
+  const LABELS = ['Tap a star', 'Poor', 'Not good', 'Okay', 'Good', 'Excellent'];
+  const STARS_BY_STATE = { ready: 4, low: 2, submitting: 4, offline: 4, rated: rated.rating };
+
+  document.querySelectorAll('.eng-initials').forEach((el) => { el.textContent = engineer.initials; });
+  $('who-sub').innerHTML = `${R.esc(engineer.name)} · ${R.esc(machine(ticket))} · <span class="mono">${ticket.number}</span>`;
+  $('rated-sub').innerHTML = `${R.esc(engineer.name)} · ${R.esc(machine(rated))} · <span class="mono">${rated.number}</span>`;
+  $('stars').innerHTML = [1, 2, 3, 4, 5].map((n) => `<button type="button" data-star="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" aria-pressed="false">${R.icon('star')}</button>`).join('');
+
+  const setStars = (n) => {
+    document.querySelectorAll('[data-star]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.star) <= n)));
+    $('star-label').textContent = LABELS[n];
+  };
+  const goto = (state) => document.querySelector(`.plate-states [data-state="${state}"]`).click();
+
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    setStars(STARS_BY_STATE[b.dataset.state] || 0);
+    $('stars').setAttribute('aria-disabled', String(b.dataset.state === 'rated' || b.dataset.state === 'submitting'));
+  }));
+  document.addEventListener('click', (event) => {
+    const star = event.target.closest('[data-star]');
+    if (star) {
+      const n = Number(star.dataset.star);
+      const state = document.querySelector('.screen').dataset.state;
+      if (state !== 'offline') goto(n <= 2 ? 'low' : 'ready');
+      setStars(n);
+    }
+    const chip = event.target.closest('.multi > .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+    const go = event.target.closest('[data-goto]');
+    if (go) {
+      goto(go.dataset.goto);
+      if (go.dataset.goto === 'submitting') window.setTimeout(() => goto('thanks'), 900);
+    }
+  });
+  setStars(STARS_BY_STATE.ready);
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

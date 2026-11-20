@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C505 Raise request: photos and videos</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C503 to C507 wizard */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+.mrow-sm{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r-lg); background:var(--field)}
+.mrow-sm b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.mrow-sm .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+/* this page */
+.media-head{display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 8px}
+.media-head b{font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.media-head span{font-size:var(--fs-12); color:var(--text-muted)}
+.upload .dur{position:absolute; left:6px; bottom:6px; padding:2px 6px; border-radius:var(--r-pill); background:rgba(24,34,45,.7); color:#fff; font-size:var(--fs-11); font-weight:600}
+.upload .state.queued{position:absolute; bottom:6px; color:var(--slate-600)}
+.upload.add:disabled{opacity:.4; cursor:not-allowed}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C505 Raise request: photos and videos</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">uploading</button>
+  <button type="button" data-state="empty" aria-pressed="false">nothing added</button>
+  <button type="button" data-state="failed" aria-pressed="false">upload failed</button>
+  <button type="button" data-state="full" aria-pressed="false">10 of 10</button>
+  <button type="button" data-state="toolarge" aria-pressed="false">file too large</button>
+  <button type="button" data-state="camera" aria-pressed="false" data-open="camera-off">camera denied</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C504-raise-issue.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 3 of 5</b><span>Photos and videos</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Uploads start when you are back.</div>
+          <div class="mrow-sm" id="mrow"></div>
+          <div class="banner amber" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg><div>Photos are strongly suggested for a breakdown.</div></div>
+          <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div>1 photo did not upload. You can continue without it.</div></div>
+
+          <div>
+            <div class="media-head"><b>Photos</b>
+              <span data-when="ready toolarge camera offline">4 of 10</span><span data-when="empty">0 of 10</span><span data-when="failed">4 of 10</span><span data-when="full">10 of 10</span></div>
+            <div class="uploads" data-when="ready toolarge camera">
+              <div class="upload" id="done-1"></div><div class="upload" id="done-2"></div><div class="upload" id="done-3"></div>
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="bar"><i style="width:60%"></i></span></div>
+              <button class="upload add" type="button" data-open="picker" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+            </div>
+            <div class="uploads" data-when="failed">
+              <div class="upload" id="done-4"></div><div class="upload" id="done-5"></div><div class="upload" id="done-6"></div>
+              <button class="upload failed" type="button" aria-label="Upload failed, retry"><svg class="ic ic-24" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg><span class="state">Retry</span></button>
+              <button class="upload add" type="button" data-open="picker" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+            </div>
+            <div class="uploads" data-when="offline">
+              <div class="upload" id="done-7"></div><div class="upload" id="done-8"></div><div class="upload" id="done-9"></div>
+              <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="state queued">Queued</span></div>
+              <button class="upload add" type="button" data-open="picker" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+            </div>
+            <div class="uploads" data-when="empty">
+              <button class="upload add" type="button" data-open="picker" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+            </div>
+            <div class="uploads" data-when="full" id="full"></div>
+            <span class="hint" data-when="full">Photo limit reached.</span>
+            <span class="error-text" data-when="toolarge"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This file is larger than 10 MB. Choose a smaller file.</span>
+          </div>
+
+          <div>
+            <div class="media-head"><b>Video</b><span>1, up to 60 seconds</span></div>
+            <div class="uploads">
+              <div class="upload" data-when="ready failed full toolarge camera offline"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-video-camera"/></svg><span class="dur">0:42</span>
+                <button class="remove" type="button" aria-label="Remove video"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+              <button class="upload add" type="button" data-open="picker" aria-label="Add video" data-when="empty"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-video-camera"/></svg></button>
+            </div>
+          </div>
+
+          <div>
+            <div class="media-head"><b>Documents</b><span>PDF, up to 10 MB</span></div>
+            <div class="list" data-when="ready failed full toolarge camera offline">
+              <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
+                <b>HMI alarm log.pdf</b><span class="sub">1.2 MB</span>
+                <span class="end"><button class="icon-btn sm" type="button" aria-label="Remove HMI alarm log.pdf"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-trash"/></svg></button></span></div>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" style="margin-top:10px" data-when="ready failed full toolarge camera offline empty"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-paperclip"/></svg>Add document</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C506-raise-visit.html" data-keep>Next</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="picker" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Add media">
+        <div class="group">
+          <button type="button" data-close>Take photo</button>
+          <button type="button" data-close>Choose from library</button>
+          <button type="button" data-close>Record video</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="camera-off" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="cam-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+          <h3 id="cam-title">Camera access is off</h3>
+          <p>Allow the camera in Settings to scan or take photos.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-primary" href="../system/S07-permission.html">Open Settings</a>
+          <button class="btn btn-secondary" type="button" data-close>Not now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave request">
+        <div class="group"><div class="title">Leave this request? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C501-support.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C501-support.html'">Discard request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 3. Up to 10 photos, one 60 second video and PDFs. Optional for preventive work, strongly
+suggested for a breakdown. Leaving the step keeps uploads going.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MAX_PHOTOS = 10;
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-CF-2011';
+  const m = R.machine(serial);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('mrow').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span>`;
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+  const done = `${R.icon('image', 'ic-28')}<button class="remove" type="button" aria-label="Remove photo">${R.icon('x')}</button>`;
+  document.querySelectorAll('[id^="done-"]').forEach((tile) => { tile.innerHTML = done; });
+  $('full').innerHTML = `<div class="upload">${done}</div>`.repeat(MAX_PHOTOS)
+    + `<button class="upload add" type="button" disabled aria-label="Add photo, limit reached">${R.icon('camera', 'ic-28')}</button>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

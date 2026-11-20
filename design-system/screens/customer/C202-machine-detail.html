@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C202 Machine detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.hero{display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center}
+.hero .thumb{width:88px; height:88px; border-radius:22px}
+.hero .thumb .ic{width:40px; height:40px}
+.hero h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.2}
+.hero .series{margin:4px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.hero .serial{margin:6px 0 0; font-size:var(--fs-13); color:var(--slate-700)}
+.chip-row{display:flex; flex-wrap:wrap; gap:6px}
+.quick a{position:relative}
+.quick .n{position:absolute; top:8px; right:10px; min-width:18px; height:18px; padding:0 5px; display:grid; place-items:center;
+  border-radius:var(--r-pill); background:var(--slate-800); color:#fff; font:700 10px var(--font-body)}
+.quick a[aria-disabled="true"], [data-state="decommissioned"] .quick a:not(:last-child),
+[data-state="offline"] .quick a:not(:last-child){opacity:.42; pointer-events:none}
+.panel-title{margin:4px 2px 10px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.cover{padding:16px; border-radius:var(--r-lg); background:var(--field)}
+.cover .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.cover h3{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.cover .big{margin:12px 0 0; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
+.cover .big small{font:400 var(--fs-14) var(--font-body); color:var(--text-muted)}
+.cover .actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px}
+.cover .actions .btn{width:100%}
+.doc-row .disc{background:var(--red-50); color:var(--red)}
+.part-row{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; padding:12px 0}
+.part-row + .part-row{border-top:1px solid var(--line)}
+.part-row b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.part-row span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.part-row .price{font:400 var(--fs-14) var(--font-display); color:var(--slate-900); text-align:right}
+.part-row .price .tag{margin-top:4px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C202 Machine detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="machines"><span>machine</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="decommissioned" aria-pressed="false">decommissioned</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C201-machines.html" aria-label="Back to machines"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="nav-title">Machine</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More actions"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+
+      <div class="scroll">
+        <div class="stack" data-when="ready decommissioned offline" id="body">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
+          <div class="banner grey" data-when="decommissioned"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+            <div><b>Decommissioned on 18 Nov 2026</b>Service actions are off for this machine. History and documents stay available.</div></div>
+          <div id="pending-banner"></div>
+
+          <div class="hero" id="hero"></div>
+          <div class="chip-row" id="chips"></div>
+          <div class="quick" id="quick"></div>
+
+          <div class="chips" role="tablist" aria-label="Machine sections">
+            <button class="chip" role="tab" aria-selected="true" aria-controls="p-overview">Overview</button>
+            <button class="chip" role="tab" aria-selected="false" aria-controls="p-history">History</button>
+            <button class="chip" role="tab" aria-selected="false" aria-controls="p-cover">Warranty and AMC</button>
+            <button class="chip" role="tab" aria-selected="false" aria-controls="p-docs">Documents</button>
+            <button class="chip" role="tab" aria-selected="false" aria-controls="p-parts">Parts</button>
+          </div>
+
+          <section id="p-overview" class="stack"></section>
+          <section id="p-history" hidden></section>
+          <section id="p-cover" class="stack" hidden></section>
+          <section id="p-docs" hidden></section>
+          <section id="p-parts" hidden></section>
+        </div>
+
+        <div class="stack" data-when="loading" style="margin-top:4px">
+          <div class="hero"><span class="skeleton" style="width:88px; height:88px; border-radius:22px"></span>
+            <div class="stack-sm"><span class="skeleton sk-line" style="width:80%; height:18px"></span><span class="skeleton sk-line" style="width:50%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <div class="row-flex"><span class="skeleton" style="width:150px; height:24px; border-radius:var(--r-pill)"></span><span class="skeleton" style="width:90px; height:24px; border-radius:var(--r-pill)"></span></div>
+          <div class="quick"><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:96px; border-radius:var(--r-lg)"></span></div>
+          <span class="skeleton" style="height:240px; border-radius:var(--r-lg)"></span>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Machine actions">
+        <div class="group"><div class="title" id="more-title">Machine</div>
+          <button type="button" data-close onclick="location.href='C206-edit-machine.html'">Edit details</button>
+          <button type="button" data-close onclick="location.href='C1412-share-machine.html'">Share machine card</button>
+          <button type="button" data-close onclick="location.href='C1411-machine-status.html'">Update status</button>
+          <button type="button" class="destructive" data-close onclick="location.href='C209-transfer-machine.html'">Transfer or remove</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One page for everything about a machine. Each section loads when first opened, with its own error
+and Retry. Expired warranty swaps Claim warranty for Raise paid service. A machine waiting for verification shows limited
+data. Not found opens <a href="../system/S05-not-found.html">S05</a>, another company's machine opens
+<a href="../system/S06-no-access.html">S06</a>. Offline keeps the saved overview and disables actions that need the server.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const STATUS = { running: ['Running', 'green'], repair: ['Under repair', 'amber'], idle: ['Idle', ''], pending: ['Pending verification', ''] };
+  /* sample specifications per machine type until Zixom supplies datasheets */
+  const SPECS = {
+    'Thermoforming machine': [['Forming area', '760 x 560 mm'], ['Sheet thickness', '0.2 to 1.8 mm'], ['Heaters', 'Infrared ceramic, PID'], ['Control', 'PLC with HMI']],
+    'Cup forming machine': [['Cup diameter', '50 to 95 mm'], ['Output', 'Up to 18,000 cups per hour'], ['Heaters', 'Calrod, PID'], ['Control', 'PLC with HMI']],
+    'Vacuum forming machine': [['Forming area', '600 x 450 mm'], ['Depth of draw', '200 mm'], ['Heaters', 'Infrared ceramic'], ['Operation', 'Semi automatic']],
+    'Plastic crusher': [['Throat size', '300 x 200 mm'], ['Motor', '7.5 kW'], ['Blades', '4 rotating, 2 fixed'], ['Output', 'Up to 120 kg per hour']],
+  };
+  const NEXT_VISIT = { 'AMC-2026-0010': '2026-12-12', 'AMC-2026-0011': '2026-11-30' };
+
+  const serial = new URLSearchParams(location.search).get('serial') || 'ZP-TF-2204';
+  const m = R.machine(serial);
+  const company = data.companies.find((c) => c.id === m.company);
+  const site = company.sites.find((s) => s.id === m.site);
+  const contract = m.amc ? R.amc(m.amc) : null;
+  const tickets = data.tickets.filter((t) => t.machine === serial);
+  const open = tickets.filter((t) => R.isOpen(t));
+  const pending = m.status === 'pending';
+  const warrantyLeft = m.warrantyEnd ? R.daysFromToday(m.warrantyEnd) : null;
+  const inWarranty = warrantyLeft !== null && warrantyLeft >= 0;
+  const name = m.nickname || m.model;
+
+  /* plate: jump between sample machines */
+  $('machines').insertAdjacentHTML('beforeend', data.machines.map((x) =>
+    `<button type="button" aria-pressed="${x.serial === serial}" onclick="location.search='?serial=${x.serial}'">${R.esc(x.nickname || x.model)}</button>`).join(''));
+
+  $('nav-title').textContent = name;
+  $('more-title').textContent = `${name}, ${serial}`;
+  if (pending) $('pending-banner').outerHTML = `<div class="banner"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+    <div><b>Zixom is verifying this machine</b>You will get a notification once it is linked. Until then service and warranty are off.</div></div>`;
+
+  $('hero').innerHTML = `${R.thumb(m)}<div><h2>${R.esc(m.model)}</h2>
+    <p class="series">${R.esc(m.type)}${m.nickname ? ` · ${R.esc(m.nickname)}` : ''}</p>
+    <p class="serial mono">${R.esc(serial)}</p></div>`;
+  $('chips').innerHTML = R.tag(...STATUS[m.status]) + R.warrantyTag(m) + R.amcTag(m);
+
+  const action = (href, iconName, label, count = 0, disabled = false) => `<a href="${href}"${disabled ? ' aria-disabled="true"' : ''}>
+    <span class="disc">${R.icon(iconName)}</span>${label}${count ? `<span class="n">${count}</span>` : ''}</a>`;
+  $('quick').innerHTML = [
+    action(`C503-raise-machine.html?serial=${serial}`, 'wrench', 'Raise service', open.length, pending),
+    inWarranty ? action(`C303-claim-machine.html?serial=${serial}`, 'shield-check', 'Claim warranty', 0, pending)
+      : action(`C503-raise-machine.html?serial=${serial}`, 'currency-inr', 'Raise paid service', 0, pending),
+    action(`C702-machine-parts.html?serial=${serial}`, 'package', 'Order parts', 0, pending),
+    action(`C602-ask.html?serial=${serial}`, 'chat-circle-dots', 'Ask a question'),
+  ].join('');
+
+  /* overview */
+  const kv = (rows) => `<dl class="kv" style="margin:0">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
+  const lastService = tickets.find((t) => t.status === 'closed');
+  $('p-overview').innerHTML = pending ? `<div class="card-fill">${kv([['Serial', `<span class="mono">${serial}</span>`], ['Site', site.name], ['Submitted', 'Sun 22 Nov']])}</div>` : `
+    <div class="card-fill">${kv([
+      ['Installed on', R.date(m.installed)], ['Commissioned on', R.date(m.commissioned)],
+      ['Site', `<a class="link accent" href="#" style="font-size:inherit">${R.esc(site.name)} ${R.icon('map-pin', 'ic-16')}</a>`],
+      ['Contact', `${R.esc(site.contact.name)}`],
+      ['Running hours', `${m.runningHours.toLocaleString('en-IN')} h`],
+      ['Last service', lastService ? R.date(lastService.created) : 'None on record'],
+      ['Next AMC visit', contract && NEXT_VISIT[contract.number] ? R.date(NEXT_VISIT[contract.number]) : 'No visit planned'],
+    ])}</div>
+    <div><h3 class="panel-title">Key specifications</h3><div class="card">${kv(SPECS[m.type].map(([k, v]) => [k, R.esc(v)]))}</div></div>
+    ${open.length ? `<div><h3 class="panel-title">Open requests</h3><div class="stack-sm">${open.slice(0, 3)
+      .map((t) => R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`)).join('')}</div></div>` : ''}
+    <div class="list">
+      <a class="list-item" href="C1405-operators.html"><span class="disc">${R.icon('users')}</span><b>Operators</b><span class="sub">2 on shift</span><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="C1401-running-hours.html"><span class="disc">${R.icon('gauge')}</span><b>Running hours log</b><span class="sub">Last entry 20 Nov</span><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="C1403-machine-notes.html"><span class="disc">${R.icon('note-pencil')}</span><b>Notes</b><span class="sub">3 notes</span><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="C1407-machine-photos.html"><span class="disc">${R.icon('image')}</span><b>Photos</b><span class="sub">Installation and your uploads</span><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="C1408-commissioning.html"><span class="disc">${R.icon('certificate')}</span><b>Commissioning and training</b><span class="sub">${R.date(m.commissioned)}</span><span class="end">${R.icon('caret-right')}</span></a>
+    </div>`;
+
+  /* history preview */
+  const events = [...tickets.map((t) => ({ when: t.created, title: `${t.type}`, sub: `${t.number} · ${t.summary}`, done: !R.isOpen(t) })),
+    ...(m.commissioned ? [{ when: m.commissioned, title: 'Commissioned', sub: 'Operators trained on site', done: true },
+      { when: m.installed, title: 'Installed', sub: site.name, done: true }] : [])]
+    .sort((a, b) => b.when.localeCompare(a.when)).slice(0, 10);
+  $('p-history').innerHTML = events.length ? `<ol class="timeline">${events.map((e) => `<li class="done"><span class="dot"></span>
+    <div><b>${R.esc(e.title)}</b><span>${R.date(e.when)} · ${R.esc(e.sub)}</span></div></li>`).join('')}</ol>
+    <a class="btn btn-secondary" style="margin-top:16px" href="C207-machine-history.html?serial=${serial}">View full history</a>`
+    : `<div class="state"><span class="disc">${R.icon('clock')}</span><h3>No history yet</h3><p>Visits, repairs and parts appear here.</p></div>`;
+
+  /* warranty and AMC */
+  const warrantyCard = !m.warrantyEnd ? '' : `<div class="cover"><div class="top"><h3>Warranty</h3>${R.warrantyTag(m)}</div>
+    <p class="big">${inWarranty ? `${warrantyLeft} <small>days left</small>` : '<small>Ended on</small> ' + R.date(m.warrantyEnd)}</p>
+    <dl class="kv" style="margin:8px 0 0">${['Standard, 12 months from commissioning'].map((v) => `<div><dt>Type</dt><dd>${v}</dd></div>`).join('')}
+      <div><dt>Ends</dt><dd>${R.date(m.warrantyEnd)}</dd></div></dl>
+    <div class="actions">${inWarranty ? `<a class="btn btn-primary btn-sm" href="C303-claim-machine.html?serial=${serial}">Claim warranty</a>`
+      : `<a class="btn btn-primary btn-sm" href="C503-raise-machine.html?serial=${serial}">Raise paid service</a>`}
+      <a class="btn btn-secondary btn-sm" href="C302-warranty-details.html?serial=${serial}">View details</a></div></div>`;
+  const amcCard = contract ? `<div class="cover"><div class="top"><h3>${R.esc(contract.plan)} AMC</h3>${R.amcTag(m)}</div>
+    <p class="big">${contract.visitsIncluded - contract.visitsUsed} <small>of ${contract.visitsIncluded} visits left</small></p>
+    <div class="meter" style="margin-top:10px"><i style="width:${(contract.visitsUsed / contract.visitsIncluded) * 100}%"></i></div>
+    <dl class="kv" style="margin:8px 0 0"><div><dt>Contract</dt><dd class="mono">${contract.number}</dd></div>
+      <div><dt>Valid</dt><dd>${R.date(contract.start)} to ${R.date(contract.end)}</dd></div></dl>
+    <div class="actions">${contract.status === 'active' ? `<a class="btn btn-secondary btn-sm" href="C406-amc-visits.html">Visit schedule</a>`
+      : `<a class="btn btn-primary btn-sm" href="C405-renew-amc.html">Renew</a>`}
+      <a class="btn btn-secondary btn-sm" href="C402-amc-contract.html?amc=${contract.number}">View contract</a></div></div>`
+    : `<div class="cover"><div class="top"><h3>AMC</h3>${R.tag('No AMC')}</div>
+      <p class="card-sub" style="margin-top:10px">Preventive visits, faster breakdown response and parts discounts. Priced per machine per year.</p>
+      <div class="actions" style="grid-template-columns:1fr"><a class="btn btn-secondary btn-sm" href="C403-amc-plans.html">View AMC plans</a></div></div>`;
+  $('p-cover').innerHTML = pending ? '<p class="card-sub">Warranty and AMC show once Zixom verifies this machine.</p>' : warrantyCard + amcCard;
+
+  /* documents */
+  const docs = [['book-open', `${m.model.split(' ')[0]} operating manual`, 'PDF, 48 MB'], ['circuitry', 'Wiring diagram', 'PDF, 6 MB'],
+    ['list-checks', 'Parts list', 'PDF, 2 MB'], ['certificate', 'Warranty certificate', 'PDF, 0.4 MB · Downloaded']];
+  $('p-docs').innerHTML = pending ? '<p class="card-sub">Documents show once Zixom verifies this machine.</p>'
+    : `<div class="list">${docs.map(([i, t, s]) => `<a class="list-item" href="C902-document-viewer.html"><span class="disc">${R.icon(i)}</span>
+      <b>${t}</b><span class="sub">${s}</span><span class="end">${R.icon('download-simple')}</span></a>`).join('')}</div>`;
+
+  /* parts that fit */
+  $('p-parts').innerHTML = pending ? '<p class="card-sub">Parts show once Zixom verifies this machine.</p>' : data.parts.slice(0, 4).map((p) => `
+    <a class="part-row" href="C703-part-detail.html?part=${p.number}" style="color:inherit; text-decoration:none">
+      <span class="thumb sm">${R.icon('package')}</span>
+      <span><b>${R.esc(p.name)}</b><span class="mono">${p.number}</span></span>
+      <span class="price">${p.price ? R.money(p.price) : 'Price on request'}<br>${R.stockTag(p.stock)}</span></a>`).join('')
+    + `<a class="btn btn-secondary" style="margin-top:12px" href="C702-machine-parts.html?serial=${serial}">All parts for this machine</a>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

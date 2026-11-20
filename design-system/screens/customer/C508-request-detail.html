@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C508 Service request detail</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tags-row{display:flex; flex-wrap:wrap; gap:6px}
+.mrow{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; margin-top:12px; color:inherit; text-decoration:none}
+.mrow b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.mrow > .ic{color:var(--slate-400)}
+.raised{margin:10px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
+.scard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
+.scard .disc{grid-row:1 / span 2; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
+.scard.amber .disc{background:var(--amber-50); color:var(--amber)}
+.scard.red .disc{background:var(--red-50); color:var(--red)}
+.scard.green .disc{background:var(--green-50); color:var(--green)}
+.scard.grey .disc{background:var(--slate-100); color:var(--slate-600)}
+.scard b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); line-height:1.35}
+.scard p{grid-column:2; margin:4px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.scard .eta{grid-column:1 / -1; display:flex; align-items:center; gap:12px; margin-top:14px; padding:12px; border-radius:var(--r-md); background:var(--blue-50)}
+.scard .eta b{font-size:var(--fs-22); color:var(--blue); white-space:nowrap}
+.scard .eta span{font-size:var(--fs-13); color:var(--slate-700)}
+.sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.desc{margin:10px 2px 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.stars{display:inline-flex; gap:2px; color:var(--amber)}
+.acts{display:flex; gap:10px}
+.acts .btn{flex:1; padding:0 12px}
+.acts .icon-btn{width:54px; height:54px}
+.more-photos{position:absolute; inset:0; display:grid; place-items:center; background:rgba(24,34,45,.55); color:#fff; font:400 var(--fs-18) var(--font-display)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C508 Service request detail</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states" id="ticket-switch"><span>ticket</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="refresh" aria-pressed="false">updated while open</button>
+  <button type="button" data-state="changed" aria-pressed="false">engineer changed</button>
+  <button type="button" data-state="moved" aria-pressed="false">visit moved by Zixom</button>
+  <button type="button" data-state="zcancel" aria-pressed="false">cancelled by Zixom</button>
+  <button type="button" data-state="photos" aria-pressed="false">12 photos</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="notfound" aria-pressed="false">not found</button>
+  <button type="button" data-state="noaccess" aria-pressed="false">no access</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C502-requests.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1 id="title">Service request</h1>
+        <button class="icon-btn" type="button" data-open="more" aria-label="More"><svg class="ic" aria-hidden="true"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" id="body"></div>
+
+        <div class="stack" data-when="loading">
+          <span class="skeleton sk-line" style="width:55%"></span>
+          <div class="row-flex"><span class="skeleton" style="width:44px; height:44px"></span><div class="grow stack-sm"><span class="skeleton sk-line" style="width:60%"></span><span class="skeleton sk-line" style="width:40%"></span></div></div>
+          <span class="skeleton" style="height:96px; border-radius:24px"></span>
+          <span class="skeleton sk-card"></span>
+          <span class="skeleton" style="height:180px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="notfound" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>We cannot find this</h3>
+          <p>It may have been removed or you may not have access.</p>
+          <a class="btn btn-secondary" href="C502-requests.html">Go back</a>
+        </div>
+        <div class="state" data-when="noaccess" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3>This is not available to you</h3>
+          <p>This record belongs to another company.</p>
+          <a class="btn btn-secondary" href="C502-requests.html">Go back</a>
+        </div>
+      </div>
+      <div class="footer-bar" id="actions" data-when="ready refresh changed moved photos offline"></div>
+      <div class="footer-bar" data-when="zcancel"><a class="btn btn-primary" id="raise-again" href="C503-raise-machine.html">Raise again</a></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="more" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Request actions">
+        <div class="group"><div class="title" id="more-title">Service request</div>
+          <button type="button" data-close data-toast="Opening share sheet">Share summary</button>
+          <button type="button" data-close data-toast="Copied">Copy request number</button>
+          <button type="button" data-close>Call Zixom support</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="call" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Call">
+        <div class="group"><div class="title">Call about this request</div>
+          <button type="button" data-close id="call-engineer">Call engineer</button>
+          <button type="button" data-close>Call Zixom support</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="info" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="info-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="info-title">Add information</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="field"><label for="info-text">Message to Zixom<span class="counter">0 / 1000</span></label>
+            <textarea class="textarea" id="info-text" placeholder="What changed or what Zixom asked for"></textarea></div>
+          <div class="uploads" style="margin-top:12px">
+            <button class="upload add" type="button" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Sent to Zixom">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One ticket from request to closure; pick a ticket above for each status. Open with
+<code>?ticket=TKT-2026-0123</code>. Engineer changed and visit moved apply to tickets with an engineer. Cancel opens
+<a href="C511-cancel-request.html">C511</a>, Reschedule <a href="C510-reschedule.html">C510</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT_TICKET = 'TKT-2026-0123';
+  const AUTO_CLOSE_DAYS = 3;
+
+  /* Sample data not in data.js yet (move there): comments with Zixom, photo counts, reasons */
+  const COMMENTS = {
+    'TKT-2026-0121': [['them', 'Please share a photo of the vacuum gauge after 20 minutes of running.', 'Neha, Zixom support · Sat 21 Nov, 6:10 PM']],
+    'TKT-2026-0123': [['me', 'Left mould rims are 1 mm lower than the right.', 'You · Sun 22 Nov, 10:34 AM'],
+      ['them', 'Thanks. Sandeep will bring a spare heater band.', 'Neha, Zixom support · Sun 22 Nov, 2:20 PM']],
+    'TKT-2026-0127': [['them', 'The PID controller is on order. We will book the visit when it arrives.', 'Neha, Zixom support · Wed 18 Nov, 11:05 AM']],
+  };
+  const PHOTOS = { 'TKT-2026-0121': 2, 'TKT-2026-0122': 2, 'TKT-2026-0123': 3, 'TKT-2026-0126': 4, 'TKT-2026-0132': 1 };
+  const REASONS = {
+    'TKT-2026-0130': 'The site was closed when the engineer arrived.',
+    'TKT-2026-0131': 'Cancelled by you: no longer needed.',
+  };
+  const ZIXOM_CANCEL_REASON = 'No reply to our question for 7 days.';
+  const MOVED_TO = { date: '2026-11-25', slot: '9 to 12 AM' };
+  const ENGINEER_AFTER_CHANGE = 'anita';
+
+  /* a request just submitted in C507 is not in data.js: build it from the query string */
+  const params = new URLSearchParams(location.search);
+  const number = params.get('ticket') || DEFAULT_TICKET;
+  const nextNumber = `TKT-2026-${String(Math.max(...data.tickets.map((t) => Number(t.number.slice(-4)))) + 1).padStart(4, '0')}`;
+  const t = data.tickets.find((x) => x.number === number)
+    || (number === nextNumber && { number, status: 'submitted', machine: params.get('machine') || 'ZP-CF-2011',
+      type: 'Breakdown or repair', severity: 'production', coverage: params.get('coverage') || 'amc', created: data.now,
+      summary: 'Heater zone 2 takes 25 minutes to reach temperature. Cups come out soft on one side.' });
+
+  /* ticket switch above the frame */
+  $('ticket-switch').insertAdjacentHTML('beforeend', data.tickets.map((x) => `<button type="button" data-ticket="${x.number}"
+    aria-pressed="${x.number === number}">${x.number.slice(-4)} ${R.esc(x.status)}</button>`).join(''));
+  $('ticket-switch').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-ticket]');
+    if (b) location.search = `?ticket=${b.dataset.ticket}`;
+  });
+
+  if (!t) {
+    document.querySelector('.screen').dataset.state = 'notfound';
+    return;
+  }
+
+  const time = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const m = R.machine(t.machine);
+  const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
+  const eng = t.engineer && R.engineer(t.engineer);
+  const visit = t.window && `${R.dayDate(t.window.date)}, ${t.window.slot}`;
+  const estimate = data.estimates.find((e) => e.ticket === t.number);
+  const report = data.reports.find((r) => r.ticket === t.number);
+  const invoice = data.invoices.find((i) => i.for === t.number);
+  const ready = 'ready refresh changed moved photos offline';
+
+  $('title').textContent = t.number;
+  $('more-title').textContent = t.number;
+  if (eng) $('call-engineer').textContent = `Call ${eng.name}`;
+  $('raise-again').href = `C503-raise-machine.html?machine=${m.serial}`;
+
+  /* ---------- status card: current step in plain words and the next step ---------- */
+  const CARD = {
+    'submitted': ['tray', 'blue', 'Received. Zixom is reviewing it', 'We will tell you when an engineer is assigned.'],
+    'awaiting-info': ['chat-text', 'amber', 'We need more information', 'Reply below so we can plan the visit.'],
+    'estimate': ['currency-inr', 'amber', 'Estimate ready', estimate && `${estimate.number}, ${R.money(R.totals(estimate.lines).total)}. Valid until ${R.date(estimate.validUntil)}.`],
+    'assigned': ['user', 'blue', `Engineer assigned. Visit on ${visit}`, eng && `${eng.name} will confirm the time.`],
+    'scheduled': ['calendar-check', 'blue', `Visit on ${visit}`, 'We will tell you when the engineer is on the way.'],
+    'on-the-way': ['navigation-arrow', 'blue', 'Engineer on the way', `Visit window ${visit}.`],
+    'in-progress': ['wrench', 'blue', 'Work in progress', 'You get the report when the work is done.'],
+    'on-hold': ['clock', 'amber', `On hold: ${t.holdReason}`, 'We will book the next visit when ready.'],
+    'completed': ['check-circle', 'amber', 'Work completed. Please confirm', report && `Closes by itself on ${R.dayDate(new Date(new Date(report.date).getTime() + AUTO_CLOSE_DAYS * 86400000).toISOString())}.`],
+    'closed': ['seal-check', 'green', 'Resolved', t.rating ? `You rated it ${t.rating} of 5.` : 'Rate the service within 7 days.'],
+    'visit-failed': ['warning-circle', 'red', 'Visit could not be completed', REASONS[t.number]],
+    'cancelled': ['x', 'grey', 'Cancelled', REASONS[t.number]],
+    'reopened': ['arrows-clockwise', 'amber', 'Reopened', 'Zixom assigns an engineer again, the same one when possible.'],
+  };
+  const [cIcon, cTone, cHead, cNext] = CARD[t.status];
+  const statusCard = `<div class="scard ${cTone}" data-when="${ready}"><span class="disc">${R.icon(cIcon)}</span>
+      <b>${R.esc(cHead)}</b>${cNext ? `<p>${R.esc(cNext)}</p>` : ''}
+      ${t.status === 'on-the-way' ? `<div class="eta"><b>${t.eta} min</b><span>${R.esc(eng.name)} reaches in about ${t.eta} minutes.</span></div>` : ''}
+    </div>
+    <div class="scard red" data-when="zcancel"><span class="disc">${R.icon('x')}</span><b>Cancelled by Zixom</b><p>${ZIXOM_CANCEL_REASON}</p></div>`;
+
+  /* ---------- banners for changes made while the screen is open ---------- */
+  const banners = `
+    <div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>
+    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div>This was updated. <button class="link-btn" type="button" data-busy>Refresh</button></div></div>
+    ${eng ? `<div class="banner amber" data-when="changed">${R.icon('user')}<div><b>Your engineer was changed</b>${R.esc(R.engineer(ENGINEER_AFTER_CHANGE).name)} will visit instead.</div></div>` : ''}
+    ${visit ? `<div class="banner amber" data-when="moved">${R.icon('calendar-blank')}<div><b>Zixom moved your visit to ${R.dayDate(MOVED_TO.date)}, ${MOVED_TO.slot}</b>
+      <button class="link-btn" type="button" data-toast="New time accepted">Accept</button> · <a href="C510-reschedule.html?ticket=${t.number}">Request another time</a></div></div>` : ''}`;
+
+  /* ---------- header ---------- */
+  const header = `<div>
+      <div class="tags-row"><span data-when="${ready}">${R.ticketTag(t.status)}</span><span data-when="zcancel">${R.ticketTag('cancelled')}</span>${R.coverageTag(t.coverage)}${R.severityTag(t.severity)}</div>
+      <a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
+        <span><b>${R.esc(m.nickname || m.model)}</b><span>${R.esc(m.nickname ? m.model : m.type)} · <span class="mono" style="display:inline; white-space:nowrap">${m.serial}</span></span></span>${R.icon('caret-right', 'ic-16')}</a>
+      <p class="raised">Raised ${R.dayDate(t.created)}, ${time(t.created)} · ${R.esc(site.name)}</p>
+    </div>`;
+
+  /* ---------- engineer ---------- */
+  const SHOW_PHONE = !['closed', 'cancelled'].includes(t.status);
+  const person = (e) => (SHOW_PHONE ? R.engineerCard(e) : `<div class="person"><span class="avatar">${R.esc(e.initials)}</span>
+    <span class="grow"><b>${R.esc(e.name)}</b><span>${R.esc(e.designation)}</span></span></div>`);
+  const engineerBlock = (e, when) => `<div class="sec" data-when="${when}"><h2>Your engineer</h2>
+      <div class="card-fill">${person(e)}<a class="link accent" style="margin-top:10px" href="C1511-engineer-profile.html">View profile</a></div></div>`;
+  const engineer = eng && t.status !== 'cancelled'
+    ? engineerBlock(eng, 'ready refresh moved photos offline') + engineerBlock(R.engineer(ENGINEER_AFTER_CHANGE), 'changed') : '';
+
+  /* ---------- timeline: [done count, current step, first todo index] by status ---------- */
+  const STEPS = [['submitted', 'Request received'], ['assigned', 'Engineer assigned'], ['scheduled', 'Visit scheduled'],
+    ['on-the-way', 'Engineer on the way'], ['in-progress', 'Work in progress'], ['completed', 'Work completed'], ['closed', 'Resolved']];
+  const PLACE = {
+    'submitted': [1, 'Zixom is reviewing', 1], 'awaiting-info': [1, 'We need more information', 1],
+    'estimate': [1, 'Estimate ready for your approval', 1], 'assigned': [2, `Visit on ${visit}`, 3],
+    'scheduled': [3, `Visit on ${visit}`, 3], 'on-the-way': [3, 'Engineer on the way', 4],
+    'in-progress': [4, 'Work in progress', 5], 'on-hold': [5, `On hold: ${t.holdReason}`, 5],
+    'completed': [5, 'Work completed, please confirm', 6], 'closed': [7, null, 7],
+    'visit-failed': [4, 'Visit could not be completed', 7], 'cancelled': [1, 'Cancelled', 7], 'reopened': [6, 'Reopened', 7],
+  };
+  const ACTOR = { submitted: 'You', assigned: 'Zixom', scheduled: eng?.name, 'on-the-way': eng?.name, 'in-progress': eng?.name, completed: eng?.name, closed: 'You' };
+  const ACTIVITY_TITLE = { assigned: 'Engineer assigned', 'on-the-way': 'Engineer on the way' };
+  const stamp = (key) => {
+    if (key === 'submitted') return `${R.dayDate(t.created)}, ${time(t.created)} · You`;
+    const event = data.activity.find((a) => a.sub.startsWith(t.number) && a.title === ACTIVITY_TITLE[key]);
+    return [event && `${R.dayDate(event.when)}, ${time(event.when)}`, ACTOR[key]].filter(Boolean).join(' · ');
+  };
+  const [doneCount, nowLabel, todoFrom] = PLACE[t.status];
+  const rows = [
+    ...STEPS.slice(0, doneCount).map(([key, label]) => `<li class="done"><span class="dot"></span><div><b>${label}</b><span>${R.esc(stamp(key))}</span></div></li>`),
+    nowLabel ? `<li class="now"><span class="dot"></span><div><b>${R.esc(nowLabel)}</b></div></li>` : '',
+    ...STEPS.slice(todoFrom).map(([, label]) => `<li class="todo"><span class="dot"></span><div><b>${label}</b></div></li>`),
+  ];
+  const timeline = `<div class="sec" data-when="${ready}"><h2>Timeline</h2><ol class="timeline">${rows.join('')}</ol></div>`;
+
+  /* ---------- your request ---------- */
+  const tile = `<div class="upload">${R.icon('image', 'ic-28')}</div>`;
+  const photoCount = PHOTOS[t.number] || 0;
+  const GALLERY_SHOWN = 8;
+  const gallery = `<div class="uploads" data-when="photos" style="margin-top:12px">${tile.repeat(GALLERY_SHOWN - 1)}
+    <div class="upload">${R.icon('image', 'ic-28')}<span class="more-photos">+5</span></div></div>`;
+  const request = `<div class="sec" data-when="ready refresh changed moved zcancel photos offline"><h2>Your request</h2>
+      <dl class="kv" style="margin:0">
+        <div><dt>Type</dt><dd>${R.esc(t.type)}</dd></div>
+        ${t.severity ? `<div><dt>Severity</dt><dd>${R.severityTag(t.severity)}</dd></div>` : ''}
+        ${visit ? `<div><dt>Visit</dt><dd>${R.esc(visit)}</dd></div>` : ''}
+        <div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>
+      </dl>
+      <p class="desc">${R.esc(t.summary)}</p>
+      ${photoCount ? `<div class="uploads" data-when="ready refresh changed moved zcancel offline" style="margin-top:12px">${tile.repeat(photoCount)}</div>` : ''}
+      ${gallery}
+    </div>`;
+
+  /* ---------- estimate, report, invoice when present ---------- */
+  const estimateBlock = estimate ? `<div class="sec" data-when="${ready}"><h2>Estimate</h2>
+      <a class="list-item list" href="C509-estimate.html?ticket=${t.number}"><span class="disc">${R.icon('currency-inr')}</span>
+        <b class="mono">${estimate.number}</b><span class="sub">${R.money(R.totals(estimate.lines).total)} · valid until ${R.date(estimate.validUntil)}</span>
+        <span class="end">${R.icon('caret-right')}</span></a></div>` : '';
+  const reportBlock = report ? `<div class="sec" data-when="${ready}"><h2>Visit report</h2>
+      <a class="list-item list" href="C512-service-report.html?ticket=${t.number}"><span class="disc">${R.icon('file-text')}</span>
+        <b class="mono">${report.number}</b><span class="sub">${R.date(report.date)} · ${R.esc(R.engineer(report.engineer).name)}</span>
+        <span class="end">${R.icon('caret-right')}</span></a></div>` : '';
+  const invoiceBlock = invoice ? `<div class="sec" data-when="${ready}"><h2>Invoice</h2>
+      <a class="list-item list" href="C802-invoice-detail.html?invoice=${invoice.number}"><span class="disc">${R.icon('receipt')}</span>
+        <b class="mono">${invoice.number}</b><span class="sub">${R.money(invoice.amount)}</span><span class="end">${R.invoiceTag(invoice.status)}</span></a></div>` : '';
+
+  /* ---------- comments with Zixom ---------- */
+  const comments = COMMENTS[t.number] || [];
+  const thread = `<div class="sec" data-when="${ready}"><h2>Messages with Zixom</h2>
+      ${comments.length ? `<div class="thread">${comments.map(([who, text, meta]) => `<div class="bubble ${who}">${R.esc(text)}</div>
+        <div class="bubble-meta ${who === 'me' ? 'me' : ''}">${R.esc(meta)}</div>`).join('')}</div>` : '<p class="hint" style="margin-top:0">No messages yet.</p>'}
+      ${['closed', 'cancelled'].includes(t.status) ? '' : `<button class="btn btn-secondary btn-sm" type="button" data-open="info" style="margin-top:12px">${R.icon('chat-text', 'ic-18')}Add a message</button>`}
+    </div>`;
+
+  $('body').innerHTML = banners + header + statusCard + engineer + timeline + estimateBlock + request + reportBlock + invoiceBlock + thread;
+  $('body').dataset.when = 'ready refresh changed moved zcancel photos offline';
+
+  /* ---------- action bar by status (spec section 11) ---------- */
+  const link = (label, href, cls = 'btn-primary') => `<a class="btn ${cls}" href="${href}?ticket=${t.number}">${label}</a>`;
+  const sheet = (label, id, cls = 'btn-primary') => `<button class="btn ${cls}" type="button" data-open="${id}">${label}</button>`;
+  const call = `<button class="icon-btn" type="button" data-open="call" aria-label="Call engineer">${R.icon('phone')}</button>`;
+  const ACTIONS = {
+    'submitted': [link('Cancel', 'C511-cancel-request.html', 'btn-secondary'), sheet('Add information', 'info')],
+    'awaiting-info': [sheet('Add information', 'info')],
+    'estimate': [link('Review estimate', 'C509-estimate.html')],
+    'assigned': [call, link('Cancel', 'C511-cancel-request.html', 'btn-secondary'), link('Reschedule', 'C510-reschedule.html')],
+    'scheduled': [call, link('Cancel', 'C511-cancel-request.html', 'btn-secondary'), link('Reschedule', 'C510-reschedule.html')],
+    'on-the-way': [call, link('Track engineer', 'C516-track.html')],
+    'in-progress': [sheet('Call engineer', 'call')],
+    'on-hold': [sheet('Add information', 'info')],
+    'completed': [link('Not resolved', 'C515-reopen.html', 'btn-secondary'), link('Confirm', 'C513-confirm-completion.html')],
+    'closed': [`<a class="icon-btn" href="C512-service-report.html?ticket=${t.number}" aria-label="Download report and invoice">${R.icon('download-simple')}</a>`,
+      link('Reopen', 'C515-reopen.html', 'btn-secondary'), ...(t.rating ? [] : [link('Rate', 'C514-rate-service.html')])],
+    'visit-failed': [link('Reschedule', 'C510-reschedule.html')],
+    'cancelled': [`<a class="btn btn-primary" href="C503-raise-machine.html?machine=${m.serial}">Raise again</a>`],
+    'reopened': [sheet('Add information', 'info')],
+  };
+  $('actions').innerHTML = `<div class="acts">${ACTIONS[t.status].join('')}</div>`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

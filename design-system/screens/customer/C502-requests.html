@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C502 Service requests</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.tools{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center}
+.tools .icon-btn{width:50px; height:50px}
+.count-line{display:flex; justify-content:space-between; align-items:center; margin:2px 4px 0; font-size:var(--fs-13); color:var(--text-muted)}
+.count-line b{color:var(--slate-900); font-weight:600}
+.group-title{display:flex; align-items:center; gap:6px; margin:6px 4px 0; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.group-title .ic{color:var(--amber)}
+.fab.pushed{bottom:34px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C502 Service requests</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
+  <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="morefail" aria-pressed="false">load more failed</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C501-support.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Service requests</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack" style="padding-bottom:84px">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+
+          <div class="segment" role="tablist" aria-label="Open or closed" data-when="ready filtered noresults loading morefail error offline">
+            <button role="tab" aria-selected="true" aria-controls="tab-open" id="tab-open-btn">Open</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-closed" id="tab-closed-btn">Closed</button>
+          </div>
+
+          <div class="tools" data-when="ready filtered noresults morefail offline">
+            <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+              <input class="input" placeholder="Ticket number" aria-label="Search by ticket number" inputmode="numeric"></div>
+            <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
+          </div>
+
+          <div class="chips" data-when="filtered" style="margin-top:-4px">
+            <button class="chip outline" type="button" aria-pressed="false">Line 1 former <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+            <button class="chip outline" type="button" aria-pressed="false">Breakdown or repair <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
+          </div>
+
+          <div data-when="ready morefail offline">
+            <div id="tab-open"></div>
+            <div id="tab-closed" hidden></div>
+          </div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+
+          <div data-when="filtered">
+            <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+            <div class="stack-sm" id="filtered" style="margin-top:10px"></div>
+          </div>
+
+          <div class="state" data-when="noresults">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3>
+            <p>Nothing matches "TKT-2026-0199".</p>
+            <button class="btn btn-secondary" type="button">Clear search</button>
+          </div>
+
+          <div class="state" data-when="empty" style="padding-top:80px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>
+            <h3>No service requests</h3>
+            <p>When you raise a request it will show here.</p>
+            <a class="btn btn-primary" href="C503-raise-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Raise a request</a>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:40%; margin:4px"></span>
+            <span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:150px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:150px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:40px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your requests. Please try again in a moment.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="fab pushed" href="C503-raise-machine.html" data-when="ready filtered noresults morefail offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New request</a>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="filter" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="f-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="f-title">Filter requests</h3><button class="btn btn-text" type="button">Reset</button></div>
+        <div class="body">
+          <div class="field-label">Machine</div>
+          <div class="chips" data-single style="margin-bottom:14px" id="f-machines"></div>
+          <div class="field-label">Status</div>
+          <div class="chips" style="margin-bottom:14px; flex-wrap:wrap; overflow:visible">
+            <button class="chip outline" type="button" aria-pressed="false">Waiting for you</button><button class="chip outline" type="button" aria-pressed="false">Scheduled</button>
+            <button class="chip outline" type="button" aria-pressed="false">In progress</button><button class="chip outline" type="button" aria-pressed="false">On hold</button></div>
+          <div class="field-label">Type</div>
+          <div class="chips" style="margin-bottom:14px; flex-wrap:wrap; overflow:visible" id="f-types"></div>
+          <div class="field-label">Raised</div>
+          <div class="chips" data-single><button class="chip outline" type="button" aria-pressed="true">Any time</button><button class="chip outline" type="button" aria-pressed="false">Last 7 days</button><button class="chip outline" type="button" aria-pressed="false">Last 30 days</button></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" data-close id="f-apply">Show requests</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Every request of the company, Open and Closed. Requests that need you are pinned on top. Search by
+ticket number; 20 load at a time.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const ENDED = ['closed', 'cancelled'];
+  const NEEDS_YOU = ['awaiting-info', 'estimate', 'completed', 'visit-failed'];
+  const FILTER_MACHINE = 'ZP-TF-2310';
+  const FILTER_TYPE = 'Breakdown or repair';
+
+  const newest = [...data.tickets].sort((a, b) => b.created.localeCompare(a.created));
+  const card = (t) => R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`);
+  const list = (tickets) => `<div class="stack-sm" style="margin-top:10px">${tickets.map(card).join('')}</div>`;
+
+  const open = newest.filter((t) => !ENDED.includes(t.status));
+  const needsYou = open.filter((t) => NEEDS_YOU.includes(t.status));
+  const others = open.filter((t) => !NEEDS_YOU.includes(t.status));
+  const closed = newest.filter((t) => ENDED.includes(t.status));
+
+  $('tab-open-btn').textContent = `Open, ${open.length}`;
+  $('tab-closed-btn').textContent = `Closed, ${closed.length}`;
+  $('tab-open').innerHTML = `<p class="group-title">${R.icon('warning-circle', 'ic-16')}Waiting for you, ${needsYou.length}</p>${list(needsYou)}
+    <p class="group-title" style="margin-top:18px">Others, ${others.length}</p>${list(others)}`;
+  $('tab-closed').innerHTML = list(closed);
+
+  const filtered = newest.filter((t) => t.machine === FILTER_MACHINE && t.type === FILTER_TYPE);
+  $('filtered').innerHTML = filtered.map(card).join('');
+  $('filtered-count').innerHTML = `<b>${filtered.length} of ${data.tickets.length} requests</b>`;
+
+  $('f-machines').innerHTML = `<button class="chip outline" type="button" aria-pressed="false">All machines</button>`
+    + data.machines.filter((m) => m.status !== 'pending').map((m) => `<button class="chip outline" type="button"
+      aria-pressed="${m.serial === FILTER_MACHINE}">${R.esc(m.nickname || m.model)}</button>`).join('');
+  $('f-types').innerHTML = [...new Set(data.tickets.map((t) => t.type))].map((type) => `<button class="chip outline" type="button"
+    aria-pressed="${type === FILTER_TYPE}">${R.esc(type)}</button>`).join('');
+  $('f-apply').textContent = `Show ${filtered.length} requests`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

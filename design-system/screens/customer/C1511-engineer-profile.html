@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1511 Engineer profile</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.backdrop-eta{padding:20px; border-radius:24px; background:linear-gradient(160deg, var(--slate-700), var(--slate-900)); color:#fff}
+.backdrop-eta b{display:block; font:400 44px var(--font-display)}
+.backdrop-eta span{font-size:var(--fs-14); color:rgba(255,255,255,.8)}
+.profile{display:flex; flex-direction:column; align-items:center; text-align:center}
+.profile h3{margin:12px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.profile p{margin:2px 0 0; font-size:var(--fs-13); color:var(--text-muted)}
+.facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:16px}
+.facts div{padding:12px 6px; border-radius:var(--r-lg); background:var(--field); text-align:center}
+.facts b{display:block; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.1}
+.facts span{display:block; margin-top:4px; font-size:var(--fs-12); color:var(--text-muted)}
+.skills{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:14px}
+.actions2{display:grid; grid-template-columns:1fr 1.4fr; gap:10px; margin-top:20px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1511 Engineer profile</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="profile">ready</button>
+  <button type="button" data-state="new" aria-pressed="false" data-open="profile">under 5 ratings</button>
+  <button type="button" data-state="closed" aria-pressed="false" data-open="profile">job closed</button>
+  <button type="button" data-state="loading" aria-pressed="false" data-open="profile">loading</button>
+  <button type="button" data-state="error" aria-pressed="false" data-open="profile">error</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="profile">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C508-request-detail.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Track engineer</h1><span></span>
+      </div>
+      <div class="scroll"><div class="backdrop-eta"><b class="eta"></b><span>Engineer on the way</span></div></div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="profile" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="pf-name">
+        <span class="grabber"></span>
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved profile.</div>
+        <div data-when="ready new closed offline">
+          <div class="profile">
+            <span class="avatar lg eng-initials"></span>
+            <h3 id="pf-name"></h3>
+            <p id="pf-role"></p>
+          </div>
+          <div class="facts">
+            <div data-when="ready closed offline"><b class="eng-rating"></b><span>Rating</span></div>
+            <div data-when="new"><b>New</b><span>Not rated yet</span></div>
+            <div><b class="eng-visits"></b><span>Visits done</span></div>
+            <div><b class="eng-years"></b><span>Experience</span></div>
+          </div>
+          <div class="skills" id="skills"></div>
+        </div>
+        <div class="stack" data-when="loading" style="align-items:center">
+          <span class="skeleton sk-circle" style="width:64px; height:64px"></span><span class="skeleton sk-line" style="width:50%"></span>
+          <span class="skeleton" style="height:70px; width:100%; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="inline-retry" data-when="error">Couldn't load this profile.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+        <div class="actions2" data-when="ready new offline">
+          <button class="btn btn-secondary" type="button" data-close>Close</button>
+          <button class="btn btn-primary" type="button" data-open="call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call</button>
+        </div>
+        <button class="btn btn-secondary" type="button" style="margin-top:20px" data-close data-when="closed loading error">Close</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="call" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Call">
+        <div class="group">
+          <button type="button" data-close class="call-eng"></button>
+          <button type="button" data-close>Call Zixom support</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from the engineer card in C508 and <a href="C516-track.html">C516</a>. Initials stand in for the photo;
+rating hides under 5 ratings and Call hides after the job closes. Call opens <a href="C1512-call-engineer.html">C1512</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const engineer = R.engineer('sandeep');
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0125');
+  const fill = (cls, text) => document.querySelectorAll(cls).forEach((el) => { el.textContent = text; });
+  fill('.eta', `${ticket.eta} min`);
+  fill('.eng-initials', engineer.initials);
+  fill('#pf-name', engineer.name);
+  fill('#pf-role', `${engineer.designation} · ${engineer.region}`);
+  fill('.eng-rating', engineer.rating);
+  fill('.eng-visits', engineer.visits);
+  fill('.eng-years', engineer.experience.replace(' years', ' yrs'));
+  fill('.call-eng', `Call ${engineer.name}`);
+  document.getElementById('skills').innerHTML = engineer.skills.map((s) => R.tag(s, 'outline')).join('');
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

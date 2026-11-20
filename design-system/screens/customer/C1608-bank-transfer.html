@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1608 Bank transfer details</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.copy-list{border-radius:var(--r-lg); background:var(--field); padding:2px 6px 2px 16px}
+.copy-row{display:grid; grid-template-columns:1fr auto; column-gap:10px; align-items:center; padding:10px 0}
+.copy-row + .copy-row{border-top:1px solid var(--line)}
+.copy-row span{font-size:var(--fs-12); color:var(--text-muted)}
+.copy-row b{grid-column:1; margin-top:2px; font-size:var(--fs-14); font-weight:600; color:var(--slate-900); overflow-wrap:anywhere}
+.copy-row b.mono{font-size:var(--fs-14)}
+.copy-row .icon-btn{grid-column:2; grid-row:1 / span 2; border:0; background:#fff}
+.to-send{display:flex; justify-content:space-between; align-items:baseline; padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line)}
+.to-send span{font-size:var(--fs-13); color:var(--text-muted)}
+.to-send b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1608 Bank transfer details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="missing" aria-pressed="false">not set up</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" id="back" href="C803-pay-method.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Bank transfer</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="stack" data-when="ready offline">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing saved details.</div>
+          <div class="to-send"><span>Amount to send</span><b id="amount"></b></div>
+          <div class="copy-list" id="details"></div>
+          <div class="banner grey"><svg class="ic" aria-hidden="true"><use href="#ph-upload-simple"/></svg><div>After paying, upload the proof. Zixom verifies within 1 working day.</div></div>
+          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg><div>Engineers never collect payment. Pay only to this account.</div></div>
+        </div>
+
+        <div class="state" data-when="missing" style="padding-top:80px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bank"/></svg></span>
+          <h3>Bank details not available</h3><p>Contact support for the account to pay into.</p>
+          <a class="btn btn-secondary" href="C605-contact.html"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact support</a>
+        </div>
+        <div class="stack-sm" data-when="loading">
+          <span class="skeleton" style="height:58px; border-radius:var(--r-lg)"></span>
+          <span class="skeleton" style="height:330px; border-radius:var(--r-lg)"></span>
+        </div>
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load this. Please try again in a moment.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="ready offline">
+        <div class="btn-pair">
+          <button class="icon-btn" type="button" aria-label="Share details"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+          <a class="btn btn-primary" id="proof" href="C812-payment-proof.html"><svg class="ic" aria-hidden="true"><use href="#ph-upload-simple"/></svg>Upload proof</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Zixom's account for transfers, each value with Copy. Bank values are placeholders until Zixom
+provides them (spec Q15).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const DEFAULT = 'INV-2026-0981';
+  /* placeholders until Zixom provides its bank details (spec Q15) */
+  const BANK = { bank: 'Bank name to come', name: 'Zixom Plast', account: '000000000000', ifsc: 'ABCD0000000', upi: 'zixomplast@bank' };
+
+  const params = new URLSearchParams(location.search);
+  const numbers = (params.get('invoices') || params.get('invoice') || DEFAULT).split(',');
+  const invoices = numbers.map((n) => data.invoices.find((i) => i.number === n)).filter(Boolean);
+  const query = numbers.length > 1 ? `invoices=${numbers.join(',')}` : `invoice=${numbers[0]}`;
+
+  $('amount').textContent = R.money(invoices.reduce((s, i) => s + R.balance(i), 0));
+  const rows = [['Bank', BANK.bank], ['Account name', BANK.name], ['Account number', BANK.account, true], ['IFSC', BANK.ifsc, true],
+    ['UPI ID', BANK.upi, true], ['Reference to quote', numbers.join(', '), true]];
+  $('details').innerHTML = rows.map(([label, value, mono]) => `<div class="copy-row"><span>${label}</span>
+    <b${mono ? ' class="mono"' : ''}>${R.esc(value)}</b>
+    <button class="icon-btn sm" type="button" data-toast="${label} copied" aria-label="Copy ${label}">${R.icon('copy', 'ic-18')}</button></div>`).join('');
+
+  $('back').href = `C803-pay-method.html?${query}`;
+  $('proof').href = `C812-payment-proof.html?invoice=${numbers[0]}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

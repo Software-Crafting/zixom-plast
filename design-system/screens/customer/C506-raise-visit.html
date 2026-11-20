@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C506 Raise request: visit details</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+/* shared by the C503 to C507 wizard */
+.wiz-actions{display:grid; grid-template-columns:1fr 1.7fr; gap:10px}
+.autosave{display:flex; align-items:center; gap:6px; margin:-6px 2px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.autosave .ic{width:14px; height:14px; color:var(--green)}
+/* this page */
+.block + .block{margin-top:22px}
+.addr{margin:8px 2px 0; font-size:var(--fs-13); line-height:1.45; color:var(--text-muted)}
+.two{display:grid; grid-template-columns:1fr; gap:12px}
+.add-time{margin-top:10px}
+.chosen{margin-top:12px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C506 Raise request: visit details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors</button>
+  <button type="button" data-state="noservice" aria-pressed="false">pincode not served</button>
+  <button type="button" data-state="nocontact" aria-pressed="false">site has no contact</button>
+  <button type="button" data-state="ready" data-open="sites" aria-pressed="false">site picker</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C505-raise-media.html" data-keep aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New request</h1>
+        <button class="icon-btn" type="button" data-open="leave" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button>
+      </div>
+      <div class="scroll with-footer">
+        <div class="wizard"><div class="meta"><b>Step 4 of 5</b><span>Visit details</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span></span></div></div>
+        <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
+        <div class="offline-strip" style="margin:0 0 16px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. You can submit when back online.</div>
+        <div class="error-summary" role="alert" style="margin-bottom:16px" data-when="errors"><b>Fix 2 things to continue</b>
+          <ul><li><a href="#phone">Enter a 10 digit mobile number</a></li><li><a href="#slots">Choose at least one time</a></li></ul></div>
+
+        <div class="block">
+          <span class="field-label">Site<span class="req">*</span></span>
+          <button class="select" type="button" data-open="sites"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value" id="site-name"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          <p class="addr" id="site-addr"></p>
+          <div class="banner red" style="margin-top:10px" data-when="noservice"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div><b>We do not serve this pincode yet</b>Call <span id="noservice-phone"></span> to arrange a visit.</div></div>
+        </div>
+
+        <div class="block">
+          <div class="banner amber" style="margin-bottom:12px" data-when="nocontact"><svg class="ic" aria-hidden="true"><use href="#ph-user"/></svg><div>This site has no contact. Add one for the engineer.</div></div>
+          <div class="two">
+            <div class="field"><label for="contact">Contact person<span class="req">*</span></label><input class="input" id="contact" autocomplete="name"></div>
+            <div class="field" id="phone-field" style="margin-top:0"><label for="phone">Phone<span class="req">*</span></label>
+              <div class="input-group"><span class="prefix">+91</span><input class="input" id="phone" type="tel" inputmode="numeric" autocomplete="tel-national"></div>
+              <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span></div>
+          </div>
+        </div>
+
+        <div class="block" id="slots">
+          <span class="field-label">Preferred times<span class="req">*</span><span class="counter" id="slot-count"></span></span>
+          <div class="dates" data-single id="dates"></div>
+          <div class="slots" data-single style="margin-top:10px" id="windows">
+            <button class="slot" type="button" aria-pressed="true">9 to 12</button>
+            <button class="slot" type="button" aria-pressed="false">12 to 3</button>
+            <button class="slot" type="button" aria-pressed="false">3 to 6</button>
+          </div>
+          <button class="btn btn-secondary btn-sm add-time" type="button" id="add-time"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add this time</button>
+          <div class="list chosen" id="chosen" data-when="ready noservice nocontact offline"></div>
+          <span class="error-text" data-when="errors"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Choose at least one time</span>
+          <span class="hint">Up to 3. Zixom confirms one.</span>
+        </div>
+
+        <div class="block field">
+          <label for="access">Access instructions<span class="counter" id="access-count"></span></label>
+          <textarea class="textarea" id="access" maxlength="300" placeholder="Gate, security, parking" style="min-height:84px"></textarea>
+        </div>
+
+        <div class="block">
+          <span class="field-label">Safety induction needed?</span>
+          <div class="segment" role="tablist" aria-label="Safety induction needed">
+            <button role="tab" type="button" aria-selected="false">Yes</button><button role="tab" type="button" aria-selected="true">No</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="wiz-actions">
+          <button class="btn btn-soft" type="button" data-toast="Draft saved. You can continue from Support.">Save draft</button>
+          <a class="btn btn-primary" href="C507-raise-review.html" data-keep data-when="ready errors nocontact offline">Next</a>
+          <button class="btn btn-primary" type="button" disabled data-when="noservice">Next</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="sites" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="sites-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="sites-title">Choose site</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body" role="radiogroup" aria-label="Sites" id="site-list"></div>
+        <a class="btn btn-text" href="C1507-add-site.html" style="margin-top:8px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
+        <button class="btn btn-primary" type="button" style="margin-top:8px" data-close id="site-choose">Choose</button>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="leave" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Leave request">
+        <div class="group"><div class="title">Leave this request? Your draft is saved.</div>
+          <button type="button" onclick="location.href='C501-support.html'">Save draft and leave</button>
+          <button class="destructive" type="button" onclick="location.href='C501-support.html'">Discard request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep editing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Step 4: where and when. Up to 3 preferred times; today, Sundays and holidays are disabled. A
+pincode Zixom does not serve stops the form (EC-45).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  const MAX_SLOTS = 3;
+  const DAYS_SHOWN = 12;
+  /* Sample values not in data.js yet (move there): Zixom holidays, and the times already picked in the draft */
+  const HOLIDAYS = ['2026-11-29', '2026-12-06'];
+  const DRAFT_SLOTS = [['2026-11-25', '9 to 12'], ['2026-11-26', '12 to 3']];
+  let chosen = DRAFT_SLOTS;
+
+  const serial = new URLSearchParams(location.search).get('machine') || 'ZP-CF-2011';
+  const m = R.machine(serial);
+  const company = data.companies.find((c) => c.id === m.company);
+  const me = data.users[0];
+  let site = company.sites.find((s) => s.id === m.site);
+  document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
+  $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+  $('noservice-phone').textContent = data.support.phone;
+
+  const fillSite = () => {
+    const contact = site.contact || { name: me.name, phone: me.mobile };
+    $('site-name').textContent = site.name;
+    $('site-addr').textContent = `${site.address} ${site.pincode}`;
+    $('contact').value = contact.name;
+    $('phone').value = contact.phone.replace('+91 ', '');
+    $('access').value = site.access;
+    $('access-count').textContent = `${site.access.length} / 300`;
+  };
+  $('access').addEventListener('input', () => { $('access-count').textContent = `${$('access').value.length} / 300`; });
+
+  $('site-list').innerHTML = company.sites.map((s) => `<button class="choice" role="radio" type="button" data-site="${s.id}" aria-checked="${s.id === site.id}">
+    <span class="disc">${R.icon('map-pin')}</span><b>${R.esc(s.name)}</b><p>${R.esc(s.address)} ${s.pincode}</p><span class="mark"></span></button>`).join('');
+  $('site-choose').addEventListener('click', () => {
+    const id = document.querySelector('[data-site][aria-checked="true"]').dataset.site;
+    site = company.sites.find((s) => s.id === id);
+    fillSite();
+  });
+
+  /* date strip: today is inside the minimum notice, holidays are closed */
+  const day = (offset) => new Date(new Date(`${data.today}T00:00:00`).getTime() + offset * 86400000);
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const firstOpen = 2;
+  $('dates').innerHTML = Array.from({ length: DAYS_SHOWN }, (_, i) => {
+    const d = day(i);
+    const closed = i === 0 || HOLIDAYS.includes(iso(d));
+    return `<button class="date" type="button" data-date="${iso(d)}"${closed ? ' disabled' : ` aria-pressed="${i === firstOpen}"`}>
+      <span>${R.dayDate(iso(d)).slice(0, 3)}</span><b>${d.getDate()}</b></button>`;
+  }).join('');
+
+  const renderChosen = () => {
+    $('chosen').innerHTML = chosen.map(([date, slot], i) => `<div class="list-item" style="cursor:default">
+      <span class="disc">${R.icon('calendar-blank')}</span><b>${R.dayDate(date)}</b><span class="sub">${slot}</span>
+      <span class="end"><button class="icon-btn sm" type="button" data-remove="${i}" aria-label="Remove ${R.dayDate(date)}, ${slot}">${R.icon('x', 'ic-18')}</button></span></div>`).join('');
+    $('chosen').hidden = !chosen.length || !['ready', 'noservice', 'nocontact', 'offline'].includes(document.querySelector('.screen').dataset.state);
+    $('slot-count').textContent = `${chosen.length} of ${MAX_SLOTS}`;
+    $('add-time').disabled = chosen.length >= MAX_SLOTS;
+  };
+  $('add-time').addEventListener('click', () => {
+    const date = document.querySelector('#dates [aria-pressed="true"]').dataset.date;
+    const slot = document.querySelector('#windows [aria-pressed="true"]').textContent;
+    if (!chosen.some(([d, s]) => d === date && s === slot)) chosen = [...chosen, [date, slot]].slice(0, MAX_SLOTS);
+    renderChosen();
+  });
+  $('chosen').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-remove]');
+    if (!b) return;
+    chosen = chosen.filter((_, i) => i !== Number(b.dataset.remove));
+    renderChosen();
+  });
+
+  /* plate states that change field values */
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    fillSite();
+    $('phone-field').classList.toggle('has-error', b.dataset.state === 'errors');
+    chosen = b.dataset.state === 'errors' ? [] : DRAFT_SLOTS;
+    if (b.dataset.state === 'errors') $('phone').value = '98250 114';
+    if (b.dataset.state === 'nocontact') { $('contact').value = ''; $('phone').value = ''; }
+    window.setTimeout(renderChosen);
+  }));
+  fillSite();
+  renderChosen();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

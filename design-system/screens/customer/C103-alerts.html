@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C103 Alerts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.acard{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.acard .disc{grid-row:1 / span 2; width:40px; height:40px; display:grid; place-items:center; border-radius:50%}
+.acard.red .disc{background:var(--red-50); color:var(--red)}
+.acard.amber .disc{background:var(--amber-50); color:var(--amber)}
+.acard.blue .disc{background:var(--blue-50); color:var(--blue)}
+.acard b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.acard .sub{grid-column:2; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.acard .row{grid-column:2; display:flex; align-items:center; gap:8px; margin-top:12px}
+.count-line{margin:2px 4px 0; font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C103 Alerts</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">ready</button>
+  <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="empty" aria-pressed="false">empty</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C101-home.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Alerts</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="stack">
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
+          <p class="count-line" data-when="ready offline" id="count"></p>
+          <div class="stack-sm" id="alerts" data-when="ready offline"></div>
+
+          <div class="state" data-when="empty" style="padding-top:100px">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>Nothing needs your attention</h3>
+            <p>New alerts will appear here.</p>
+          </div>
+
+          <div class="stack-sm" data-when="loading">
+            <span class="skeleton sk-line" style="width:35%; margin:4px"></span>
+            <span class="skeleton" style="height:116px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:116px; border-radius:var(--r-lg)"></span>
+            <span class="skeleton" style="height:116px; border-radius:var(--r-lg); opacity:.6"></span>
+          </div>
+
+          <div class="state" data-when="error" style="padding-top:80px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Something went wrong</h3>
+            <p>We could not load your alerts.</p>
+            <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+            <span class="code mono">ZC-500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Everything that needs the company, most urgent first, each with its action. Dismiss hides an
+alert; dismissing all shows the empty state.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const { data } = ZX;
+  const $ = (id) => document.getElementById(id);
+  /* Sample data not in data.js yet (move there): the action label of each alert, by the screen it opens */
+  const ACTION = {
+    'C802-invoice-detail.html': 'Pay now', 'C405-renew-amc.html': 'Renew AMC', 'C509-estimate.html': 'Review estimate',
+    'C302-warranty-details.html': 'View warranty', 'C308-claim.html': 'Reply',
+  };
+  let alerts = [...data.alerts];
+
+  const render = () => {
+    $('count').textContent = `${alerts.length} ${alerts.length === 1 ? 'alert' : 'alerts'}, most urgent first`;
+    $('alerts').innerHTML = alerts.map((a, i) => `<div class="acard ${a.tone}">
+      <span class="disc">${R.icon(a.icon)}</span><b>${R.esc(a.title)}</b>
+      <span class="sub${a.mono ? ' mono' : ''}">${R.esc(a.sub)}</span>
+      <span class="row"><a class="btn btn-primary btn-sm" href="${R.esc(a.href)}">${ACTION[a.href]}</a>
+        <button class="btn btn-text" type="button" data-dismiss="${i}" data-toast="Alert dismissed" style="color:var(--slate-600)">Dismiss</button></span>
+    </div>`).join('');
+  };
+  $('alerts').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-dismiss]');
+    if (!b) return;
+    alerts = alerts.filter((_, i) => i !== Number(b.dataset.dismiss));
+    render();
+    if (!alerts.length) document.querySelector('.plate-states [data-state="empty"]').click();
+  });
+  document.querySelector('.plate-states [data-state="ready"]').addEventListener('click', () => { alerts = [...data.alerts]; render(); });
+  render();
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>
