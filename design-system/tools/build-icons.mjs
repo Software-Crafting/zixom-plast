@@ -43,7 +43,7 @@ const ICONS = {
   'identification-card': 'id-card', 'thumbs-up': 'thumbs-up', 'smiley-sad': 'frown',
   /* upload states */
   'pause': 'pause', 'play': 'play', 'file-x': 'file-x', 'circle-x': 'circle-x', 'file-search': 'file-search',
-  'image-off': 'image-off', 'rotate-ccw': 'rotate-ccw', 'files': 'files', 'file-check': 'file-check',
+  'image-off': 'image-off', 'rotate-ccw': 'rotate-ccw', 'files': 'files', 'file-check': 'file-check', 'circle': 'circle',
 };
 
 const iconsDir = process.argv[2];

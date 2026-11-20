@@ -244,7 +244,7 @@
   const screen = document.querySelector('.screen[data-state]');
   const applyState = (state) => {
     screen.dataset.state = state;
-    screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes(state); });
+    screen.querySelectorAll('[data-when]').forEach((el) => { el.toggleAttribute('hidden', !el.dataset.when.split(' ').includes(state)); });
     screen.querySelectorAll('.overlay').forEach((overlay) => { overlay.hidden = true; });
     screen.querySelector('.root-scroll, .scroll')?.scrollTo({ top: 0 });
   };
