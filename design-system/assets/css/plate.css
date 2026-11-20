@@ -24,10 +24,8 @@ body.plate{font-family:var(--font-body); color:var(--text); background:#DDE1E5;
   background:var(--header-gradient);
   box-shadow:0 0 0 10px #12181F, 0 0 0 11px #2B333C, 0 40px 70px -30px rgba(18,24,31,.55)}
 
-.status{position:relative; z-index:30; height:47px; flex-shrink:0; display:flex; align-items:flex-end;
-  justify-content:space-between; padding:0 30px 4px 34px; font:600 15px var(--font-body); color:#fff}
-.status.on-light{color:var(--slate-900)}
-.status .signals{display:flex; align-items:center; gap:6px}
+/* top safe area: the OS draws the status bar, the prototype leaves the space empty */
+.status{position:relative; z-index:30; height:22px; flex-shrink:0}
 
 .home-indicator{position:absolute; z-index:40; left:50%; bottom:8px; transform:translateX(-50%);
   width:134px; height:5px; border-radius:var(--r-pill); background:var(--slate-900); opacity:.85; pointer-events:none}

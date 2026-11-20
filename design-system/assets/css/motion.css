@@ -1,5 +1,5 @@
 /* Motion. Things arrive, respond and leave on a spring (--ease); leaving is a little faster.
-   Kept small on purpose: press, overlays, toasts, page and tab transitions. */
+   Kept small on purpose: press, selection, overlays, toasts and the tab pill. Page changes do not animate. */
 
 /* ---------- press: shrink quickly, spring back ---------- */
 .btn, .icon-btn, .tab, .chip, .choice, .date, .slot, .quick a, .stat, .machine, .ticket, .list-item,
@@ -34,33 +34,25 @@
 @keyframes zx-toast-out{to{transform:translate(-50%, 16px); opacity:0}}
 @keyframes zx-settle{from{transform:translateY(6px); opacity:0}}
 
-/* ---------- page transitions between screens (cross document view transitions) ----------
-   Only the phone screen moves. Push slides in from the right, back slides out to the right,
-   switching tabs crossfades and the tab pill glides to its new place. ui.js sets html[data-nav]. */
-@view-transition{navigation:auto}
-::view-transition-group(root), ::view-transition-old(root), ::view-transition-new(root){animation:none}
-.device .screen{view-transition-name:screen}
-.device .status{view-transition-name:status}
-.device .tabbar{view-transition-name:tabbar}
-.device .tab[aria-current="page"]{view-transition-name:tab-active}
-::view-transition-image-pair(screen){overflow:hidden; border-radius:44px}
-::view-transition-group(status), ::view-transition-old(status), ::view-transition-new(status){animation:none}
+/* ---------- selection: every control that changes state springs ---------- */
+/* segmented control: a thumb slides under the selected option (ui.js sets --i and --n) */
+.segment{position:relative; isolation:isolate}
+.segment::before{content:""; position:absolute; z-index:-1; top:4px; bottom:4px; left:4px; border-radius:var(--r-pill);
+  width:calc((100% - 8px - (var(--n, 2) - 1) * 4px) / var(--n, 2)); background:#fff; box-shadow:var(--shadow-soft);
+  transform:translateX(calc(var(--i, 0) * (100% + 4px)))}
+.segment.ready::before{transition:transform .5s var(--ease)}
+.segment.ready [aria-selected="true"]{background:transparent; box-shadow:none}
+.chip[aria-pressed="true"], .chip[aria-selected="true"], .date[aria-pressed="true"], .slot[aria-pressed="true"],
+.dots button[aria-current="true"]{animation:zx-select .45s var(--ease)}
+.check input:checked::after{animation:zx-pop-in .4s var(--ease) both}
+.switch span{transition:background-color .3s ease}
+.switch span::after{transition:transform .5s var(--ease)}
+.choice .mark{transition:border-width .45s var(--ease), border-color .2s ease}
+.choice .disc{transition:background-color .25s ease, color .25s ease}
+.panel-in{animation:zx-settle .45s var(--ease) both}
+@keyframes zx-select{0%{transform:scale(.9)}100%{transform:none}}
 
-::view-transition-old(screen){animation:zx-push-out .42s var(--ease) both}
-::view-transition-new(screen){animation:zx-push-in .5s var(--ease) both; box-shadow:-12px 0 30px -12px rgba(18,24,31,.4)}
-html[data-nav="back"]::view-transition-old(screen){animation:zx-back-out .36s var(--ease-exit) both; z-index:2;
-  box-shadow:-12px 0 30px -12px rgba(18,24,31,.4)}
-html[data-nav="back"]::view-transition-new(screen){animation:zx-back-in .45s var(--ease) both; box-shadow:none}
-html[data-nav="tab"]::view-transition-old(screen){animation:zx-fade-out .18s ease-out both}
-html[data-nav="tab"]::view-transition-new(screen){animation:zx-fade-in .26s ease-in both; box-shadow:none}
-::view-transition-group(tab-active){animation-duration:.5s; animation-timing-function:var(--ease)}
-::view-transition-group(tabbar){animation:none}
-
-@keyframes zx-push-in{from{transform:translateX(100%)}}
-@keyframes zx-push-out{to{transform:translateX(-28%); filter:brightness(.92)}}
-@keyframes zx-back-in{from{transform:translateX(-28%); filter:brightness(.92)}}
-@keyframes zx-back-out{to{transform:translateX(100%)}}
 
 @media (prefers-reduced-motion:reduce){
-  *, ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*){animation:none !important; transition:none !important}
+  *{animation:none !important; transition:none !important}
 }

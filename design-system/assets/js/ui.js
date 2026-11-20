@@ -11,14 +11,6 @@
   const TOAST_MS = 3000;
   const BUSY_MS = 900;
 
-  /* ---------- fake status bar (prototype chrome) ---------- */
-  const SIGNALS = `<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><path fill="currentColor" d="M1 8h2.6v3.4H1zM5.4 5.8H8v5.6H5.4zM9.8 3.4h2.6v8H9.8zM14.2 1h2.6v10.4h-2.6z"/></svg>
-    <svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path fill="currentColor" d="M8 2.6c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .8 10.4 10.4 0 0 0 .8 3.7L2 5c1.6-1.5 3.7-2.4 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.6 6.6 0 0 0 8 4.4a6.6 6.6 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zm0 3.5L10 8a2.9 2.9 0 0 0-4 0z"/></svg>
-    <svg width="26" height="12" viewBox="0 0 26 12" aria-hidden="true"><rect x=".6" y=".6" width="22" height="10.8" rx="3.4" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.2" y="2.2" width="17" height="7.6" rx="2" fill="currentColor"/><path d="M24.2 4.2v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".4"/></svg>`;
-  document.querySelectorAll('.status:empty').forEach((bar) => {
-    bar.innerHTML = `<span>9:41</span><span class="signals">${SIGNALS}</span>`;
-  });
-
   /* ---------- tab bars ---------- */
   const TABS = {
     customer: [
@@ -91,6 +83,18 @@
     window.setTimeout(() => button.removeAttribute('aria-busy'), BUSY_MS);
   });
 
+  /* ---------- segmented control thumb: motion.css slides it to the selected option ---------- */
+  const placeThumb = (segment) => {
+    if (!segment.classList.contains('segment')) return;
+    const options = [...segment.children];
+    segment.style.setProperty('--n', options.length);
+    segment.style.setProperty('--i', Math.max(0, options.findIndex((o) => o.getAttribute('aria-selected') === 'true')));
+  };
+  document.querySelectorAll('.segment').forEach((segment) => {
+    placeThumb(segment);
+    requestAnimationFrame(() => segment.classList.add('ready'));
+  });
+
   /* ---------- single select groups, segments, choice cards ---------- */
   document.addEventListener('click', (event) => {
     const pressed = event.target.closest('[data-single] > button:not(:disabled)');
@@ -104,7 +108,9 @@
         t.setAttribute('aria-selected', String(selected));
         const panel = t.getAttribute('aria-controls') && document.getElementById(t.getAttribute('aria-controls'));
         if (panel) panel.hidden = !selected;
+        if (panel && selected) { panel.classList.remove('panel-in'); void panel.offsetWidth; panel.classList.add('panel-in'); }
       });
+      placeThumb(tab.parentElement);
     }
     const choice = event.target.closest('[role="radiogroup"] > [role="radio"]:not(:disabled)');
     if (choice) {
@@ -160,20 +166,22 @@
     }
   });
 
-  /* ---------- page transitions: tell motion.css which way the next screen moves ----------
-     Back links and the browser back button slide left to right, tab links crossfade,
-     everything else pushes from the right. */
-  const NAV_KEY = 'zx-nav';
-  const root = document.documentElement;
-  try { root.dataset.nav = sessionStorage.getItem(NAV_KEY) || 'push'; sessionStorage.removeItem(NAV_KEY); } catch { root.dataset.nav = 'push'; }
-  window.addEventListener('pagereveal', () => {
-    if (window.navigation?.activation?.navigationType === 'traverse') root.dataset.nav = 'back';
-  });
+  /* ---------- tab bar: the pill springs from the tab you left to the one you opened ---------- */
+  const TAB_KEY = 'zx-tab-from';
+  const SPRING = getComputedStyle(document.documentElement).getPropertyValue('--ease').trim();
+  const tabs = [...document.querySelectorAll('.device .tab')];
+  const current = tabs.findIndex((t) => t.getAttribute('aria-current') === 'page');
+  let from = null;
+  try { from = sessionStorage.getItem(TAB_KEY); sessionStorage.removeItem(TAB_KEY); } catch { /* storage blocked */ }
+  if (from !== null && current >= 0 && Number(from) !== current && tabs[1]) {
+    const step = tabs[1].getBoundingClientRect().left - tabs[0].getBoundingClientRect().left;
+    tabs[current].animate([{ transform: `translateX(${(Number(from) - current) * step}px)` }, { transform: 'none' }],
+      { duration: 500, easing: SPRING || 'ease-out' });
+  }
   document.addEventListener('click', (event) => {
-    const link = event.target.closest('a[href]');
-    if (!link || link.getAttribute('href').startsWith('#')) return;
-    const nav = link.matches('[aria-label^="Back"], [data-back]') ? 'back' : link.classList.contains('tab') ? 'tab' : 'push';
-    try { sessionStorage.setItem(NAV_KEY, nav); } catch { /* storage blocked: default push */ }
+    const tab = event.target.closest('.device .tab');
+    if (!tab || current < 0) return;
+    try { sessionStorage.setItem(TAB_KEY, current); } catch { /* storage blocked: no glide */ }
   });
 
   /* ---------- prototype only: the state switch above the frame ----------

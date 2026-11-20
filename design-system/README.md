@@ -29,7 +29,7 @@ assets/css/zixom.css    the one stylesheet a page links (imports the rest)
   forms.css             fields, pickers, OTP, choice cards, switch, stepper, wizard, slots
   cards.css             cards, lists, machine and ticket cards, timeline, money, uploads, chat
   feedback.css          banners, toasts, alert, action sheet, bottom sheet, states, skeleton
-  motion.css            spring press, overlay enter and exit, page and tab transitions
+  motion.css            spring press, selection, overlay enter and exit, tab pill
   docs.css              layout of index and components pages only
 assets/js/data.js       demo data from spec section 16, one source for every screen
 assets/js/render.js     formats (dates, rupees) and HTML templates for data components
@@ -46,7 +46,8 @@ screens/{access,system,customer,engineer}/<SpecID>-<name>.html
 
 Each screen page draws a phone so it can be judged on a laptop. These parts are scaffolding:
 
-- The status bar (`.status`, 9:41, signal, battery). The OS draws it. In the app it is safe area padding.
+- The top safe area (`.status`, an empty 22 px strip). The OS draws the status bar; in the app it is
+  safe area padding.
 - The home indicator (`.home-indicator`). Leave bottom safe area padding instead.
 - The device frame (`.device`, 390 by 844, 44 px corners). Build fluid layouts.
 - Everything outside the frame: `.plate-label`, `.plate-note`, `.plate-states`.
@@ -71,9 +72,9 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
 - Copy: short and compact. One line under a title, no explanatory paragraphs, only what the person needs.
 - No logo inside the app except the splash. Auth screens put the back chevron and title on one row.
 - Motion: one spring curve (`--ease`) for things arriving, responding and leaving; leaving is faster.
-  Buttons and cards press with a spring, overlays and toasts animate in and out, a pushed screen slides
-  in from the right and back slides it out to the right, tabs crossfade while the tab pill glides.
-  Reduced motion turns all of it off.
+  Buttons and cards press with a spring, selections settle on a spring (segment thumb, chips, switches),
+  overlays and toasts animate in and out, and the tab pill glides to the tab you open. Page changes do
+  not animate. Reduced motion turns all of it off.
 
 ## Conventions
 
@@ -89,7 +90,6 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
 - Tab roots: wrap the header and sheet in `.root-scroll` so the header scrolls away with the content.
 - Uploads: `.files > .file[data-status]`, statuses queued, uploading, paused, done, failed, too-large,
   wrong-type, duplicate, missing; buttons with `data-file="pause|resume|retry|remove"` work.
-- Back links: any link with an `aria-label` starting "Back" (or `data-back`) plays the back transition.
 - Links between screens: use the names in `ZX.files` and run `node tools/check-links.mjs`.
 - New page: copy the skeleton below, then add its path to `ZX.built` in `assets/js/screens.js`.
 
