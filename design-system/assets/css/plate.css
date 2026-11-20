@@ -21,7 +21,7 @@ body.plate{font-family:var(--font-body); color:var(--text); background:#DDE1E5;
 .plate-states button[aria-pressed="true"]{background:var(--slate-800); border-color:var(--slate-800); color:#fff}
 
 .device{position:relative; width:390px; height:844px; flex-shrink:0; overflow:hidden; border-radius:44px;
-  background:var(--header-gradient);
+  background:var(--surface);
   box-shadow:0 0 0 10px #12181F, 0 0 0 11px #2B333C, 0 40px 70px -30px rgba(18,24,31,.55)}
 
 /* iPhone status bar with the Dynamic Island. ui.js fills it and picks its look from the screen:

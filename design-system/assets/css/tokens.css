@@ -45,7 +45,6 @@
   --field:var(--white);           /* inputs and inner cards */
   --card:var(--white);
   --wash:rgba(24,34,45,.05);      /* quiet fills on the grey: segment track, icon discs, skeletons */
-  --header-gradient:linear-gradient(172deg, #5E6F84 0%, #8A99AA 38%, #B9C3CD 72%, #D5DBE1 100%);
 
   /* type */
   --font-display:"Varela Round", "Inter", system-ui, sans-serif;

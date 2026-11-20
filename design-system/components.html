@@ -280,7 +280,7 @@
         <button class="icon-btn" type="button" aria-label="Notifications, 4 unread"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg><span class="count">4</span></button>
         <button class="icon-btn dark" type="button" aria-label="Call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></button>
         <button class="icon-btn sm" type="button" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button>
-        <span style="display:inline-flex; gap:10px; padding:10px; border-radius:var(--r-pill); background:var(--header-gradient)">
+        <span style="display:inline-flex; gap:10px; padding:10px; border-radius:var(--r-pill); background:var(--surface)">
           <button class="icon-btn glass" type="button" aria-label="Search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></button>
           <button class="icon-btn glass" type="button" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#ph-list"/></svg></button>
         </span>
@@ -656,7 +656,7 @@
   const css = getComputedStyle(document.documentElement);
   $('swatches').innerHTML = SWATCHES.map(([token, use]) => `<div class="swatch"><i style="background:var(${token})"></i>
     <span><b>${use}</b><br><code>${token} ${css.getPropertyValue(token).trim()}</code></span></div>`).join('')
-    + `<div class="swatch"><i style="background:var(--header-gradient)"></i><span><b>Screen gradient</b><br><code>--header-gradient</code></span></div>`;
+    + `<div class="swatch"><i style="background:var(--surface)"></i><span><b>App background</b><br><code>--surface</code></span></div>`;
 
   $('icons-grid').innerHTML = [...document.querySelectorAll('symbol')].map((s) => {
     const name = s.id.replace('ph-', '');
