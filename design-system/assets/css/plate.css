@@ -14,9 +14,15 @@ body.plate{font-family:var(--font-body); color:var(--text); background:#DDE1E5;
   padding:4px 9px; border-radius:var(--r-pill)}
 .plate-note{max-width:390px; margin:0; text-align:center; font-size:var(--fs-12); line-height:1.6; color:var(--slate-600)}
 
-.plate-states{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; align-items:center;
-  max-width:420px; font-size:var(--fs-12); color:var(--slate-600)}
-.plate-states button{min-height:30px; padding:0 12px; border-radius:var(--r-pill); border:1px solid var(--line-strong);
+.plate-label{order:0}
+.device{order:1}
+/* state switch: under the phone, one line that scrolls sideways */
+.plate-states{order:2; display:flex; flex-wrap:nowrap; gap:6px; align-items:center; max-width:min(820px, 100%); overflow-x:auto;
+  scrollbar-width:none; padding:2px 4px; font-size:var(--fs-12); color:var(--slate-600); white-space:nowrap}
+.plate-states::-webkit-scrollbar{display:none}
+.plate-states > span{flex-shrink:0}
+.plate-note{order:3}
+.plate-states button{flex-shrink:0; min-height:30px; padding:0 12px; border-radius:var(--r-pill); border:1px solid var(--line-strong);
   background:#fff; color:var(--slate-700); font:600 var(--fs-11) var(--font-body); cursor:pointer}
 .plate-states button[aria-pressed="true"]{background:var(--slate-800); border-color:var(--slate-800); color:#fff}
 
