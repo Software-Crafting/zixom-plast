@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A16 Account suspended</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A16 Account suspended or deactivated</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>reason</span>
+  <button type="button" data-state="suspended" aria-pressed="true">account suspended</button>
+  <button type="button" data-state="company" aria-pressed="false">company deactivated</button>
+  <button type="button" data-state="removed" aria-pressed="false">removed from company</button>
+  <button type="button" data-state="engineer" aria-pressed="false">engineer left Zixom</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="suspended">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span></div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding-top:36px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3 data-when="suspended">Your account is suspended</h3>
+          <h3 data-when="company">Shree Packaging Industries is not active</h3>
+          <h3 data-when="removed">You were removed from Shree Packaging Industries</h3>
+          <h3 data-when="engineer">This engineer account is closed</h3>
+          <p data-when="suspended">Zixom stopped access to this account. Your records are safe. Call support to find out why and to restore access.</p>
+          <p data-when="company">Zixom has deactivated this company's account, so nobody in the company can sign in. Contact Zixom support.</p>
+          <p data-when="removed">Rakesh Mehta, your company's primary contact, removed your access. Ask Rakesh to invite you again if this was a mistake.</p>
+          <p data-when="engineer">Your Zixom engineer account is no longer active. Speak to your service manager or Zixom support.</p>
+        </div>
+
+        <div class="card-fill">
+          <dl class="kv" style="margin:0">
+            <div><dt>Account</dt><dd>+91 97140 22321</dd></div>
+            <div data-when="suspended company removed"><dt>Company</dt><dd>Shree Packaging Industries</dd></div>
+            <div data-when="engineer"><dt>Employee code</dt><dd class="mono">ZP-SE-031</dd></div>
+            <div><dt>Since</dt><dd>23 Nov 2026, 8:40 AM</dd></div>
+          </dl>
+        </div>
+        <p class="hint" style="text-align:center">Unsent drafts stay on this phone for 30 days.</p>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm">
+          <button class="btn btn-primary" type="button" data-open="support"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact support</button>
+          <a class="btn btn-secondary" href="A03-sign-in.html">Sign out</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown at sign in, or when the next request fails because access was removed while the app was
+open (EC-17, EC-19). The reason and who to contact change with the case; the app then signs the person out. Unsent
+drafts stay on the phone for 30 days.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

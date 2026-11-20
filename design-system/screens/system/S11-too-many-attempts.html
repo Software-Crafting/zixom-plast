@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S11 Too many attempts</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 8px 150px}
+.clock{margin-top:22px; text-align:center; font:400 44px var(--font-display); color:var(--slate-900); font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S11 Too many attempts</b><span>lock with a countdown</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>cause</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-seconds="900">wrong OTP 5 times</button>
+  <button type="button" data-state="requests" aria-pressed="false" data-seconds="2700">OTP requests per hour</button>
+  <button type="button" data-state="rate" aria-pressed="false" data-seconds="60">server rate limit</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../access/A03-sign-in.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <span></span><span></span>
+      </div>
+      <div class="full">
+        <div class="state" style="padding-bottom:0">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3 data-when="ready requests">Too many tries</h3>
+          <h3 data-when="rate">Too many attempts</h3>
+          <p data-when="ready">You entered a wrong code 5 times. For your safety, +91 98250 11410 is locked.</p>
+          <p data-when="requests">You asked for 5 codes in the last hour. You can ask for a new code when the timer ends.</p>
+          <p data-when="rate">Please wait a minute. The button comes back when the timer ends.</p>
+        </div>
+        <div class="clock" role="timer" aria-live="off"><span class="sr-only">Try again in </span><span id="clock">15:00</span></div>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm">
+          <button class="btn btn-primary" type="button" id="retry" disabled>Try again</button>
+          <button class="btn btn-secondary" type="button" data-open="support">Contact support</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Used for OTP, sign in and server rate limits (EC-08, EC-13). Wrong code 5 times locks the number
+for 15 minutes; more than 5 code requests in an hour also locks. The countdown uses server time and keeps running if
+the app closes. Try again stays disabled until it reaches 0:00.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+(() => {
+  const clock = document.getElementById('clock');
+  const retry = document.getElementById('retry');
+  let left = 900;
+  const draw = () => {
+    clock.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    retry.disabled = left > 0;
+  };
+  draw();
+  window.setInterval(() => { if (left > 0) { left -= 1; draw(); } }, 1000);
+  document.querySelectorAll('[data-seconds]').forEach((b) => b.addEventListener('click', () => { left = Number(b.dataset.seconds); draw(); }));
+})();
+</script>
+</body>
+</html>

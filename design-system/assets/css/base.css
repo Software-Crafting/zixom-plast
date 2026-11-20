@@ -1,6 +1,8 @@
 /* Screen shell, navigation, icons, buttons and chips. */
 
+[hidden]{display:none !important}
 .screen{position:absolute; inset:0; display:flex; flex-direction:column}
+.screen.plain{background:#fff}
 .ic{width:20px; height:20px; flex-shrink:0; fill:currentColor; vertical-align:middle}
 .ic-16{width:16px; height:16px} .ic-18{width:18px; height:18px} .ic-24{width:24px; height:24px}
 .ic-28{width:28px; height:28px} .ic-32{width:32px; height:32px}
@@ -14,7 +16,7 @@
   padding:4px var(--gutter) 28px}
 .scroll::-webkit-scrollbar{display:none}
 .scroll.with-tabbar{padding-bottom:var(--tabbar-space)}
-.scroll.with-footer{padding-bottom:132px}
+.scroll.with-footer{padding-bottom:190px}
 .stack{display:flex; flex-direction:column; gap:16px}
 .stack-sm{display:flex; flex-direction:column; gap:8px}
 .row-flex{display:flex; align-items:center; gap:10px}
@@ -109,9 +111,9 @@
 /* segmented control */
 .segment{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:4px; padding:4px; border-radius:var(--r-pill);
   background:var(--slate-100)}
-.segment button{height:38px; border:0; border-radius:var(--r-pill); background:transparent; color:var(--slate-600);
-  font:400 var(--fs-14) var(--font-display); cursor:pointer}
-.segment button[aria-selected="true"]{background:#fff; color:var(--slate-900); box-shadow:var(--shadow-soft)}
+.segment button, .segment a{height:38px; display:grid; place-items:center; border:0; border-radius:var(--r-pill); background:transparent;
+  color:var(--slate-600); font:400 var(--fs-14) var(--font-display); text-decoration:none; cursor:pointer}
+.segment [aria-selected="true"]{background:#fff; color:var(--slate-900); box-shadow:var(--shadow-soft)}
 
 /* status tag. Always text, never colour alone */
 .tag{display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:var(--r-pill);

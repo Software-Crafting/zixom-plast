@@ -55,7 +55,7 @@ a.screen-row .mono{color:var(--blue)}
 (() => {
   const { esc, tag } = ZX.render;
   const all = ZX.modules.flatMap((m) => m.screens.map(([id, name, phase = 1]) => ({ id, name, phase, role: m.role })));
-  const built = all.filter((s) => ZX.built[s.id]).length;
+  const built = all.filter((s) => ZX.built.has(s.id)).length;
   const phase1 = all.filter((s) => s.phase === 1).length;
   document.getElementById('summary').innerHTML = [
     [all.length, 'Screens in the spec'], [phase1, 'In the first release'], [built, 'Pages built'],
@@ -64,7 +64,7 @@ a.screen-row .mono{color:var(--blue)}
   const draw = (role) => {
     document.getElementById('modules').innerHTML = ZX.modules.filter((m) => role === 'all' || m.role === role).map((m) => {
       const rows = m.screens.map(([id, name, phase = 1]) => {
-        const href = ZX.built[id];
+        const href = ZX.built.has(id) && ZX.pagePath(id);
         const badge = phase === 2 ? tag('Phase 2') : href ? tag('Built', 'green') : '';
         const inner = `<span class="mono">${id}</span><span>${esc(name)}</span>${badge}`;
         return href ? `<a class="screen-row" href="${href}">${inner}</a>` : `<div class="screen-row">${inner}</div>`;

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A15 Session expired</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A15 Session expired</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="draft" aria-pressed="true">with a draft</button>
+  <button type="button" data-state="plain" aria-pressed="false">nothing open</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="draft">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span></div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding-top:36px">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg></span>
+          <h3>Your session ended</h3>
+          <p data-when="draft">Please sign in again. Your draft is saved and opens where you left it.</p>
+          <p data-when="plain">Please sign in again to continue. You will return to the screen you were on.</p>
+        </div>
+
+        <div data-when="draft">
+          <p class="list-title">Kept on this phone</p>
+          <div class="card-fill">
+            <div class="person">
+              <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span>
+              <span class="grow"><b>Service request draft</b><span>Line 2 former · Step 2 of 5 · Saved 9:12 AM</span></span>
+            </div>
+          </div>
+          <p class="hint" style="text-align:center">Drafts stay on the phone for 30 days.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="A03-sign-in.html">Sign in</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Opens when the login is no longer valid: 30 days without use, or signed out from another
+device. The current screen and any unsent draft are kept; after the OTP the person returns to the same place with the
+form filled (EC-11, flow F10).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

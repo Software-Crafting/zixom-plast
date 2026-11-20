@@ -17,6 +17,15 @@ window.ZX = window.ZX || {};
   const date = (iso) => { const d = toDate(iso); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
   const dayDate = (iso) => { const d = toDate(iso); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`; };
   const daysFromToday = (iso) => Math.round((toDate(iso) - toDate(data.today)) / DAY_MS);
+  /* relative time for recent items: 12 min ago, 3 h ago, Yesterday, then the date */
+  const ago = (isoDateTime) => {
+    const minutes = Math.round((new Date(data.now) - new Date(isoDateTime)) / 60000);
+    if (minutes < 60) return `${Math.max(1, minutes)} min ago`;
+    if (minutes < 24 * 60 && isoDateTime.slice(0, 10) === data.today) return `${Math.round(minutes / 60)} h ago`;
+    const days = -daysFromToday(isoDateTime);
+    if (days === 1) return 'Yesterday';
+    return days < 7 ? DAYS[toDate(isoDateTime).getDay()] : dayDate(isoDateTime);
+  };
   const money = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   const count = (n) => (n > 99 ? '99+' : String(n));
 
@@ -116,7 +125,11 @@ window.ZX = window.ZX || {};
       <a class="icon-btn dark" href="tel:${esc(e.phone.replace(/\s/g, ''))}" aria-label="Call ${esc(e.name)}">${icon('phone')}</a>
     </div>`;
 
-  ZX.render = { esc, icon, tag, date, dayDate, daysFromToday, money, count, machine, engineer, amc,
+  const alertCard = (a) => `<a class="alert-card ${a.tone}" href="${esc(a.href)}">
+      <span class="disc">${icon(a.icon)}</span><b>${esc(a.title)}</b>
+      <span${a.mono ? ' class="mono"' : ''}>${esc(a.sub)}</span>${icon('caret-right', 'ic-16')}</a>`;
+
+  ZX.render = { esc, icon, tag, date, dayDate, daysFromToday, ago, money, count, alertCard, machine, engineer, amc,
     ticketTag, coverageTag, severityTag, warrantyTag, amcTag, stockTag, invoiceTag, thumb,
     machineCard, ticketCard, engineerCard };
 })();

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S06 No access</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 8px 190px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S06 No access</b><span>reached through a link</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>case</span>
+  <button type="button" data-state="ready" aria-pressed="true">other company</button>
+  <button type="button" data-state="engineer" aria-pressed="false">engineer, not assigned</button>
+  <button type="button" data-state="changed" aria-pressed="false">access changed while open</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../customer/C101-home.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <span></span><span></span>
+      </div>
+      <div class="full">
+        <div class="state" data-when="ready">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3>This is not available to you</h3>
+          <p>This record belongs to another company.</p>
+        </div>
+        <div class="state" data-when="engineer">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+          <h3>This is not available to you</h3>
+          <p>This job is not assigned to you. Ask your service manager if you should have it.</p>
+        </div>
+        <div class="state" data-when="changed">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
+          <h3>Your access was updated</h3>
+          <p>Something changed in your account while this screen was open. We refreshed the app.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready">
+          <a class="btn btn-primary" href="../customer/C101-home.html">Go back</a>
+          <button class="btn btn-secondary" type="button" data-open="owner">Contact your account owner</button>
+        </div>
+        <div class="stack-sm" data-when="engineer">
+          <a class="btn btn-primary" href="../engineer/E101-today.html">Go back</a>
+          <button class="btn btn-secondary" type="button" data-open="manager">Call service manager</button>
+        </div>
+        <div class="stack-sm" data-when="changed">
+          <a class="btn btn-primary" href="../customer/C101-home.html"><svg class="ic" aria-hidden="true"><use href="#ph-house"/></svg>Go to Home</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="owner" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact your account owner">
+        <div class="group">
+          <div class="title">Rakesh Mehta, primary contact at Shree Packaging Industries</div>
+          <button type="button" data-close>Call +91 98250 11410</button>
+          <button type="button" data-close>Copy number</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+    <div class="overlay bottom" id="manager" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Call service manager">
+        <div class="group">
+          <div class="title">Mr Kapoor, service manager</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown only when someone reaches a screen through a link, a notification or a QR code (EC-21).
+Buttons the role cannot use are hidden everywhere else. Never names or describes the other company. When access
+changes while a screen is open, the app shows Your access was updated, refreshes and returns to Home (EC-19).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

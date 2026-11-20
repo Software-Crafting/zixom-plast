@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A03 Sign in</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.brand-small{height:44px; width:auto; display:block; margin:4px 0 18px}
+.alt{margin-top:14px; text-align:center; font-size:var(--fs-14); color:var(--text)}
+.alt a{color:var(--blue); font-weight:600; text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A03 Sign in</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">idle</button>
+  <button type="button" data-state="invalid" aria-pressed="false">invalid number</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="unknown" aria-pressed="false" data-open="not-found">not registered</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states"><span>number belongs to</span>
+  <button type="button" data-role="customer" aria-pressed="true">customer</button>
+  <button type="button" data-role="engineer" aria-pressed="false">engineer</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="A02-welcome.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to sign in.</div>
+        <img class="brand-small" src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
+        <h1 class="large-title">Sign in</h1>
+        <p class="lede">Enter the mobile number Zixom has for you. We will send a 6 digit code.</p>
+
+        <div class="field" style="margin-top:22px" data-when="ready sending unknown offline">
+          <label for="mobile">Mobile number</label>
+          <div class="input-group"><span class="prefix">+91</span>
+            <input class="input" id="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98250 11410" value="98250 11410"></div>
+        </div>
+        <div class="field has-error" style="margin-top:22px" data-when="invalid">
+          <label for="mobile-bad">Mobile number</label>
+          <div class="input-group"><span class="prefix">+91</span>
+            <input class="input" id="mobile-bad" type="tel" inputmode="numeric" value="98250 114" aria-invalid="true" aria-describedby="mobile-err"></div>
+          <span class="error-text" id="mobile-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span>
+        </div>
+        <span class="hint">Engineers sign in here too, with the number Zixom has on file.</span>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="A04-verify-otp.html" id="send" data-when="ready unknown">Send OTP</a>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Sending...</button>
+        <button class="btn btn-primary" type="button" disabled data-when="invalid offline">Send OTP</button>
+        <p class="alt">New to Zixom Connect? <a href="A05-sign-up.html">Sign up</a></p>
+        <p class="alt" style="margin-top:6px"><button class="btn btn-text" type="button" data-open="support">Need help? Contact support</button></p>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="not-found" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="nf-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3 id="nf-title">We can't find this number</h3>
+          <p>+91 98250 11410 is not linked to a Zixom Connect account yet.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-primary" href="A05-sign-up.html">Sign up</a>
+          <button class="btn btn-secondary" type="button" data-close>Try another number</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">One sign in for both roles; the account decides where it goes. Number checks: 10 digits starting
+6 to 9, pasted +91 and spaces are cleaned. Too many requests opens <a href="../system/S11-too-many-attempts.html">S11</a>,
+a number on two accounts opens <a href="A20-number-on-two-accounts.html">A20</a>, a suspended account opens
+<a href="A16-account-suspended.html">A16</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+/* Prototype only: remembers which role the number belongs to so A04 routes to the right home. */
+(() => {
+  const ROLE_KEY = 'zx-role';
+  const buttons = document.querySelectorAll('[data-role]');
+  const pick = (role) => {
+    try { sessionStorage.setItem(ROLE_KEY, role); } catch { /* storage blocked: A04 defaults to customer */ }
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
+  };
+  buttons.forEach((b) => b.addEventListener('click', () => pick(b.dataset.role)));
+  pick('customer');
+})();
+</script>
+</body>
+</html>

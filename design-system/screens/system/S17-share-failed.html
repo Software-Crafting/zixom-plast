@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S17 Share or export failed</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S17 Share or export failed</b><span>PDF or receipt</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>cause</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="fail">PDF not created</button>
+  <button type="button" data-state="offline" aria-pressed="false" data-open="fail">offline, not downloaded</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="#" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Service report</h1>
+        <button class="icon-btn" type="button" data-open="fail" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
+      </div>
+      <div class="scroll">
+        <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Showing saved data.</div>
+        <div class="card-fill">
+          <dl class="kv" style="margin:0">
+            <div><dt>Ticket</dt><dd class="mono">TKT-2026-0129</dd></div>
+            <div><dt>Machine</dt><dd>Tray line, SVF-600</dd></div>
+            <div><dt>Visit</dt><dd>28 Oct 2026</dd></div>
+            <div><dt>Engineer</dt><dd>Sandeep Yadav</dd></div>
+          </dl>
+        </div>
+        <div class="section-head" style="margin-top:18px"><h2>Work done</h2></div>
+        <p class="lede">Quarterly preventive visit. Cleaned vacuum lines, replaced two worn seals, checked heater zones and lubricated the chain drive.</p>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="fail" data-initial>
+      <div class="alert" role="alertdialog" aria-labelledby="fail-title">
+        <span class="disc red"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
+        <h3 id="fail-title" data-when="ready">Couldn't share the report</h3>
+        <h3 data-when="offline">This file is not downloaded yet</h3>
+        <p data-when="ready">We could not create the PDF for <span class="mono" style="white-space:nowrap">TKT-2026-0129</span>. Please try again.</p>
+        <p data-when="offline">Connect to the internet to download and share the report. Download it next time to share it offline.</p>
+        <div class="actions">
+          <button class="btn btn-primary" type="button" data-close data-busy data-when="ready">Retry</button>
+          <button class="btn btn-primary" type="button" data-close data-when="offline">OK</button>
+          <button class="btn btn-text" type="button" style="width:100%" data-close data-when="ready">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Alert when a PDF, receipt or ticket summary cannot be created or shared. Offline it explains that
+the file is not on the phone yet. Errors never use a toast.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

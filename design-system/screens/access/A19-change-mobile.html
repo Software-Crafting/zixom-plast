@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A19 Change mobile number</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A19 Change mobile number</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>step</span>
+  <button type="button" data-state="new" aria-pressed="true">1 new number</button>
+  <button type="button" data-state="taken" aria-pressed="false">already registered</button>
+  <button type="button" data-state="otpnew" aria-pressed="false">2 code to new</button>
+  <button type="button" data-state="otpold" aria-pressed="false">3 code to old</button>
+  <button type="button" data-state="done" aria-pressed="false">changed</button>
+  <button type="button" data-state="pending" aria-pressed="false">old number lost</button>
+  <button type="button" data-state="limit" aria-pressed="false">30 day limit</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="new">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../customer/C1102-profile.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Change mobile number</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+
+        <div data-when="new taken">
+          <div class="wizard"><div class="meta"><b>Step 1 of 3</b><span>New number</span></div><div class="bars"><span class="now"></span><span></span><span></span></div></div>
+          <p class="lede" style="margin-top:0">Your current number is +91 98250 11410. We send a code to the new number, then one to the old number to be sure it is you.</p>
+          <div class="field" style="margin-top:20px" data-when="new">
+            <label for="new-mobile">New mobile number</label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="new-mobile" type="tel" inputmode="numeric" value="99250 44718"></div>
+          </div>
+          <div class="field has-error" style="margin-top:20px" data-when="taken">
+            <label for="new-mobile-bad">New mobile number</label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="new-mobile-bad" type="tel" inputmode="numeric" value="97140 22321" aria-invalid="true" aria-describedby="taken-err"></div>
+            <span class="error-text" id="taken-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number already has an account. Use another number.</span>
+          </div>
+          <span class="hint">You can change your number once every 30 days.</span>
+        </div>
+
+        <div data-when="otpnew otpold">
+          <div class="wizard" data-when="otpnew"><div class="meta"><b>Step 2 of 3</b><span>Verify the new number</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span></div></div>
+          <div class="wizard" data-when="otpold"><div class="meta"><b>Step 3 of 3</b><span>Confirm with the old number</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span></div></div>
+          <h2 class="large-title" style="font-size:var(--fs-22)">Enter the code</h2>
+          <p class="lede" data-when="otpnew">We sent a 6 digit code to +91 99250 44718.</p>
+          <p class="lede" data-when="otpold">We sent a 6 digit code to your current number, +91 98250 11410.</p>
+          <div class="otp" style="margin-top:20px"><input maxlength="1" inputmode="numeric" value="3" aria-label="Digit 1"><input maxlength="1" inputmode="numeric" value="9" aria-label="Digit 2"><input maxlength="1" inputmode="numeric" aria-label="Digit 3"><input maxlength="1" inputmode="numeric" aria-label="Digit 4"><input maxlength="1" inputmode="numeric" aria-label="Digit 5"><input maxlength="1" inputmode="numeric" aria-label="Digit 6"></div>
+          <span class="hint">Resend code in 0:21</span>
+          <button class="btn btn-text" type="button" style="margin-top:10px; padding:0" data-when="otpold" onclick="document.querySelector('[data-state=pending]').click()">I no longer have my old number</button>
+        </div>
+
+        <div data-when="done">
+          <div class="state" style="padding-top:40px">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>Mobile number changed</h3>
+            <p>Sign in with +91 99250 44718 from now on. Your other device was signed out.</p>
+          </div>
+        </div>
+
+        <div data-when="pending">
+          <div class="state" style="padding-top:28px">
+            <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+            <h3>Zixom will verify the change</h3>
+            <p>Without the old number we check it by hand. Keep using +91 98250 11410 until we confirm, within 1 working day.</p>
+          </div>
+          <div class="card-fill">
+            <dl class="kv" style="margin:0">
+              <div><dt>New number</dt><dd>+91 99250 44718</dd></div>
+              <div><dt>Status</dt><dd><span class="tag blue">Pending verification</span></dd></div>
+              <div><dt>Requested</dt><dd>23 Nov 2026, 11:05 AM</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div data-when="limit">
+          <div class="state" style="padding-top:40px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
+            <h3>You changed your number recently</h3>
+            <p>A number can be changed once every 30 days. You can change it again from 12 Dec 2026, or call support if it is urgent.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="new" onclick="document.querySelector('[data-state=otpnew]').click()">Next</button>
+        <button class="btn btn-primary" type="button" disabled data-when="taken">Next</button>
+        <button class="btn btn-primary" type="button" data-when="otpnew" onclick="document.querySelector('[data-state=otpold]').click()">Verify</button>
+        <button class="btn btn-primary" type="button" data-when="otpold" onclick="document.querySelector('[data-state=done]').click()">Verify</button>
+        <a class="btn btn-primary" href="../customer/C1102-profile.html" data-when="done pending">Back to profile</a>
+        <a class="btn btn-secondary" href="tel:+919991910097" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call support</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">From Profile. Three steps: new number, OTP to the new number, OTP to the old number (EC-68).
+Without the old number the request goes to Zixom for manual checks. Code entry behaves like
+<a href="A04-verify-otp.html">A04</a>: wrong code, expired, resend after 30 seconds.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

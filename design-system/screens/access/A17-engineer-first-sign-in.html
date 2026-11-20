@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A17 Engineer first sign in</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.profile{display:flex; flex-direction:column; align-items:center; gap:8px; padding:8px 0 4px; text-align:center}
+.profile .photo{position:relative}
+.profile .avatar{background:#fff}
+.profile .photo .icon-btn{position:absolute; right:-6px; bottom:-4px; width:32px; height:32px}
+.profile b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.profile span{font-size:var(--fs-13); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A17 Engineer first sign in</b><span>engineer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>step</span>
+  <button type="button" data-state="confirm" aria-pressed="true">1 confirm details</button>
+  <button type="button" data-state="permissions" aria-pressed="false">2 permissions</button>
+  <button type="button" data-state="denied" aria-pressed="false">location denied</button>
+  <button type="button" data-state="notfound" aria-pressed="false">number not found</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="confirm">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span></div>
+      <div class="scroll with-footer">
+
+        <div data-when="confirm">
+          <div class="wizard"><div class="meta"><b>Step 1 of 2</b><span>Your details</span></div><div class="bars"><span class="now"></span><span></span></div></div>
+          <h1 class="large-title">Welcome to Zixom Connect</h1>
+          <p class="lede">Check the details Zixom has for you. Your service manager can correct anything that is wrong.</p>
+          <div class="card-fill" style="margin-top:18px">
+            <div class="profile">
+              <span class="photo"><span class="avatar lg">SY</span><button class="icon-btn dark" type="button" aria-label="Add a photo"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-camera"/></svg></button></span>
+              <b>Sandeep Yadav</b><span>Senior service engineer</span>
+            </div>
+            <dl class="kv" style="margin:12px 0 0">
+              <div><dt>Employee code</dt><dd class="mono">ZP-SE-014</dd></div>
+              <div><dt>Region</dt><dd>Ahmedabad</dd></div>
+              <div><dt>Mobile</dt><dd>+91 99090 33114</dd></div>
+              <div><dt>Skills</dt><dd>Thermoforming, PLC, Vacuum</dd></div>
+            </dl>
+          </div>
+          <p class="hint">A photo helps customers recognise you at the gate. Optional.</p>
+        </div>
+
+        <div data-when="permissions denied">
+          <div class="wizard"><div class="meta"><b>Step 2 of 2</b><span>Permissions</span></div><div class="bars"><span class="done"></span><span class="now"></span></div></div>
+          <h1 class="large-title">Allow what the job needs</h1>
+          <p class="lede">The phone asks for each one. You can change them later in Settings.</p>
+          <div class="list" style="margin-top:18px">
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span><b>Location</b><span class="sub">Only while travelling and at check in, to share your ETA and verify arrival</span>
+              <span class="end" data-when="permissions"><span class="tag green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg>Allowed</span></span>
+              <span class="end" data-when="denied"><span class="tag red">Off</span></span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span><b>Camera</b><span class="sub">Photos for visit reports and scanning nameplates</span><span class="end"><span class="tag green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg>Allowed</span></span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Notifications</b><span class="sub">New jobs arrive as time sensitive alerts. You have 30 minutes to answer</span><span class="end"><button class="btn btn-soft btn-sm" type="button" data-toast="Notifications allowed">Allow</button></span></div>
+          </div>
+          <div class="banner amber" style="margin-top:14px" data-when="denied"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+            <div><b>Location is off</b>Travel still works, but customers will not see your ETA, and every check in will need a reason and a photo of the gate. <button class="link-btn" type="button" data-toast="Opens iOS Settings">Open Settings</button></div></div>
+        </div>
+
+        <div data-when="notfound">
+          <div class="state" style="padding-top:36px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-identification-card"/></svg></span>
+            <h3>We can't find your engineer account</h3>
+            <p>+91 99090 33114 is not on Zixom's engineer list. Your service manager adds engineers before the first sign in.</p>
+          </div>
+          <div class="list">
+            <a class="list-item" href="tel:+919991910097"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></span><b>Call Zixom support</b><span class="sub">+91 99919 10097, 24x7</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <button class="btn btn-primary" type="button" data-when="confirm" onclick="document.querySelector('[data-state=permissions]').click()">These are correct</button>
+        <a class="btn btn-primary" href="A13-app-lock-setup.html" data-when="permissions denied">Continue</a>
+        <a class="btn btn-secondary" href="A03-sign-in.html" data-when="notfound">Try another number</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Only the first time an engineer signs in. Engineers are created by Zixom, so there is no sign up:
+the person confirms the name, photo and region on file, then allows location, camera and notifications. Next is app lock
+(required for engineers), then Today.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

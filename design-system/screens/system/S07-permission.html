@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S07 Permission needed</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S07 Permission needed</b><span>after a denied permission</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>permission</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="perm">camera</button>
+  <button type="button" data-state="photos" aria-pressed="false" data-open="perm">photos</button>
+  <button type="button" data-state="location" aria-pressed="false" data-open="perm">location</button>
+  <button type="button" data-state="mic" aria-pressed="false" data-open="perm">microphone</button>
+  <button type="button" data-state="notif" aria-pressed="false" data-open="perm">notifications</button>
+  <button type="button" data-state="restricted" aria-pressed="false" data-open="perm">blocked by device admin</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="#" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>New claim</h1><span></span>
+      </div>
+      <div class="scroll">
+        <div class="wizard"><div class="meta"><b>Step 3 of 5</b><span>Evidence</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
+        <h2 class="large-title" style="font-size:var(--fs-22)">Photos of the fault</h2>
+        <p class="lede">At least 1 photo or a video, plus a photo of the nameplate.</p>
+        <div class="uploads" style="margin-top:16px">
+          <button class="upload add" type="button" data-open="perm" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="perm" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="perm-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc blue" data-when="ready"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
+          <span class="disc blue" data-when="photos"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+          <span class="disc blue" data-when="location"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span>
+          <span class="disc blue" data-when="mic"><svg class="ic" aria-hidden="true"><use href="#ph-microphone"/></svg></span>
+          <span class="disc blue" data-when="notif"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
+          <span class="disc" data-when="restricted"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg></span>
+
+          <h3 id="perm-title" data-when="ready">Camera access is off</h3>
+          <h3 data-when="photos">Photo access is off</h3>
+          <h3 data-when="location">Location is off</h3>
+          <h3 data-when="mic">Microphone access is off</h3>
+          <h3 data-when="notif">Notifications are off</h3>
+          <h3 data-when="restricted">Camera is blocked on this phone</h3>
+
+          <p data-when="ready">Allow the camera in Settings to scan or take photos. You can still choose photos from your library.</p>
+          <p data-when="photos">Allow photo access in Settings to add photos from your library. You can still take a new photo.</p>
+          <p data-when="location">Allow location to share your arrival and travel time. Without it, check in needs a reason and a photo of the site gate.</p>
+          <p data-when="mic">Allow the microphone in Settings to speak instead of typing. You can still type the description.</p>
+          <p data-when="notif">Turn them on to hear about engineer visits and payments. Important messages also come by email.</p>
+          <p data-when="restricted">Your company's device settings do not allow the camera. Ask your IT team, or choose photos from your library.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close data-when="ready photos location mic">Open Settings</button>
+          <button class="btn btn-primary" type="button" data-close data-when="notif">Turn on</button>
+          <button class="btn btn-primary" type="button" data-close data-when="restricted">Choose from library</button>
+          <button class="btn btn-secondary" type="button" data-close data-when="ready photos location mic restricted">Not now</button>
+          <button class="btn btn-secondary" type="button" data-close data-when="notif">Later</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Explanation sheet after a person denies a permission (EC-23 to EC-28). It says what stops working
+and what still works, then offers Open Settings. Permissions are asked only when a feature is first used. Shown here over
+the claim evidence step; the same sheet appears wherever the feature lives.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

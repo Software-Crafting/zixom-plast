@@ -120,5 +120,75 @@ ZX.modules = [
     ['E811', 'Notification alerts'] ] },
 ];
 
-/* id -> page path, filled in as screens are built */
-ZX.built = {};
+/* Canonical file name of every screen. Links between pages must use these names.
+   A page lives at screens/<folder>/<file>.html, folder from ZX.pagePath below. */
+ZX.files = Object.fromEntries(`
+  A01-splash A02-welcome A03-sign-in A04-verify-otp A05-sign-up A06-find-company A07-verify-machine
+  A08-verification-pending A09-verification-rejected A10-complete-profile A11-terms A12-company-picker
+  A13-app-lock-setup A14-app-lock A15-session-expired A16-account-suspended A17-engineer-first-sign-in
+  A18-accept-invitation A19-change-mobile A20-number-on-two-accounts A21-verify-email A22-security-alert
+  A23-device-limit A24-deletion-requested A25-account-deleted
+  S01-force-update S02-maintenance S03-no-internet S04-error S05-not-found S06-no-access S07-permission
+  S08-invalid-link S09-about S10-storage-full S11-too-many-attempts S12-unsupported-os S13-rooted-warning
+  S14-update-available S15-mobile-data S16-wrong-date S17-share-failed S18-opening-link S19-biometric-help
+  C101-home C102-search C103-alerts
+  C201-machines C202-machine-detail C203-add-machine C204-unlisted-machine C205-scan-qr C206-edit-machine
+  C207-machine-history C208-history-entry C209-transfer-machine C210-machine-qr-card
+  C301-warranty C302-warranty-details C303-claim-machine C304-claim-problem C305-claim-evidence C306-claim-site
+  C307-claim-review C308-claim C309-extend-warranty C310-appeal-claim
+  C401-amc C402-amc-contract C403-amc-plans C404-buy-amc C405-renew-amc C406-amc-visits
+  C407-reschedule-amc-visit C408-do-not-renew
+  C501-support C502-requests C503-raise-machine C504-raise-issue C505-raise-media C506-raise-visit
+  C507-raise-review C508-request-detail C509-estimate C510-reschedule C511-cancel-request C512-service-report
+  C513-confirm-completion C514-rate-service C515-reopen C516-track
+  C601-questions C602-ask C603-thread C604-faq C605-contact C606-complaint
+  C701-parts C702-machine-parts C703-part-detail C704-cart C705-checkout C706-request-part C707-orders
+  C708-order-detail C709-cancel-order C710-delivery-problem
+  C801-payments C802-invoice-detail C803-pay-method C804-payment-processing C805-payment-success
+  C806-payment-failed C807-payment-pending C808-payment-history C809-receipt C810-refunds C811-billing-details
+  C812-payment-proof C813-statement
+  C901-documents C902-document-viewer C903-upload-document
+  C1001-notifications C1002-notification-settings
+  C1101-more C1102-profile C1103-company C1104-sites C1105-team C1107-security C1108-settings C1109-legal
+  C1110-delete-account C1111-log-out C1112-report-problem
+  C1201-products C1202-product-detail C1203-enquiry
+  C1301-tour C1302-announcements C1303-announcement C1304-whats-new C1305-rate-app
+  C1401-running-hours C1402-add-running-hours C1403-machine-notes C1404-edit-note C1405-operators
+  C1406-edit-operator C1407-machine-photos C1408-commissioning C1409-maintenance-schedule C1410-care-checklist
+  C1411-machine-status C1412-share-machine
+  C1501-machine-down C1502-urgent-request C1503-service-history C1504-charges C1505-response-times
+  C1506-site-picker C1507-add-site C1508-drafts C1509-share-ticket C1510-slot-picker C1511-engineer-profile
+  C1512-call-engineer C1513-arrival-code
+  C1601-dispute C1602-dispute-status C1603-credit-notes C1604-invoice-correction C1605-saved-methods
+  C1607-select-invoices C1608-bank-transfer
+  C1701-downloads C1702-document-versions C1703-share-document
+  C1113-companies C1114-change-primary C1115-data-privacy C1116-about-zixom C1117-invite-sent
+  E101-today E102-sync-queue E103-duty-status
+  E201-jobs E202-job-detail E203-accept-job E204-propose-time E205-start-travel E206-check-in E207-work
+  E208-hold E209-customer-unavailable E210-complete-job E211-escalate E212-reassign E213-notes
+  E214-reopened-job E215-job-cancelled
+  E301-machine-history E302-machine-detail E303-find-machine E304-documents E305-troubleshooting
+  E401-report E402-parts-used E403-signature E404-report-review E405-report-submitted E406-drafts
+  E407-follow-up E408-estimate
+  E501-request-parts E502-parts-requests E503-stock E504-return-parts
+  E701-schedule E702-leave E703-skills
+  E801-inbox E802-profile E803-performance E804-settings E805-help E806-report-problem E807-log-out
+  E901-safety-checklist E902-site-access E903-incident E904-emergency E905-hazards E906-induction
+  E1001-camera E1002-annotate E1003-video E1004-voice E1005-scan E1006-offline-data E1007-sync-conflict
+  E1008-upload-queue E1009-end-of-day E1010-weekly-summary E1011-team-contacts E1012-handover-notes
+  E1013-location-off E1014-low-storage E1015-low-power
+  E216-briefing E217-running-late E218-job-parts E219-timeline E220-attachments E221-extra-work
+  E222-coverage E223-feedback
+  E409-report-preview E410-checklist-template E411-recommendations E412-machine-status E413-time-log
+  E705-holidays E706-leave-detail E707-working-hours E808-certifications E809-change-phone
+  E810-update-notes E811-alert-sounds
+`.trim().split(/\s+/).map((file) => [file.split('-')[0], file]));
+
+const FOLDER = { A: 'access', S: 'system', C: 'customer', E: 'engineer' };
+ZX.pagePath = (id) => `screens/${FOLDER[id[0]]}/${ZX.files[id]}.html`;
+
+/* screens that have a page, added as each layer is built */
+ZX.built = new Set(`
+  A01 A02 A03 A04 A05 A06 A07 A08 A09 A10 A11 A12 A13 A14 A15 A16 A17 A18 A19 A20 A21 A22 A23 A24 A25
+  S01 S02 S03 S04 S05 S06 S07 S08 S09 S10 S11 S12 S13 S14 S15 S16 S17 S18 S19
+`.trim().split(/\s+/));

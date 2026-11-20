@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A05 Sign up</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.alt{margin-top:14px; text-align:center; font-size:var(--fs-14); color:var(--text)}
+.alt a{color:var(--blue); font-weight:600; text-decoration:none}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A05 Sign up: your details</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">filled</button>
+  <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
+  <button type="button" data-state="sending" aria-pressed="false">sending</button>
+  <button type="button" data-state="registered" aria-pressed="false" data-open="registered">number registered</button>
+  <button type="button" data-state="email" aria-pressed="false">email used</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="A02-welcome.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your details are kept.</div>
+        <h1 class="large-title">Create your account</h1>
+        <p class="lede">For people at companies that use Zixom machines. We match you to your company with these details.</p>
+
+        <div class="error-summary" role="alert" style="margin-top:18px" data-when="errors">
+          <b>Fix 2 things to continue</b>
+          <ul><li><a href="#name-bad">Enter your full name</a></li><li><a href="#mobile-bad">Enter a 10 digit mobile number</a></li></ul>
+        </div>
+
+        <div style="margin-top:20px">
+          <!-- full name -->
+          <div class="field" data-when="ready sending registered email offline">
+            <label for="name">Full name<span class="req">*</span></label>
+            <input class="input" id="name" autocomplete="name" value="Rakesh Mehta">
+          </div>
+          <div class="field has-error" data-when="errors">
+            <label for="name-bad">Full name<span class="req">*</span></label>
+            <input class="input" id="name-bad" value="R" aria-invalid="true" aria-describedby="name-err">
+            <span class="error-text" id="name-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter your full name, at least 2 letters</span>
+          </div>
+
+          <!-- mobile -->
+          <div class="field" data-when="ready sending registered email offline">
+            <label for="mobile">Mobile number<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile" type="tel" inputmode="numeric" value="98250 11410"></div>
+          </div>
+          <div class="field has-error" data-when="errors">
+            <label for="mobile-bad">Mobile number<span class="req">*</span></label>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile-bad" type="tel" inputmode="numeric" value="58250 1141" aria-invalid="true" aria-describedby="mobile-err"></div>
+            <span class="error-text" id="mobile-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number starting 6 to 9</span>
+          </div>
+
+          <!-- email -->
+          <div class="field" data-when="ready sending registered errors offline">
+            <label for="email">Work email</label>
+            <input class="input" id="email" type="email" autocomplete="email" value="rakesh@shreepack.example">
+            <span class="hint">Optional, but it helps us find your company faster.</span>
+          </div>
+          <div class="field has-error" data-when="email">
+            <label for="email-bad">Work email</label>
+            <input class="input" id="email-bad" type="email" value="rakesh@shreepack.example" aria-invalid="true" aria-describedby="email-err">
+            <span class="error-text" id="email-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This email is used by another account.</span>
+            <span class="hint"><button class="btn btn-text" type="button" style="padding:0; min-height:0" data-open="support">Contact support</button> if it is yours.</span>
+          </div>
+
+          <!-- company -->
+          <div class="field">
+            <label for="company">Company name<span class="req">*</span></label>
+            <input class="input" id="company" autocomplete="organization" value="Shree Packaging Industries">
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="A04-verify-otp.html" id="continue" data-when="ready registered errors email">Continue</a>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Continue</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Continue</button>
+        <p class="alt">Already have an account? <a href="A03-sign-in.html">Sign in</a></p>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="registered" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="reg-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span>
+          <h3 id="reg-title">This number already has an account</h3>
+          <p>+91 98250 11410 is signed up. Sign in with an OTP instead.</p>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-primary" href="A03-sign-in.html">Sign in</a>
+          <button class="btn btn-secondary" type="button" data-close>Use another number</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Name 2 to 60 letters, mobile as A03, email optional, company 2 to 100 characters. Continue sends an
+OTP (A04), then A06 when Zixom finds the company or A07 when it does not. A number that belongs to an engineer opens
+<a href="A20-number-on-two-accounts.html">A20</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+/* Prototype only: tells A04 this is a new sign up, so it continues to A06. */
+document.getElementById('continue').addEventListener('click', () => {
+  try { sessionStorage.setItem('zx-role', 'signup'); } catch { /* storage blocked */ }
+});
+</script>
+</body>
+</html>

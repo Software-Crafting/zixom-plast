@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A14 App lock</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.lock{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 28px; text-align:center}
+.lock img{width:130px; height:auto}
+.lock h1{margin:28px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
+.lock p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
+.lock .who{display:flex; align-items:center; gap:10px; margin-top:18px; padding:8px 16px 8px 8px; border-radius:var(--r-pill); background:var(--slate-50)}
+.lock .who b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.lock-foot{padding:0 var(--gutter) 44px}
+/* iOS style Face ID prompt, drawn by the system in the real app */
+.faceid{width:200px; padding:26px 20px 22px; border-radius:26px; background:rgba(246,247,249,.97); text-align:center; box-shadow:var(--shadow-lift)}
+.faceid .ic{width:58px; height:58px; color:var(--slate-800)}
+.faceid b{display:block; margin-top:12px; font:600 var(--fs-16) var(--font-body); color:var(--slate-900)}
+.faceid span{display:block; margin-top:4px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A14 App lock</b><span>launch and return</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="prompt" aria-pressed="true" data-open="faceid">Face ID prompt</button>
+  <button type="button" data-state="locked" aria-pressed="false">cancelled</button>
+  <button type="button" data-state="failed" aria-pressed="false">failed, 3 tries left</button>
+  <button type="button" data-state="toomany" aria-pressed="false">too many failures</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="prompt">
+    <div class="status on-light"></div>
+    <div class="lock">
+      <img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
+      <h1 data-when="prompt locked failed">Zixom Connect is locked</h1>
+      <h1 data-when="toomany">Sign in again</h1>
+      <p data-when="prompt locked">Unlock with Face ID to continue.</p>
+      <p data-when="failed" style="color:var(--red)">Face ID did not recognise you. 3 tries left, then you sign in again with an OTP.</p>
+      <p data-when="toomany">Face ID failed 5 times. For your security sign in with your mobile number and a code.</p>
+      <div class="who"><span class="avatar" style="width:36px; height:36px; font-size:var(--fs-14)">RM</span><b>Rakesh Mehta</b></div>
+    </div>
+    <div class="lock-foot">
+      <div class="stack-sm">
+        <button class="btn btn-primary" type="button" data-open="faceid" data-when="prompt locked failed"><svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg>Unlock with Face ID</button>
+        <button class="btn btn-secondary" type="button" data-toast="Phone passcode screen opens" data-when="prompt locked failed">Use passcode</button>
+        <a class="btn btn-primary" href="A03-sign-in.html" data-when="toomany">Sign in with OTP</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="faceid" data-initial>
+      <div class="faceid" role="dialog" aria-label="Face ID">
+        <svg class="ic" aria-hidden="true"><use href="#ph-fingerprint"/></svg>
+        <b>Face ID</b><span>Unlock Zixom Connect</span>
+        <button class="btn btn-text" type="button" style="width:100%; margin-top:10px" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown at launch and after 5 minutes in the background when app lock is on. The Face ID prompt
+is drawn by iOS; it is here only to show the moment. Cancel leaves the lock screen with Unlock and Use passcode.
+After 5 failures the person signs in again (EC-38). A link opened while locked asks for the lock first.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

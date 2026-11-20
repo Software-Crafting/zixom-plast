@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A12 Company picker</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.choice .tag{margin-top:8px; grid-column:2; justify-self:start}
+.draft-note{grid-column:2; display:flex; align-items:center; gap:5px; margin-top:6px; font-size:var(--fs-12); color:var(--amber)}
+.draft-note .ic{width:14px; height:14px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A12 Company picker</b><span>customer in several companies</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">two companies</button>
+  <button type="button" data-state="removed" aria-pressed="false">removed since last time</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span><h1>Choose company</h1><span></span></div>
+      <div class="scroll with-footer">
+        <h1 class="large-title">Welcome back, Rakesh</h1>
+        <p class="lede" data-when="ready">You work with 2 companies. Each has its own machines, requests and payments.</p>
+        <p class="lede" data-when="removed">Your list has changed since you last signed in.</p>
+
+        <div class="banner amber" style="margin-top:14px" data-when="removed">
+          <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+          <div><b>You are no longer part of Nova Cups Pvt Ltd</b>Their primary contact removed you. Ask Imran Qureshi if this is a mistake.</div>
+        </div>
+
+        <div role="radiogroup" aria-label="Companies" style="margin-top:18px">
+          <button class="choice" role="radio" aria-checked="true" type="button">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+            <b>Shree Packaging Industries</b>
+            <p>Ahmedabad · 6 machines · 2 sites</p>
+            <span class="tag blue">Primary contact</span>
+            <span class="mark"></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="false" type="button" data-when="ready">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+            <b>Nova Cups Pvt Ltd</b>
+            <p>Pune · No machines yet</p>
+            <span class="tag">Member</span>
+            <span class="draft-note"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>1 unsent draft</span>
+            <span class="mark"></span>
+          </button>
+        </div>
+
+        <label class="check" style="margin-top:18px"><input type="checkbox" checked>Remember my choice. Switch any time from Home.</label>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="../customer/C101-home.html">Continue</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown once after sign in to a person in more than one company; the choice is remembered and
+switched from Home (C1113). Drafts stay with the company they were started in (EC-69). A deactivated company opens
+<a href="A16-account-suspended.html">A16</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

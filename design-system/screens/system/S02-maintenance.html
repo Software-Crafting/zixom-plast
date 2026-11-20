@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S02 Maintenance</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 190px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S02 Maintenance</b><span>planned server work</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>end time</span>
+  <button type="button" data-state="ready" aria-pressed="true">known</button>
+  <button type="button" data-state="unknown" aria-pressed="false">not known</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="full">
+      <div class="state">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-toolbox"/></svg></span>
+        <h3>We are making improvements</h3>
+        <p data-when="ready">We will be back soon. Expected by 6:00 PM.</p>
+        <p data-when="unknown">We will be back soon. Try again in a little while.</p>
+      </div>
+      <div class="banner grey">
+        <svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>
+        <div><b>Your downloads still open</b>Manuals and reports you saved on this phone work without the server.</div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="stack-sm">
+        <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+        <a class="btn btn-secondary" href="../customer/C1701-downloads.html">Open downloaded documents</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown at launch or on any request while Zixom's server is in planned maintenance (EC-09). The app
+is blocked, but downloaded documents stay open from More. The end time comes from the server when it is known.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

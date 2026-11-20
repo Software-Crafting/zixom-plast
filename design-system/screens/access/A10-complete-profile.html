@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A10 Complete profile</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.photo-pick{position:relative; width:96px; margin:8px auto 0}
+.photo-pick .avatar{width:96px; height:96px; font-size:var(--fs-28)}
+.photo-pick .icon-btn{position:absolute; right:-4px; bottom:-2px; width:36px; height:36px; border:3px solid #fff}
+.photo-pick.failed .avatar{box-shadow:0 0 0 3px var(--red-50), 0 0 0 4px var(--red)}
+.who{text-align:center; margin-top:12px}
+.who b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
+.who span{font-size:var(--fs-13); color:var(--text-muted)}
+.notify{display:grid; grid-template-columns:auto 1fr; gap:12px; padding:16px; border-radius:var(--r-lg); background:var(--field)}
+.notify .disc{width:44px; height:44px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff; color:var(--slate-800)}
+.notify b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.notify p{margin:4px 0 0; font-size:var(--fs-13); line-height:1.5; color:var(--text)}
+.notify .btn{grid-column:1 / -1; margin-top:4px}
+/* iOS permission prompt, drawn by the OS: prototype only */
+.ios-prompt{width:270px; border-radius:14px; background:rgba(242,242,247,.97); text-align:center; overflow:hidden; animation:pop .2s var(--ease) both}
+.ios-prompt .body{padding:18px 16px 16px}
+.ios-prompt b{display:block; font:600 17px -apple-system, var(--font-body); color:#000}
+.ios-prompt p{margin:6px 0 0; font:400 13px -apple-system, var(--font-body); line-height:1.4; color:#000}
+.ios-prompt .row{display:grid; grid-template-columns:1fr 1fr; border-top:1px solid rgba(60,60,67,.29)}
+.ios-prompt button{min-height:44px; border:0; background:none; font:400 17px -apple-system, var(--font-body); color:#007AFF; cursor:pointer}
+.ios-prompt button + button{border-left:1px solid rgba(60,60,67,.29); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A10 Complete profile</b><span>after terms</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">to fill</button>
+  <button type="button" data-state="prompt" aria-pressed="false" data-open="ios">permission prompt</button>
+  <button type="button" data-state="allowed" aria-pressed="false">notifications on</button>
+  <button type="button" data-state="denied" aria-pressed="false">notifications denied</button>
+  <button type="button" data-state="photofail" aria-pressed="false">photo failed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span><h1>Your profile</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="photo-pick" data-when="ready prompt allowed denied">
+          <span class="avatar">RM</span>
+          <button class="icon-btn dark" type="button" data-open="photo" aria-label="Add a profile photo"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+        </div>
+        <div class="photo-pick failed" data-when="photofail">
+          <span class="avatar">RM</span>
+          <button class="icon-btn dark" type="button" aria-label="Retry photo upload"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></button>
+        </div>
+        <div class="who">
+          <b>Rakesh Mehta</b>
+          <span>Shree Packaging Industries</span>
+          <p class="error-text" style="justify-content:center" data-when="photofail"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Photo did not upload. Retry, or continue without it.</p>
+        </div>
+
+        <div class="field" style="margin-top:24px">
+          <label for="designation">Your designation</label>
+          <input class="input" id="designation" value="Plant head" placeholder="For example, Maintenance supervisor">
+          <span class="hint">Helps the engineer know who they are talking to.</span>
+        </div>
+
+        <div class="notify" style="margin-top:18px" data-when="ready prompt photofail">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
+          <div><b>Get service updates</b><p>We tell you when an engineer is assigned, on the way, and when a payment is due.</p></div>
+          <button class="btn btn-secondary btn-sm" type="button" style="width:100%" data-open="ios">Allow notifications</button>
+        </div>
+        <div class="banner green" style="margin-top:18px" data-when="allowed">
+          <svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>
+          <div><b>Notifications are on</b>Change what you get any time in Settings.</div>
+        </div>
+        <div class="banner grey" style="margin-top:18px" data-when="denied">
+          <svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+          <div><b>Notifications are off</b>You will still get emails for payments and safety alerts. Turn them on later in Settings.</div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="../customer/C101-home.html">Save and continue</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay center" id="ios" hidden>
+      <div class="ios-prompt" role="alertdialog" aria-labelledby="ios-t">
+        <div class="body"><b id="ios-t">"Zixom Connect" Would Like to Send You Notifications</b>
+          <p>Notifications may include alerts, sounds and icon badges.</p></div>
+        <div class="row"><button type="button" data-close>Don't Allow</button><button type="button" data-close>Allow</button></div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="photo" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Profile photo">
+        <div class="group"><button type="button" data-close>Take photo</button><button type="button" data-close>Choose from library</button></div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Last step before Home. Designation and photo are optional. The app explains notifications first and
+asks the OS only when the person taps Allow. Denied is fine: the app continues and reminds them in Settings. The grey
+system prompt is drawn by iOS, not by the app.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -73,8 +73,9 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
   `tools/build-icons.mjs`, then run it against `@phosphor-icons/core@2` (instructions in the file).
 - Data: read from `ZX.data`, render with `ZX.render` templates. Never hard code a ticket, machine or
   amount that exists in `data.js`.
-- States: put `data-state="ready"` on `.screen`, wrap content in `.when-ready`, `.when-loading`,
-  `.when-empty`, `.when-error`, `.when-offline`, and add buttons with `data-state` in `.plate-states`.
+- States: put `data-state="ready"` on `.screen`, mark content with `data-when="ready offline"` (any
+  state names, space separated), and add buttons with `data-state` in `.plate-states`. A state button
+  with `data-open="id"` also opens that overlay, for states that are a sheet or dialog.
 - Overlays: an `.overlay` inside `.screen`, opened by `data-open="id"`, closed by `data-close`.
 - Toast: `data-toast="Request saved as a draft"` on the trigger.
 - New page: copy the skeleton below, then add its path to `ZX.built` in `assets/js/screens.js`.

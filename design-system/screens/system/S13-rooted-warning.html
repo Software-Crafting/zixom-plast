@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S13 Rooted or jailbroken phone warning</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.backdrop{flex:1; display:grid; place-items:center; padding-bottom:220px}
+.backdrop img{width:150px; height:auto}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S13 Rooted or jailbroken phone</b><span>warning, once per 30 days</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>role</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="warn">customer, iPhone</button>
+  <button type="button" data-state="android" aria-pressed="false" data-open="warn">customer, Android</button>
+  <button type="button" data-state="engineer" aria-pressed="false" data-open="warn">engineer</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="backdrop"><img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast"></div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="warn" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="warn-title">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
+          <h3 id="warn-title">This phone may not be secure</h3>
+          <p data-when="ready engineer">This iPhone looks jailbroken. Apps cannot fully protect your data on it.</p>
+          <p data-when="android">This phone looks rooted. Apps cannot fully protect your data on it.</p>
+        </div>
+        <div class="banner amber" style="margin-top:16px" data-when="engineer">
+          <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+          <div>Your service manager will see a note on your profile that this phone was flagged.</div>
+        </div>
+        <div class="stack-sm" style="margin-top:20px">
+          <button class="btn btn-primary" type="button" data-close>Continue anyway</button>
+          <button class="btn btn-secondary" type="button" data-close>Exit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Shown once per 30 days at launch when the phone looks rooted or jailbroken (EC-35). It warns but
+does not block: Continue anyway opens the app. For engineers the flag also goes to the manager.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

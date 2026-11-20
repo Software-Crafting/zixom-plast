@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A09 Verification rejected</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.reason{padding:16px; border-radius:var(--r-lg); background:var(--field)}
+.reason .who{display:flex; align-items:center; gap:10px; font-size:var(--fs-12); color:var(--text-muted)}
+.reason blockquote{margin:10px 0 0; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
+.fix{list-style:none; margin:0; padding:0}
+.fix li{display:flex; gap:12px; align-items:flex-start; padding:12px 0; font-size:var(--fs-14); line-height:1.5}
+.fix li + li{border-top:1px solid var(--line)}
+.fix .n{width:26px; height:26px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-800); color:#fff; font:600 var(--fs-12) var(--font-body)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A09 Verification rejected</b><span>sign up</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">reason given</button>
+  <button type="button" data-state="generic" aria-pressed="false">no reason</button>
+  <button type="button" data-state="repeat" aria-pressed="false">rejected again</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span><h1>Verification</h1><span></span></div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding:8px 0 0">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></span>
+          <h3>We could not verify you</h3>
+          <p data-when="ready generic">Request <span class="mono">VER-2026-0018</span> was not approved. Correct the details and send them again.</p>
+          <p data-when="repeat">This is the second time the details did not match. A quick call is the fastest way to sort it out.</p>
+        </div>
+
+        <div class="reason" style="margin-top:20px" data-when="ready repeat">
+          <div class="who"><span class="avatar" style="width:28px; height:28px; font-size:var(--fs-12)">N</span>Neha, Zixom support · Yesterday, 4:15 PM</div>
+          <blockquote>The invoice number does not match machine ZP-TF-2501. Please add the purchase invoice from your dealer or a photo of the nameplate.</blockquote>
+        </div>
+        <div class="reason" style="margin-top:20px" data-when="generic">
+          <blockquote style="margin:0">The details did not match our records. Check the serial number and invoice or GSTIN, or call support.</blockquote>
+        </div>
+
+        <h2 class="section-head" style="margin-top:24px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)" data-when="ready generic">What to check</h2>
+        <ol class="fix" data-when="ready generic">
+          <li><span class="n">1</span>The serial number exactly as it is on the nameplate, letters and dashes included.</li>
+          <li><span class="n">2</span>An invoice number from Zixom or your dealer, or your company's 15 character GSTIN.</li>
+          <li><span class="n">3</span>A clear photo of the nameplate, so our team can read it.</li>
+        </ol>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready generic">
+          <a class="btn btn-primary" href="A07-verify-machine.html">Try again with new details</a>
+          <a class="btn btn-secondary" href="tel:+919991910097"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Contact support</a>
+        </div>
+        <div class="stack-sm" data-when="repeat">
+          <a class="btn btn-primary" href="tel:+919991910097"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call +91 99919 10097</a>
+          <a class="btn btn-secondary" href="A07-verify-machine.html">Try again with new details</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Opened from the rejection notification or at launch. Shows Zixom's reason when there is one, a
+generic text when not, and points to a call after a repeated rejection.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

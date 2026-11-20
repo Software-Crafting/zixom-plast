@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S03 No internet</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 190px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S03 No internet</b><span>app cannot open</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>saved data</span>
+  <button type="button" data-state="ready" aria-pressed="true">none, first launch</button>
+  <button type="button" data-state="saved" aria-pressed="false">available</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="full">
+      <div class="state">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg></span>
+        <h3>You are offline</h3>
+        <p data-when="ready">Zixom Connect needs the internet the first time it opens. Connect to Wi-Fi or mobile data and try again.</p>
+        <p data-when="saved">Showing the last saved information. Some actions need the internet.</p>
+      </div>
+      <div class="card-fill" data-when="saved">
+        <dl class="kv" style="margin:0">
+          <div><dt>Last updated</dt><dd>Today, 8:12 AM</dd></div>
+          <div><dt>Saved on this phone</dt><dd>6 machines, 13 requests</dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="stack-sm">
+        <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+        <a class="btn btn-secondary" href="../customer/C101-home.html" data-when="saved">Open saved data</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Full screen only when the app cannot open at all (EC-01). On first launch nothing is saved, so
+Try again is the only action. Once data has been saved the screen offers it, and screens opened earlier work with the
+offline banner instead of this screen (EC-02).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

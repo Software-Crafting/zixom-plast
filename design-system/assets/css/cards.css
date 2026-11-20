@@ -162,3 +162,12 @@
 /* progress meter */
 .meter{height:8px; border-radius:var(--r-pill); background:var(--slate-200); overflow:hidden}
 .meter i{display:block; height:100%; border-radius:var(--r-pill); background:var(--slate-800)}
+
+/* long form reading: terms, policies, announcements */
+.prose{font-size:var(--fs-14); line-height:1.65; color:var(--text)}
+.prose h2{margin:20px 0 0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.prose h2:first-child{margin-top:0}
+.prose p{margin:8px 0 0}
+.prose ul{margin:8px 0 0; padding-left:20px}
+.prose li{margin-top:6px}
+.prose .version{font-size:var(--fs-12); color:var(--text-muted)}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S16 Phone date or time wrong</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 190px}
+.steps{margin:0; padding-left:20px; font-size:var(--fs-14); line-height:1.7; color:var(--text)}
+.steps b{color:var(--slate-900); font-weight:600}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S16 Phone date or time wrong</b><span>more than 5 minutes off</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>phone</span>
+  <button type="button" data-state="ready" aria-pressed="true">iPhone</button>
+  <button type="button" data-state="android" aria-pressed="false">Android</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="full">
+      <div class="state" style="padding-bottom:18px">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
+        <h3>Your phone's date or time looks wrong</h3>
+        <p>Sign in codes and secure connections can fail until it is fixed.</p>
+      </div>
+      <div class="card-fill">
+        <dl class="kv" style="margin:0">
+          <div><dt>Your phone</dt><dd>21 Nov 2026, 3:12 PM</dd></div>
+          <div><dt>Actual time, IST</dt><dd>23 Nov 2026, 9:41 AM</dd></div>
+        </dl>
+      </div>
+      <div class="card-fill" style="margin-top:10px">
+        <ol class="steps" data-when="ready"><li>Open <b>Settings</b>, then <b>General</b></li><li>Tap <b>Date &amp; Time</b></li><li>Turn on <b>Set Automatically</b></li></ol>
+        <ol class="steps" data-when="android"><li>Open <b>Settings</b>, then <b>System</b></li><li>Tap <b>Date &amp; time</b></li><li>Turn on <b>Set time automatically</b></li></ol>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="stack-sm">
+        <button class="btn btn-primary" type="button">Open settings</button>
+        <button class="btn btn-secondary" type="button" data-busy>Try again</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown when the server time and the phone time differ by more than 5 minutes (EC-34), because OTP
+and secure connections can fail. Names both times and the exact setting to change. Try again re-checks the clock.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

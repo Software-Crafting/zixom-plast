@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A11 Terms and privacy</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.doc{margin-top:14px; max-height:330px; overflow-y:auto; padding:16px; border-radius:var(--r-lg); background:var(--field); scrollbar-width:thin}
+.changed{margin:10px 0 0; padding-left:18px; font-size:var(--fs-13)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A11 Terms and privacy</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">first time</button>
+  <button type="button" data-state="changed" aria-pressed="false">policy changed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar"><span></span><h1>Terms and privacy</h1><span></span></div>
+      <div class="scroll with-footer">
+        <h1 class="large-title" data-when="ready">Before you start</h1>
+        <h1 class="large-title" data-when="changed">We updated our privacy policy</h1>
+        <p class="lede" data-when="ready">Read how Zixom Connect works and how we use your data. You accept once; we ask again only when they change.</p>
+        <div class="banner" style="margin-top:12px" data-when="changed">
+          <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
+          <div><b>What changed on 21 Nov 2026</b>
+            <ul class="changed"><li>Engineer photos keep a time stamp but no exact location.</li><li>Photos and reports are kept for the life of the machine record.</li></ul></div>
+        </div>
+
+        <div class="segment" role="tablist" aria-label="Documents" style="margin-top:18px">
+          <button role="tab" aria-selected="true" aria-controls="terms">Terms of use</button>
+          <button role="tab" aria-selected="false" aria-controls="privacy">Privacy policy</button>
+        </div>
+
+        <div class="doc prose" id="terms" tabindex="0" aria-label="Terms of use">
+          <p class="version">Version 1.0, 21 Nov 2026. Template drafted for Zixom to review.</p>
+          <h2>1. Who can use the app</h2>
+          <p>Zixom Connect is for people who work for a company that owns Zixom machines, and for Zixom service engineers.
+            Your company's primary contact decides who joins your company.</p>
+          <h2>2. Your account</h2>
+          <p>You sign in with your mobile number and a one time code. Keep your phone safe. You can be signed in on up to 2
+            phones.</p>
+          <h2>3. Service, warranty and AMC</h2>
+          <p>Visit times are confirmed by Zixom. Warranty claims are decided by the service manager within 2 working days.
+            AMC covers labour unless your plan says otherwise.</p>
+          <h2>4. Payments</h2>
+          <p>Payments go through Razorpay in Zixom Plast's name. Full payment only. The app never stores card details.</p>
+        </div>
+        <div class="doc prose" id="privacy" tabindex="0" aria-label="Privacy policy" hidden>
+          <p class="version">Version 1.1, 21 Nov 2026. Template drafted for Zixom to review.</p>
+          <h2>What we keep</h2>
+          <p>Your name, mobile number, email, designation and the company you work for. Records of machines, service visits,
+            claims, orders and payments.</p>
+          <h2>Photos and location</h2>
+          <p>We remove location data from photos you upload. We read an engineer's location only while travelling to you and
+            at check in.</p>
+          <h2>How long we keep it</h2>
+          <p>Photos, reports and messages stay for the life of the machine record. Business records are kept as the law
+            requires, even after you delete your account.</p>
+        </div>
+
+        <label class="check" style="margin-top:18px"><input type="checkbox" id="accept">I have read and accept the terms of use and the privacy policy</label>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="A10-complete-profile.html" id="go" aria-disabled="true">Accept and continue</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown once after sign up, and again at the next launch whenever a policy changes, before Home.
+Accept and continue stays off until the box is ticked. Policy text is a placeholder template for Zixom to review.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+document.getElementById('accept').addEventListener('change', (e) => {
+  document.getElementById('go').setAttribute('aria-disabled', String(!e.target.checked));
+});
+</script>
+</body>
+</html>

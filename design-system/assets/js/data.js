@@ -6,6 +6,7 @@ window.ZX = window.ZX || {};
 
 ZX.data = {
   today: '2026-11-23',
+  now: '2026-11-23T12:00',
 
   companies: [
     { id: 'shree', name: 'Shree Packaging Industries', city: 'Ahmedabad', code: 'ZP-C-0001',
@@ -22,12 +23,13 @@ ZX.data = {
   ],
 
   users: [
+    /* primary: this person is the company's primary contact (a flag, not a role) */
     { id: 'rakesh', name: 'Rakesh Mehta', initials: 'RM', mobile: '+91 98250 11410', email: 'rakesh@shreepack.example',
-      designation: 'Plant head', companies: ['shree', 'nova'], primaryContact: true },
+      designation: 'Plant head', companies: [{ id: 'shree', primary: true }, { id: 'nova', primary: false }] },
     { id: 'pooja', name: 'Pooja Shah', initials: 'PS', mobile: '+91 97140 22321', email: 'pooja@shreepack.example',
-      designation: 'Maintenance supervisor', companies: ['shree'], primaryContact: false },
+      designation: 'Maintenance supervisor', companies: [{ id: 'shree', primary: false }] },
     { id: 'imran', name: 'Imran Qureshi', initials: 'IQ', mobile: '+91 98220 43120', email: '',
-      designation: 'Production manager', companies: ['nova'], primaryContact: true },
+      designation: 'Production manager', companies: [{ id: 'nova', primary: true }] },
   ],
 
   engineers: [
@@ -113,6 +115,29 @@ ZX.data = {
     { number: 'ZP-SP-003', name: 'Industrial chain set, 12B', category: 'Industrial chains', price: 6400, stock: 'out' },
     { number: 'ZP-SP-004', name: 'PID temperature controller', category: 'PID controllers', price: null, stock: 'request' },
     { number: 'ZP-SP-005', name: 'Vacuum gauge, analogue', category: 'Others', price: 980, stock: 'discontinued', replacedBy: 'ZP-SP-006' },
+  ],
+
+  /* things that need the customer's attention, most urgent first (Home strip, C103) */
+  alerts: [
+    { tone: 'red', icon: 'receipt', title: 'Invoice overdue by 6 days', sub: 'INV-2026-0981, ₹15,340.00', mono: true, href: 'C802-invoice-detail.html' },
+    { tone: 'red', icon: 'seal-check', title: 'AMC expired 3 days ago', sub: 'Scrap grinder. Renew within 4 days to keep it', href: 'C405-renew-amc.html' },
+    { tone: 'amber', icon: 'currency-inr', title: 'Estimate waiting for approval', sub: 'TKT-2026-0122, ₹8,968.00', mono: true, href: 'C509-estimate.html' },
+    { tone: 'amber', icon: 'shield-warning', title: 'Warranty ends in 12 days', sub: 'Line 2 former, AFM-1000', href: 'C302-warranty-details.html' },
+    { tone: 'blue', icon: 'info', title: 'Zixom needs more information', sub: 'Claim WCL-2026-0042, reply by 27 Nov', href: 'C308-claim.html' },
+  ],
+
+  /* last events across the company, newest first */
+  activity: [
+    { icon: 'navigation-arrow', title: 'Engineer on the way', sub: 'TKT-2026-0125 · Tray line', when: '2026-11-23T11:48' },
+    { icon: 'currency-inr', title: 'Estimate shared', sub: 'TKT-2026-0122 · Scrap grinder', when: '2026-11-23T09:30' },
+    { icon: 'user', title: 'Engineer assigned', sub: 'TKT-2026-0123 · CFM-450 Cup Former', when: '2026-11-22T14:15' },
+    { icon: 'truck', title: 'Order dispatched', sub: 'ORD-2026-0209 · Blue Dart', when: '2026-11-21T17:05' },
+    { icon: 'check-circle', title: 'Payment received', sub: 'INV-2026-0979 · ₹2,950.00', when: '2026-11-20T12:40' },
+  ],
+
+  announcements: [
+    { title: 'Heater elements now ship in 2 days', when: '2026-11-20', pinned: false,
+      text: 'Ceramic heaters for the AFM range are now stocked in Ahmedabad and Pune.' },
   ],
 
   invoices: [

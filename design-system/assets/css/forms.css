@@ -1,7 +1,7 @@
 /* Fields, pickers and controls. */
 
 .field{display:block}
-.field + .field{margin-top:16px}
+.field ~ .field{margin-top:16px}
 .field > label, .field-label{display:block; margin:0 2px 7px; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
 .field .req{color:var(--red); margin-left:2px}
 .hint{display:block; margin:7px 2px 0; font-size:var(--fs-12); line-height:1.45; color:var(--text-muted)}
@@ -23,7 +23,8 @@
 .input-group{display:flex; align-items:center; gap:10px; min-height:52px; padding:0 16px; border:1.5px solid transparent;
   border-radius:var(--r-md); background:var(--field)}
 .input-group:focus-within{background:#fff; border-color:var(--blue); box-shadow:0 0 0 4px var(--blue-50)}
-.input-group .input{min-height:48px; padding:0; border:0; background:none; box-shadow:none}
+.input-group .input, .field.has-error .input-group .input{min-height:48px; padding:0; border:0; background:none; box-shadow:none}
+.field.has-error .input-group{border-color:var(--red); background:#fff; box-shadow:0 0 0 4px var(--red-50)}
 .input-group .prefix{font:600 var(--fs-16) var(--font-body); color:var(--slate-700); padding-right:10px;
   border-right:1px solid var(--line-strong)}
 .input-group .ic{color:var(--slate-500)}

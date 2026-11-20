@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S08 Invalid or expired link</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 190px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S08 Invalid or expired link</b><span>link or QR code</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>case</span>
+  <button type="button" data-state="ready" aria-pressed="true">broken link</button>
+  <button type="button" data-state="qr" aria-pressed="false">QR not for Zixom</button>
+  <button type="button" data-state="company" aria-pressed="false">other company</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="full">
+      <div class="state" data-when="ready">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-globe"/></svg></span>
+        <h3>This link can't be opened</h3>
+        <p>It may be incomplete or out of date. Open the latest message from Zixom, or find the record in the app.</p>
+      </div>
+      <div class="state" data-when="qr">
+        <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></span>
+        <h3>This QR code is not from Zixom</h3>
+        <p>Scan the code on the machine nameplate, or type the serial number instead.</p>
+      </div>
+      <div class="state" data-when="company">
+        <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
+        <h3>This link is for Nova Cups Pvt Ltd</h3>
+        <p>You are working in Shree Packaging Industries. Switch company to open it.</p>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="stack-sm" data-when="ready qr">
+        <a class="btn btn-primary" href="../customer/C101-home.html"><svg class="ic" aria-hidden="true"><use href="#ph-house"/></svg>Go to Home</a>
+        <a class="btn btn-secondary" href="../access/A03-sign-in.html">Sign in with another number</a>
+      </div>
+      <div class="stack-sm" data-when="company">
+        <a class="btn btn-primary" href="../customer/C101-home.html"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg>Switch to Nova Cups</a>
+        <a class="btn btn-secondary" href="../customer/C101-home.html">Stay in Shree Packaging</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown when a link, notification or QR code cannot be opened. A link only carries an id, never
+personal data. When the record belongs to another company the person also belongs to, the screen offers to switch
+company; otherwise it says nothing about the other company. A record that was removed opens
+<a href="S05-not-found.html">S05</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S04 Generic error</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 8px 170px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S04 Generic error</b><span>first load failed</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>cause</span>
+  <button type="button" data-state="ready" aria-pressed="true">server error</button>
+  <button type="button" data-state="timeout" aria-pressed="false">timed out</button>
+  <button type="button" data-state="retries" aria-pressed="false">third retry failed</button>
+  <button type="button" data-state="crash" aria-pressed="false">repeated crash</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../customer/C101-home.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Machines</h1><span></span>
+      </div>
+      <div class="full">
+        <div class="state" data-when="ready">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Please try again in a moment.</p>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="timeout">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+          <h3>This is taking too long</h3>
+          <p>Check your connection and try again.</p>
+          <span class="code mono">ZC-408</span>
+        </div>
+        <div class="state" data-when="retries">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3>
+          <p>We could not load this. Still not working? Contact support.</p>
+          <span class="code mono">ZC-500</span>
+        </div>
+        <div class="state" data-when="crash">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>The app closed unexpectedly</h3>
+          <p>This happened twice on this screen. Send us a report with the app log so we can fix it.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready retries">
+          <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <button class="btn btn-secondary" type="button" data-open="support">Contact support</button>
+        </div>
+        <div class="stack-sm" data-when="timeout">
+          <button class="btn btn-primary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <a class="btn btn-secondary" href="../customer/C101-home.html">Cancel</a>
+        </div>
+        <div class="stack-sm" data-when="crash">
+          <a class="btn btn-primary" href="../customer/C1112-report-problem.html"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Report a problem</a>
+          <button class="btn btn-secondary" type="button" data-busy>Try again</button>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7. Quote error ZC-500.</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Full screen error when a screen's first load fails. Reads retry twice on their own before this
+shows. Server error ZC-500 (EC-07) and timeout after 20 seconds ZC-408 (EC-06). After three failed manual retries the
+text adds Contact support. A crash repeated on the same screen offers Report a problem with logs. The navigation bar
+stays so the person can leave.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

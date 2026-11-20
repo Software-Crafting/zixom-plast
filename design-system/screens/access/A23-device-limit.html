@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A23 Device limit reached</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A23 Device limit reached</b><span>at sign in</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="customer" aria-pressed="true">customer, 2 devices</button>
+  <button type="button" data-state="engineer" aria-pressed="false">engineer, 1 device</button>
+  <button type="button" data-state="failed" aria-pressed="false">sign out failed</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="customer">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="A03-sign-in.html" aria-label="Cancel"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <h1 class="large-title">You are signed in on another device</h1>
+        <p class="lede" data-when="customer failed">An account can be signed in on 2 devices at a time. Sign one out to use this phone.</p>
+        <p class="lede" data-when="engineer">An engineer account works on 1 device. Sign out the other phone to use this one. Its unsent reports stay on that phone until it syncs.</p>
+
+        <div class="banner red" style="margin-top:16px" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+          <div><b>Could not sign out Samsung Galaxy M34</b>Check your connection and try again.</div></div>
+
+        <div role="radiogroup" aria-label="Device to sign out" style="margin-top:18px" data-when="customer failed">
+          <button class="choice" role="radio" aria-checked="true" type="button">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+            <b>Samsung Galaxy M34</b><p>Last used 19 Nov 2026, 6:12 PM · Ahmedabad</p><span class="mark"></span>
+          </button>
+          <button class="choice" role="radio" aria-checked="false" type="button">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+            <b>iPhone 13</b><p>Last used today, 8:55 AM · Ahmedabad</p><span class="mark"></span>
+          </button>
+        </div>
+
+        <div class="card-fill" style="margin-top:18px" data-when="engineer">
+          <div class="person">
+            <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg></span>
+            <span class="grow"><b>Redmi Note 13</b><span>Last used today, 7:40 AM · Ahmedabad</span></span>
+          </div>
+          <div class="banner amber" style="margin-top:12px"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><div>2 items on that phone are waiting to sync.</div></div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm">
+          <button class="btn btn-primary" type="button" data-busy data-when="customer engineer">Sign out that device</button>
+          <button class="btn btn-primary" type="button" data-busy data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <a class="btn btn-secondary" href="A03-sign-in.html">Cancel</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Shown after the OTP when the account is already on its limit: 2 devices for a customer, 1 for an
+engineer (EC-12). The person picks the device to sign out, then continues on this phone. The signed out device sees
+<a href="A15-session-expired.html">A15</a> on its next request.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S01 Force update</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.full{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 24px 150px}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S01 Force update</b><span>version below the minimum</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">update needed</button>
+  <button type="button" data-state="nostore" aria-pressed="false">store link fails</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="ready">
+    <div class="status on-light"></div>
+    <div class="full">
+      <div class="state">
+        <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
+        <h3>Please update the app</h3>
+        <p>A new version is needed to keep using Zixom Connect.</p>
+      </div>
+      <div class="card-fill">
+        <dl class="kv" style="margin:0">
+          <div><dt>Your version</dt><dd>1.0.0</dd></div>
+          <div><dt>Required version</dt><dd>1.2.0 or later</dd></div>
+        </dl>
+      </div>
+      <div class="banner amber" style="margin-top:12px" data-when="nostore">
+        <svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
+        <div><b>The App Store did not open</b>Open the App Store yourself and search for Zixom Connect, version 1.2.0.</div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <button class="btn btn-primary" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Update</button>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Full screen block from <a href="../access/A01-splash.html">A01</a> when the app is below the minimum
+version (EC-10). Nothing else works until the update. Update opens the App Store, or Google Play on Android. If the
+store link fails the screen keeps the version text so the person can search by hand.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

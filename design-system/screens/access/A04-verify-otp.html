@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A04 Verify OTP</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.otp.shake{animation:shake .36s ease}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.otp:disabled, .otp[aria-busy="true"] input{opacity:.5}
+.resend{display:flex; align-items:center; justify-content:space-between; margin-top:14px; font-size:var(--fs-14)}
+.resend .btn-text{padding:0}
+.verifying{display:flex; align-items:center; gap:10px; margin-top:14px; font-size:var(--fs-14); color:var(--text-muted)}
+.verifying i{width:18px; height:18px; border-radius:50%; border:2.5px solid var(--slate-200); border-top-color:var(--slate-800); animation:spin .8s linear infinite}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A04 Verify OTP</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">typing</button>
+  <button type="button" data-state="verifying" aria-pressed="false">verifying</button>
+  <button type="button" data-state="wrong" aria-pressed="false">wrong code</button>
+  <button type="button" data-state="expired" aria-pressed="false">expired</button>
+  <button type="button" data-state="limit" aria-pressed="false">resend limit</button>
+  <button type="button" data-state="offline" aria-pressed="false">offline</button>
+</div>
+<div class="plate-states"><span>after verify opens</span>
+  <button type="button" data-next="customer" aria-pressed="true">customer Home</button>
+  <button type="button" data-next="signup" aria-pressed="false">new sign up, A06</button>
+  <button type="button" data-next="engineer-first" aria-pressed="false">engineer first time, A17</button>
+  <button type="button" data-next="engineer" aria-pressed="false">engineer Today</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="A03-sign-in.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+      </div>
+      <div class="scroll with-footer">
+        <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your code is kept.</div>
+        <h1 class="large-title">Enter the code</h1>
+        <p class="lede">We sent a 6 digit code to <b style="color:var(--slate-900)">+91 98xxxxxx10</b>.
+          <a class="link accent" href="A03-sign-in.html" style="font-size:inherit">Change number</a></p>
+
+        <div class="field" style="margin-top:24px">
+          <div class="otp" id="otp" data-when="ready verifying expired limit offline" aria-label="6 digit code">
+            <input inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Digit 1" value="4">
+            <input inputmode="numeric" maxlength="1" aria-label="Digit 2" value="8">
+            <input inputmode="numeric" maxlength="1" aria-label="Digit 3" value="2">
+            <input inputmode="numeric" maxlength="1" aria-label="Digit 4">
+            <input inputmode="numeric" maxlength="1" aria-label="Digit 5">
+            <input inputmode="numeric" maxlength="1" aria-label="Digit 6">
+          </div>
+          <div class="otp has-error shake" data-when="wrong" aria-label="6 digit code">
+            <input value="4" aria-label="Digit 1" aria-invalid="true"><input value="8" aria-label="Digit 2"><input value="2" aria-label="Digit 3">
+            <input value="9" aria-label="Digit 4"><input value="1" aria-label="Digit 5"><input value="0" aria-label="Digit 6">
+          </div>
+          <span class="error-text" data-when="wrong"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. Check the code and try again. 4 tries left.</span>
+          <span class="error-text" data-when="expired"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-clock"/></svg>This code has expired. Send a new one.</span>
+        </div>
+
+        <div class="verifying" data-when="verifying"><i></i>Checking the code</div>
+
+        <div class="resend" data-when="ready wrong offline">
+          <span style="color:var(--text-muted)">Didn't get it?</span>
+          <span id="timer" style="color:var(--text-muted)">Resend code in 0:30</span>
+        </div>
+        <div class="resend" data-when="expired">
+          <span style="color:var(--text-muted)">Codes last 5 minutes</span>
+          <button class="btn btn-text" type="button" data-toast="New code sent">Resend code</button>
+        </div>
+
+        <div class="banner amber" style="margin-top:16px" data-when="limit">
+          <svg class="ic" aria-hidden="true"><use href="#ph-chat-text"/></svg>
+          <div><b>Still no code?</b>SMS can take a few minutes. You have used all 3 resends.
+            Call support on <a href="tel:+919991910097">+91 99919 10097</a>.</div>
+        </div>
+        <p class="hint" style="margin-top:16px">After 5 wrong tries this number is locked for 15 minutes.</p>
+      </div>
+
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="#" id="verify" data-when="ready wrong expired limit">Verify</a>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="verifying">Verify</button>
+        <button class="btn btn-primary" type="button" disabled data-when="offline">Verify</button>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Six boxes with iOS one time code autofill and paste. Verify enables at six digits and also runs by
+itself on the sixth. Resend unlocks after 30 seconds, up to 3 times. Five wrong tries lock the number for 15 minutes in
+<a href="../system/S11-too-many-attempts.html">S11</a>. A wrong phone date opens <a href="../system/S16-wrong-date.html">S16</a>.
+Type the last three digits to see it continue.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+(() => {
+  const RESEND_SECONDS = 30;
+  const NEXT = {
+    customer: '../customer/C101-home.html', signup: 'A06-find-company.html',
+    'engineer-first': 'A17-engineer-first-sign-in.html', engineer: '../engineer/E101-today.html',
+  };
+  const verify = document.getElementById('verify');
+  const nextButtons = document.querySelectorAll('[data-next]');
+  const setNext = (key) => {
+    verify.href = NEXT[key];
+    nextButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.next === key)));
+  };
+  nextButtons.forEach((b) => b.addEventListener('click', () => setNext(b.dataset.next)));
+  let role = 'customer';
+  try { role = sessionStorage.getItem('zx-role') || role; } catch { /* storage blocked */ }
+  setNext(role === 'engineer' ? 'engineer' : role === 'signup' ? 'signup' : 'customer');
+
+  /* boxes: move forward on input, back on delete, run on the sixth digit */
+  const boxes = [...document.querySelectorAll('#otp input')];
+  boxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/\D/g, '').slice(-1);
+      if (box.value && boxes[i + 1]) boxes[i + 1].focus();
+      if (boxes.every((b) => b.value)) window.location.href = verify.href;
+    });
+    box.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !box.value && boxes[i - 1]) boxes[i - 1].focus(); });
+  });
+
+  /* resend countdown */
+  const timer = document.getElementById('timer');
+  let left = RESEND_SECONDS;
+  const tick = window.setInterval(() => {
+    left -= 1;
+    if (left > 0) { timer.textContent = `Resend code in 0:${String(left).padStart(2, '0')}`; return; }
+    window.clearInterval(tick);
+    timer.outerHTML = '<button class="btn btn-text" type="button" data-toast="New code sent. 2 resends left">Resend code</button>';
+  }, 1000);
+})();
+</script>
+</body>
+</html>

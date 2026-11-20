@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A22 Security alert</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A22 Security alert</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="ready" aria-pressed="true">new sign in</button>
+  <button type="button" data-state="old" aria-pressed="false">older than 7 days</button>
+  <button type="button" data-state="ok" aria-pressed="false">this was me</button>
+  <button type="button" data-state="out" aria-pressed="false" data-open="confirm-out">sign out others</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../customer/C1001-notifications.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Security alert</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding:20px 20px 24px">
+          <span class="disc" data-when="ready old out"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
+          <span class="disc green" data-when="ok"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg></span>
+          <h3 data-when="ready old out">New sign in on iPhone</h3>
+          <h3 data-when="ok">Thanks, all good</h3>
+          <p data-when="ready out">Your account was opened on another phone. If this was not you, sign out every other device now.</p>
+          <p data-when="old">This alert is more than 7 days old. Here are the details; to act on devices, open Security.</p>
+          <p data-when="ok">We marked this sign in as yours. Nothing else to do.</p>
+        </div>
+
+        <div class="card-fill">
+          <dl class="kv" style="margin:0">
+            <div><dt>Device</dt><dd>iPhone 15, iOS 18</dd></div>
+            <div><dt>When</dt><dd>21 Nov 2026, 3:30 PM</dd></div>
+            <div><dt>Approximate place</dt><dd>Ahmedabad, Gujarat</dd></div>
+            <div><dt>Account</dt><dd>+91 98250 11410</dd></div>
+          </dl>
+        </div>
+        <p class="hint" style="text-align:center">The place comes from the network and may be off by a few kilometres.</p>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="ready out">
+          <button class="btn btn-danger" type="button" data-open="confirm-out">Sign out all other devices</button>
+          <button class="btn btn-secondary" type="button" onclick="document.querySelector('[data-state=ok]').click()">This was me</button>
+        </div>
+        <a class="btn btn-secondary" href="../customer/C1107-security.html" data-when="old">Open Security</a>
+        <a class="btn btn-primary" href="../customer/C101-home.html" data-when="ok">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="confirm-out" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Sign out other devices">
+        <div class="group">
+          <div class="title">Sign out every device except this phone? Anyone using them will need an OTP to sign in again.</div>
+          <button class="destructive" type="button" data-close data-toast="Other devices signed out">Sign out all other devices</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Opened from the new sign in notification or email. Shows the device name, time and approximate
+place. This was me closes it; Sign out all other devices asks once. An alert older than 7 days shows the details only.
+If Zixom suspends the account after a report, the person sees <a href="A16-account-suspended.html">A16</a>.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

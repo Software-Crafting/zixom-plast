@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A24 Account deletion requested</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A24 Account deletion requested</b><span>customer</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>state</span>
+  <button type="button" data-state="pending" aria-pressed="true">pending</button>
+  <button type="button" data-state="blocked" aria-pressed="false">blocked by dues</button>
+  <button type="button" data-state="cancelled" aria-pressed="false">cancelled</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="pending">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="../customer/C1101-more.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Account deletion</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+
+        <div data-when="pending">
+          <div class="state" style="padding:16px 20px 22px">
+            <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span>
+            <h3>We received your request</h3>
+            <p>Zixom processes it within 7 working days. You can keep using the app until then, or cancel the request.</p>
+          </div>
+          <div class="card-fill">
+            <dl class="kv" style="margin:0">
+              <div><dt>Request number</dt><dd class="mono">DEL-2026-0007</dd></div>
+              <div><dt>Requested</dt><dd>23 Nov 2026, 10:20 AM</dd></div>
+              <div><dt>Expected by</dt><dd>2 Dec 2026</dd></div>
+              <div><dt>Status</dt><dd><span class="tag blue">Pending</span></dd></div>
+            </dl>
+          </div>
+          <p class="list-title">What Zixom keeps</p>
+          <div class="list">
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Invoices and payments</b><span class="sub">Kept as tax law requires</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span><b>Machine service history</b><span class="sub">Stays with the company's machines</span></div>
+            <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span><b>Your name and contact details</b><span class="sub">Removed from Zixom Connect</span></div>
+          </div>
+        </div>
+
+        <div data-when="blocked">
+          <div class="state" style="padding:16px 20px 22px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Clear these first</h3>
+            <p>Your account can be deleted once nothing is open. Pay the dues and close the requests below, then ask again.</p>
+          </div>
+          <div class="stack-sm">
+            <a class="alert-card red" href="../customer/C802-invoice-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Invoice overdue</b><span class="mono">INV-2026-0981, ₹15,340.00</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+            <a class="alert-card amber" href="../customer/C802-invoice-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Invoice due</b><span class="mono">INV-2026-0980, ₹4,720.00</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+            <a class="alert-card blue" href="../customer/C508-request-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>10 open service requests</b><span>Line 2 former, Tray line and others</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+          </div>
+        </div>
+
+        <div data-when="cancelled">
+          <div class="state" style="padding-top:40px">
+            <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+            <h3>Deletion request cancelled</h3>
+            <p>Your account stays as it is. <span class="mono">DEL-2026-0007</span> is closed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="stack-sm" data-when="pending">
+          <button class="btn btn-secondary" type="button" data-open="cancel-del">Cancel request</button>
+          <a class="btn btn-text" style="width:100%" href="tel:+919991910097">Contact support</a>
+        </div>
+        <a class="btn btn-primary" href="../customer/C801-payments.html" data-when="blocked">Go to payments</a>
+        <a class="btn btn-primary" href="../customer/C1101-more.html" data-when="cancelled">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="cancel-del" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Cancel deletion request">
+        <div class="group">
+          <div class="title">Cancel DEL-2026-0007 and keep your account?</div>
+          <button type="button" data-close onclick="document.querySelector('[data-state=cancelled]').click()">Cancel request</button>
+        </div>
+        <button class="cancel" type="button" data-close>Keep request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">After Delete account (C1110). Deletion is a request that Zixom processes; business records are
+kept as required. It is blocked while dues or open tickets exist, and the list shows each one with a link (EC-67).</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

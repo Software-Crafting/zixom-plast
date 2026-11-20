@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A01 Splash</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.splash{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; cursor:pointer}
+.splash img{width:150px; height:auto}
+.loader{width:120px; height:4px; border-radius:var(--r-pill); background:var(--slate-100); overflow:hidden}
+.loader i{display:block; width:40%; height:100%; border-radius:var(--r-pill); background:var(--blue); animation:sweep 1.4s ease-in-out infinite}
+@keyframes sweep{from{transform:translateX(-110%)}to{transform:translateX(260%)}}
+.splash-foot{padding:0 24px 46px; text-align:center; font-size:var(--fs-12); line-height:1.6; color:var(--text-faint)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A01 Splash</b><span>launch</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>session</span>
+  <button type="button" data-state="none" aria-pressed="true">none, opens Welcome</button>
+  <button type="button" data-state="found" aria-pressed="false">found, opens Home</button>
+</div>
+
+<div class="device">
+  <div class="screen plain" data-state="none">
+    <div class="status on-light"></div>
+    <div class="splash" id="splash" role="button" tabindex="0" aria-label="Opening Zixom Connect. Tap to continue.">
+      <img src="../../assets/brand/zixom-logo.png" alt="Zixom Plast">
+      <span class="loader" role="progressbar" aria-label="Checking the app version and your session"><i></i></span>
+    </div>
+    <p class="splash-foot">Version 1.0.0</p>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<p class="plate-note">Logo centred on white, nothing else. While the line runs the app checks the version, maintenance
+and the saved session. It then opens Welcome, or Home when a session is found. A version below the minimum opens
+<a href="../system/S01-force-update.html">S01</a>, maintenance opens <a href="../system/S02-maintenance.html">S02</a>,
+no network on first launch opens <a href="../system/S03-no-internet.html">S03</a>. Opens the next screen after 3
+seconds; tap to skip.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script>
+(() => {
+  const SPLASH_MS = 3000;
+  const NEXT = { none: 'A02-welcome.html', found: '../customer/C101-home.html' };
+  const screen = document.querySelector('.screen');
+  const open = () => { window.location.href = NEXT[screen.dataset.state]; };
+  let timer = window.setTimeout(open, SPLASH_MS);
+  document.querySelectorAll('.plate-states button').forEach((b) => b.addEventListener('click', () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(open, SPLASH_MS);
+  }));
+  const splash = document.getElementById('splash');
+  splash.addEventListener('click', open);
+  splash.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(); });
+})();
+</script>
+</body>
+</html>

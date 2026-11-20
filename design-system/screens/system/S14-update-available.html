@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - S14 Update available</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.news{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px}
+.news li{display:grid; grid-template-columns:36px 1fr; column-gap:12px; align-items:start; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
+.news .disc{width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); color:var(--slate-800)}
+.news b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>S14 Update available</b><span>soft update, never blocks</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-states"><span>sheet</span>
+  <button type="button" data-state="ready" aria-pressed="true" data-open="update">open</button>
+  <button type="button" data-state="later" aria-pressed="false">after Later</button>
+</div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <header class="root-head">
+      <div class="root-bar">
+        <span class="avatar on-dark">RM</span>
+        <div class="grow"><span class="root-hello">Good morning, Rakesh</span><span class="root-name">Shree Packaging Industries</span></div>
+        <span class="icon-btn glass" aria-hidden="true"><svg class="ic"><use href="#ph-bell"/></svg></span>
+      </div>
+    </header>
+    <div class="sheet">
+      <div class="scroll with-tabbar"><div class="stack" style="margin-top:12px" id="home"></div></div>
+    </div>
+    <nav class="tabbar" data-tabs="customer" data-active="home" data-prefix="../customer/"></nav>
+    <span class="home-indicator"></span>
+
+    <div class="overlay bottom" id="update" data-initial>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="up-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="up-title">Update available</h3><span class="tag blue">Version 1.1.0</span></div>
+        <ul class="news">
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-calendar-check"/></svg></span><span><b>Reschedule AMC visits</b>Pick a new window from the visit card.</span></li>
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span><span><b>Faster report downloads</b>Service report PDFs open in half the time.</span></li>
+          <li><span class="disc"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-wrench"/></svg></span><span><b>Fixes</b>The cart keeps quantities after you switch company.</span></li>
+        </ul>
+        <p class="hint" style="margin-top:16px">This version still works. Later hides this for 7 days.</p>
+        <div class="actions">
+          <button class="btn btn-secondary btn-inline" type="button" data-close data-toast="We will remind you in 7 days">Later</button>
+          <button class="btn btn-primary" type="button" data-close>Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="plate-note">Soft update sheet when a newer version exists but the current one still works. Shows what is new,
+can be dismissed for 7 days and never blocks the app. A version below the minimum gets the blocking
+<a href="S01-force-update.html">S01</a> instead.</p>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const R = ZX.render;
+  const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0123');
+  document.getElementById('home').innerHTML = `<div class="section-head"><h2>Active request</h2></div>${R.ticketCard(ticket)}
+    ${R.machineCard(R.machine('ZP-TF-2204'))}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

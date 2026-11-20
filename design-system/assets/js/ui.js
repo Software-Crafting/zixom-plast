@@ -117,13 +117,26 @@
     output.textContent = next;
   });
 
-  /* ---------- prototype only: the state switch above the frame ---------- */
+  /* ---------- prototype only: the state switch above the frame ----------
+     .screen[data-state] holds the current state; an element with data-when="ready offline"
+     shows only in those states. */
   const screen = document.querySelector('.screen[data-state]');
+  const applyState = (state) => {
+    screen.dataset.state = state;
+    screen.querySelectorAll('[data-when]').forEach((el) => { el.hidden = !el.dataset.when.split(' ').includes(state); });
+    screen.querySelectorAll('.overlay').forEach((overlay) => { overlay.hidden = true; });
+    screen.querySelector('.scroll')?.scrollTo({ top: 0 });
+  };
+  if (screen) {
+    /* an overlay marked data-initial starts open, for screens that are a sheet or prompt */
+    const initial = [...screen.querySelectorAll('.overlay[data-initial]')];
+    applyState(screen.dataset.state);
+    initial.forEach((overlay) => { overlay.hidden = false; });
+  }
   document.querySelectorAll('.plate-states button[data-state]').forEach((button) => {
     button.addEventListener('click', () => {
       document.querySelectorAll('.plate-states button[data-state]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-      screen.dataset.state = button.dataset.state;
-      screen.querySelector('.scroll')?.scrollTo({ top: 0 });
+      applyState(button.dataset.state); /* a data-open on the same button then opens its overlay */
     });
   });
 })();
