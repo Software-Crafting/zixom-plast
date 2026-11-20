@@ -23,7 +23,7 @@
 .grow{flex:1; min-width:0}
 
 /* ---------- tab root header, on the same grey as the rest of the app ---------- */
-.root-head{flex-shrink:0; padding:6px var(--gutter) 14px; color:var(--slate-900)}
+.root-head{flex-shrink:0; padding:4px var(--gutter) 2px; color:var(--slate-900)}
 .root-bar{display:flex; align-items:center; gap:10px}
 .root-bar .grow{display:flex; flex-direction:column; min-width:0}
 .root-hello{font-size:var(--fs-13); color:var(--text-muted)}
@@ -31,7 +31,7 @@
 .root-switch{display:flex; align-items:center; gap:4px; max-width:100%; border:0; padding:0; background:none; cursor:pointer;
   font:400 var(--fs-18) var(--font-display); color:var(--slate-900); text-align:left}
 .root-switch span{min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.root-title{margin:18px 0 0; font:400 var(--fs-28) var(--font-display); color:var(--slate-900); letter-spacing:-.015em}
+.root-title{margin:12px 0 0; font:400 var(--fs-28) var(--font-display); color:var(--slate-900); letter-spacing:-.015em}
 
 /* ---------- navigation bar of a pushed screen ---------- */
 .navbar{flex-shrink:0; display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px;
@@ -148,4 +148,5 @@
 .root-scroll{flex:1; min-height:0; display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none}
 .root-scroll::-webkit-scrollbar{display:none}
 .root-scroll > .sheet{flex:1 0 auto; background:transparent; border-radius:0; box-shadow:none}
-.root-scroll .scroll{flex:none; overflow:visible}
+.root-scroll .scroll{flex:none; overflow:visible; padding-top:0}
+.root-scroll .scroll > .stack:first-child{margin-top:8px !important}
