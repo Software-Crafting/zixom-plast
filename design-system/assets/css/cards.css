@@ -135,7 +135,7 @@
 .upload .remove .ic{width:12px; height:12px}
 .upload .bar{position:absolute; left:8px; right:8px; bottom:8px; height:4px; border-radius:var(--r-pill); background:rgba(255,255,255,.7); overflow:hidden}
 .upload .bar i{display:block; height:100%; background:var(--slate-800)}
-.upload .state{font-size:var(--fs-11); font-weight:600}
+.upload .state{display:block; padding:0; text-align:center; font-size:var(--fs-11); font-weight:600}
 .upload.failed{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
   background:var(--red-50); color:var(--red); border:0; font:inherit; cursor:pointer}
 .upload.add{border:1.5px dashed var(--slate-300); background:#fff; cursor:pointer}
