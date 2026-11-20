@@ -245,7 +245,7 @@
   const person = (e) => (SHOW_PHONE ? R.engineerCard(e) : `<div class="person"><span class="avatar">${R.esc(e.initials)}</span>
     <span class="grow"><b>${R.esc(e.name)}</b><span>${R.esc(e.designation)}</span></span></div>`);
   const engineerBlock = (e, when) => `<div class="sec" data-when="${when}"><h2>Your engineer</h2>
-      <div class="card-fill">${person(e)}<a class="link accent" style="margin-top:10px" href="C1511-engineer-profile.html">View profile</a></div></div>`;
+      <div class="card-fill">${person(e)}<a class="btn btn-secondary btn-sm" style="width:100%; margin-top:12px" href="C1511-engineer-profile.html">View profile</a></div></div>`;
   const engineer = eng && t.status !== 'cancelled'
     ? engineerBlock(eng, 'ready refresh moved photos offline') + engineerBlock(R.engineer(ENGINEER_AFTER_CHANGE), 'changed') : '';
 
