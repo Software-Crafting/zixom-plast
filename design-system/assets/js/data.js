@@ -41,7 +41,7 @@ ZX.data = {
       skills: ['Cup forming', 'Blister sealing'], rating: 4.5, visits: 128 },
   ],
 
-  support: { agent: 'Neha', manager: 'Mr Kapoor', phone: '+91 99919 10097', email: 'info@zixom.in', hours: '24x7' },
+  support: { agent: 'Neha', manager: 'Mr Kapoor', managerPhone: '+91 98240 55120', phone: '+91 99919 10097', email: 'info@zixom.in', hours: '24x7' },
 
   /* warrantyEnd and amc.end are relative to today, see section 16 table */
   machines: [
@@ -144,8 +144,9 @@ ZX.data = {
   invoices: [
     { number: 'INV-2026-0980', type: 'Service', status: 'due', amount: 4720, issued: '2026-11-16', due: '2026-11-30', for: 'TKT-2026-0118',
       title: 'Blower motor repair, Scrap grinder', lines: [['Visit fee', 1, 700], ['Labour, hours', 2.5, 800], ['Motor bearing set', 1, 1300]] },
-    { number: 'INV-2026-0981', type: 'Parts', status: 'overdue', amount: 15340, issued: '2026-11-02', due: '2026-11-17', for: 'ORD-2026-0208',
-      title: 'Heater elements and timer relay', lines: [['Ceramic heater element 650 W', 4, 2850], ['Timer relay 24 V DC', 1, 1240], ['Delivery', 1, 360]] },
+    /* AMC covers labour only, so parts fitted on an AMC visit are billed after it */
+    { number: 'INV-2026-0981', type: 'Service', status: 'overdue', amount: 15340, issued: '2026-11-02', due: '2026-11-17', for: 'TKT-2026-0129',
+      title: 'Parts fitted on AMC visit, Tray line', lines: [['Ceramic heater element 650 W', 4, 2850], ['Timer relay 24 V DC', 1, 1240], ['Consumables', 1, 360]] },
     { number: 'INV-2026-0982', type: 'AMC', status: 'paid', amount: 42480, paid: 42480, issued: '2026-03-25', due: '2026-04-01', for: 'AMC-2026-0010',
       title: 'Preventive Plus AMC, CFM-450, 1 year', receipt: 'RCP-2026-0650', lines: [['Preventive Plus, 1 machine, 1 year', 1, 36000]] },
     { number: 'INV-2026-0983', type: 'Service', status: 'processing', amount: 2360, issued: '2026-11-18', due: '2026-11-25', for: 'TKT-2026-0117',
@@ -158,6 +159,15 @@ ZX.data = {
       title: 'Essential AMC renewal, SVF-600, 1 year', lines: [['Essential, 1 machine, 1 year', 1, 24000]] },
     { number: 'INV-2026-0987', type: 'Service', status: 'paid', amount: 1180, paid: 1180, issued: '2026-10-21', due: '2026-11-04', for: 'TKT-2026-0112',
       title: 'Sensor cleaning, Tray line', creditNote: 'CN-2026-0012', lines: [['Labour, hours', 1.25, 800]] },
+    { number: 'INV-2026-0988', type: 'AMC', status: 'due', amount: 42480, issued: '2026-11-20', due: '2026-11-30', for: 'AMC-2026-0012',
+      title: 'Preventive Plus AMC, Line 2 former, 1 year', lines: [['Preventive Plus, 1 machine, 1 year', 1, 36000]] },
+    { number: 'INV-2026-0989', type: 'AMC', status: 'overdue', amount: 14160, issued: '2026-10-25', due: '2026-11-08', for: 'AMC-2026-0013',
+      title: 'Essential AMC, Line 1 former, 6 months', lines: [['Essential, 1 machine, 6 months', 1, 12000]] },
+    /* drafts: created when the person chooses Pay now on renew or buy; not due until then */
+    { number: 'INV-2026-0990', type: 'AMC', status: 'draft', amount: 28320, issued: '2026-11-23', due: '2026-11-27', for: 'AMC-2026-0014',
+      title: 'Essential AMC renewal, Scrap grinder, 1 year', lines: [['Essential, 1 machine, 1 year', 1, 24000]] },
+    { number: 'INV-2026-0991', type: 'AMC', status: 'draft', amount: 42480, issued: '2026-11-23', due: '2026-11-30', for: 'AMC-2026-0016',
+      title: 'Preventive Plus AMC, 1 machine, 1 year', lines: [['Preventive Plus, 1 machine, 1 year', 1, 36000]] },
   ],
 
   /* estimate for extra work, shared on TKT-2026-0122. Valid 3 days */

@@ -132,7 +132,7 @@
   /* ---------- search: filters the list below it (spec: after 2 characters and a 300 ms pause) ----------
      A spinner shows while it searches, then a clear button. No match shows a Clear search state.
      Put data-search="own" on a .search whose page handles searching itself. */
-  const SEARCH_ITEMS = '.machine, .ticket, .list-item, .file, .pay, .inv, .part-row, .notif, .alert-card, .choice, [data-search-item]';
+  const SEARCH_ITEMS = '.machine, .ticket, .list-item, .file, .pay, .inv, .part-row, .notif, .alert-card, .choice, .pcard, .order, .amc, .visit, .entry, .job, [data-search-item]';
   const MIN_CHARS = 2;
   const PAUSE_MS = 300;
   document.querySelectorAll('.search').forEach((box) => {
