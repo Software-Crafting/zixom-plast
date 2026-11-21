@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D716 Engineer messages</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D716">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Engineer messages</h1><p>Push to one engineer, a region or everyone</p></div>
+    <a class="btn btn-secondary" href="#D1320"><svg class="ic"><use href="#ph-send-horizontal"/></svg>Delivery log</a>
+  </div>
+
+  <div data-when="ready empty">
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>New message</h2><p>Shows in the app inbox (E801) with a push.</p></div></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="choices full" style="grid-template-columns:repeat(3, 1fr)" role="radiogroup" aria-label="Send to">
+              <label class="choice"><input type="radio" name="to" value="one" class="sr-only" checked><span><b>One engineer</b><small>Pick a person</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="region" class="sr-only"><span><b>A region</b><small>Everyone in it</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="all" class="sr-only"><span><b>All engineers</b><small>2 people</small></span></label>
+            </div>
+            <div class="field full" id="pick-one"><label for="m-eng">Engineer</label><select class="select" id="m-eng"><option>Sandeep Yadav, Ahmedabad</option><option>Anita Verma, Pune</option></select></div>
+            <div class="field full" id="pick-region" hidden><label for="m-region">Region</label><select class="select" id="m-region"><option>Ahmedabad, 1 engineer</option><option>Pune, 1 engineer</option></select></div>
+            <div class="field full"><label for="m-title">Title</label><input class="input" id="m-title" maxlength="60" value="Chain set from Pune">
+              <span class="hint">Up to 60 characters; shown in the push.</span></div>
+            <div class="field full"><label for="m-text">Message</label><textarea class="textarea" id="m-text" maxlength="500">Two chain sets 12B are coming from Pune on Tuesday. Plan the Line 2 visit for Wednesday.</textarea>
+              <span class="hint" id="m-count"></span></div>
+            <div class="field full"><label class="check"><input type="checkbox" id="m-later"> Send later</label></div>
+            <div class="field" id="m-when-wrap" hidden><label for="m-when">Send on</label><input class="input" id="m-when" type="datetime-local" value="2026-11-24T09:00">
+              <span class="hint">IST. A time in the past is blocked (EC-A65).</span></div>
+          </div>
+          <div class="form-bar"><span class="grow">Engineers get it at once, even in quiet hours.</span>
+            <button class="btn btn-secondary" type="button" id="m-schedule" hidden data-toast="Message scheduled for Tue 24 Nov, 9:00 AM">Schedule</button>
+            <button class="btn btn-primary" type="button" id="m-send" data-busy data-toast="Message sent to Sandeep Yadav">Send now</button></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Sent and scheduled</h2><p>Last 30 days</p></div><a class="card-link" href="#D1320">Delivery log</a></div>
+        <ul class="mini" id="sent" data-when="ready"></ul>
+        <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg></span>
+          <h3>No messages yet</h3><p>Messages you send will appear here.</p></div>
+      </section>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="msg-view" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="mv-title">
+    <div class="drawer-head"><div class="grow"><h2 id="mv-title"></h2><p id="mv-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="mv-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" href="#D1320">Delivery log</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" id="mv-action" data-close></button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/engineer/E801-inbox.html">
+  <div><h3>What it is</h3><p>A push message to one engineer, a region or all engineers.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose who gets it, write a title and text.</li><li>Send now or schedule.</li><li>Open a sent message to see delivery; cancel a scheduled one.</li></ul></div>
+  <div><h3>What happens next</h3><p>The message shows in the app inbox (E801). Delivery and failures are in the Delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Push fails: marked Failed in the log, email backup where allowed (EC-A26).</li><li>Schedule in the past is blocked (EC-A65).</li><li>Engineer assignments and messages ignore quiet hours (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const $ = (id) => document.getElementById(id);
+  const TONE = { Sent: 'green', Scheduled: 'blue', Failed: 'red' };
+  const msgs = [...g.messages].sort((a, b) => b.when.localeCompare(a.when));
+
+  $('sent').innerHTML = msgs.map((m, i) => `<li data-open="msg-view" data-i="${i}" style="cursor:pointer">
+    <span class="ic-disc ${m.status === 'Scheduled' ? 'blue' : ''}">${r.icon(m.status === 'Scheduled' ? 'clock' : 'paper-plane-tilt')}</span>
+    <span class="grow"><b>${r.esc(m.title)}</b><small>${m.to} · ${m.status === 'Scheduled' ? `${r.dayDate(m.when)}, ${r.time(m.when)}` : r.ago(m.when)}</small></span>
+    <span class="end">${r.tag(m.status, TONE[m.status])}${m.status === 'Sent' ? `<br>${m.opened} of ${m.delivered} opened` : ''}</span></li>`).join('');
+
+  document.addEventListener('click', (event) => {
+    const li = event.target.closest('#sent [data-i]');
+    if (!li) return;
+    const m = msgs[li.dataset.i];
+    $('mv-title').textContent = m.title;
+    $('mv-sub').textContent = `${m.to} · ${m.status}`;
+    $('mv-body').innerHTML = `<p style="color:var(--text-strong)">${r.esc(m.text)}</p>
+      <dl class="dl"><dt>${m.status === 'Scheduled' ? 'Sends on' : 'Sent'}</dt><dd>${r.dayDate(m.when)}, ${r.time(m.when)} IST</dd>
+      ${m.status === 'Sent' ? `<dt>Delivered</dt><dd>${m.delivered}</dd><dt>Opened</dt><dd>${m.opened}</dd>` : ''}<dt>By</dt><dd>${ZXA.data.admin.name}</dd></dl>`;
+    const action = $('mv-action');
+    action.textContent = m.status === 'Scheduled' ? 'Cancel schedule' : 'Send again';
+    action.className = `btn ${m.status === 'Scheduled' ? 'btn-danger' : 'btn-primary'}`;
+    action.dataset.toast = m.status === 'Scheduled' ? 'Scheduled message cancelled' : 'Message sent again';
+  });
+
+  /* audience and schedule switch the fields and the buttons */
+  const sync = () => {
+    const to = document.querySelector('input[name="to"]:checked').value;
+    $('pick-one').hidden = to !== 'one';
+    $('pick-region').hidden = to !== 'region';
+    const later = $('m-later').checked;
+    $('m-when-wrap').hidden = !later;
+    $('m-schedule').hidden = !later;
+    $('m-send').hidden = later;
+    $('m-schedule').className = `btn ${later ? 'btn-primary' : 'btn-secondary'}`;
+    const who = { one: $('m-eng').value.split(',')[0], region: `the ${$('m-region').value.split(',')[0]} region`, all: 'all engineers' }[to];
+    $('m-send').dataset.toast = `Message sent to ${who}`;
+    $('m-count').textContent = `${$('m-text').value.length} / 500`;
+  };
+  document.addEventListener('change', sync);
+  $('m-text').addEventListener('input', sync);
+  sync();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

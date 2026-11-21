@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D735 Safety checklist templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D735">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Safety checklist templates</h1><p>The pre work checklist engineers answer before they start, per machine type</p></div>
+  </div>
+
+  <div class="grid side-left" data-when="ready">
+    <section class="card">
+      <div class="card-head"><div class="grow"><h2>Machine types</h2></div></div>
+      <ul class="mini" id="types"></ul>
+    </section>
+
+    <div class="stack">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2 id="t-title"></h2><p id="t-sub"></p></div><span id="t-tag"></span></div>
+        <div class="card-body stack">
+          <div class="banner grey" id="t-locked" hidden><svg class="ic"><use href="#ph-lock-simple"/></svg>
+            <span class="grow"><b>Published versions are read only.</b> Edit to start a new draft.</span></div>
+          <ol class="stack-sm" id="items" style="list-style:none; margin:0; padding:0"></ol>
+          <div class="btns" id="add-row"><button class="btn btn-ghost btn-sm" type="button" data-add><svg class="ic"><use href="#ph-plus"/></svg>Add item</button></div>
+          <p class="muted" style="font-size:12px">Engineers answer Yes or No. A No needs the action taken before work can start.</p>
+        </div>
+        <div class="form-bar" id="t-bar"></div>
+      </section>
+
+      <section class="card list-card">
+        <div class="card-head"><div class="grow"><h2>Versions</h2><p>Each safety report stores the version it used.</p></div></div>
+        <div class="table-wrap"><table class="table compact" id="versions">
+          <thead><tr><th>Version</th><th>Status</th><th>Published</th><th class="num">Used in reports</th></tr></thead><tbody></tbody></table></div>
+      </section>
+    </div>
+  </div>
+
+  <div data-when="loading"><div class="grid side-left">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div></div>
+</main>
+
+<div class="overlay center" id="publish" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pub-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="pub-title">Publish version 4?</h2><p>Engineers get it on their next sync and new jobs use it. Reports already sent keep version 3.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep editing</button><button class="btn btn-primary" type="button" data-close data-toast="Version 4 published">Publish</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/engineer/E901-safety-checklist.html">
+  <div><h3>What it is</h3><p>The text of the pre work safety checklist (E901), one template per machine type.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a machine type, edit the draft: change, add, remove, reorder items.</li><li>Publish the draft as a new version.</li><li>Edit a published template to start a new draft.</li></ul></div>
+  <div><h3>What happens next</h3><p>Engineers answer it before work (E901). Failures show in Safety reports (D736).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each report stores the version used; old reports never change.</li><li>Published versions are read only. One draft per type.</li><li>Jobs started offline use the version on the phone.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const base = ZX.data.engineerDay.safety;
+  /* page only: the item version 4 adds for thermoforming */
+  const ADDED = 'Platen is blocked so it cannot fall';
+  const types = [...new Set(g.checklists.map((c) => c.type))];
+  const latest = (type) => g.checklists.find((c) => c.type === type);
+
+  document.getElementById('types').innerHTML = types.map((type) => {
+    const c = latest(type);
+    return `<li data-type="${type}" style="cursor:pointer"><span class="grow"><b>${type}</b><small>Version ${c.version}${c.status === 'Draft' ? ', draft' : ''}</small></span>
+      ${c.status === 'Draft' ? r.tag('Draft', 'amber') : ''}</li>`;
+  }).join('');
+
+  const item = (text, editable, isNew) => `<li class="row" style="gap:10px">
+    <span class="faint">${ic('grip')}</span>
+    ${editable ? `<input class="input grow" value="${r.esc(text)}" aria-label="Checklist item">` : `<span class="grow" style="padding:8px 0; color:var(--text-strong)">${r.esc(text)}</span>`}
+    ${isNew ? r.tag('New', 'blue') : ''}
+    ${editable ? `<button class="icon-btn sm" type="button" aria-label="Remove item" data-toast="Item removed">${ic('trash')}</button>` : ''}</li>`;
+
+  const render = (type) => {
+    const c = latest(type);
+    const draft = c.status === 'Draft';
+    const items = type === 'Thermoforming machine' && draft ? [...base, ADDED] : base;
+    document.querySelectorAll('#types li').forEach((li) => li.toggleAttribute('aria-current', li.dataset.type === type));
+    document.querySelectorAll('#types li').forEach((li) => { li.style.background = li.dataset.type === type ? 'var(--slate-100)' : ''; });
+    document.getElementById('t-title').textContent = type;
+    document.getElementById('t-sub').textContent = draft ? `Version ${c.version}, draft · ${items.length} items` : `Version ${c.version}, published ${r.date(c.published)} · ${items.length} items`;
+    document.getElementById('t-tag').innerHTML = draft ? r.tag('Draft', 'amber') : r.tag('Published', 'green');
+    document.getElementById('t-locked').hidden = draft;
+    document.getElementById('add-row').hidden = !draft;
+    document.getElementById('items').innerHTML = items.map((text) => item(text, draft, draft && text === ADDED)).join('');
+    document.getElementById('t-bar').innerHTML = draft
+      ? `<span class="grow">Draft saved 10:20 AM</span><button class="btn btn-ghost" type="button" data-toast="Draft discarded">Discard draft</button>
+         <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button><button class="btn btn-primary" type="button" data-open="publish">Publish version ${c.version}</button>`
+      : `<span class="grow">In use by every new job for this machine type</span><button class="btn btn-primary" type="button" data-toast="Draft version ${c.version + 1} started">Edit</button>`;
+    document.querySelector('#versions tbody').innerHTML = g.checklists.filter((x) => x.type === type).map((x) => `<tr>
+      <td class="mono">v${x.version}</td><td>${r.tag(x.status, x.status === 'Draft' ? 'amber' : 'green')}</td>
+      <td>${x.published ? r.date(x.published) : '<span class="faint">Not yet</span>'}</td><td class="num">${x.used}</td></tr>`).join('')
+      + (latest(type).version > 1 ? `<tr><td class="mono">v${latest(type).version - (draft ? 2 : 1)}</td><td>${r.tag('Replaced')}</td><td>${r.date('2025-04-02')}</td><td class="num">18</td></tr>` : '');
+  };
+  render(types[0]);
+
+  document.addEventListener('click', (event) => {
+    const li = event.target.closest('#types li');
+    if (li) render(li.dataset.type);
+    if (event.target.closest('[data-add]')) {
+      document.getElementById('items').insertAdjacentHTML('beforeend', item('', true, true));
+      document.querySelector('#items li:last-child input').focus();
+    }
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

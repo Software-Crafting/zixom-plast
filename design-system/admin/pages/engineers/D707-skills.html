@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D707 Skills</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D707">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Skills</h1><p>Master list used for engineer profiles and assignment suggestions</p></div>
+    <button class="btn btn-primary" type="button" data-open="skill"><svg class="ic"><use href="#ph-plus"/></svg>Add skill</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="Active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#skills"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Skill or machine range" aria-label="Search skills"></label>
+        <span class="grow"></span>
+        <span class="muted" style="font-size:13px">Levels: 1 Basic · 2 Skilled · 3 Expert</span>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="skills">
+          <thead><tr><th class="sortable">Skill</th><th class="sortable">Machines</th><th>Engineers and level</th><th class="sortable num">In use</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-toolbox"/></svg></span>
+        <h3>No skills yet</h3><p>Skills will appear here.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="skill">Add skill</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Skill</th><th>Machines</th><th>Engineers</th><th>Status</th></tr></thead>
+      <tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="skill" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="skill-title">
+    <div class="drawer-head"><div class="grow"><h2 id="skill-title">Add skill</h2><p>Engineers get a level from 1 to 3 on their page.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="s-name">Name</label><input class="input" id="s-name" value="Skin packing" autofocus><span class="hint">Must be unique</span></div>
+      <div class="field"><label for="s-mach">Machines <span class="opt">optional</span></label><input class="input" id="s-mach" value="SPM range"></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Skill saved">Save skill</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="rename" hidden>
+  <div class="modal" role="dialog" aria-labelledby="rn-title">
+    <div class="modal-head"><div class="grow"><h2 id="rn-title">Rename skill</h2><p>Engineer profiles show the new name at once.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="rn-name">Name</label><input class="input" id="rn-name" value="PLC"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Skill renamed">Rename</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ar-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ar-title">Archive this skill?</h2><p>It is hidden from new profiles and filters. Engineers who have it keep it. A skill in use cannot be deleted.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Skill archived">Archive</button></div>
+  </div>
+</div>
+
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="rename"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Rename</button>
+  <hr><button class="danger" type="button" data-open="archive"><svg class="ic"><use href="#ph-archive"/></svg>Archive</button>
+</div>
+<div class="menu" id="archived-menu" hidden>
+  <button type="button" data-toast="Skill restored"><svg class="ic"><use href="#ph-undo"/></svg>Restore</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E703-skills.html">
+  <div><h3>What it is</h3><p>Master list of skills with the level scale used on engineer profiles.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add, rename or archive a skill.</li><li>See who has each skill and at what level.</li></ul></div>
+  <div><h3>What happens next</h3><p>Skills are set per engineer in Edit engineer (D704) and drive suggestions in Assign engineer (D404).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A skill in use cannot be deleted, only archived.</li><li>Duplicate names are refused.</li><li>The engineer sees skills read only in the app (E703).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const holders = (skill) => ZX.data.engineers.filter((e) => g.profiles[e.id].levels[skill]);
+  document.querySelector('#skills tbody').innerHTML = g.skills.map((s) => {
+    const who = holders(s.name);
+    return `<tr data-status="${s.status}"><td class="strong">${s.name}</td><td>${s.machines}</td>
+      <td>${who.length ? `<span class="tags">${who.map((e) => r.tag(`${e.name.split(' ')[0]}, ${g.LEVELS[g.profiles[e.id].levels[s.name]]}`, 'outline')).join('')}</span>` : '<span class="faint">No one yet</span>'}</td>
+      <td class="num">${who.length}</td><td>${r.tag(s.status, s.status === 'Active' ? 'green' : '')}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="${s.status === 'Active' ? 'row-menu' : 'archived-menu'}"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#skills tbody tr')];
+    rows.forEach((row) => { row.hidden = row.dataset.status !== key; });
+    document.getElementById('foot-count').textContent = `${rows.filter((row) => !row.hidden).length} skills`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = g.skills.filter((s) => s.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('Active');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

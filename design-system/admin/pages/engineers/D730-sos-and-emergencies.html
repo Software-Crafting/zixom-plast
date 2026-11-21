@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D730 SOS and emergencies</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D730">
+<main class="content">
+  <div data-when="ready acknowledged resolved two-sos no-signal">
+    <div class="sos-bar" role="alert" data-when="ready two-sos no-signal" style="margin-top:16px"><svg class="ic"><use href="#ph-siren"/></svg>
+      <span class="grow" id="sos-line"></span>
+      <button class="btn btn-sm btn-secondary" type="button" data-ack>Acknowledge</button></div>
+
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D701">Engineers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>SOS and emergencies</span></nav>
+        <div class="record-head"><h1 class="mono" id="number"></h1>
+          <span class="tags">
+            <span data-when="ready two-sos no-signal"><span class="tag solid-red"><svg class="ic"><use href="#ph-siren"/></svg>Active</span></span>
+            <span data-when="ready two-sos no-signal"><span class="tag red"><svg class="ic"><use href="#ph-volume"/></svg>Sound on</span></span>
+            <span data-when="acknowledged"><span class="tag amber">Acknowledged</span></span>
+            <span data-when="resolved"><span class="tag green">Resolved</span></span>
+          </span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar">
+        <span data-when="ready two-sos no-signal acknowledged" class="row">
+          <button class="btn btn-secondary" type="button" data-toast="Live location shared with Rakesh Mehta for 60 minutes"><svg class="ic"><use href="#ph-share-network"/></svg>Share location</button>
+          <a class="btn btn-secondary" id="call-eng-top" href="#"><svg class="ic"><use href="#ph-phone"/></svg>Call engineer</a></span>
+        <span data-when="ready two-sos no-signal"><button class="btn btn-primary" type="button" data-ack>Acknowledge</button></span>
+        <span data-when="acknowledged"><button class="btn btn-primary" type="button" data-open="resolve">Mark resolved</button></span>
+        <span data-when="resolved"><a class="btn btn-primary" href="#D731">Open incident report</a></span>
+        <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <section class="card" data-when="two-sos">
+        <div class="card-head"><div class="grow"><h2>2 active SOS</h2><p>Both stay on the top banner until acknowledged.</p></div></div>
+        <ul class="mini" id="active-list"></ul>
+      </section>
+      <div class="banner amber" data-when="ready two-sos"><svg class="ic"><use href="#ph-clock-countdown"/></svg>
+        <span class="grow"><b>Not acknowledged for 8 minutes.</b> SMS sent to the owner's mobile at 11:57 AM.</span></div>
+      <div class="banner dark" data-when="no-signal"><svg class="ic"><use href="#ph-wifi-slash"/></svg>
+        <span class="grow"><b>Sandeep's phone has no signal.</b> Showing the last location from 11:52 AM. Call keeps trying.</span></div>
+      <div class="banner green" data-when="resolved"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b>Resolved at 12:20 PM.</b> Engineer safe, first aid given on site. Still logged.</span></div>
+    </div>
+
+    <div class="detail">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Last location</h2><p id="loc-sub"></p></div>
+            <span class="tag outline"><svg class="ic"><use href="#ph-lock-simple"/></svg>Read only, at site</span></div>
+          <div class="card-body stack">
+            <div class="state" style="min-height:240px; border-radius:var(--r-lg); background:var(--slate-100)">
+              <span class="disc red"><svg class="ic"><use href="#ph-map-pin"/></svg></span>
+              <h3 id="loc-place"></h3><p id="loc-addr"></p></div>
+            <p class="muted" style="font-size:13px">Location is shared only during travel and at site (Q17).</p>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Timeline</h2></div></div>
+          <div class="card-body"><ol class="timeline" id="timeline"></ol></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Notes</h2><p>Only Admins see these.</p></div></div>
+          <div class="card-body stack">
+            <div class="internal">Rakesh Mehta confirmed by phone: Sandeep is conscious, small cut on the hand. First aid kit at Gate 2.<br><small class="muted">You · 11:56 AM</small></div>
+            <div class="field"><label for="note">Add note</label><textarea class="textarea" id="note" maxlength="500" placeholder="What did you do or learn?"></textarea></div>
+            <div class="btns"><button class="btn btn-secondary btn-sm" type="button" data-toast="Note added">Add note</button></div>
+          </div>
+        </section>
+      </div>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="empty">
+    <div class="page-head"><div class="grow"><h1>SOS and emergencies</h1><p>Emergency alerts from the engineer app</p></div></div>
+    <div class="card"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>No active SOS</h3><p>An SOS from the app shows a red banner on every page.</p></div></div>
+  </div>
+
+  <section class="card list-card" data-when="ready acknowledged resolved two-sos no-signal empty" style="margin-top:16px">
+    <div class="card-head"><div class="grow"><h2>Earlier SOS</h2><p>Every SOS stays logged, false alarms too.</p></div>
+      <a class="card-link" href="#D736">Safety reports</a></div>
+    <div class="table-wrap"><table class="table" id="history">
+      <thead><tr><th>SOS</th><th>Engineer</th><th>Raised</th><th>Status</th><th>Outcome</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:280px"></span><span class="sk sk-line" style="width:360px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:240px"></span><span class="sk sk-line"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay center" id="resolve" hidden>
+  <div class="modal" role="dialog" aria-labelledby="resolve-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="resolve-title">Mark SOS-2026-0004 resolved?</h2><p>The banner and sound stop for every Admin. The SOS stays logged.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="r-kind">Outcome</label><select class="select" id="r-kind">
+        <option>Engineer safe, help reached</option><option>Medical help given</option><option>False alarm</option><option>Other</option></select></div>
+      <div class="field"><label for="r-reason">Reason</label><textarea class="textarea" id="r-reason" maxlength="500" placeholder="What happened and what was done"></textarea>
+        <span class="error" id="r-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Write a reason of at least 10 characters</span></div>
+      <label class="check"><input type="checkbox" id="r-incident" checked> Ask Sandeep to file an incident report (E903)</label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="r-save">Mark resolved</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <a href="#D403?t=TKT-2026-0126"><svg class="ic"><use href="#ph-wrench"/></svg>Open ticket</a>
+  <a href="#D731"><svg class="ic"><use href="#ph-first-aid"/></svg>Incidents</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><button type="button" data-open="resolve"><svg class="ic"><use href="#ph-check-circle"/></svg>Mark resolved</button>
+</div>
+
+<aside class="proto" data-states="ready acknowledged resolved two-sos no-signal empty loading error" data-mobile="../../../screens/engineer/E904-emergency.html">
+  <div><h3>What it is</h3><p>An engineer's SOS from the app (E904), with location, ticket and customer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call the engineer or the customer.</li><li>Acknowledge to stop the sound and the banner.</li><li>Add notes, share location, mark resolved with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Incident report from the engineer (D731), Safety reports (D736).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Banner on every page until acknowledged (EC-A51). Active: sound and the tab title flashes.</li><li>Not acknowledged in 5 minutes: SMS to the owner's mobile.</li><li>Two at once: both listed. No signal: last location and time.</li><li>False alarm: resolved as false alarm, still logged. Offline shows last known data.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const tel = (phone) => `tel:${phone.replace(/\s/g, '')}`;
+  const s = g.sos.find((x) => x.status === 'Active');
+  const e = r.engineer(s.engineer);
+  const t = r.ticket(s.ticket);
+  const c = r.company(t.company);
+  const site = r.site(t.company, t.site);
+  const p = r.person(t.by);
+  /* page only: a second SOS for the Two at once state */
+  const second = { number: 'SOS-2026-0005', engineer: 'anita', when: '2026-11-23T11:58', place: 'Chakan unit, Nova Cups' };
+
+  document.getElementById('sos-line').textContent = `SOS from ${e.name} at 11:52 AM · ${site.name}`;
+  document.getElementById('number').textContent = s.number;
+  document.getElementById('meta').innerHTML = `<span>${ic('clock')}Raised ${r.dayDate(s.when)}, ${r.time(s.when)} IST</span>
+    <span>${ic('user')}${e.name}, <span class="mono">${e.code}</span></span><span>${ic('wrench')}<a class="mono" href="#D403?t=${t.number}">${t.number}</a></span>`;
+  document.getElementById('call-eng-top').href = tel(e.phone);
+  document.getElementById('loc-sub').textContent = `Updated ${r.time(s.locWhen)} from Sandeep's phone`;
+  document.getElementById('loc-place').textContent = s.location;
+  document.getElementById('loc-addr').textContent = `${site.address}, ${site.pincode}`;
+
+  document.getElementById('active-list').innerHTML = [[e, s.number, s.when, site.name], [r.engineer(second.engineer), second.number, second.when, second.place]]
+    .map(([x, num, when, place]) => `<li><span class="ic-disc red">${ic('siren')}</span>${r.avatar(x, 'sm')}
+      <span class="grow"><b>${x.name} · <span class="mono">${num}</span></b><small>${place} · ${r.time(when)}</small></span>
+      <a class="btn btn-sm btn-secondary" href="${tel(x.phone)}">${ic('phone')}Call</a></li>`).join('');
+
+  const events = [
+    ['siren', 'red', 'SOS raised in the app', `${e.name} · ${site.name}`, '11:52'],
+    ['map-pin', 'blue', 'Location received', s.location, '11:52'],
+    ['bell-ring', 'amber', 'Banner, sound, email and push sent', 'Every Admin', '11:52'],
+    ['phone', '', 'You called Rakesh Mehta', '2 min 10 s', '11:55'],
+    ['envelope-simple', 'amber', 'SMS to the owner\'s mobile', 'Not acknowledged in 5 minutes', '11:57'],
+  ];
+  document.getElementById('timeline').innerHTML = events.reverse().map(([i, tone, title, sub, when]) => `
+    <li><span class="node ${tone}">${ic(i)}</span><div><b>${title}</b><p>${sub}</p></div><small>${when}</small></li>`).join('');
+
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Engineer</h3><a class="card-link" href="#D702?e=${e.id}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${e.region}</small></span></div>
+      <dl class="dl"><dt>Phone</dt><dd>${e.phone}</dd><dt>Device</dt><dd>${g.profiles[e.id].device.model}</dd></dl>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="${tel(e.phone)}">${ic('phone')}Call engineer</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Ticket and customer</h3><a class="card-link" href="#D403?t=${t.number}">Open</a></div>
+      <div class="card-body stack-sm"><dl class="dl"><dt>Ticket</dt><dd class="mono">${t.number}</dd><dt>Customer</dt><dd>${c.name}<br><span class="muted">${site.name}</span></dd>
+        <dt>Contact</dt><dd>${p.name}<br><span class="muted">${p.mobile}</span></dd></dl>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="${tel(p.mobile)}">${ic('phone')}Call customer</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Emergency numbers</h3></div>
+      <ul class="mini"><li><span class="ic-disc red">${ic('first-aid')}</span><span class="grow"><b>Emergency 112</b><small>Police, fire, ambulance</small></span><a class="btn btn-sm btn-ghost" href="tel:112">Call</a></li>
+        <li><span class="ic-disc">${ic('buildings')}</span><span class="grow"><b>Site security</b><small>${site.name}, Gate 2</small></span><a class="btn btn-sm btn-ghost" href="${tel(site.contact.phone)}">Call</a></li></ul></section>`;
+
+  const OUTCOME_TONE = { Resolved: 'green', Active: 'red', Acknowledged: 'amber' };
+  document.querySelector('#history tbody').innerHTML = g.sos.filter((x) => x.status !== 'Active').map((x) => {
+    const en = r.engineer(x.engineer);
+    return `<tr><td class="nowrap"><span class="mono">${x.number}</span></td><td><span class="who">${r.avatar(en, 'sm')}<span>${en.name}</span></span></td>
+      <td class="nowrap">${r.date(x.when)}, ${r.time(x.when)}</td><td>${r.tag(x.reason.startsWith('False') ? 'False alarm' : x.status, x.reason.startsWith('False') ? '' : OUTCOME_TONE[x.status])}</td>
+      <td>${x.reason}</td></tr>`;
+  }).join('');
+
+  /* acknowledge stops the sound and the banner; resolve needs a reason */
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-ack]')) { ZXA.ui.setState('acknowledged'); ZXA.ui.toast('Acknowledged. Sound stopped for every Admin'); }
+    if (event.target.closest('#r-save')) {
+      const reason = document.getElementById('r-reason');
+      const bad = reason.value.trim().length < 10;
+      document.getElementById('r-error').hidden = !bad;
+      reason.setAttribute('aria-invalid', String(bad));
+      if (bad) return;
+      ZXA.ui.closeOverlay(document.getElementById('resolve'));
+      ZXA.ui.setState('resolved');
+      ZXA.ui.toast(document.getElementById('r-kind').value === 'False alarm' ? 'Resolved as false alarm. Still logged' : 'SOS resolved');
+    }
+  });
+
+  /* Active: the tab title flashes */
+  const title = document.title;
+  window.setInterval(() => {
+    const active = ['ready', 'two-sos', 'no-signal'].includes(document.body.dataset.state);
+    document.title = active && document.title === title ? 'SOS · Sandeep Yadav' : title;
+  }, 1000);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D709 Performance</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D709">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Performance</h1><p>November 2026 · 2 engineers · Ahmedabad and Pune</p></div>
+    <div class="segment" role="tablist" aria-label="Date range">
+      <button role="tab" aria-selected="false" data-toast="Showing this week">This week</button>
+      <button role="tab" aria-selected="true">This month</button>
+      <button role="tab" aria-selected="false" data-toast="Showing the last 3 months">Last 3 months</button>
+    </div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div class="row wrap" style="margin-bottom:16px; gap:10px">
+    <select class="select" aria-label="Region" style="width:auto"><option>All regions</option><option>Ahmedabad</option><option>Pune</option></select>
+    <select class="select" aria-label="Engineer" style="width:auto"><option>All engineers</option><option>Sandeep Yadav</option><option>Anita Verma</option></select>
+    <input class="input" type="date" aria-label="From" value="2026-11-01" style="width:auto">
+    <input class="input" type="date" aria-label="To" value="2026-11-23" style="width:auto">
+  </div>
+
+  <div data-when="ready">
+    <section class="kpis" id="kpis" aria-label="Team numbers"></section>
+
+    <div class="grid cols-2">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Jobs done per week</h2><p>Last 8 weeks</p></div>
+          <div class="segment" role="tablist" aria-label="Jobs view"><button role="tab" aria-selected="true" aria-controls="jobs-chart">Chart</button><button role="tab" aria-selected="false" aria-controls="jobs-table">Table</button></div></div>
+        <div class="card-body">
+          <div id="jobs-chart" role="tabpanel"><div class="chart"><canvas id="chart-jobs" aria-label="Jobs done per week by engineer"></canvas></div>
+            <div class="legend" style="margin-top:10px"><span><i style="--c:var(--slate-800)"></i>Sandeep Yadav</span><span><i style="--c:var(--blue)"></i>Anita Verma</span></div></div>
+          <div id="jobs-table" role="tabpanel" hidden><div class="table-wrap"><table class="table compact" id="t-jobs"></table></div></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Average rating per week</h2><p>Out of 5 · no rating in a week on leave</p></div>
+          <div class="segment" role="tablist" aria-label="Rating view"><button role="tab" aria-selected="true" aria-controls="rating-chart">Chart</button><button role="tab" aria-selected="false" aria-controls="rating-table">Table</button></div></div>
+        <div class="card-body">
+          <div id="rating-chart" role="tabpanel"><div class="chart"><canvas id="chart-rating" aria-label="Average rating per week by engineer"></canvas></div>
+            <div class="legend" style="margin-top:10px"><span><i style="--c:var(--slate-800)"></i>Sandeep Yadav</span><span><i style="--c:var(--blue)"></i>Anita Verma</span></div></div>
+          <div id="rating-table" role="tabpanel" hidden><div class="table-wrap"><table class="table compact" id="t-rating"></table></div></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2>By engineer</h2><p>This month</p></div></div>
+      <div class="table-wrap">
+        <table class="table" id="by-engineer">
+          <thead><tr><th class="sortable">Engineer</th><th class="sortable num">Jobs done</th><th class="sortable num">On time</th><th class="sortable num">First time fix</th>
+            <th class="sortable num">Rating</th><th class="sortable num">Response</th><th class="sortable num">Reopen</th><th class="sortable num">Travel per job</th><th class="sortable num">Utilisation</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-bar-chart"/></svg></span>
+      <h3>No jobs in this period</h3><p>Pick another date range or region.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Filters cleared">Clear filters</button></div></div></div>
+  </div>
+
+  <div data-when="loading">
+    <section class="kpis">
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>
+    </section>
+    <div class="grid cols-2">
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:220px"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:220px"></span></div>
+    </div>
+  </div>
+</main>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+  <hr><button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>PDF with charts</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/engineer/E803-performance.html">
+  <div><h3>What it is</h3><p>How each engineer and the team did in a period.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by date, region and engineer.</li><li>Switch any chart to a table.</li><li>Open an engineer; export to Excel, CSV or PDF.</li></ul></div>
+  <div><h3>What happens next</h3><p>Engineer detail (D702), Weekly summaries (D715), Reports (D1501).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Every chart has a table view (D709).</li><li>A week on leave has no rating, not zero.</li><li>No jobs in the range: Empty.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ids = ['sandeep', 'anita'];
+  const P = g.performance;
+  const sum = (key) => ids.reduce((n, id) => n + P[id][key], 0);
+  /* team values weighted by jobs done */
+  const weighted = (key) => ids.reduce((n, id) => n + P[id][key] * P[id].completed, 0) / sum('completed');
+  const one = (n) => n.toFixed(1);
+  const kpis = [
+    ['Jobs done', sum('completed'), ['up', '6', 'good'], 'vs October'], ['On time', `${Math.round(weighted('onTime'))}%`, ['up', '2%'], 'arrived in the window'],
+    ['First time fix', `${Math.round(weighted('firstVisitFix'))}%`, ['flat', '0'], 'no second visit'], ['Average rating', one(weighted('rating')), ['up', '0.1'], 'from customers'],
+    ['Response time', `${one(weighted('responseHours'))} h`, ['down', '0.2 h', 'good'], 'target 4 h'], ['Reopen rate', `${one(weighted('reopen'))}%`, ['up', '0.4%', 'bad'], 'within 7 days'],
+    ['Travel per job', `${Math.round(weighted('travelMin'))} min`, ['flat', '0'], 'average'], ['Utilisation', `${Math.round((P.sandeep.utilisation + P.anita.utilisation) / 2)}%`, ['up', '3%'], 'of working hours'],
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(([label, value, trend, foot]) => `<div class="card kpi"><span class="label">${label}</span>
+    <span class="value">${value}</span><span class="foot">${r.trend(trend)}<span>${foot}</span></span></div>`).join('');
+
+  document.querySelector('#by-engineer tbody').innerHTML = ids.map((id) => {
+    const e = r.engineer(id);
+    const p = P[id];
+    return `<tr data-href="D702?e=${id}"><td><span class="who">${r.avatar(e, 'sm')}<span><b>${e.name}</b><span class="sub">${e.region}</span></span></span></td>
+      <td class="num">${p.completed}</td><td class="num">${p.onTime}%</td><td class="num">${p.firstVisitFix}%</td><td class="num">${p.rating}</td>
+      <td class="num">${p.responseHours} h</td><td class="num">${p.reopen}%</td><td class="num">${p.travelMin} min</td><td class="num">${p.utilisation}%</td></tr>`;
+  }).join('');
+
+  /* table views of the charts */
+  const weekTable = (series, fmt) => `<thead><tr><th>Week of</th>${ids.map((id) => `<th class="num">${r.engineer(id).name}</th>`).join('')}</tr></thead>
+    <tbody>${g.weeks.map((w, i) => `<tr><td>${w}</td>${ids.map((id) => `<td class="num">${fmt(series[id][i])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  document.getElementById('t-jobs').innerHTML = weekTable(g.jobsByWeek, (n) => n);
+  document.getElementById('t-rating').innerHTML = weekTable(g.ratingByWeek, (n) => (n == null ? '<span class="faint">On leave</span>' : n.toFixed(1)));
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script src="../../assets/vendor/chart.umd.js"></script>
+<script>
+(() => {
+  const g = ZXA.data.eng;
+  const c = ZXA.colors;
+  const line = (data, color) => ({ data, borderColor: color, backgroundColor: color, tension: .35, pointRadius: 3, borderWidth: 2, spanGaps: false });
+  ZXA.chart(document.getElementById('chart-jobs'), {
+    type: 'bar',
+    data: { labels: g.weeks, datasets: [
+      { label: 'Sandeep Yadav', data: g.jobsByWeek.sandeep, backgroundColor: c.slate, borderRadius: 5, barThickness: 10 },
+      { label: 'Anita Verma', data: g.jobsByWeek.anita, backgroundColor: c.blue, borderRadius: 5, barThickness: 10 },
+    ] },
+    options: { interaction: { mode: 'index', intersect: false }, scales: { y: { ticks: { stepSize: 2 } } } },
+  });
+  ZXA.chart(document.getElementById('chart-rating'), {
+    type: 'line',
+    data: { labels: g.weeks, datasets: [{ label: 'Sandeep Yadav', ...line(g.ratingByWeek.sandeep, c.slate) }, { label: 'Anita Verma', ...line(g.ratingByWeek.anita, c.blue) }] },
+    options: { interaction: { mode: 'index', intersect: false }, scales: { y: { beginAtZero: false, min: 4, max: 5 } } },
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D731 Incidents</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D731">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Incidents</h1><p>2 open · 1 high severity · reported from the engineer app</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-primary" type="button" data-open="add"><svg class="ic"><use href="#ph-plus"/></svg>Add incident</button>
+  </div>
+
+  <div class="banner red" data-when="ready no-results" style="margin-bottom:16px"><svg class="ic"><use href="#ph-first-aid"/></svg>
+    <span class="grow"><b>INC-2026-0006 is high severity with an injury.</b> It is in the work queue until closed.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D102">Work queue</a></span></div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="high">High severity <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="injury">With injury <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#incidents"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Incident, engineer, machine or text" aria-label="Search incidents"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="incidents">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Incident</th><th class="sortable">Severity</th><th class="sortable">Engineer</th>
+            <th>Machine and customer</th><th>Injury</th><th class="sortable">Reported</th><th class="sortable">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-shield-check"/></svg></span>
+        <h3>No incidents yet</h3><p>Incidents and near misses from the engineer app will appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Incident</th><th>Severity</th><th>Engineer</th><th>Machine</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="incidents" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view: review, add the action taken, close -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay center" id="close-inc" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ci-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="ci-title">Close this incident?</h2><p id="ci-text">It leaves the work queue and becomes read only.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ci-note">Closing note</label><textarea class="textarea" id="ci-note" maxlength="500">Label fitted by Nova Cups on 18 Nov. Heater hazard in the register.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Incident closed">Close incident</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="add" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="add-title">
+    <div class="drawer-head"><div class="grow"><h2 id="add-title">Add incident</h2><p>For incidents reported by phone.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="a-eng">Engineer</label><select class="select" id="a-eng"><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+        <div class="field"><label for="a-kind">Type</label><select class="select" id="a-kind"><option>Near miss</option><option>Injury</option><option>Unsafe condition</option><option>Damage to property</option></select></div>
+        <div class="field"><label for="a-sev">Severity</label><select class="select" id="a-sev"><option>Low</option><option>Medium</option><option>High</option></select><span class="hint">High goes to the work queue.</span></div>
+        <div class="field"><label for="a-when">Date</label><input class="input" id="a-when" type="date" value="2026-11-23"></div>
+        <div class="field full"><label for="a-machine">Machine</label><select class="select" id="a-machine"></select></div>
+        <div class="field full"><label for="a-text">What happened</label><textarea class="textarea" id="a-text" maxlength="1000"></textarea><span class="hint">At least 20 characters.</span></div>
+      </div>
+      <div class="field"><span class="label">Was anyone injured?</span><div class="row"><label class="check"><input type="radio" name="a-inj"> Yes</label><label class="check"><input type="radio" name="a-inj" checked> No</label></div></div>
+      <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop photos here</b>Up to 5, JPG or PNG, 10 MB each</div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Incident INC-2026-0008 added">Add incident</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Near miss</button><button class="chip" type="button" aria-pressed="false">Injury</button>
+        <button class="chip" type="button" aria-pressed="false">Unsafe condition</button></div></div>
+      <div class="field"><span class="label">Severity</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">High</button><button class="chip" type="button" aria-pressed="false">Medium</button>
+        <button class="chip" type="button" aria-pressed="false">Low</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+        <div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-from">Reported from</label><input class="input" id="f-from" type="date" value="2026-09-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show incidents</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E903-incident.html">
+  <div><h3>What it is</h3><p>Incidents and near misses engineers report from the app (E903).</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a row to review: add a review note and the action taken, then close.</li><li>Add an incident reported by phone.</li><li>Export the list to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>Hazard register (D732), Safety reports (D736), SOS (D730).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Severity High goes to the work queue until closed.</li><li>The engineer cannot edit a sent report; Admin notes are separate.</li><li>Injury yes shows in red. A serious incident also sends banner, email and SMS (section 12).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const list = g.incidents;
+  const find = (n) => list.find((x) => x.number === n);
+
+  document.querySelector('#incidents tbody').innerHTML = list.map((x) => {
+    const e = r.engineer(x.engineer);
+    const m = r.machine(x.machine);
+    return `<tr data-drawer="quick" data-inc="${x.number}" class="${x.severity === 'High' && x.status !== 'Closed' ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+      <td class="nowrap"><span class="mono strong">${x.number}</span><span class="sub">${x.kind}</span></td>
+      <td data-sort="${{ High: 0, Medium: 1, Low: 2 }[x.severity]}">${r.tag(x.severity, g.SEVERITY_TONE[x.severity])}</td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+      <td><b class="clip">${r.company(m.company).name}</b><span class="sub">${m.model} · ${r.site(m.company, m.site).name}</span></td>
+      <td>${x.injury ? '<span class="red-text strong">Yes</span>' : 'No'}</td>
+      <td class="nowrap" data-sort="${x.when}">${r.date(x.when)}<span class="sub">${r.time(x.when)}</span></td>
+      <td>${r.tag(x.status, g.INCIDENT_TONE[x.status])}</td></tr>`;
+  }).join('');
+
+  const VIEWS = { open: (x) => x.status !== 'Closed', high: (x) => x.severity === 'High', injury: (x) => x.injury, closed: (x) => x.status === 'Closed', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#incidents tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](find(row.dataset.inc)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+  document.getElementById('a-machine').innerHTML = r.machines.filter((m) => m.status !== 'pending')
+    .map((m) => `<option>${m.model}, ${m.serial} · ${r.site(m.company, m.site).name}</option>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = find(event.detail.dataset.inc);
+    const e = r.engineer(x.engineer);
+    const m = r.machine(x.machine);
+    const closed = x.status === 'Closed';
+    document.getElementById('quick-title').textContent = x.number;
+    document.getElementById('quick-sub').textContent = `${x.kind} · reported ${r.date(x.when)}, ${r.time(x.when)}`;
+    document.getElementById('ci-title').textContent = `Close ${x.number}?`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(x.status, g.INCIDENT_TONE[x.status])}${r.tag(`${x.severity} severity`, g.SEVERITY_TONE[x.severity])}${x.injury ? r.tag('Injury', 'red', 'first-aid') : r.tag('No injury', 'outline')}</div>
+      <div><h3 style="font-size:15px">What happened</h3><p style="margin-top:6px; color:var(--text-strong)">${x.text}</p></div>
+      <dl class="dl">
+        <dt>Engineer</dt><dd>${e.name}<br><span class="muted">${e.phone}</span></dd>
+        <dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd>
+        <dt>Customer</dt><dd>${r.company(m.company).name}<br><span class="muted">${r.site(m.company, m.site).name}</span></dd>
+        <dt>Ticket</dt><dd>${x.ticket ? `<a class="mono" href="${ZXA.href('D403', `?t=${x.ticket}`)}">${x.ticket}</a>` : '<span class="faint">None</span>'}</dd>
+        <dt>Action on site</dt><dd>${x.action}</dd>
+      </dl>
+      ${x.photos ? `<div class="gallery">${Array.from({ length: x.photos }, (_, i) => `<div class="ph">${ic('image')}<small>Photo ${i + 1}</small></div>`).join('')}</div>` : ''}
+      ${x.review ? `<div class="internal"><b>Review</b><br>${x.review}</div>` : ''}
+      ${closed ? '' : `<div class="field"><label for="q-action">Add action taken</label><textarea class="textarea" id="q-action" maxlength="500" placeholder="What Zixom did about it"></textarea>
+        <span class="hint">Saved to the incident log. The engineer is not notified.</span></div>
+        <label class="check"><input type="checkbox"> Add a hazard to the register (D732)</label>`}`;
+    document.getElementById('quick-foot').innerHTML = closed
+      ? `<span class="grow"></span><button class="btn btn-secondary" type="button" data-toast="Incident PDF downloaded">${ic('download-simple')}Download PDF</button>`
+      : `<button class="btn btn-ghost" type="button" data-toast="Action saved">Save action</button><span class="grow"></span>
+         ${x.status === 'New' ? '<button class="btn btn-secondary" type="button" data-toast="Marked under review">Start review</button>' : ''}
+         <button class="btn btn-primary" type="button" data-open="close-inc">Close incident</button>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

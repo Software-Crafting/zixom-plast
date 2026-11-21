@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D703 Add engineer</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D703">
+<main class="content">
+  <div data-when="ready mobile-used errors">
+    <div class="page-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D701">Engineers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Add engineer</span></nav>
+        <h1>Add engineer</h1><p>An SMS with the app link is sent on save. First sign in registers one phone.</p>
+      </div>
+    </div>
+
+    <div class="banner red" data-when="mobile-used" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>This mobile number belongs to a customer.</b> Pooja Shah, Shree Packaging Industries. Use another number.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D207">Open account conflict</a></span></div>
+    <div class="banner red" data-when="errors" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>Fix 2 things to save.</b> Name and region are needed.</span></div>
+
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section"><h3>Person</h3><p>Shown to customers on visits.</p>
+        <div class="form-grid">
+          <div class="field" data-when="ready mobile-used"><label for="name">Full name</label><input class="input" id="name" value="Vikram Rathod" autocomplete="off"></div>
+          <div class="field" data-when="errors"><label for="name-e">Full name</label><input class="input" id="name-e" aria-invalid="true"><span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Enter the full name</span></div>
+          <div class="field" data-when="ready errors"><label for="mobile">Mobile</label><input class="input" id="mobile" value="+91 98790 44128" inputmode="tel"><span class="hint">Used to sign in with an OTP</span></div>
+          <div class="field" data-when="mobile-used"><label for="mobile-u">Mobile</label><input class="input" id="mobile-u" value="+91 97140 22321" aria-invalid="true">
+            <span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Already used by a customer</span></div>
+          <div class="field"><label for="email">Email <span class="opt">optional</span></label><input class="input" id="email" type="email" value="vikram.rathod@zixom.in"></div>
+          <div class="field"><label for="code">Employee code</label><input class="input mono" id="code" value="ZP-SE-022"><span class="hint">Next free code</span></div>
+          <div class="field"><label for="designation">Designation</label><select class="select" id="designation"><option>Service engineer</option><option>Senior service engineer</option><option>Trainee engineer</option></select></div>
+          <div class="field"><label for="experience">Experience</label><input class="input" id="experience" type="number" min="0" value="3"><span class="hint">Years</span></div>
+          <div class="field full"><span class="label">Photo <span class="opt">optional</span></span><div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop a photo here</b>JPG or PNG up to 10 MB</div></div>
+        </div></section>
+
+      <section class="form-section"><h3>Work</h3><p>Region and skills decide assignment suggestions.</p>
+        <div class="form-grid">
+          <div class="field" data-when="ready mobile-used"><label for="region">Region</label><select class="select" id="region"><option>Ahmedabad</option><option>Pune</option></select></div>
+          <div class="field" data-when="errors"><label for="region-e">Region</label><select class="select" id="region-e" aria-invalid="true"><option>Choose a region</option><option>Ahmedabad</option><option>Pune</option></select>
+            <span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Choose a region</span></div>
+          <div class="field"><label for="hours">Working hours</label><select class="select" id="hours"><option>Region default: Mon to Sat, 9 AM to 6 PM</option><option>Custom</option></select></div>
+          <div class="field full"><span class="label">Skills</span><div class="row wrap" data-chips id="skills"></div><span class="hint">Set levels on the engineer's page after saving</span></div>
+        </div></section>
+
+      <div class="form-bar"><span class="grow">The engineer gets an SMS with the app link. The invitation is valid 7 days.</span>
+        <a class="btn btn-ghost" href="#D701">Cancel</a>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Engineer added. Invitation SMS sent">Save and invite</button></div>
+    </form>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready mobile-used errors error" data-mobile="../../../screens/engineer/E802-profile.html">
+  <div><h3>What it is</h3><p>Form to add a field engineer and send the app invitation.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter name, mobile, code, region, designation, experience, skills, hours and photo.</li><li>Save and invite sends an SMS with the app link.</li></ul></div>
+  <div><h3>What happens next</h3><p>The engineer signs in once (A17) on one phone and appears in suggestions. Opens Engineer detail (D702).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Mobile already used by a customer is blocked with a link to D207 (EC-A35).</li><li>Save disables on first click (EC-A09); data kept if offline (EC-A01).</li><li>Invitation valid 7 days (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const picked = ['Thermoforming', 'Vacuum'];
+  document.getElementById('skills').innerHTML = ZXA.data.eng.skills.filter((s) => s.status === 'Active')
+    .map((s) => `<button class="chip" type="button" aria-pressed="${picked.includes(s.name)}">${s.name}</button>`).join('');
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

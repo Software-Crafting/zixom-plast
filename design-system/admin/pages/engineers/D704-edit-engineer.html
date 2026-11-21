@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D704 Edit engineer</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D704">
+<main class="content">
+  <div data-when="ready region-changed">
+    <div class="page-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D701">Engineers</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-link" href="#D702"></a>
+          <svg class="ic"><use href="#ph-caret-right"/></svg><span>Edit</span></nav>
+        <h1 id="title"></h1><p id="meta"></p>
+      </div>
+    </div>
+
+    <div class="banner amber" id="impact" data-when="region-changed" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+      <span class="grow"><b>Region or skills changed.</b> This affects assignment suggestions at once. Open jobs stay with the engineer.</span></div>
+
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section"><h3>Person</h3>
+        <div class="form-grid">
+          <div class="field"><label for="name">Full name</label><input class="input" id="name"></div>
+          <div class="field"><label for="mobile">Mobile</label><input class="input" id="mobile" inputmode="tel"><span class="hint">Changing it signs the engineer out</span></div>
+          <div class="field"><label for="email">Email <span class="opt">optional</span></label><input class="input" id="email" type="email"></div>
+          <div class="field"><label for="code">Employee code</label><input class="input mono" id="code" readonly><span class="hint">Cannot change</span></div>
+          <div class="field"><label for="designation">Designation</label><select class="select" id="designation"><option>Service engineer</option><option>Senior service engineer</option><option>Trainee engineer</option></select></div>
+          <div class="field"><label for="experience">Experience</label><input class="input" id="experience" type="number" min="0"><span class="hint">Years</span></div>
+        </div></section>
+
+      <section class="form-section"><h3>Work</h3><p>Region and skills decide assignment suggestions.</p>
+        <div class="form-grid">
+          <div class="field"><label for="region">Region</label><select class="select" id="region" data-impact><option>Ahmedabad</option><option>Pune</option></select></div>
+          <div class="field"><label for="hours">Working hours</label><select class="select" id="hours"><option>Region default: Mon to Sat, 9 AM to 6 PM</option><option>Custom</option></select></div>
+          <div class="field full"><span class="label">Skills</span><div class="row wrap" data-chips data-impact id="skills"></div></div>
+        </div></section>
+
+      <section class="form-section"><h3>Status and notes</h3>
+        <div class="form-grid">
+          <div class="field"><label for="status">Status</label><select class="select" id="status"><option>Active</option><option>On leave</option></select>
+            <span class="hint">To disable, use Disable on the engineer's page</span></div>
+          <div class="field full"><label for="notes">Notes <span class="opt">only Admins see these</span></label><textarea class="textarea" id="notes" maxlength="1000"></textarea></div>
+        </div></section>
+
+      <div class="form-bar"><span class="grow autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>No unsaved changes</span>
+        <a class="btn btn-ghost" id="cancel" href="#D702">Cancel</a>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+    </form>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready region-changed loading error" data-mobile="../../../screens/engineer/E703-skills.html">
+  <div><h3>What it is</h3><p>Edit an engineer's profile, region, skills, status and notes. Opens with <code>?e=sandeep</code> or <code>?e=anita</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change any field except the employee code.</li><li>Set status Active or On leave.</li><li>Save.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Engineer detail (D702). The app shows the new region and skills (E703).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Changing region or skills affects suggestions at once (Region changed state).</li><li>Mobile used by a customer is blocked (D207, EC-A35).</li><li>Another Admin saved: Stale state (EC-A12). Leaving with changes asks first (D1808).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const e = r.engineer(new URLSearchParams(location.search).get('e') || 'sandeep');
+  const p = g.profiles[e.id];
+  const $ = (id) => document.getElementById(id);
+  document.title = `Zixom Admin - Edit ${e.name}`;
+  $('title').textContent = `Edit ${e.name}`;
+  $('crumb-link').textContent = e.name;
+  $('crumb-link').setAttribute('href', `#D702?e=${e.id}`);
+  $('cancel').setAttribute('href', `#D702?e=${e.id}`);
+  $('meta').innerHTML = `<span class="mono">${e.code}</span> · Last saved 19 Nov 2026 by Rajesh Goyal`;
+  $('name').value = e.name;
+  $('mobile').value = e.phone;
+  $('email').value = p.email;
+  $('code').value = e.code;
+  $('designation').value = e.designation;
+  $('experience').value = parseInt(e.experience, 10);
+  $('region').value = e.region;
+  $('status').value = p.status;
+  $('notes').value = p.notes;
+  $('skills').innerHTML = g.skills.filter((s) => s.status === 'Active')
+    .map((s) => `<button class="chip" type="button" aria-pressed="${e.skills.includes(s.name)}">${s.name}</button>`).join('');
+
+  const changed = () => {
+    const bar = document.querySelector('.form-bar .autosave');
+    bar.innerHTML = `${r.icon('note-pencil')}Unsaved changes`;
+  };
+  document.querySelector('form').addEventListener('input', changed);
+  $('region').addEventListener('change', () => ZXA.ui.setState('region-changed'));
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (!chip) return;
+    chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+    changed();
+    ZXA.ui.setState('region-changed');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

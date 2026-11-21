@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D711 Handover notes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D711">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Handover notes</h1><p>Left by engineers for the next visit · never shown to customers</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="visible">Visible <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="pinned">Pinned to machine <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="hidden">Hidden <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#notes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Machine, serial, ticket or text" aria-label="Search notes"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="notes">
+          <thead><tr><th class="sortable">Machine</th><th>Note</th><th class="sortable">By</th><th class="sortable">Ticket</th><th class="sortable">Left</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-sticky-note"/></svg></span>
+        <h3>No handover notes yet</h3><p>Notes engineers leave in the app will appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="card-body stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span><span class="sk sk-line"></span></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close data-toast="Note hidden from engineers">Hide</button>
+      <button class="btn btn-secondary" type="button" data-close data-toast="Note pinned to the machine">Pin to machine</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Reply sent to the engineer">Send reply</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="field"><label for="f-site">Site</label><select class="select" id="f-site"><option>Any</option><option>Vatva plant</option><option>Sanand plant</option><option>Chakan unit</option></select></div>
+      <div class="field"><label for="f-from">Left from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+      <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+    </div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show notes</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Note pinned to the machine"><svg class="ic"><use href="#ph-pin"/></svg>Pin to machine</button>
+  <button type="button" data-toast="Note hidden from engineers"><svg class="ic"><use href="#ph-eye-slash"/></svg>Hide</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E1012-handover-notes.html">
+  <div><h3>What it is</h3><p>Notes engineers leave for the next engineer on a machine: tried, remains, site tips.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pin a note to the machine so every later job shows it.</li><li>Hide a wrong or old note.</li><li>Reply to the engineer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Visible notes show in the briefing of the next job on that machine (E216).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Never visible to the customer.</li><li>Hidden notes stay in the log.</li><li>A note on an old ticket keeps its number even when the ticket is archived.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const notes = g.handover;
+  const statusTag = (n) => (n.hidden ? r.tag('Hidden') : n.pinned ? r.tag('Pinned', 'blue', 'pin') : r.tag('Visible', 'green'));
+  const ticketCell = (number) => (r.ticket(number) ? `<a class="rec" href="${ZXA.href('D403', `?t=${number}`)}">${number}</a>` : `<span class="mono">${number}</span>`);
+  const summary = (n) => [n.tried, n.remains].filter(Boolean).join(' ');
+
+  document.querySelector('#notes tbody').innerHTML = notes.map((n, i) => {
+    const m = r.machine(n.machine);
+    const e = r.engineer(n.by);
+    return `<tr data-drawer="quick" data-note="${i}">
+      <td><b class="clip">${m.model}</b><span class="sub mono">${m.serial}</span></td>
+      <td><span class="clip" style="max-width:340px" title="${r.esc(summary(n))}">${r.esc(summary(n))}</span></td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+      <td>${ticketCell(n.ticket)}</td>
+      <td class="nowrap" data-sort="${n.when}">${r.dayDate(n.when)}<span class="sub">${r.time(n.when)}</span></td>
+      <td>${statusTag(n)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+
+  const VIEWS = { visible: (n) => !n.hidden, pinned: (n) => n.pinned && !n.hidden, hidden: (n) => n.hidden, all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#notes tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](notes[row.dataset.note]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = notes.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('visible');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const n = notes[event.detail.dataset.note];
+    const m = r.machine(n.machine);
+    const e = r.engineer(n.by);
+    const s = r.site(m.company, m.site);
+    document.getElementById('quick-title').textContent = m.model;
+    document.getElementById('quick-sub').innerHTML = `<span class="mono">${m.serial}</span> · ${s.name}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${statusTag(n)}${r.tag('Engineers only', 'outline', 'eye-slash')}</div>
+      <div class="who">${r.avatar(e)}<span><b>${e.name}</b><small>${r.dayDate(n.when)}, ${r.time(n.when)} · ${n.ticket}</small></span></div>
+      <dl class="dl stack">
+        <dt>What was tried</dt><dd>${r.esc(n.tried) || '<span class="faint">Not filled</span>'}</dd>
+        <dt>What remains</dt><dd>${r.esc(n.remains) || '<span class="faint">Not filled</span>'}</dd>
+        <dt>Site tips</dt><dd>${r.esc(n.tips) || '<span class="faint">Not filled</span>'}</dd>
+      </dl>
+      <div class="field"><label for="reply">Reply to ${e.name.split(' ')[0]}</label><textarea class="textarea" id="reply" maxlength="500" placeholder="Shown in the app inbox"></textarea></div>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

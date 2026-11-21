@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D702 Engineer detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D702">
+<main class="content">
+  <div data-when="ready disabled">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D701">Engineers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><span id="head-avatar"></span><h1 id="name" style="font-family:var(--font-display); font-weight:400; letter-spacing:0"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" data-when="ready">
+        <button class="btn btn-secondary" type="button" data-toast="Test push sent to the engineer's phone">Send test push</button>
+        <a class="btn btn-secondary" id="edit-link" href="#D704">Edit</a>
+        <a class="btn btn-primary" href="#D716">Message</a>
+        <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button>
+      </div>
+      <div class="action-bar" data-when="disabled">
+        <button class="btn btn-primary" type="button" data-toast="Engineer enabled. An invitation SMS was sent">Enable</button>
+      </div>
+    </div>
+
+    <div class="banner grey" data-when="disabled" style="margin-bottom:16px"><svg class="ic"><use href="#ph-user-x"/></svg>
+      <span class="grow"><b>Disabled on 23 Nov 2026.</b> Signed out of the app and removed from assignment suggestions.</span></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Engineer sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-profile">Profile</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-schedule">Schedule</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-jobs">Jobs <span class="n" id="jobs-n"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-performance">Performance</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-leave">Leave</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-skills">Skills</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-devices">Devices</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-notes">Notes</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-profile" role="tabpanel"></div>
+          <div id="tab-schedule" role="tabpanel" hidden></div>
+          <div id="tab-jobs" role="tabpanel" hidden></div>
+          <div id="tab-performance" role="tabpanel" hidden></div>
+          <div id="tab-leave" role="tabpanel" hidden></div>
+          <div id="tab-skills" role="tabpanel" hidden></div>
+          <div id="tab-devices" role="tabpanel" hidden></div>
+          <div id="tab-notes" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D701">Go to engineers</a></div></div></div>
+  </div>
+</main>
+
+<!-- reset device: 1 device per engineer; a new device is allowed after one sign in -->
+<div class="overlay center" id="reset-device" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reset-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-smartphone"/></svg></span>
+      <div class="grow"><h2 id="reset-title"></h2><p id="reset-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="reset-reason">Reason</label><select class="select" id="reset-reason"><option>Phone lost or stolen</option><option>New phone</option><option>Phone repaired or reset</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Device reset. The next sign in registers the new phone">Reset device</button></div>
+  </div>
+</div>
+
+<!-- disable: flow F10, open jobs are listed for reassignment first -->
+<div class="overlay center" id="disable" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="disable-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-user-x"/></svg></span>
+      <div class="grow"><h2 id="disable-title"></h2><p id="disable-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow" id="disable-count"></span></div>
+      <ul class="mini card" id="disable-jobs"></ul>
+      <div class="field"><label for="disable-reason">Reason</label><select class="select" id="disable-reason"><option>Left the company</option><option>Long leave</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep active</button><button class="btn btn-danger" type="button" id="disable-go" disabled>Disable engineer</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-open="reset-device"><svg class="ic"><use href="#ph-smartphone"/></svg>Reset device</button>
+  <a href="#D705"><svg class="ic"><use href="#ph-calendar-blank"/></svg>Leave requests</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><button class="danger" type="button" data-open="disable"><svg class="ic"><use href="#ph-user-x"/></svg>Disable engineer</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found disabled error" data-mobile="../../../screens/engineer/E802-profile.html">
+  <div><h3>What it is</h3><p>One engineer: profile, schedule, jobs, performance, leave, skills, device and notes. Opens with <code>?e=sandeep</code> or <code>?e=anita</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Message, edit, send a test push.</li><li>Reset the device when a phone is lost or replaced.</li><li>Disable: open jobs are listed for reassignment first.</li></ul></div>
+  <div><h3>What happens next</h3><p>Edit (D704), Message (D716), Assign engineer (D404) for each open job, Leave requests (D705).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>One device per engineer; a reset allows a new device after one sign in.</li><li>Disabled: signed out and removed from suggestions (F10).</li><li>Location shows only during travel and at site (Q17).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const e = r.engineer(new URLSearchParams(location.search).get('e') || 'sandeep');
+  if (!e) { document.body.dataset.state = 'not-found'; return; }
+  const p = g.profiles[e.id];
+  const perf = g.performance[e.id];
+  const tel = (n) => `tel:${n.replace(/\s/g, '')}`;
+  const jobs = r.tickets.filter((t) => t.engineer === e.id);
+  const open = jobs.filter(r.isOpen);
+  const today = g.today[e.id].map(r.ticket);
+
+  document.title = `Zixom Admin - ${e.name}`;
+  document.getElementById('crumb').textContent = e.name;
+  document.getElementById('name').textContent = e.name;
+  document.getElementById('head-avatar').innerHTML = r.avatar(e, 'lg');
+  document.getElementById('edit-link').setAttribute('href', `#D704?e=${e.id}`);
+  document.getElementById('chips').innerHTML = `<span data-when="ready">${r.tag(p.status, 'green')}</span><span data-when="disabled">${r.tag('Disabled')}</span>
+    <span data-when="ready">${r.tag(p.duty, g.DUTY_TONE[p.duty], '')}</span>`;
+  document.getElementById('meta').innerHTML = `<span class="mono">${e.code}</span><span>${ic('map-pin')}${e.region}</span>
+    <span>${ic('briefcase')}${e.designation}</span><span>${ic('star')}${e.rating} from ${e.visits} visits</span>`;
+
+  /* ---------- profile ---------- */
+  document.getElementById('tab-profile').innerHTML = `<div class="grid cols-2" style="gap:20px">
+    <dl class="dl"><dt>Mobile</dt><dd><a href="${tel(p.mobile)}">${p.mobile}</a></dd><dt>Email</dt><dd>${p.email}</dd>
+      <dt>Employee code</dt><dd class="mono">${e.code}</dd><dt>Joined</dt><dd>${r.date(p.joined)}</dd><dt>Experience</dt><dd>${e.experience}</dd></dl>
+    <dl class="dl"><dt>Region</dt><dd>${e.region}</dd><dt>Areas</dt><dd>${p.area.join(', ')}</dd><dt>Working hours</dt><dd>${p.hours}</dd>
+      <dt>Skills</dt><dd><span class="tags">${e.skills.map((s) => r.tag(s, 'outline')).join('')}</span></dd></dl></div>`;
+
+  /* ---------- schedule: today in slot order ---------- */
+  document.getElementById('tab-schedule').innerHTML = `<div class="stack">
+    <div class="row"><b>Today, ${r.dayDate(ZX.data.today)}</b><span class="grow"></span><a class="btn btn-sm btn-secondary" href="#D410">Open schedule</a></div>
+    <ul class="mini card">${today.map((t) => `<li data-href="D403?t=${t.number}"><span class="time">${g.slot(t).split(' to ')[0]}</span>
+      <span class="grow"><b class="mono">${t.number}</b><small>${r.company(t.company).name}, ${r.site(t.company, t.site).name} · ${g.slot(t)}</small></span>${r.ticketTag(t.status)}</li>`).join('')}</ul>
+    <p class="muted">Tomorrow: ${e.id === 'sandeep' ? ZX.data.engineerDay.tomorrow.join(', ') : 'No visits yet'}</p></div>`;
+
+  /* ---------- jobs ---------- */
+  document.getElementById('jobs-n').textContent = open.length;
+  document.getElementById('tab-jobs').innerHTML = `<div class="table-wrap"><table class="table compact"><thead><tr><th>Ticket</th><th>Status</th><th>Customer and machine</th><th>Window</th></tr></thead><tbody>
+    ${jobs.map((t) => `<tr data-href="D403?t=${t.number}"><td><a class="rec" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a><span class="sub">${t.type}</span></td>
+      <td>${r.ticketTag(t.status)}</td><td><b class="clip">${r.company(t.company).name}</b><span class="sub">${r.machine(t.machine).model}</span></td>
+      <td class="nowrap">${t.window ? r.dayDate(t.window.date) : '<span class="faint">Not set</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+
+  /* ---------- performance (November) ---------- */
+  const kpi = (label, value) => `<div class="card kpi"><span class="label">${label}</span><span class="value">${value}</span></div>`;
+  document.getElementById('tab-performance').innerHTML = `<div class="stack"><div class="kpis">
+    ${kpi('Jobs done', perf.completed)}${kpi('On time', `${perf.onTime}%`)}${kpi('First time fix', `${perf.firstVisitFix}%`)}${kpi('Average rating', perf.rating)}
+    ${kpi('Response time', `${perf.responseHours} h`)}${kpi('Reopen rate', `${perf.reopen}%`)}${kpi('Travel per job', `${perf.travelMin} min`)}${kpi('Utilisation', `${perf.utilisation}%`)}</div>
+    <div class="row"><span class="muted">November 2026</span><span class="grow"></span><a class="btn btn-sm btn-secondary" href="#D709">Open performance</a></div></div>`;
+
+  /* ---------- leave ---------- */
+  const span = (l) => (l.from === l.to ? r.dayDate(l.from) : `${r.dayDate(l.from)} to ${r.dayDate(l.to)}`);
+  const leave = g.leave.filter((l) => l.engineer === e.id);
+  document.getElementById('tab-leave').innerHTML = leave.length ? `<ul class="mini card">${leave.map((l) => `<li data-href="D705">
+    <span class="ic-disc">${ic('calendar-blank')}</span><span class="grow"><b>${span(l)}</b><small>${l.type} · ${l.reason}</small></span>${r.tag(l.status, g.LEAVE_TONE[l.status])}</li>`).join('')}</ul>`
+    : `<div class="state"><span class="disc">${ic('calendar-blank')}</span><h3>No leave yet</h3><p>Requests from the app appear here.</p></div>`;
+
+  /* ---------- skills and certifications ---------- */
+  const certs = g.certs.filter((c) => c.engineer === e.id);
+  const certTag = (c) => { const left = r.daysFromToday(c.expires);
+    return left < 0 ? r.tag('Expired', 'red') : left <= 30 ? r.tag(`${left} days left`, 'amber') : r.tag(`Valid to ${r.date(c.expires)}`, 'green'); };
+  document.getElementById('tab-skills').innerHTML = `<div class="stack">
+    <table class="table compact"><thead><tr><th>Skill</th><th>Level</th></tr></thead><tbody>
+      ${Object.entries(p.levels).map(([s, lv]) => `<tr><td>${s}</td><td>${g.LEVELS[lv]} <span class="faint">(${lv} of 3)</span></td></tr>`).join('')}</tbody></table>
+    <div class="table-wrap"><table class="table compact"><thead><tr><th>Certificate</th><th>Number</th><th>Status</th></tr></thead><tbody>
+      ${certs.map((c) => `<tr data-href="D708"><td>${c.name}</td><td class="mono">${c.number}</td><td>${certTag(c)}</td></tr>`).join('')}</tbody></table></div>
+    <div class="row"><span class="grow"></span><a class="btn btn-sm btn-secondary" href="#D708">Manage certifications</a></div></div>`;
+
+  /* ---------- devices: one per engineer ---------- */
+  document.getElementById('tab-devices').innerHTML = `<div class="stack">
+    <div class="who"><span class="thumb">${ic('smartphone')}</span><span><b>${p.device.model}</b><small>${p.device.os} · App ${p.appVersion}</small></span></div>
+    <dl class="dl"><dt>Registered</dt><dd>${r.date(p.device.since)}</dd><dt>Last seen</dt><dd>${r.ago(p.device.lastSeen)}</dd><dt>Push</dt><dd>${r.tag(p.device.push, 'green')}</dd></dl>
+    <div class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Test push sent">Send test push</button>
+      <button class="btn btn-sm btn-danger-soft" type="button" data-open="reset-device">Reset device</button></div>
+    <p class="muted">One device per engineer. After a reset the next sign in registers the new phone.</p></div>`;
+
+  /* ---------- notes ---------- */
+  document.getElementById('tab-notes').innerHTML = `<div class="stack"><div class="internal">${p.notes}</div>
+    <div class="field"><label for="note">Add a note <span class="opt">only Admins see this</span></label><textarea class="textarea" id="note"></textarea></div>
+    <div class="row"><span class="grow"></span><button class="btn btn-sm btn-secondary" type="button" data-toast="Note saved">Save note</button></div></div>`;
+
+  /* ---------- side cards ---------- */
+  const job = r.ticket(p.now.match(/TKT-\d{4}-\d{4}/)?.[0] ?? '');
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Contact</h3></div>
+      <div class="card-body stack-sm"><div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.designation}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="${tel(e.phone)}">${ic('phone')}${e.phone}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Right now</h3><a class="card-link" href="#D710">Duty board</a></div>
+      <div class="card-body"><dl class="dl"><dt>Duty</dt><dd>${r.tag(p.duty, g.DUTY_TONE[p.duty], '')}</dd><dt>Now</dt><dd>${job ? `<a class="mono" href="#D403?t=${job.number}">${job.number}</a>` : p.now}</dd>
+        <dt>Next</dt><dd>${p.next}</dd><dt>Location</dt><dd>${p.location.mode}<br><span class="muted">${p.location.place}, ${r.ago(p.location.when)}</span></dd></dl>
+      <p class="faint" style="margin-top:10px; font-size:12px">${ic('lock-simple')} Location shows only during travel and at site.</p></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">This month</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Jobs done</dt><dd>${perf.completed}</dd><dt>Response time met</dt><dd>${perf.slaMet}%</dd><dt>Rating</dt><dd>${perf.rating}</dd></dl></div></section>`;
+
+  /* ---------- modals ---------- */
+  document.getElementById('reset-title').textContent = `Reset ${e.name}'s device?`;
+  document.getElementById('reset-text').textContent = `${p.device.model} is signed out now. ${e.name.split(' ')[0]} can sign in once on a new phone.`;
+  document.getElementById('disable-title').textContent = `Disable ${e.name}?`;
+  document.getElementById('disable-text').textContent = `${e.name.split(' ')[0]} is signed out at once and removed from suggestions.`;
+  document.getElementById('disable-count').innerHTML = `<b>Reassign ${open.length} open jobs first.</b> Disable unlocks when none are left.`;
+  document.getElementById('disable-jobs').innerHTML = open.map((t) => `<li><span class="grow"><b class="mono">${t.number}</b>
+    <small>${r.ticketLabel(t.status)} · ${r.company(t.company).name.split(' ')[0]}, ${r.site(t.company, t.site).name}</small></span>
+    <a class="btn btn-sm btn-secondary" href="#D404?t=${t.number}">Reassign</a></li>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

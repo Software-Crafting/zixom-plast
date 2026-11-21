@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D714 Time logs</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D714">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Time logs</h1><p>Travel and work time per visit · edits over 30 minutes need approval</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="Needs approval">Needs approval <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Approved">Approved <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Adjusted">Adjusted <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#logs"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Ticket or engineer" aria-label="Search time logs"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="logs">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Ticket</th><th class="sortable">Engineer</th><th class="sortable">Date</th><th class="num">Travel</th><th class="num">Work</th><th>Edits</th><th class="sortable">Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-timer"/></svg></span>
+        <h3>No time logs yet</h3><p>Time logs will appear here when engineers finish visits.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="card-body stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div></section>
+  </div>
+
+  <div class="bulk-bar" data-for="logs" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-result">Approve</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-ghost" id="quick-open" href="#D403">Open ticket</a><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" data-close data-open="adjust">Adjust</button>
+      <button class="btn btn-primary" type="button" id="quick-approve" data-close data-toast="Time log approved">Approve</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="adjust" hidden>
+  <div class="modal" role="dialog" aria-labelledby="adj-title">
+    <div class="modal-head"><div class="grow"><h2 id="adj-title">Adjust time log</h2><p>The engineer sees the change. Both values stay in the log.</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="adj-start">Work started</label><input class="input" id="adj-start" type="time" value="09:00"></div>
+        <div class="field"><label for="adj-end">Work finished</label><input class="input" id="adj-end" type="time" value="11:50"></div>
+      </div>
+      <div class="field"><label for="adj-reason">Reason</label><textarea class="textarea" id="adj-reason" maxlength="300" aria-invalid="true"></textarea>
+        <span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Give a reason of at least 10 characters</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Time log adjusted. Engineer told">Save adjustment</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><div class="grow"><h2 id="br-title">Time logs approved</h2><p>Approved logs feed utilisation in Performance (D709).</p></div></div>
+    <div class="modal-foot"><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option>Any</option><option>Ahmedabad</option><option>Pune</option></select></div>
+      <div class="field"><label for="f-from">Visit from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+      <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+    </div><label class="check"><input type="checkbox"> Edited by the engineer only</label></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show time logs</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E413-time-log.html">
+  <div><h3>What it is</h3><p>Travel and work times per visit, with the engineer's edits beside the original.</p></div>
+  <div><h3>What you can do</h3><ul><li>Approve one or many.</li><li>Adjust a time with a reason.</li><li>Open the ticket.</li></ul></div>
+  <div><h3>What happens next</h3><p>Approved times feed utilisation (D709) and labour on the invoice (D902).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Edits over 30 minutes are flagged and need approval (E413).</li><li>Adjustments are kept in the log with who and why.</li><li>Times in IST (EC-A57).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const logs = g.timeLogs;
+  const STATUS_TONE = { 'Needs approval': 'amber', Approved: 'green', Adjusted: 'blue' };
+  const mins = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+  const dur = (min) => (min >= 60 ? `${Math.floor(min / 60)} h ${min % 60 ? `${min % 60} min` : ''}`.trim() : `${min} min`);
+  /* rows: [label, original, edited]; travel = check in - travel start, work = finish - start, on the edited values */
+  const travel = (l) => mins(l.rows[1][2]) - mins(l.rows[0][2]);
+  const work = (l) => mins(l.rows[3][2]) - mins(l.rows[2][2]);
+  const edits = (l) => l.rows.filter(([, a, b]) => a !== b).map(([label, a, b]) => ({ label, a, b, delta: Math.abs(mins(b) - mins(a)) }));
+  const byTicket = (t) => logs.find((l) => l.ticket === t);
+  const editCell = (l) => {
+    const e = edits(l);
+    if (!e.length) return '<span class="faint">None</span>';
+    const big = e.some((x) => x.delta > 30);
+    return `${e.length} edit${e.length > 1 ? 's' : ''}${big ? ` ${r.tag('Over 30 min', 'amber')}` : ''}`;
+  };
+
+  document.querySelector('#logs tbody').innerHTML = logs.map((l) => {
+    const e = r.engineer(l.engineer);
+    return `<tr data-drawer="quick" data-ticket="${l.ticket}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${l.ticket}"></label></td>
+      <td><a class="rec" href="${ZXA.href('D403', `?t=${l.ticket}`)}">${l.ticket}</a></td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+      <td class="nowrap" data-sort="${l.date}">${r.dayDate(l.date)}</td>
+      <td class="num">${dur(travel(l))}</td><td class="num">${dur(work(l))}</td>
+      <td class="nowrap">${editCell(l)}</td><td>${r.tag(l.status, STATUS_TONE[l.status])}</td></tr>`;
+  }).join('');
+
+  const VIEW = (key) => (l) => key === 'all' || l.status === key;
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#logs tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEW(key)(byTicket(row.dataset.ticket)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = logs.filter(VIEW(tab.dataset.view)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('Needs approval');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const l = byTicket(event.detail.dataset.ticket);
+    const e = r.engineer(l.engineer);
+    const t = r.ticket(l.ticket);
+    document.getElementById('quick-title').textContent = l.ticket;
+    document.getElementById('quick-sub').textContent = `${e.name} · ${r.dayDate(l.date)} · ${r.company(t.company).name}`;
+    document.getElementById('quick-open').href = ZXA.href('D403', `?t=${l.ticket}`);
+    document.getElementById('quick-approve').hidden = l.status !== 'Needs approval';
+    const big = edits(l).some((x) => x.delta > 30);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(l.status, STATUS_TONE[l.status])}${big ? r.tag('Edit over 30 min', 'amber', 'warning') : ''}</div>
+      <table class="table compact"><thead><tr><th>Step</th><th>Original</th><th>Engineer's value</th></tr></thead><tbody>
+        ${l.rows.map(([label, a, b]) => `<tr><td>${label}</td>${a === b ? `<td colspan="2">${a}</td>` : `<td colspan="2"><div class="diff"><span class="old">${a}</span><span class="new">${b}</span></div></td>`}</tr>`).join('')}
+      </tbody></table>
+      <div class="grid cols-2"><div class="kv"><span>Travel</span><b>${dur(travel(l))}</b></div><div class="kv"><span>Work</span><b>${dur(work(l))}</b></div></div>
+      ${l.reason ? `<dl class="dl stack"><dt>Engineer's reason</dt><dd>${r.esc(l.reason)}</dd></dl>` : ''}
+      ${l.adjusted ? `<div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>Adjusted by ${l.adjusted[0]}.</b> ${r.esc(l.adjusted[1])}</span></div>` : ''}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

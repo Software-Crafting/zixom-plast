@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D713 Service areas</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D713">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Service areas</h1><p>Regions and serviceable pincodes · drives the pincode check in the app</p></div>
+    <button class="btn btn-secondary" type="button" data-open="import"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import pincodes</button>
+    <button class="btn btn-primary" type="button" data-open="add-region"><svg class="ic"><use href="#ph-plus"/></svg>Add region</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <div class="grid cols-2" id="regions" data-when="ready no-results"></div>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="views tabs" role="tablist" aria-label="Regions" id="region-tabs" data-when="ready no-results"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#pincodes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Pincode or area" aria-label="Search pincodes"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-secondary btn-sm" type="button" data-open="add-pincode"><svg class="ic"><use href="#ph-plus"/></svg>Add pincode</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="pincodes">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Pincode</th><th class="sortable">Area</th><th class="sortable">Status</th><th class="sortable num">Open tickets</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-map-pin"/></svg></span>
+        <h3>No service areas yet</h3><p>Until you add a region, every pincode is flagged in the app.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="add-region">Add region</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid cols-2"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+    <div class="card pad stack" style="margin-top:16px"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>
+  </div>
+
+  <div class="bulk-bar" data-for="pincodes" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="not-serviceable">Mark not serviceable</button>
+    <button class="btn" type="button" data-toast="Marked serviceable">Mark serviceable</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="add-region" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ar-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ar-title">Add region</h2><p>New tickets in these pincodes suggest the default engineer.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="ar-name">Region name</label><input class="input" id="ar-name" placeholder="For example Vadodara" autofocus></div>
+      <div class="field"><label for="ar-state">State</label><select class="select" id="ar-state"><option>Gujarat</option><option>Maharashtra</option><option>Haryana</option><option>Rajasthan</option></select></div>
+      <div class="field full"><label for="ar-eng">Default engineer</label><select class="select" id="ar-eng"><option>None yet</option><option>Sandeep Yadav, Ahmedabad</option><option>Anita Verma, Pune</option></select>
+        <span class="hint">Suggested first when you assign; you can always pick another.</span></div>
+      <div class="field full"><label for="ar-pins">Pincodes</label><textarea class="textarea mono" id="ar-pins" placeholder="390010, 390019, 391760"></textarea><span class="hint">Six digits each, separated by commas or new lines.</span></div>
+    </div></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Region added">Add region</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="add-pincode" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ap-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ap-title">Add pincode</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="ap-pin">Pincode</label><input class="input mono" id="ap-pin" inputmode="numeric" maxlength="6" value="38242" aria-invalid="true" autofocus>
+        <span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>A pincode has 6 digits</span></div>
+      <div class="field"><label for="ap-area">Area</label><input class="input" id="ap-area" value="Bopal"></div>
+      <div class="field full"><label for="ap-region">Region</label><select class="select" id="ap-region"><option>Ahmedabad</option><option>Pune</option></select></div>
+    </div><label class="check"><input type="checkbox" checked> Serviceable</label></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Pincode added">Add pincode</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="import" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="im-title">
+    <div class="drawer-head"><div class="grow"><h2 id="im-title">Import pincodes</h2><p>Columns: pincode, area, region, serviceable (yes or no).</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop an XLSX or CSV here</b>Up to 5 MB or 10,000 rows</div>
+      <div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span><span class="grow"><b>vadodara-pincodes.xlsx</b><br><small class="muted">42 rows · 2 with errors</small></span></div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Row 7: <span class="mono">39001</span> is not 6 digits. Row 19: region <b>Baroda</b> does not exist.</span></div>
+      <button class="btn btn-link" type="button" data-toast="Template downloaded" style="align-self:flex-start">Download the template</button>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="40 pincodes imported, 2 skipped">Import 40 valid rows</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="not-serviceable" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ns-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-map-pin"/></svg></span>
+      <div class="grow"><h2 id="ns-title">Mark <span id="ns-pin" class="mono">382330</span> not serviceable?</h2>
+        <p>Customers there see that Zixom does not service this pincode yet. New tickets from it get a flag (EC-A48). Open tickets are not changed.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ns-note">Note <span class="opt">optional</span></label><input class="input" id="ns-note" placeholder="For example too far from the Ahmedabad base"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Pincode marked not serviceable">Mark not serviceable</button></div>
+  </div>
+</div>
+
+<div class="menu" id="filter-menu" hidden>
+  <div class="label">Status</div>
+  <label class="check"><input type="checkbox" checked> Serviceable</label>
+  <label class="check"><input type="checkbox" checked> Not serviceable</label>
+  <label class="check"><input type="checkbox"> With open tickets only</label>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="not-serviceable"><svg class="ic"><use href="#ph-ban"/></svg>Mark not serviceable</button>
+  <button type="button" data-toast="Marked serviceable"><svg class="ic"><use href="#ph-check-circle"/></svg>Mark serviceable</button>
+  <hr><button class="danger" type="button" data-toast="Pincode removed"><svg class="ic"><use href="#ph-trash"/></svg>Remove</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Regions Zixom serves, their pincodes and the default engineer for each.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a region or a pincode; import many from Excel.</li><li>Mark a pincode not serviceable, one or many.</li><li>Change the default engineer of a region.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app checks the site pincode on a request; Assign engineer (D404) suggests the default engineer first.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not serviceable: the ticket shows a flag; Admin may still assign or call the customer (EC-A48).</li><li>Import with bad rows lists row numbers and reasons (EC-A31).</li><li>A pincode belongs to one region only.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+
+  document.getElementById('regions').innerHTML = g.regions.map((x) => {
+    const e = r.engineer(x.engineer);
+    const ok = x.pincodes.filter(([, , s]) => s).length;
+    return `<section class="card"><div class="card-head"><div class="grow"><h2>${x.name}</h2><p>${x.state} · ${ok} of ${x.pincodes.length} pincodes serviceable</p></div>
+      <button class="btn btn-sm btn-ghost" type="button" data-open="add-region">${r.icon('pencil-simple')}Edit</button></div>
+      <ul class="mini"><li data-href="D702?e=${e.id}">${r.avatar(e, 'sm')}<span class="grow"><b>${e.name}</b><small>Default engineer · ${e.code}</small></span></li></ul></section>`;
+  }).join('');
+
+  document.getElementById('region-tabs').innerHTML = g.regions.map((x, i) =>
+    `<button role="tab" aria-selected="${i === 0}" data-region="${x.name}">${x.name} <span class="n">${x.pincodes.length}</span></button>`).join('');
+
+  document.querySelector('#pincodes tbody').innerHTML = g.regions.flatMap((x) => x.pincodes.map(([pin, area, ok, open]) => `<tr data-region="${x.name}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${pin}"></label></td>
+    <td><span class="mono strong">${pin}</span></td><td>${area}</td>
+    <td>${ok ? r.tag('Serviceable', 'green') : r.tag('Not serviceable', 'amber')}</td>
+    <td class="num">${open || '<span class="faint">0</span>'}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu" data-pin="${pin}"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`)).join('');
+
+  const showRegion = (name) => {
+    const rows = [...document.querySelectorAll('#pincodes tbody tr')];
+    rows.forEach((row) => { row.hidden = row.dataset.region !== name; });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-region][role="tab"]').forEach((tab) => tab.addEventListener('click', () => showRegion(tab.dataset.region)));
+  showRegion(g.regions[0].name);
+
+  /* the confirm names the pincode the row menu was opened for */
+  document.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-pin]');
+    if (trigger) document.getElementById('ns-pin').textContent = trigger.dataset.pin;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D706 Holidays and working hours</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D706">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Holidays and working hours</h1><p>Holidays show as unavailable in the app slot picker</p></div>
+    <button class="btn btn-primary" type="button" data-open="holiday"><svg class="ic"><use href="#ph-plus"/></svg>Add holiday</button>
+  </div>
+
+  <div data-when="ready">
+    <div class="grid side-right">
+      <section class="card list-card">
+        <div class="card-head"><div class="grow"><h2>Company holidays</h2><p id="hol-count"></p></div>
+          <div class="segment" role="tablist" aria-label="Region">
+            <button role="tab" aria-selected="true" data-region="all">All</button>
+            <button role="tab" aria-selected="false" data-region="Ahmedabad">Ahmedabad</button>
+            <button role="tab" aria-selected="false" data-region="Pune">Pune</button>
+          </div></div>
+        <div class="table-wrap">
+          <table class="table" id="holidays">
+            <thead><tr><th class="sortable">Date</th><th class="sortable">Holiday</th><th class="sortable">Region</th><th>Status</th><th class="actions"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="stack">
+        <section class="card" id="hours-cards"></section>
+        <section class="card"><div class="card-head"><div class="grow"><h2>Visit slots</h2><p>Same for every region (section 14)</p></div></div>
+          <ul class="mini">
+            <li><span class="ic-disc">9</span><span class="grow"><b>9 AM to 12 PM</b><small>Morning</small></span></li>
+            <li><span class="ic-disc">12</span><span class="grow"><b>12 to 3 PM</b><small>Afternoon</small></span></li>
+            <li><span class="ic-disc">3</span><span class="grow"><b>3 to 6 PM</b><small>Evening</small></span></li>
+          </ul>
+          <div class="card-body"><p class="muted" style="font-size:13px">Minimum notice 4 hours. Change in <a href="#D1607">Service slots</a>.</p></div></section>
+      </div>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right">
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay right" id="holiday" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="hol-title">
+    <div class="drawer-head"><div class="grow"><h2 id="hol-title">Add holiday</h2><p>Engineers see it in the app holiday calendar (E705).</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="hol-name">Name</label><input class="input" id="hol-name" value="Makar Sankranti" autofocus></div>
+      <div class="field"><label for="hol-date">Date</label><input class="input" id="hol-date" type="date" value="2027-01-14"></div>
+      <div class="field"><label for="hol-region">Region</label><select class="select" id="hol-region"><option>All regions</option><option>Ahmedabad</option><option>Pune</option></select></div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Jobs already booked that day stay booked. Check the schedule.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Holiday added">Save holiday</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="hours" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="hours-title">
+    <div class="drawer-head"><div class="grow"><h2 id="hours-title">Working hours, Ahmedabad</h2><p>Default for engineers in this region.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Working days</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="true">Mon</button><button class="chip" type="button" aria-pressed="true">Tue</button>
+        <button class="chip" type="button" aria-pressed="true">Wed</button><button class="chip" type="button" aria-pressed="true">Thu</button>
+        <button class="chip" type="button" aria-pressed="true">Fri</button><button class="chip" type="button" aria-pressed="true">Sat</button>
+        <button class="chip" type="button" aria-pressed="false">Sun</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="h-start">Start</label><input class="input" id="h-start" type="time" value="09:00"></div>
+        <div class="field"><label for="h-end">End</label><input class="input" id="h-end" type="time" value="18:00"></div>
+      </div>
+      <p class="muted" style="font-size:13px">Engineers with their own hours keep them. The app picks up the change within 15 minutes (EC-A62).</p>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Working hours saved">Save hours</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="remove" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rm-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="rm-title">Remove Christmas?</h2><p>25 Dec opens for bookings in the app again.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep holiday</button><button class="btn btn-danger" type="button" data-close data-toast="Holiday removed">Remove</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="holiday"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <hr><button class="danger" type="button" data-open="remove"><svg class="ic"><use href="#ph-trash"/></svg>Remove</button>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/engineer/E705-holidays.html">
+  <div><h3>What it is</h3><p>Company holiday calendar and default working hours per region.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add, edit or remove a holiday.</li><li>Edit the working hours of a region.</li></ul></div>
+  <div><h3>What happens next</h3><p>Holidays block slots in the customer app (C1510) and show in the engineer app (E705). Hours change requests come from E707.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Past holidays are read only.</li><li>Jobs already booked on a new holiday stay booked.</li><li>The app picks up changes within 15 minutes (EC-A62).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const body = document.querySelector('#holidays tbody');
+  body.innerHTML = g.holidays.map(([date, name, region]) => {
+    const past = r.daysFromToday(date) < 0;
+    return `<tr data-region="${region}"><td class="nowrap" data-sort="${date}">${r.dayDate(date)}<span class="sub">${date.slice(0, 4)}</span></td><td>${name}</td><td>${region}</td>
+      <td>${past ? r.tag('Past') : r.tag(`In ${r.daysFromToday(date)} days`, 'blue')}</td>
+      <td class="actions">${past ? '' : '<button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button>'}</td></tr>`;
+  }).join('');
+  const filter = (region) => {
+    let n = 0;
+    body.querySelectorAll('tr').forEach((row) => {
+      row.hidden = region !== 'all' && row.dataset.region !== region && row.dataset.region !== 'All regions';
+      if (!row.hidden) n += 1;
+    });
+    document.getElementById('hol-count').textContent = `${n} holidays, Nov 2026 to Mar 2027`;
+  };
+  document.querySelectorAll('[data-region]').forEach((b) => { if (b.tagName === 'BUTTON') b.addEventListener('click', () => filter(b.dataset.region)); });
+  filter('all');
+
+  const clock = (hhmm) => { const h = Number(hhmm.slice(0, 2)); return `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`; };
+  document.getElementById('hours-cards').innerHTML = `<div class="card-head"><div class="grow"><h2>Working hours</h2><p>Default per region</p></div></div>
+    <ul class="mini">${g.hours.map((h) => `<li><span class="ic-disc">${r.icon('clock')}</span><span class="grow"><b>${h.region}</b>
+      <small>${h.days.replace('Monday to Saturday', 'Mon to Sat')}, ${clock(h.start)} to ${clock(h.end)}</small></span><button class="btn btn-sm btn-secondary" type="button" data-open="hours">Edit hours</button></li>`).join('')}</ul>`;
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

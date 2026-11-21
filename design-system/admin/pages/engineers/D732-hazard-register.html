@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D732 Hazard register</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D732">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Hazard register</h1><p>Shown to the engineer in the job before work</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-primary" type="button" data-open="edit" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add hazard</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="type">Machine types <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="site">Sites <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="recent">Added this month <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#hazards"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Hazard, machine type or site" aria-label="Search hazards"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="hazards">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Hazard</th><th class="sortable">Applies to</th><th>Photo</th><th class="sortable">Added</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-shield-warning"/></svg></span>
+        <h3>No hazards yet</h3><p>Hazards will appear here. Engineers then see standard safety rules only.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="edit">Add hazard</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Hazard</th><th>Applies to</th><th>Photo</th><th>Added</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="hazards" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="btn" type="button" data-open="remove">Remove</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit hazard</h2><p id="edit-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Applies to</span><div class="segment" role="tablist" aria-label="Applies to">
+        <button role="tab" aria-selected="true" aria-controls="scope-type">Machine type</button><button role="tab" aria-selected="false" aria-controls="scope-site">Site</button></div></div>
+      <div class="field" id="scope-type" role="tabpanel"><label for="e-type">Machine type</label><select class="select" id="e-type"></select><span class="hint">Every machine of this type at every customer.</span></div>
+      <div class="field" id="scope-site" role="tabpanel" hidden><label for="e-site">Site</label><select class="select" id="e-site"></select></div>
+      <div class="field"><label for="e-title">Hazard</label><input class="input" id="e-title" maxlength="60"></div>
+      <div class="field"><label for="e-text">What to do</label><textarea class="textarea" id="e-text" maxlength="300"></textarea><span class="hint">One or two short sentences. Engineers read this on the phone.</span></div>
+      <div class="field"><span class="label">Photo <span class="opt">optional</span></span><div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop a photo here</b>JPG or PNG up to 10 MB</div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-open="remove" id="edit-remove">Remove</button><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved. Engineers see it on their next job">Save</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="remove" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rm-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="rm-title">Remove this hazard?</h2><p id="rm-text">Engineers will no longer see it before work. Past jobs keep the notes they showed.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep hazard</button><button class="btn btn-danger" type="button" data-close data-toast="Hazard removed">Remove hazard</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Machine type</span><div class="row wrap" data-chips id="f-types"></div></div>
+      <div class="field"><span class="label">Site</span><div class="row wrap" data-chips id="f-sites"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show hazards</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="edit"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <hr><button class="danger" type="button" data-open="remove"><svg class="ic"><use href="#ph-trash"/></svg>Remove</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E905-hazards.html">
+  <div><h3>What it is</h3><p>Known hazards per machine type or per site, with what to do.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a hazard for a machine type or a site.</li><li>Click a row to edit; remove from the row menu or the drawer.</li><li>Export to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>Engineers see these in the job (E202) and the hazard notes (E905) and acknowledge them before the safety checklist.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No hazards for a machine: the app shows standard safety rules.</li><li>Removing keeps the notes already shown on past jobs.</li><li>Incidents can add a hazard from their review (D731).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const sites = ZX.data.companies.flatMap((c) => c.sites.map((s) => ({ name: s.name, company: c.name })));
+  const isSite = (h) => sites.some((s) => s.name === h.scope);
+  const types = [...new Set(r.machines.map((m) => m.type))];
+  const find = (id) => g.hazards.find((h) => h.id === id);
+
+  document.querySelector('#hazards tbody').innerHTML = g.hazards.map((h) => {
+    const site = sites.find((s) => s.name === h.scope);
+    const count = r.machines.filter((m) => m.type === h.scope).length;
+    return `<tr data-drawer="edit" data-hazard="${h.id}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${h.title}"></label></td>
+      <td><span class="who"><span class="thumb" style="background:var(--amber-50); color:var(--amber)">${ic(h.icon)}</span>
+        <span><b>${h.title}</b><span class="sub">${h.text}</span></span></span></td>
+      <td>${site ? `${r.tag('Site', 'blue')} ${h.scope}<span class="sub">${site.company}</span>` : `${r.tag('Machine type', 'outline')} ${h.scope}<span class="sub">${count} machine${count === 1 ? '' : 's'}</span>`}</td>
+      <td>${h.id === 'HZ-014' || h.id === 'HZ-101' ? `<span class="muted">${ic('image')} 1</span>` : '<span class="faint">None</span>'}</td>
+      <td class="nowrap" data-sort="${h.added}">${r.date(h.added)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, type: (h) => !isSite(h), site: isSite, recent: (h) => h.added >= '2026-11-01' };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#hazards tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](find(row.dataset.hazard)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = g.hazards.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+  document.getElementById('e-type').innerHTML = types.map((t) => `<option>${t}</option>`).join('');
+  document.getElementById('e-site').innerHTML = sites.map((s) => `<option>${s.name}, ${s.company}</option>`).join('');
+  document.getElementById('f-types').innerHTML = types.map((t) => `<button class="chip" type="button" aria-pressed="false">${t}</button>`).join('');
+  document.getElementById('f-sites').innerHTML = sites.map((s) => `<button class="chip" type="button" aria-pressed="false">${s.name}</button>`).join('');
+
+  /* one drawer for add and edit */
+  const fill = (h) => {
+    document.getElementById('edit-title').textContent = h ? 'Edit hazard' : 'Add hazard';
+    document.getElementById('edit-sub').innerHTML = h ? `<span class="mono">${h.id}</span> · added ${r.date(h.added)}` : 'Engineers see it on their next job.';
+    document.getElementById('edit-remove').hidden = !h;
+    document.getElementById('e-title').value = h?.title ?? '';
+    document.getElementById('e-text').value = h?.text ?? '';
+    const site = h && isSite(h);
+    document.querySelector(`[aria-controls="${site ? 'scope-site' : 'scope-type'}"]`).click();
+    if (h && !site) document.getElementById('e-type').value = h.scope;
+    if (h) document.getElementById('rm-title').textContent = `Remove ${h.title}, ${h.scope}?`;
+  };
+  document.getElementById('edit').addEventListener('zxa:row', (event) => fill(find(event.detail.dataset.hazard)));
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-new]')) fill(null);
+    const menuRow = event.target.closest('[data-menu="row-menu"]');
+    if (menuRow) fill(find(menuRow.closest('tr').dataset.hazard));
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

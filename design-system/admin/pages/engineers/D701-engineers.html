@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D701 Engineers</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D701">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Engineers</h1><p>2 active · 1 busy · 1 leave request pending</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D703"><svg class="ic"><use href="#ph-plus"/></svg>Add engineer</a>
+  </div>
+
+  <div data-when="ready empty no-results device-not-seen">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results device-not-seen">
+        <button role="tab" aria-selected="true" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="duty">On duty now <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="leave">On leave <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="disabled">Disabled <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results device-not-seen">
+        <label class="search" data-filter="#engineers"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Name, code, region or skill" aria-label="Search engineers"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results device-not-seen">
+        <table class="table" id="engineers">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Engineer</th><th class="sortable">Region</th><th>Skills</th><th class="sortable">Duty</th>
+            <th class="sortable num">Today</th><th class="sortable num">Rating</th><th class="sortable">Last active</th><th class="sortable">App</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results device-not-seen">
+        <span id="foot-count">1 to 2 of 2</span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-hard-hat"/></svg></span>
+        <h3>No engineers yet</h3><p>Engineers will appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D703">Add engineer</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Engineer</th><th>Region</th><th>Skills</th><th>Duty</th><th>Today</th><th>Last active</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="engineers" hidden>
+    <b data-count>0 selected</b>
+    <a class="btn" href="#D716">Message</a>
+    <button class="btn" type="button" data-toast="Test push sent">Send test push</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-call" href="#">Call</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-open" href="#D702">Open engineer</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Region</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Ahmedabad</button><button class="chip" type="button" aria-pressed="false">Pune</button></div></div>
+      <div class="field"><span class="label">Skill</span><div class="row wrap" data-chips id="f-skills"></div></div>
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">On leave</button>
+        <button class="chip" type="button" aria-pressed="false">Disabled</button></div></div>
+      <div class="field"><span class="label">Duty</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">On duty</button><button class="chip" type="button" aria-pressed="false">Busy</button>
+        <button class="chip" type="button" aria-pressed="false">Off duty</button></div></div>
+      <label class="check"><input type="checkbox"> Device not seen for 7 days</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show 2 engineers</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="engineers"> Skills</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="engineers"> Rating</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="engineers"> Last active</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="engineers"> App</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D702"><svg class="ic"><use href="#ph-external-link"/></svg>Open engineer</a>
+  <a href="#D704"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</a>
+  <a href="#D716"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Message</a>
+  <button type="button" data-toast="Test push sent"><svg class="ic"><use href="#ph-bell-ring"/></svg>Send test push</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results device-not-seen error" data-mobile="../../../screens/engineer/E802-profile.html">
+  <div><h3>What it is</h3><p>Every engineer with region, skills, duty from the app and today's jobs.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by region, skill and status, use saved views.</li><li>Click a row for the quick view; click the name for the full record.</li><li>Select rows to message, test push or export.</li></ul></div>
+  <div><h3>What happens next</h3><p>Engineer detail (D702), Add engineer (D703), Duty board (D710), Engineer messages (D716).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Device not seen for 7 days: amber chip (Device not seen state).</li><li>Duty (On duty, Busy, Off duty) comes from the app; On leave and Disabled are set here (section 11).</li><li>25 rows by default (25, 50, 100).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const engineers = ZX.data.engineers;
+  const onLeave = (e) => g.leave.some((l) => l.engineer === e.id && l.status === 'Approved' && r.daysFromToday(l.from) <= 0 && r.daysFromToday(l.to) >= 0);
+
+  document.querySelector('#engineers tbody').innerHTML = engineers.map((e) => {
+    const p = g.profiles[e.id];
+    const duty = onLeave(e) ? 'On leave' : p.duty;
+    return `<tr data-drawer="quick" data-engineer="${e.id}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${e.name}"></label></td>
+      <td><span class="who">${r.avatar(e)}<span><a class="strong" href="${ZXA.href('D702', `?e=${e.id}`)}">${e.name}</a><span class="sub mono">${e.code}</span></span></span></td>
+      <td>${e.region}</td>
+      <td><span class="tags">${e.skills.map((s) => r.tag(s, 'outline')).join('')}</span></td>
+      <td>${r.tag(duty, g.DUTY_TONE[duty], '')}<span class="sub">${p.now}</span></td>
+      <td class="num">${g.today[e.id].length}</td>
+      <td class="num" data-sort="${e.rating}">${r.icon('star')} ${e.rating}</td>
+      <td class="nowrap" data-sort="${p.device.lastSeen}">${r.ago(p.lastActive)}
+        ${e.id === 'anita' ? `<span class="sub" data-when="device-not-seen">${r.tag('Device not seen 8 days', 'amber')}</span>` : ''}</td>
+      <td class="mono">${p.appVersion}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('f-skills').innerHTML = g.skills.filter((s) => s.status === 'Active')
+    .map((s) => `<button class="chip" type="button" aria-pressed="false">${s.name}</button>`).join('');
+
+  /* saved views */
+  const VIEWS = {
+    active: (e) => g.profiles[e.id].status === 'Active', duty: (e) => ['On duty', 'Busy'].includes(g.profiles[e.id].duty) && !onLeave(e),
+    leave: onLeave, disabled: (e) => g.profiles[e.id].status === 'Disabled', all: () => true,
+  };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#engineers tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](r.engineer(row.dataset.engineer)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = engineers.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('active');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 4 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* quick view */
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const e = r.engineer(event.detail.dataset.engineer);
+    const p = g.profiles[e.id];
+    const jobs = g.today[e.id].map(r.ticket);
+    document.getElementById('quick-title').textContent = e.name;
+    document.getElementById('quick-sub').innerHTML = `<span class="mono">${e.code}</span> · ${e.designation}, ${e.region}`;
+    document.getElementById('quick-open').href = ZXA.href('D702', `?e=${e.id}`);
+    document.getElementById('quick-call').href = `tel:${e.phone.replace(/\s/g, '')}`;
+    document.getElementById('quick-call').innerHTML = `${r.icon('phone')}${e.phone}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(p.status, 'green')}${r.tag(p.duty, g.DUTY_TONE[p.duty], '')}${r.tag(`App ${p.appVersion}`, 'outline')}</div>
+      <dl class="dl">
+        <dt>Now</dt><dd>${p.now}</dd><dt>Next</dt><dd>${p.next}</dd>
+        <dt>Skills</dt><dd>${e.skills.join(', ')}</dd><dt>Working hours</dt><dd>${p.hours}</dd>
+        <dt>Rating</dt><dd>${e.rating} from ${e.visits} visits</dd><dt>Device</dt><dd>${p.device.model}<br><span class="muted">Seen ${r.ago(p.device.lastSeen)}</span></dd>
+      </dl>
+      <div><h3 class="section-title" style="margin:4px 0 8px; font-size:14px">Today</h3>
+        <ul class="mini card">${jobs.map((t) => `<li data-href="D403?t=${t.number}"><span class="grow"><b class="mono">${t.number}</b>
+          <small>${r.company(t.company).name.split(' ')[0]}, ${r.site(t.company, t.site).name} · ${g.slot(t)}</small></span>${r.ticketTag(t.status)}</li>`).join('')}</ul></div>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

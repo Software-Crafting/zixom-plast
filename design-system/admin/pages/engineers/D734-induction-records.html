@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D734 Induction records</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D734">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Induction records</h1><p>Safety inductions needed and done, per site and engineer</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-primary" type="button" data-open="done"><svg class="ic"><use href="#ph-check"/></svg>Mark done</button>
+  </div>
+
+  <div class="banner red" data-when="ready no-results" style="margin-bottom:16px"><svg class="ic"><use href="#ph-identification-card"/></svg>
+    <span class="grow"><b>Anita Verma's induction at Chakan unit expired on 9 Nov.</b> Check in at Chakan shows a warning until it is renewed.</span>
+    <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-open="done">Mark done</button></span></div>
+
+  <div class="grid side-right" data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="action">Needs action <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="valid">Valid <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#inductions"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Site or engineer" aria-label="Search inductions"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="inductions">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Site</th><th class="sortable">Engineer</th><th class="sortable">Done on</th><th class="sortable">Valid until</th>
+            <th class="sortable">Status</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-identification-card"/></svg></span>
+        <h3>No inductions yet</h3><p>Mark a site as needing an induction. Records will appear here.</p></div>
+    </section>
+
+    <aside>
+      <section class="card side-card">
+        <div class="card-head"><h3 class="grow">Sites that need an induction</h3></div>
+        <ul class="mini" id="sites"></ul>
+        <div class="card-body"><p class="muted" style="font-size:12px">Valid for 12 months. Set per site in Site access (D733).</p></div>
+      </section>
+    </aside>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Site</th><th>Engineer</th><th>Done on</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="inductions" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Reminder sent to the engineers">Remind engineer</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="done" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="done-title">
+    <div class="drawer-head"><div class="grow"><h2 id="done-title">Mark induction done</h2><p>Recorded on the engineer's profile.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="d-site">Site</label><select class="select" id="d-site"><option>Chakan unit, Nova Cups</option><option>Vatva plant, Shree Packaging</option></select></div>
+        <div class="field"><label for="d-eng">Engineer</label><select class="select" id="d-eng"><option>Anita Verma</option><option>Sandeep Yadav</option></select></div>
+        <div class="field"><label for="d-date">Done on</label><input class="input" id="d-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="d-until">Valid until</label><input class="input" id="d-until" type="date" value="2027-11-22"><span class="hint">12 months by default</span></div>
+        <div class="field full"><label for="d-by">Briefed by</label><input class="input" id="d-by" value="Imran Qureshi"></div>
+      </div>
+      <div class="field"><span class="label">Certificate or pass <span class="opt">optional</span></span>
+        <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop a photo or PDF here</b>JPG, PNG or PDF up to 10 MB</div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Induction recorded. Check in warning removed">Save</button></div>
+  </div>
+</div>
+
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="done"><svg class="ic"><use href="#ph-check"/></svg>Mark done</button>
+  <button type="button" data-open="done"><svg class="ic"><use href="#ph-upload-simple"/></svg>Upload certificate</button>
+  <button type="button" data-toast="Certificate downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>View certificate</button>
+  <button type="button" data-toast="Reminder sent"><svg class="ic"><use href="#ph-bell-ring"/></svg>Remind engineer</button>
+</div>
+<div class="menu" id="filter-menu" hidden>
+  <div class="label">Engineer</div>
+  <label class="check"><input type="checkbox" checked> Sandeep Yadav</label><label class="check"><input type="checkbox" checked> Anita Verma</label>
+  <div class="label">Status</div>
+  <label class="check"><input type="checkbox" checked> Expired</label><label class="check"><input type="checkbox" checked> Not done</label><label class="check"><input type="checkbox" checked> Valid</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E906-induction.html">
+  <div><h3>What it is</h3><p>Which sites need a safety induction and which engineers have a valid one.</p></div>
+  <div><h3>What you can do</h3><ul><li>Mark a site as needing an induction (switch on the right).</li><li>Mark an induction done and upload the certificate or pass.</li><li>Remind engineers or export the list.</li></ul></div>
+  <div><h3>What happens next</h3><p>The engineer confirms an induction on site in the app (E906); it appears here. Site rules: D733.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expired or missing induction: check in shows a warning; it does not block the job.</li><li>Ending within 60 days shows amber.</li><li>Turning the requirement off keeps past records.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const site = (id) => ZX.data.companies.flatMap((c) => c.sites.map((s) => ({ ...s, company: c }))).find((s) => s.id === id);
+  const status = ([, , done, until]) => {
+    if (!done) return ['Not done', 'amber', 'action'];
+    const left = r.daysFromToday(until);
+    if (left < 0) return ['Expired', 'red', 'action'];
+    if (left <= 60) return [`Ends in ${left} days`, 'amber', 'valid'];
+    return ['Valid', 'green', 'valid'];
+  };
+
+  document.querySelector('#inductions tbody').innerHTML = g.inductions.map((x) => {
+    const [siteId, engId, done, until] = x;
+    const s = site(siteId);
+    const e = r.engineer(engId);
+    const [label, tone, group] = status(x);
+    return `<tr data-group="${group}" class="${label === 'Expired' ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${s.name}, ${e.name}"></label></td>
+      <td><b>${s.name}</b><span class="sub">${s.company.name}</span></td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name}</span></span></td>
+      <td class="nowrap" data-sort="${done ?? '0'}">${done ? r.date(done) : '<span class="faint">Not done</span>'}</td>
+      <td class="nowrap" data-sort="${until ?? '0'}">${until ? r.date(until) : '<span class="faint">–</span>'}</td>
+      <td>${r.tag(label, tone)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#inductions tbody tr')];
+    rows.forEach((row) => { row.hidden = key !== 'all' && row.dataset.group !== key; });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `${shown} record${shown === 1 ? '' : 's'}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const key = tab.dataset.view;
+    tab.querySelector('.n').textContent = g.inductions.filter((x) => key === 'all' || status(x)[2] === key).length;
+    tab.addEventListener('click', () => showView(key));
+  });
+  showView('all');
+
+  /* Mark required: per site switch */
+  document.getElementById('sites').innerHTML = Object.entries(g.access).map(([id, a]) => {
+    const s = site(id);
+    return `<li><span class="grow"><b>${s.name}</b><small>${s.company.name}</small></span>
+      <label class="switch"><input type="checkbox" ${a.induction ? 'checked' : ''} data-required="${s.name}" aria-label="${s.name} needs an induction"><span></span></label></li>`;
+  }).join('');
+  document.addEventListener('change', (event) => {
+    const box = event.target.closest('[data-required]');
+    if (box) ZXA.ui.toast(box.checked ? `${box.dataset.required} now needs an induction` : `Induction no longer needed at ${box.dataset.required}`);
+  });
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 4 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

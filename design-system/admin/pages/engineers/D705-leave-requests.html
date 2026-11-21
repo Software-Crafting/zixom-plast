@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D705 Leave requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D705">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Leave requests</h1><p>1 pending · requests come from the engineer app</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-secondary" href="#D706"><svg class="ic"><use href="#ph-calendar-days"/></svg>Holidays</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="Pending">Pending <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Approved">Approved <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Rejected">Rejected <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#leave"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Engineer, type or reason" aria-label="Search leave requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="leave">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Engineer</th><th class="sortable">Dates</th><th class="sortable">Type</th><th>Reason</th>
+            <th>Conflicts</th><th class="sortable">Status</th><th class="sortable">Asked</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span>
+        <h3>No leave requests yet</h3><p>Requests engineers send from the app will appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Engineer</th><th>Dates</th><th>Type</th><th>Reason</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="leave" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-result">Approve</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reject-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="reject-title">Reject leave for 18 Dec?</h2><p>Sandeep Yadav sees your reason in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="reject-reason">Reason</label><textarea class="textarea" id="reject-reason" maxlength="300">Two AMC visits are due that week. Please pick another date.</textarea><span class="hint">At least 10 characters</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Leave rejected. Sandeep is told in the app">Reject</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reassign" hidden>
+  <div class="modal" role="dialog" aria-labelledby="reassign-title">
+    <div class="modal-head"><div class="grow"><h2 id="reassign-title">Approve and reassign</h2><p>These jobs fall on the leave dates. Reassign each one.</p></div></div>
+    <div class="modal-body stack">
+      <ul class="mini card" id="reassign-list"></ul>
+      <div class="field"><label for="reassign-to">Move to</label><select class="select" id="reassign-to"><option>Anita Verma, Pune</option><option>Leave unassigned, back to the work queue</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Leave approved and 1 job moved. Sandeep is told in the app">Approve and reassign</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">0 done, 1 failed</h2><p>LV-2026-0018 has a conflicting job. Use Approve and reassign.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Casual</button><button class="chip" type="button" aria-pressed="false">Sick</button>
+        <button class="chip" type="button" aria-pressed="false">Earned</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-12-31"></div>
+      </div>
+      <label class="check"><input type="checkbox"> With conflicts only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E702-leave.html">
+  <div><h3>What it is</h3><p>Leave requests from the engineer app with dates, type, reason and conflicting jobs.</p></div>
+  <div><h3>What you can do</h3><ul><li>Approve, reject with a reason, or approve and reassign the conflicting jobs.</li><li>Click a row for the details.</li></ul></div>
+  <div><h3>What happens next</h3><p>The engineer is told in the app (E706). Approved days block assignment (EC-A46) and show grey on the schedule (D410).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Conflicting jobs are listed; Approve alone is refused while conflicts remain.</li><li>Bulk approve with conflicts shows done and failed (EC-A64).</li><li>Leave request also lands in the work queue (section 12).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const span = (l) => (l.from === l.to ? r.dayDate(l.from) : `${r.dayDate(l.from)} to ${r.dayDate(l.to)}`);
+  const days = (l) => r.daysFromToday(l.to) - r.daysFromToday(l.from) + 1;
+  const leave = [...g.leave].sort((x, y) => Number(y.status === 'Pending') - Number(x.status === 'Pending'));
+
+  document.querySelector('#leave tbody').innerHTML = leave.map((l) => {
+    const e = r.engineer(l.engineer);
+    return `<tr data-drawer="quick" data-leave="${l.id}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${l.id}"></label></td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span><a class="strong" href="${ZXA.href('D702', `?e=${e.id}`)}">${e.name}</a><span class="sub mono">${l.id}</span></span></span></td>
+      <td class="nowrap" data-sort="${l.from}">${span(l)}<span class="sub">${days(l)} day${days(l) > 1 ? 's' : ''}</span></td>
+      <td>${l.type}</td><td><span class="clip">${l.reason}</span></td>
+      <td>${l.conflicts.length ? r.tag(`${l.conflicts.length} job`, 'amber', 'warning') : '<span class="faint">None</span>'}</td>
+      <td>${r.tag(l.status, g.LEAVE_TONE[l.status])}</td>
+      <td class="nowrap" data-sort="${l.asked}">${r.dayDate(l.asked)}</td></tr>`;
+  }).join('');
+
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#leave tbody tr')];
+    rows.forEach((row) => { row.hidden = key !== 'all' && g.leave.find((l) => l.id === row.dataset.leave).status !== key; });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const key = tab.dataset.view;
+    tab.querySelector('.n').textContent = key === 'all' ? g.leave.length : g.leave.filter((l) => l.status === key).length;
+    tab.addEventListener('click', () => showView(key));
+  });
+  showView('Pending');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 4 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  const pending = g.leave.find((l) => l.status === 'Pending');
+  document.getElementById('reassign-list').innerHTML = pending.conflicts.map(([no, what]) => `<li><span class="ic-disc amber">${ic('calendar-blank')}</span>
+    <span class="grow"><b class="mono">${no}</b><small>${what} · ${r.dayDate(pending.from)}</small></span><a class="btn btn-sm btn-secondary" href="#D602">Open</a></li>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const l = g.leave.find((x) => x.id === event.detail.dataset.leave);
+    const e = r.engineer(l.engineer);
+    document.getElementById('quick-title').textContent = `${e.name}, ${span(l)}`;
+    document.getElementById('quick-sub').innerHTML = `<span class="mono">${l.id}</span> · asked ${r.dayDate(l.asked)}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(l.status, g.LEAVE_TONE[l.status])}${r.tag(l.type, 'outline')}</div>
+      <dl class="dl"><dt>Dates</dt><dd>${span(l)}, ${days(l)} day${days(l) > 1 ? 's' : ''}</dd><dt>Reason</dt><dd>${l.reason}</dd>
+        ${l.decided ? `<dt>Decided</dt><dd>${r.date(l.decided)} by Rajesh Goyal</dd>` : ''}${l.note ? `<dt>Note to engineer</dt><dd>${l.note}</dd>` : ''}</dl>
+      ${l.conflicts.length ? `<div class="banner amber">${ic('warning')}<span class="grow"><b>${l.conflicts.length} job on these dates.</b> Reassign before approving.</span></div>
+        <ul class="mini card">${l.conflicts.map(([no, what]) => `<li data-href="D602"><span class="grow"><b class="mono">${no}</b><small>${what}</small></span></li>`).join('')}</ul>`
+        : '<p class="muted">No jobs on these dates.</p>'}
+      <p class="faint" style="font-size:12px">Other leave in December: ${g.leave.filter((x) => x !== l && x.from.startsWith('2026-12')).map((x) => `${r.engineer(x.engineer).name.split(' ')[0]}, ${span(x)}`).join('; ') || 'none'}</p>`;
+    document.getElementById('quick-foot').innerHTML = l.status === 'Pending'
+      ? `<button class="btn btn-danger-soft" type="button" data-open="reject">Reject</button><span class="grow"></span>
+         ${l.conflicts.length ? '<button class="btn btn-primary" type="button" data-open="reassign">Approve and reassign</button>'
+           : '<button class="btn btn-primary" type="button" data-close data-toast="Leave approved. The engineer is told in the app">Approve</button>'}`
+      : `<a class="btn btn-secondary" href="${ZXA.href('D702', `?e=${e.id}`)}">Open engineer</a><span class="grow"></span>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

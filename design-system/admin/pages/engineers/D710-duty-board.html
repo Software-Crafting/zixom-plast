@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D710 Duty board</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D710">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Duty board</h1><p>Updated 12:00 PM IST · refreshes every 30 seconds</p></div>
+    <a class="btn btn-secondary" href="#D411"><svg class="ic"><use href="#ph-map-trifold"/></svg>Engineer map</a>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="Duty board refreshed"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Refresh</button>
+  </div>
+
+  <div data-when="ready live empty">
+    <div class="kanban" id="board" data-when="ready live"></div>
+    <div class="card" data-when="empty"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-hard-hat"/></svg></span>
+      <h3>No engineers yet</h3><p>Engineers will appear here once they sign in to the app.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D703">Add engineer</a></div></div></div>
+  </div>
+
+  <div data-when="loading">
+    <div class="kanban">
+      <div class="lane"><span class="sk sk-line" style="width:40%"></span><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+      <div class="lane"><span class="sk sk-line" style="width:40%"></span><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+      <div class="lane"><span class="sk sk-line" style="width:40%"></span></div>
+    </div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready live loading empty error" data-mobile="../../../screens/engineer/E103-duty-status.html">
+  <div><h3>What it is</h3><p>Who is on duty, busy or off duty right now, with the current and next job.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open an engineer or the current ticket.</li><li>Call an engineer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Engineer detail (D702), Ticket detail (D403), Engineer map (D411).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Duty comes from the app; refreshes every 30 seconds (Live state moves a card).</li><li>Location shows only during travel and at site, never off duty (Q17).</li><li>On leave shows as Off duty with the leave dates.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const LANES = [['On duty', 'Free for new jobs'], ['Busy', 'On a job'], ['Off duty', 'Not taking jobs']];
+
+  /* live: Anita checks in at Chakan and moves from On duty to Busy */
+  const duty = (id, live) => (live && id === 'anita' ? 'Busy' : g.profiles[id].duty);
+  const card = (e, live) => {
+    const p = g.profiles[e.id];
+    const loc = live && e.id === 'anita' ? { mode: 'At site', place: 'Chakan unit, Gate 1', when: '2026-11-23T12:00' } : p.location;
+    const now = live && e.id === 'anita' ? 'On site, TKT-2026-0119' : p.now;
+    const ticket = now.match(/TKT-\d{4}-\d{4}/)?.[0];
+    return `<div class="card stack-sm${live && e.id === 'anita' ? ' flash' : ''}" style="cursor:default">
+      <div class="who">${r.avatar(e)}<span class="grow"><b>${e.name}</b><small class="mono">${e.code} · ${e.region}</small></span></div>
+      <dl class="dl">
+        <dt>Now</dt><dd>${ticket ? now.replace(ticket, `<a class="mono" href="${ZXA.href('D403', `?t=${ticket}`)}">${ticket}</a>`) : now}</dd>
+        <dt>Next</dt><dd>${p.next}</dd>
+        <dt>Location</dt><dd>${['At site', 'Travelling'].includes(loc.mode) ? `${loc.mode} · ${loc.place}<br><span class="muted">${r.ago(loc.when)}</span>` : '<span class="faint">Not shared off duty</span>'}</dd>
+        <dt>Jobs today</dt><dd>${g.today[e.id].length}</dd>
+      </dl>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${e.phone.replace(/\s/g, '')}">${r.icon('phone')}Call</a>
+        <a class="btn btn-sm btn-ghost" href="${ZXA.href('D702', `?e=${e.id}`)}">Open</a></div></div>`;
+  };
+  const render = (live = false) => {
+    document.getElementById('board').innerHTML = LANES.map(([lane, sub]) => {
+      const people = ZX.data.engineers.filter((e) => duty(e.id, live) === lane);
+      return `<div class="lane"><div class="lane-head">${r.tag(lane, g.DUTY_TONE[lane], '')}<small class="muted" style="font-weight:400">${sub}</small><span class="n">${people.length}</span></div>
+        ${people.map((e) => card(e, live)).join('') || '<p class="muted" style="padding:8px 4px; font-size:13px">No one</p>'}</div>`;
+    }).join('');
+  };
+  render();
+  ZXA.dutyRender = render;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  ZXA.dutyRender(button.dataset.protoState === 'live');
+  if (button.dataset.protoState === 'live') ZXA.ui.toast('Anita checked in at Chakan unit', 'info');
+});
+</script>
+</body>
+</html>

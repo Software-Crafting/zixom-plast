@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D715 Weekly summaries</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D715">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Weekly summaries</h1><p>Submitted by engineers every Sunday · Monday to Sunday</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="2026-11-16">16 to 22 Nov <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="2026-11-09">9 to 15 Nov <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="2026-11-02">2 to 8 Nov <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#summaries"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Engineer or note" aria-label="Search summaries"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="summaries">
+          <thead><tr><th class="sortable">Engineer</th><th class="sortable">Week</th><th class="sortable num">Jobs</th><th class="sortable num">Hours</th>
+            <th class="sortable num">First visit fix</th><th class="sortable num">SLA met</th><th class="sortable num">Rating</th><th class="sortable">Submitted</th><th>Comment</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-calendar-check"/></svg></span>
+        <h3>No weekly summaries yet</h3><p>Summaries will appear here after the first full week.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="card-body stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-ghost" id="quick-open" href="#D702">Open engineer</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Comment sent to the engineer">Add comment</button></div>
+  </div>
+</div>
+
+<div class="menu" id="filter-menu" hidden>
+  <div class="label">Engineer</div>
+  <label class="check"><input type="checkbox" checked> Sandeep Yadav</label>
+  <label class="check"><input type="checkbox" checked> Anita Verma</label>
+  <div class="label">Show</div>
+  <label class="check"><input type="checkbox"> Without my comment only</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E1010-weekly-summary.html">
+  <div><h3>What it is</h3><p>Each engineer's week as submitted from the app: jobs, hours, first visit fix, SLA, rating.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a week to see the split by day and the engineer's note.</li><li>Comment; the engineer sees it in the app.</li></ul></div>
+  <div><h3>What happens next</h3><p>Performance (D709) uses the same numbers; Engineer detail (D702).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A week with no jobs shows No jobs, not zeros (D715).</li><li>The current week appears once it is complete.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const list = g.summaries;
+  const short = (iso) => r.date(iso).split(' ').slice(0, 2).join(' ');
+  const week = (s) => `${short(s.from)} to ${short(s.to)}`;
+  const hours = (h) => `${Math.floor(h)} h${h % 1 ? ` ${Math.round((h % 1) * 60)} min` : ''}`;
+  const dash = '<span class="faint">–</span>';
+
+  document.querySelector('#summaries tbody').innerHTML = list.map((s, i) => {
+    const e = r.engineer(s.engineer);
+    const none = !s.jobs;
+    return `<tr data-drawer="quick" data-i="${i}">
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name}</span></span></td>
+      <td class="nowrap" data-sort="${s.from}">${week(s)}</td>
+      ${none ? `<td class="num">${r.tag('No jobs')}</td><td class="num">${dash}</td><td class="num">${dash}</td><td class="num">${dash}</td><td class="num">${dash}</td>`
+    : `<td class="num">${s.jobs}</td><td class="num">${hours(s.hours)}</td><td class="num">${s.firstVisitFix}%</td><td class="num">${s.slaMet}%</td><td class="num">${s.rating}</td>`}
+      <td class="nowrap" data-sort="${s.submitted}">${r.dayDate(s.submitted)}<span class="sub">${r.time(s.submitted)}</span></td>
+      <td>${s.comment ? r.tag('Commented', 'green') : '<span class="faint">None</span>'}</td></tr>`;
+  }).join('');
+
+  const VIEW = (key) => (s) => key === 'all' || s.from === key;
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#summaries tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEW(key)(list[row.dataset.i]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEW(tab.dataset.view)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('2026-11-16');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const s = list[event.detail.dataset.i];
+    const e = r.engineer(s.engineer);
+    document.getElementById('quick-title').textContent = e.name;
+    document.getElementById('quick-sub').textContent = `Week ${week(s)} · submitted ${r.dayDate(s.submitted)}, ${r.time(s.submitted)}`;
+    document.getElementById('quick-open').href = ZXA.href('D702', `?e=${e.id}`);
+    const kv = (label, value) => `<div class="kv"><span>${label}</span><b>${value}</b></div>`;
+    document.getElementById('quick-body').innerHTML = `
+      ${s.jobs ? `<div class="grid cols-3">${kv('Jobs', s.jobs)}${kv('Hours on jobs', hours(s.hours))}${kv('Rating', s.rating)}${kv('First visit fix', `${s.firstVisitFix}%`)}${kv('SLA met', `${s.slaMet}%`)}</div>
+        <ul class="mini card">${s.days.map(([d, jobs, h]) => `<li><span class="grow"><b>${r.dayDate(d)}</b></span><span class="end">${jobs} job${jobs > 1 ? 's' : ''} · ${hours(h)}</span></li>`).join('')}</ul>`
+    : '<div class="state"><span class="disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span><h3>No jobs</h3><p>No visits this week.</p></div>'}
+      ${s.note ? `<dl class="dl stack"><dt>Engineer's note</dt><dd>${r.esc(s.note)}</dd></dl>` : ''}
+      ${s.comment ? `<div class="msg me" style="max-width:none">${r.esc(s.comment[1])}<small>${s.comment[0]}</small></div>` : ''}
+      <div class="field"><label for="comment">Comment to ${e.name.split(' ')[0]}</label><textarea class="textarea" id="comment" maxlength="500"></textarea></div>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

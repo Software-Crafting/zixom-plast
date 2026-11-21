@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D733 Site access information</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D733">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Site access information</h1><p>Gate, security and site rules. Only the engineer assigned to a job at the site sees them.</p></div>
+  </div>
+
+  <div data-when="ready no-results">
+    <div class="search-row" style="margin-bottom:16px">
+      <label class="search" data-filter="#sites"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+        <input type="search" placeholder="Site, customer or pincode" aria-label="Search sites"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+    <div class="grid cols-3" id="sites" data-when="ready"></div>
+    <div class="card" data-noresults hidden><div class="state"><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+      <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div></div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-map-pin"/></svg></span>
+      <h3>No sites yet</h3><p>Sites come from customers. Add a customer to add its sites.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D201">Open customers</a></div></div></div>
+  </div>
+
+  <div data-when="loading"><div class="grid cols-3">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div></div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit site access</h2><p id="edit-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="e-gate">Gate</label><input class="input" id="e-gate" maxlength="80"></div>
+      <div class="field"><label for="e-security">Security rules</label><textarea class="textarea" id="e-security" maxlength="300"></textarea></div>
+      <div class="field"><label for="e-hours">Access hours</label><input class="input" id="e-hours" maxlength="80"></div>
+      <div class="field"><label for="e-ppe">Protective equipment</label><input class="input" id="e-ppe" maxlength="120"><span class="hint">The safety checklist asks for these.</span></div>
+      <div class="field"><label for="e-parking">Parking</label><input class="input" id="e-parking" maxlength="80"></div>
+      <label class="switch"><input type="checkbox" id="e-induction"><span></span>Site needs a safety induction</label>
+      <span class="hint">Track inductions in Induction records (D734).</span>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Saved. Assigned engineers see it on their next sync">Save</button></div>
+  </div>
+</div>
+
+<div class="menu" id="filter-menu" hidden>
+  <div class="label">Show</div>
+  <label class="check"><input type="checkbox" checked> Shree Packaging Industries</label>
+  <label class="check"><input type="checkbox" checked> Nova Cups Pvt Ltd</label>
+  <label class="check"><input type="checkbox"> Needs induction only</label>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E902-site-access.html">
+  <div><h3>What it is</h3><p>How an engineer gets into each customer site: gate, security, hours, PPE, parking.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search sites.</li><li>Edit the rules of a site in the drawer.</li><li>Turn on Needs induction for sites that ask for one.</li></ul></div>
+  <div><h3>What happens next</h3><p>The assigned engineer sees it in Site access (E902). Inductions: D734. Hazards: D732.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Visible to the assigned engineer only, from assignment to the end of the job.</li><li>Changes reach the app on the next sync.</li><li>Site contact and address come from the customer record (D202).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const ic = r.icon;
+  const sites = ZX.data.companies.flatMap((c) => c.sites.map((s) => ({ ...s, company: c })));
+
+  document.getElementById('sites').innerHTML = sites.map((s) => {
+    const a = g.access[s.id];
+    return `<section class="card" data-search-item>
+      <div class="card-head"><div class="grow"><h2>${s.name}</h2><p>${s.company.name}</p></div>
+        <button class="btn btn-secondary btn-sm" type="button" data-open="edit" data-site="${s.id}">${ic('pencil-simple')}Edit</button></div>
+      <div class="card-body stack">
+        <div class="tags">${a.induction ? r.tag('Needs induction', 'amber', 'identification-card') : r.tag('No induction', 'outline')}</div>
+        <dl class="dl">
+          <dt>Address</dt><dd>${s.address}, <span class="mono">${s.pincode}</span></dd>
+          <dt>Gate</dt><dd>${a.gate}</dd><dt>Security</dt><dd>${a.security}</dd>
+          <dt>Hours</dt><dd>${a.hours}</dd><dt>PPE</dt><dd>${a.ppe}</dd><dt>Parking</dt><dd>${a.parking}</dd>
+          <dt>Contact</dt><dd>${s.contact.name}<br><a href="tel:${s.contact.phone.replace(/\s/g, '')}">${s.contact.phone}</a></dd>
+        </dl>
+        <p class="muted" style="font-size:12px">Updated ${r.date(a.updated)} by Rajesh Goyal</p>
+      </div></section>`;
+  }).join('');
+
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-site]');
+    if (!button) return;
+    const s = sites.find((x) => x.id === button.dataset.site);
+    const a = g.access[s.id];
+    document.getElementById('edit-title').textContent = `Edit ${s.name}`;
+    document.getElementById('edit-sub').textContent = s.company.name;
+    [['e-gate', a.gate], ['e-security', a.security], ['e-hours', a.hours], ['e-ppe', a.ppe], ['e-parking', a.parking]]
+      .forEach(([id, value]) => { document.getElementById(id).value = value; });
+    document.getElementById('e-induction').checked = a.induction;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

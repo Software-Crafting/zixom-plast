@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D712 Engineer problem reports</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D712">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Engineer problem reports</h1><p>Problems with the app, sent from Report a problem</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="Open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Replied">Replied <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Fixed">Fixed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#problems"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Reference, engineer, text or app version" aria-label="Search problem reports"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="problems">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Reference</th><th class="sortable">Engineer</th><th>Problem</th><th class="sortable">App</th><th>Device</th><th class="sortable">Status</th><th class="sortable">Received</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>No problem reports yet</h3><p>Problems engineers report from the app will appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="card-body stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div></section>
+  </div>
+
+  <div class="bulk-bar" data-for="problems" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Marked fixed. Engineers told">Mark fixed</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-secondary" type="button" data-close data-toast="Marked fixed. Engineer told">Mark fixed</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Reply sent to the app inbox">Send reply</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="field"><label for="f-app">App version</label><select class="select" id="f-app"><option>Any</option><option>2.4.1</option><option>2.3.0</option></select></div>
+    </div><label class="check"><input type="checkbox"> With app logs only</label></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show reports</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E806-report-problem.html">
+  <div><h3>What it is</h3><p>Problems engineers report from the app, with app version and device.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the report, screenshots and logs.</li><li>Reply; the engineer sees it in the app inbox.</li><li>Mark fixed, one or many.</li></ul></div>
+  <div><h3>What happens next</h3><p>The engineer gets a push with the reply. Device details also show in Engineer detail (D702).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reports sent offline arrive late with the time they were written.</li><li>App logs are attached only when the engineer allowed it.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/engineers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const g = ZXA.data.eng;
+  const list = g.problems;
+  const byNumber = (n) => list.find((x) => x.number === n);
+
+  document.querySelector('#problems tbody').innerHTML = list.map((x) => {
+    const e = r.engineer(x.engineer);
+    return `<tr data-drawer="quick" data-number="${x.number}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+      <td><span class="mono strong nowrap">${x.number}</span></td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+      <td><span class="clip" style="max-width:320px" title="${r.esc(x.text)}">${r.esc(x.text)}</span></td>
+      <td class="mono">${x.app}</td><td><span class="clip">${x.device}</span></td>
+      <td>${r.tag(x.status, g.PROBLEM_TONE[x.status])}</td>
+      <td class="nowrap" data-sort="${x.when}">${r.ago(x.when)}</td></tr>`;
+  }).join('');
+
+  const VIEW = (key) => (x) => key === 'all' || x.status === key;
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#problems tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEW(key)(byNumber(row.dataset.number)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEW(tab.dataset.view)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('Open');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = byNumber(event.detail.dataset.number);
+    const e = r.engineer(x.engineer);
+    document.getElementById('quick-title').textContent = x.number;
+    document.getElementById('quick-sub').textContent = `${e.name} · ${r.dayDate(x.when)}, ${r.time(x.when)}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(x.status, g.PROBLEM_TONE[x.status])}${x.logs ? r.tag('App logs attached', 'outline', 'paperclip') : ''}</div>
+      <p style="color:var(--text-strong)">${r.esc(x.text)}</p>
+      ${x.files.length ? `<div class="gallery">${x.files.map((f) => `<div class="ph">${r.icon('image')}<small>${f}</small></div>`).join('')}</div>` : ''}
+      <dl class="dl"><dt>App version</dt><dd class="mono">${x.app}</dd><dt>Device</dt><dd>${x.device}</dd><dt>Engineer</dt><dd>${e.name}<br><span class="muted">${e.phone}</span></dd></dl>
+      ${x.reply ? `<div class="msg me" style="max-width:none">${r.esc(x.reply)}<small>You</small></div>` : ''}
+      ${x.logs ? `<button class="btn btn-sm btn-secondary" type="button" data-toast="Logs downloaded" style="align-self:flex-start">${r.icon('download-simple')}Download logs</button>` : ''}
+      <div class="field"><label for="reply">Reply to ${e.name.split(' ')[0]}</label><textarea class="textarea" id="reply" maxlength="500"></textarea></div>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
