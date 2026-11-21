@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D606 AMC quote requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D606" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Quote requests</span></nav>
+      <h1>AMC quote requests</h1><p id="summary"></p>
+    </div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="converted">Converted <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#requests"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Request, customer or machine" aria-label="Search requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="requests">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Request</th><th class="sortable">Customer</th><th>Machines</th><th class="sortable">Plan and term</th>
+            <th class="sortable">Requested start</th><th class="sortable">Waiting</th><th>Status</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+        <h3>No quote requests yet</h3><p>Requests from Buy AMC in the app appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Request</th><th>Customer</th><th>Plan</th><th>Start</th><th>Waiting</th></tr></thead><tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="requests" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<!-- send quotation -->
+<div class="overlay right" id="send" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="send-title">
+    <div class="drawer-head"><div class="grow"><h2 id="send-title">Send quotation</h2><p id="send-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Send as</span><div class="choices">
+        <label class="choice"><input type="radio" name="as" class="sr-only" checked><span><b>Quotation</b><small>QT number, valid 15 days. Customer accepts in the app.</small></span></label>
+        <label class="choice"><input type="radio" name="as" class="sr-only"><span><b>Invoice</b><small>Customer pays right away; the contract starts as Pending payment.</small></span></label></div></div>
+      <div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Line</th><th class="num">Amount</th></tr></thead><tbody id="send-lines"></tbody></table></div>
+      <div class="field"><label for="send-note">Note to the customer <span class="opt">optional</span></label><textarea class="textarea" id="send-note">Thank you for your interest. Visits are planned with your team after payment.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Quotation sent. Customer notified in the app and by email">Send quotation</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="decline" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="decline-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="decline-title">Decline this request?</h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="decline-reason">Reason</label><select class="select" id="decline-reason"><option>Plan not offered for this machine</option><option>Machine too old for AMC</option><option>Machine not verified</option><option>Other</option></select></div>
+      <div class="field"><label for="decline-note">Message <span class="opt">optional</span></label><textarea class="textarea" id="decline-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request declined. Customer told">Decline</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Plan</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Essential</button><button class="chip" type="button" aria-pressed="false">Preventive Plus</button><button class="chip" type="button" aria-pressed="false">Comprehensive</button></div></div>
+      <label class="check"><input type="checkbox"> Waiting over 2 working days only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C404-buy-amc.html">
+  <div><h3>What it is</h3><p>AMC requests from Buy AMC in the app that need a price.</p></div>
+  <div><h3>What you can do</h3><ul><li>Send a quotation or an invoice.</li><li>Convert to a contract (D603).</li><li>Decline with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer accepts or pays in the app; the contract becomes Pending payment, then Active (D602).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Waiting over 2 working days is red.</li><li>Price changed in the plan: the customer sees the new total.</li><li>Machine taken by another AMC meanwhile: convert is blocked (EC-A39).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const ic = r.icon;
+  const { contracts, TERM_DISCOUNT } = ZXA.data.amc;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  /* open requests, plus requests already turned into a contract */
+  const requests = contracts.filter((c) => c.status === 'quote' || c.from?.startsWith('Quote'));
+  const isOpen = (c) => c.status === 'quote';
+  /* working days after the request, up to today (Monday to Friday) */
+  const workingDays = (iso) => {
+    let n = 0;
+    const d = new Date(`${iso}T00:00:00`);
+    const end = new Date(`${ZX.data.today}T00:00:00`);
+    while (d < end) { d.setDate(d.getDate() + 1); if (![0, 6].includes(d.getDay())) n += 1; }
+    return n;
+  };
+  const open = requests.filter(isOpen);
+  document.getElementById('summary').textContent = `${open.length} waiting for a quotation · ${open.filter((c) => workingDays(c.created) > 2).length} over 2 working days`;
+
+  document.querySelector('#requests tbody').innerHTML = requests.map((c) => {
+    const co = r.company(c.company);
+    const days = workingDays(c.created);
+    const late = isOpen(c) && days > 2;
+    return `<tr data-drawer="quick" data-amc="${c.number}" class="${late ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.number}"></label></td>
+      <td><a class="rec" href="#D602?amc=${c.number}">${c.number}</a><span class="sub">${r.date(c.created)} · ${r.person(c.by).name}</span></td>
+      <td><b class="clip">${co.name}</b><span class="sub">${r.site(c.company, c.site).name}</span></td>
+      <td><span class="clip">${c.machines.map((x) => r.machine(x).model).join(', ')}</span><span class="sub mono">${c.machines.join(', ')}</span></td>
+      <td>${c.plan}<span class="sub">${c.years} year${c.years > 1 ? 's' : ''} · est. ${r.money(c.value)}</span></td>
+      <td class="nowrap" data-sort="${c.start}">${r.date(c.start)}</td>
+      <td class="nowrap" data-sort="${days}">${isOpen(c) ? `<span class="${late ? 'red-text strong' : ''}">${days} working day${days === 1 ? '' : 's'}</span>` : '<span class="faint">–</span>'}</td>
+      <td>${isOpen(c) ? r.tag('Open', 'blue') : r.tag(`Converted, ${A.label(c.status)}`, 'green')}</td>
+      <td class="actions">${isOpen(c) ? `<button class="btn btn-sm btn-secondary" type="button" data-open="send" data-send="${c.number}">Send quotation</button>` : ''}</td>
+    </tr>`;
+  }).join('');
+
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#requests tbody tr')];
+    rows.forEach((row) => { const c = A.contract(row.dataset.amc); row.hidden = key === 'open' ? !isOpen(c) : key === 'converted' ? isOpen(c) : false; });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const k = tab.dataset.view;
+    tab.querySelector('.n').textContent = requests.filter((c) => (k === 'open' ? isOpen(c) : k === 'converted' ? !isOpen(c) : true)).length;
+    tab.addEventListener('click', () => showView(k));
+  });
+  showView('open');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  const fillSend = (c) => {
+    const p = A.plan(c.plan);
+    document.getElementById('send-sub').textContent = `${c.number} · ${r.company(c.company).name}`;
+    const gross = c.value / (1 - TERM_DISCOUNT[c.years] / 100);
+    document.getElementById('send-lines').innerHTML = `<tr><td>${p.name}, ${c.machines.length} machine${c.machines.length > 1 ? 's' : ''}, ${c.years} year${c.years > 1 ? 's' : ''}</td><td class="num">${r.money(gross)}</td></tr>
+      ${TERM_DISCOUNT[c.years] ? `<tr><td>Term discount ${TERM_DISCOUNT[c.years]}%</td><td class="num">−${r.money(gross - c.value)}</td></tr>` : ''}
+      <tr><td>GST 18%</td><td class="num">${r.money(c.value * 0.18)}</td></tr><tr><td><b>Total</b></td><td class="num"><b>${r.money(c.value * 1.18)}</b></td></tr>`;
+  };
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const c = A.contract(event.detail.dataset.amc);
+    const co = r.company(c.company);
+    const s = r.site(c.company, c.site);
+    fillSend(c);
+    document.getElementById('quick-title').textContent = c.number;
+    document.getElementById('quick-sub').textContent = `${c.plan} · ${co.name}`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${isOpen(c) ? r.tag('Open', 'blue') : A.tag(c.status)}</div>
+      <dl class="dl"><dt>Requested by</dt><dd>${r.person(c.by).name}<br><span class="muted">${r.person(c.by).mobile}</span></dd>
+        <dt>Site</dt><dd>${s.name}<br><span class="muted">${s.address}</span></dd>
+        <dt>Machines</dt><dd>${c.machines.map((x) => `${r.machine(x).model}<br><span class="mono muted">${x}</span>`).join('<br>')}</dd>
+        <dt>Plan</dt><dd>${c.plan}, ${c.years} year${c.years > 1 ? 's' : ''}</dd><dt>Requested start</dt><dd>${r.date(c.start)}</dd>
+        <dt>Estimate</dt><dd>${r.money(c.value)} before GST</dd></dl>`;
+    document.getElementById('quick-foot').innerHTML = isOpen(c)
+      ? `<button class="btn btn-ghost" type="button" data-close data-open="decline">Decline</button><span class="grow"></span>
+         <a class="btn btn-secondary" href="${link('D603', `?from=${c.number}`)}">Convert to contract</a><button class="btn btn-primary" type="button" data-close data-open="send">Send quotation</button>`
+      : `<span class="grow"></span><a class="btn btn-secondary" href="${link('D602', `?amc=${c.number}`)}">Open contract</a>`;
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-send]');
+    if (b) fillSend(A.contract(b.dataset.send));
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

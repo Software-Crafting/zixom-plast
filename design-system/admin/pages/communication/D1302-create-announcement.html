@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1302 Create announcement</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-communication.css">
+</head>
+<body class="adm" data-page="D1302" data-nav="D1301">
+<main class="content">
+  <div data-when="ready sending sent past zero pinned">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1301">Announcements</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb">New announcement</span></nav>
+        <div class="record-head"><h1 id="heading" style="font-family:var(--font-display); font-weight:400">New announcement</h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"><span><svg class="ic"><use href="#ph-megaphone"/></svg>Shows on Home and in Announcements in the app</span></div>
+      </div>
+      <div class="action-bar" id="head-actions"></div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner green center" data-when="sent"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b>Sent to 3 people.</b> 2 delivered, 1 push failed and went by email.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1320?ref=ANN-2026-001">Delivery log</a></span></div>
+      <div class="banner red center" data-when="past"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>The scheduled time has passed.</b> Pick a later time or send now.</span>
+        <span class="btns"><button class="btn btn-sm btn-primary" type="button" data-set-now>Send now instead</button></span></div>
+      <div class="banner amber center" data-when="pinned"><svg class="ic"><use href="#ph-warning"/></svg>
+        <span class="grow"><b>3 announcements are pinned already.</b> The app shows the 3 newest pinned at the top; the oldest drops into the list.</span></div>
+      <div class="banner grey center" id="readonly-banner" hidden><svg class="ic"><use href="#ph-lock-simple"/></svg>
+        <span class="grow"><b>Sent announcements are read only.</b> You can withdraw it or duplicate it as a new draft.</span></div>
+    </div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="card-body" style="padding-top:20px">
+          <fieldset id="form" style="border:0; margin:0; padding:0; min-width:0">
+          <div class="form-section">
+            <h3>Message</h3><p>What customers see in the list and when they open it.</p>
+            <div class="form-grid">
+              <div class="field full"><label for="title">Title <span class="count" id="title-count">0 / 80</span></label>
+                <input class="input" id="title" maxlength="80" value="New service hours from 1 Dec">
+                <span class="error" id="title-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Title needs 5 to 80 characters</span></div>
+              <div class="field"><label for="kind">Category</label><select class="select" id="kind"><option>Safety</option><option selected>Service</option><option>Spare parts</option><option>App news</option><option>Support</option></select></div>
+              <div class="field"><label for="link">Link <span class="opt">optional</span></label><select class="select" id="link"><option>None</option><option>A screen</option><option>A document</option><option>An external address</option></select></div>
+              <div class="field full" id="link-target-field" hidden><label for="link-target">Opens</label><select class="select" id="link-target"></select></div>
+              <div class="field full"><label for="text">Text <span class="count" id="text-count">0 / 1,000</span></label>
+                <textarea class="textarea" id="text" maxlength="1000">Field engineers now work 8 AM to 8 PM, Monday to Saturday. Machine down calls are answered 24x7.</textarea></div>
+              <div class="field full"><span class="label">Image <span class="opt">optional</span></span>
+                <div class="drop" id="image-drop"><svg class="ic"><use href="#ph-image"/></svg><b>Drop a JPG or PNG here</b>Up to 2 MB, shown 16:9</div>
+                <div class="file-row" id="image-row" hidden><span class="thumb"><svg class="ic"><use href="#ph-image"/></svg></span>
+                  <span class="grow"><b>heater-guard.jpg</b><small class="muted">640 KB</small></span>
+                  <button class="icon-btn sm" type="button" id="image-remove" aria-label="Remove image"><svg class="ic"><use href="#ph-x"/></svg></button></div></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Audience</h3><p>Count updates as you choose.</p>
+            <div class="form-grid">
+              <div class="field"><label for="aud-type">Send to</label><select class="select" id="aud-type">
+                <option>All customers</option><option>Region</option><option>Company</option><option>Machine series</option><option>All engineers</option><option>Custom list</option></select></div>
+              <div class="field" id="aud-value-field" hidden><label for="aud-value" id="aud-value-label">Region</label><select class="select" id="aud-value"></select></div>
+              <div class="full"><div class="banner center" id="aud-count"></div></div>
+              <div class="field full"><label class="switch"><input type="checkbox" id="pinned"><span></span>Pin to the top of Home</label>
+                <span class="hint" id="pinned-hint">Pinned shows in red above everything else. Up to 3 at a time.</span></div>
+              <div class="field"><label for="show-from">Show from</label><input class="input" id="show-from" type="date" value="2026-11-23"></div>
+              <div class="field"><label for="show-to">Show until</label><input class="input" id="show-to" type="date" value="2026-12-23"></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Delivery</h3><p>In app always; push and email are optional.</p>
+            <div class="stack">
+              <div class="row wrap" role="radiogroup" aria-label="Delivery">
+                <label class="check"><input type="radio" name="delivery" value="In app only"> In app only</label>
+                <label class="check"><input type="radio" name="delivery" value="Push"> Push</label>
+                <label class="check"><input type="radio" name="delivery" value="Email"> Email</label>
+                <label class="check"><input type="radio" name="delivery" value="Push and email" checked> Push and email</label></div>
+              <div class="row wrap" role="radiogroup" aria-label="When">
+                <label class="check"><input type="radio" name="when" value="now" checked> Send now</label>
+                <label class="check"><input type="radio" name="when" value="later"> Schedule</label></div>
+              <div class="form-grid" id="schedule-fields" hidden>
+                <div class="field"><label for="sch-date">Date</label><input class="input" id="sch-date" type="date" value="2026-12-01"></div>
+                <div class="field"><label for="sch-time">Time, IST</label><input class="input" id="sch-time" type="time" value="10:00"></div>
+                <span class="error full" id="sch-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>This time has passed. Pick a later time or send now (EC-A65).</span>
+                <span class="hint full">Customers get it after 7 AM; quiet hours are 9 PM to 7 AM.</span>
+              </div>
+            </div>
+          </div>
+          </fieldset>
+
+          <div class="form-section" id="reach-section" hidden>
+            <h3>Reach</h3>
+            <div class="grid cols-3">
+              <div class="kv"><span>Delivered</span><b>2 of 3</b></div><div class="kv"><span>Opened</span><b>2</b></div>
+              <div class="kv"><span>Push failed</span><b class="red-text">1, sent by email</b></div></div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <section class="card side-card">
+          <div class="card-head"><h3 class="grow">Preview in the app</h3>
+            <div class="segment" role="tablist" aria-label="Preview"><button role="tab" aria-selected="true" aria-controls="pv-list">List</button><button role="tab" aria-selected="false" aria-controls="pv-detail">Detail</button></div></div>
+          <div class="card-body">
+            <div class="phone"><div class="phone-top"><span>12:00</span><span>Zixom Connect</span></div>
+              <div class="phone-screen" id="pv-list" role="tabpanel"></div>
+              <div class="phone-screen" id="pv-detail" role="tabpanel" hidden></div></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow" data-when="ready past zero pinned"><span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 12:00 PM</span></span>
+      <span class="grow" data-when="sending"><span class="row"><span class="progress grow" style="max-width:240px"><span style="width:66%"></span></span>Sending, 2 of 3</span></span>
+      <span class="grow" data-when="sent">Sent Sun 22 Nov, 10:00</span>
+      <span id="bar-actions" class="btns"></span>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+      <div class="card pad"><span class="sk sk-block" style="height:440px"></span></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay center" id="withdraw" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="wd-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-undo"/></svg></span>
+      <div class="grow"><h2 id="wd-title">Withdraw ANN-2026-001?</h2><p>It disappears from the app on the next refresh. Pushes already delivered to 2 people cannot be recalled.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep it</button><button class="btn btn-danger" type="button" data-close data-toast="Announcement withdrawn">Withdraw</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready sending sent past zero pinned loading error" data-mobile="../../../screens/customer/C1303-announcement.html">
+  <div><h3>What it is</h3><p>Write a notice for the app and see it in the phone as you type. Open an existing one with <code>?n=ANN-2026-001</code> (sent), 002 (scheduled) or 003 (draft).</p></div>
+  <div><h3>What you can do</h3><ul><li>Title, text, image, link, audience with a live count, pin, show dates.</li><li>Push, email, both or in app only; send now or schedule.</li><li>Save draft, send a test to yourself, withdraw after sending.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Announcements (D1301) with reach; push results in the delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Scheduled in the past is blocked; Send now is offered (EC-A65, state Past).</li><li>Audience of 0: send is disabled (state Zero).</li><li>More than 3 pinned: warning (state Pinned).</li><li>Draft autosaves. Withdrawn is removed on next refresh; delivered push cannot be recalled.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const $ = (id) => document.getElementById(id);
+  const ic = r.icon;
+  const number = new URLSearchParams(location.search).get('n');
+  const ann = number ? a.announcements.find((x) => x.number === number) : null;
+  const sent = ann && ['sent', 'withdrawn', 'expired'].includes(ann.status);
+
+  /* ---------- an existing announcement fills the form ---------- */
+  if (ann) {
+    document.title = `Zixom Admin - ${ann.number}`;
+    $('crumb').textContent = ann.number;
+    $('heading').textContent = ann.number;
+    $('heading').removeAttribute('style');
+    $('chips').innerHTML = `${r.tag(...a.annStatus[ann.status])}${ann.pinned ? r.tag('Pinned', 'red', 'pin') : ''}`;
+    $('meta').innerHTML = `<span>${ic('user')}${ann.by}</span><span>${ic('users')}${ann.audience}, ${ann.count} people</span>`;
+    $('title').value = ann.title;
+    $('text').value = ann.text;
+    $('kind').value = ann.kind;
+    $('pinned').checked = ann.pinned;
+    document.querySelector(`[name="delivery"][value="${ann.delivery}"]`).checked = true;
+    const [type, value] = ann.audience.split(': ');
+    $('aud-type').value = type;
+    if (ann.link !== 'None') $('link').value = ann.link.startsWith('Screen') ? 'A screen' : 'A document';
+    if (ann.status === 'scheduled') {
+      document.querySelector('[name="when"][value="later"]').checked = true;
+      $('sch-date').value = ann.scheduled.slice(0, 10);
+      $('sch-time').value = ann.scheduled.slice(11, 16);
+    }
+    $('form').dataset.audValue = value || '';
+  }
+  if (sent) {
+    $('form').disabled = true;
+    $('readonly-banner').hidden = false;
+    $('reach-section').hidden = !ann.reach;
+  }
+
+  /* ---------- actions: one primary, the rest secondary ---------- */
+  const primaryLabel = () => (document.querySelector('[name="when"]:checked').value === 'later' ? (ann?.status === 'scheduled' ? 'Update schedule' : 'Schedule') : 'Send now');
+  const drawActions = () => {
+    if (sent) {
+      $('head-actions').innerHTML = ann.status === 'sent' ? '<button class="btn btn-danger-soft" type="button" data-open="withdraw">Withdraw</button>' : '';
+      $('bar-actions').innerHTML = `<a class="btn btn-secondary" href="${ZXA.href('D1320', `?ref=${ann.number}`)}">Delivery log</a>
+        <button class="btn btn-primary" type="button" data-toast="Copy saved as a draft">Duplicate as new</button>`;
+      return;
+    }
+    $('head-actions').innerHTML = ann?.status === 'scheduled' ? '<button class="btn btn-secondary" type="button" data-toast="Schedule cancelled, saved as draft">Cancel schedule</button>' : '';
+    $('bar-actions').innerHTML = `<button class="btn btn-ghost" type="button" data-toast="Draft saved">Save draft</button>
+      <button class="btn btn-secondary" type="button" data-toast="Test sent to admin@zixom.in and your phone">Send test to myself</button>
+      <button class="btn btn-primary" type="button" id="send" data-busy>${primaryLabel()}</button>`;
+    validate();
+  };
+
+  /* ---------- audience with a live count ---------- */
+  const VALUES = { Region: ['Ahmedabad', 'Pune'], Company: ['Shree Packaging Industries', 'Nova Cups Pvt Ltd'], 'Machine series': ['AFM', 'CFM', 'BSM', 'Skin packing'] };
+  const audienceKey = () => {
+    const type = $('aud-type').value;
+    return VALUES[type] ? `${type}: ${$('aud-value').value}` : type;
+  };
+  const audienceCount = () => a.audiences[audienceKey()] ?? 0;
+  const drawAudience = () => {
+    const type = $('aud-type').value;
+    $('aud-value-field').hidden = !VALUES[type];
+    if (VALUES[type] && $('aud-value-label').textContent !== type) {
+      $('aud-value-label').textContent = type;
+      $('aud-value').innerHTML = VALUES[type].map((v) => `<option>${v}</option>`).join('');
+      if ($('form').dataset.audValue) { $('aud-value').value = $('form').dataset.audValue; $('form').dataset.audValue = ''; }
+    }
+    const n = audienceCount();
+    $('aud-count').className = `banner center ${n ? '' : 'amber'}`;
+    $('aud-count').innerHTML = n ? `${ic('users')}<span class="grow"><b>${n} ${n === 1 ? 'person' : 'people'}</b> will get this${type === 'Custom list' ? '' : `, ${type === 'All engineers' ? 'in the engineer app' : 'in the customer app'}`}.</span>`
+      : `${ic('warning')}<span class="grow"><b>Nobody matches this audience.</b> Choose another to send.</span>`;
+  };
+
+  /* ---------- link target ---------- */
+  const TARGETS = { 'A screen': ['Parts', 'AMC plans', 'Raise a request', 'What is new'], 'A document': ['AFM-760 operating manual', 'Thermoforming range brochure 2026'] };
+  const drawLink = () => {
+    const kind = $('link').value;
+    $('link-target-field').hidden = kind === 'None';
+    $('link-target').outerHTML = kind === 'An external address'
+      ? '<input class="input" id="link-target" type="url" value="https://zixom.in/thermoforming">'
+      : `<select class="select" id="link-target">${(TARGETS[kind] || []).map((t) => `<option>${t}</option>`).join('')}</select>`;
+    bindPreview();
+  };
+
+  /* ---------- checks: title length, audience 0, schedule in the past (EC-A65) ---------- */
+  const scheduledPast = () => document.querySelector('[name="when"]:checked').value === 'later'
+    && `${$('sch-date').value}T${$('sch-time').value}` <= ZX.data.now;
+  const validate = () => {
+    const titleOk = $('title').value.trim().length >= 5;
+    const past = scheduledPast();
+    $('sch-error').hidden = !past;
+    $('sch-date').setAttribute('aria-invalid', String(past));
+    const send = $('send');
+    if (send) send.disabled = !titleOk || !audienceCount() || past;
+  };
+
+  /* ---------- the phone preview ---------- */
+  const preview = () => {
+    const title = r.esc($('title').value.trim() || 'Title');
+    const text = r.esc($('text').value.trim());
+    const kind = $('kind').value;
+    const pinned = $('pinned').checked;
+    const delivery = document.querySelector('[name="delivery"]:checked').value;
+    const image = !$('image-row').hidden;
+    const linkKind = $('link').value;
+    const target = $('link-target')?.value;
+    const card = `<div class="app-card${pinned ? ' pinned' : ''}"><div class="tags">${r.tag(kind, pinned ? 'red' : '')}${pinned ? r.tag('Pinned', 'red', 'pin') : ''}</div>
+      <b>${title}</b><small>${kind} · 23 Nov 2026</small></div>`;
+    const older = a.announcements.filter((x) => x.status === 'sent' && x.number !== ann?.number).slice(0, 2)
+      .map((x) => `<div class="app-card"><b>${r.esc(x.title)}</b><small>${x.kind} · ${r.date(x.sent)}</small></div>`).join('');
+    $('pv-list').innerHTML = `${delivery.includes('Push') ? `<div class="push"><span class="logo">${ic('megaphone')}</span><span class="grow"><b>${title}</b><span>${text.slice(0, 80)}${text.length > 80 ? '…' : ''}</span></span><small>now</small></div>` : ''}
+      <h4>Announcements</h4>${card}<span class="phone-label">Earlier</span>${older}`;
+    $('pv-detail').innerHTML = `<span class="phone-label">${ic('arrow-left')} Announcements</span>
+      <div class="app-card">${image ? `<div class="app-img">${ic('image')}</div>` : ''}<div class="tags">${r.tag(kind, pinned ? 'red' : '')}</div>
+        <b style="font-size:16px">${title}</b><small>23 Nov 2026</small><p>${text || '<span class="faint">Text</span>'}</p></div>
+      ${linkKind !== 'None' && target ? `<span class="btn btn-secondary btn-sm">${linkKind === 'An external address' ? 'Open link' : r.esc(target)}</span>` : ''}`;
+    $('title-count').textContent = `${$('title').value.length} / 80`;
+    $('text-count').textContent = `${$('text').value.length.toLocaleString('en-IN')} / 1,000`;
+    $('schedule-fields').hidden = document.querySelector('[name="when"]:checked').value !== 'later';
+    $('pinned-hint').textContent = pinned ? '1 other announcement is pinned. Up to 3 show at the top.' : 'Pinned shows in red above everything else. Up to 3 at a time.';
+    drawAudience();
+    if (!sent) { const send = $('send'); if (send) send.textContent = primaryLabel(); validate(); }
+  };
+  function bindPreview() { document.querySelectorAll('#form input, #form select, #form textarea').forEach((el) => { el.oninput = preview; el.onchange = preview; }); }
+
+  $('title').addEventListener('blur', () => {
+    const bad = $('title').value.trim().length < 5;
+    $('title-error').hidden = !bad;
+    $('title').setAttribute('aria-invalid', String(bad));
+  });
+  $('link').addEventListener('change', drawLink);
+  $('image-drop').addEventListener('click', () => { if (sent) return; $('image-drop').hidden = true; $('image-row').hidden = false; preview(); });
+  $('image-remove').addEventListener('click', () => { $('image-drop').hidden = false; $('image-row').hidden = true; preview(); });
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-set-now]')) { document.querySelector('[name="when"][value="now"]').checked = true; preview(); }
+    const send = event.target.closest('#send');
+    if (send) window.setTimeout(() => ZXA.ui.toast(send.textContent.trim() === 'Send now' ? 'Sending to 3 people' : 'Scheduled for Tue 1 Dec, 10:00'), 900);
+  });
+
+  ZXA.annPreview = preview;
+  drawLink();
+  drawActions();
+  preview();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* demo states that set the form: Past (EC-A65), Zero audience, Sending and Sent lock the form */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  const state = button.dataset.protoState;
+  const $ = (id) => document.getElementById(id);
+  if (state === 'past') { document.querySelector('[name="when"][value="later"]').checked = true; $('sch-date').value = '2026-11-22'; $('sch-time').value = '18:00'; }
+  if (state === 'ready') { $('aud-type').value = 'All customers'; document.querySelector('[name="when"][value="now"]').checked = true; }
+  if (state === 'zero') { $('aud-type').value = 'Custom list'; }
+  if (state === 'pinned') $('pinned').checked = true;
+  $('form').disabled = ['sending', 'sent'].includes(state) || !$('readonly-banner').hidden;
+  ZXA.annPreview();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1320 Delivery log</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1320">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Delivery log</h1><p>Every push, email and SMS · kept for 90 days · updated 12:00 PM</p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="Log refreshed">Refresh</button>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="kpis" style="margin-bottom:16px" data-when="ready no-results">
+      <div class="card kpi"><span class="label">Sent in 7 days</span><span class="value">18</span><span class="foot">push, email and SMS</span></div>
+      <div class="card kpi"><span class="label">Delivered</span><span class="value">73%</span><span class="foot">of push and email</span></div>
+      <div class="card kpi alert"><span class="label">Failed</span><span class="value">2</span><span class="foot">push, invalid token</span></div>
+      <div class="card kpi"><span class="label">Bounced</span><span class="value">1</span><span class="foot">email, mailbox full</span></div>
+    </section>
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="problems">Failed or bounced <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="queued">Queued <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="push">Push <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="email">Email <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="sms">SMS <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#log"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Recipient, event or record number" aria-label="Search the log"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge" id="filter-badge" hidden>1</span></button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="applied-row" id="applied" data-when="ready no-results"></div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="log">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Time</th><th class="sortable">Recipient</th><th class="sortable">Channel</th><th class="sortable">Event</th>
+            <th class="sortable">Status</th><th>Error</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-send-horizontal"/></svg></span>
+        <h3>Nothing sent yet</h3><p>Notifications sent in the last 90 days appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="kpis" style="margin-bottom:16px"></section>
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Time</th><th>Recipient</th><th>Channel</th><th>Event</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="log" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-result">Resend</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-record" href="#D403">Open record</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" id="quick-resend" data-close data-toast="Queued to resend">Resend</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Queued</button><button class="chip" type="button" aria-pressed="false">Sent</button>
+        <button class="chip" type="button" aria-pressed="false">Delivered</button><button class="chip" type="button" aria-pressed="false">Failed</button>
+        <button class="chip" type="button" aria-pressed="false">Bounced</button></div></div>
+      <div class="field"><span class="label">Recipient</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Customers</button><button class="chip" type="button" aria-pressed="false">Engineers</button>
+        <button class="chip" type="button" aria-pressed="false">Admin</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-11-16" min="2026-08-25"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <span class="hint">Entries older than 90 days (before 25 Aug) are deleted.</span>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="br-title">Some could not be resent</h2><p>Delivered messages are not sent twice. Failed and bounced ones are queued again.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="log"> Channel</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="log"> Error</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Queued to resend"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Resend</button>
+  <button type="button" data-toast="Payload copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy details</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1001-notifications.html">
+  <div><h3>What it is</h3><p>Every push, email and SMS sent in the last 90 days with its result. Open with <code>?ref=ANN-2026-001</code> to see one announcement.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use the views for failures.</li><li>Row click shows details and the error; resend one or many.</li><li>Export to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>Fix the person's contact in Customer detail (D202); change text in Templates (D1310).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Push with an invalid token is Failed; email goes as backup (EC-A26).</li><li>Bounced email flags the person card (EC-A27).</li><li>No email on file: falls back to SMS (EC-A61).</li><li>Retention 90 days (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const list = [...a.deliveries].sort((x, y) => y.when.localeCompare(x.when));
+  const ref = new URLSearchParams(location.search).get('ref');
+  /* recipient: a customer person, an engineer, the Admin or a raw number */
+  const who = (d) => {
+    const p = r.person(d.to);
+    if (p) return { name: p.name, kind: 'Customer', contact: d.channel === 'Email' ? p.email : p.mobile, initials: p.initials };
+    const e = r.engineer(d.to);
+    if (e) return { name: e.name, kind: 'Engineer', contact: e.phone, initials: e.initials };
+    if (d.to === 'admin') return { name: a.admin.name, kind: 'Admin', contact: a.admin.email, initials: a.admin.initials };
+    return { name: d.to, kind: 'Sign in', contact: 'Verification request', initials: '#' };
+  };
+  const CH_ICON = { Push: 'bell', Email: 'envelope-simple', SMS: 'chat-text' };
+  const recordPage = (refNo) => (refNo.startsWith('TKT') ? ['D403', `?t=${refNo}`] : refNo.startsWith('ANN') ? ['D1302', `?n=${refNo}`]
+    : refNo.startsWith('INV') ? ['D903', ''] : refNo.startsWith('AMC') ? ['D602', `?amc=${refNo}`] : null);
+
+  document.querySelector('#log tbody').innerHTML = list.map((d) => {
+    const w = who(d);
+    return `<tr data-drawer="quick" data-id="${d.id}" class="${d.status === 'failed' ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${d.id}"></label></td>
+      <td class="nowrap" data-sort="${d.when}">${r.dayDate(d.when)}<span class="sub">${r.time(d.when)}</span></td>
+      <td><span class="who"><span class="avatar sm">${w.initials}</span><span><b class="clip">${w.name}</b><span class="sub">${w.kind}</span></span></span></td>
+      <td class="nowrap">${r.icon(CH_ICON[d.channel])} ${d.channel}</td>
+      <td><span class="clip">${d.event}</span>${d.ref ? `<span class="sub mono">${d.ref}</span>` : ''}</td>
+      <td>${r.tag(...a.deliveryStatus[d.status])}</td>
+      <td>${d.error ? `<span class="clip red-text">${d.error}</span>${d.note ? `<span class="sub">${d.note}</span>` : ''}` : d.note ? `<span class="clip muted">${d.note}</span>` : '<span class="faint">–</span>'}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, problems: (d) => ['failed', 'bounced'].includes(d.status), queued: (d) => d.status === 'queued',
+    push: (d) => d.channel === 'Push', email: (d) => d.channel === 'Email', sms: (d) => d.channel === 'SMS' };
+  const byRef = (d) => !ref || d.ref === ref;
+  const find = (id) => list.find((d) => d.id === id);
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#log tbody tr')];
+    rows.forEach((row) => { const d = find(row.dataset.id); row.hidden = !(VIEWS[key](d) && byRef(d)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter((d) => VIEWS[tab.dataset.view](d) && byRef(d)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  if (ref) {
+    document.getElementById('applied').innerHTML = `<span class="chip applied" id="ref-chip">Record: <b>${r.esc(ref)}</b>${r.icon('x', 'x')}</span>`;
+    document.getElementById('filter-badge').hidden = false;
+    document.getElementById('ref-chip').addEventListener('click', () => { window.location.search = ''; });
+  }
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+  document.querySelector('[data-when="loading"] .kpis').innerHTML = Array.from({ length: 4 },
+    () => '<div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span></div>').join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const d = find(event.detail.dataset.id);
+    const w = who(d);
+    const page = d.ref ? recordPage(d.ref) : null;
+    document.getElementById('quick-title').textContent = d.id;
+    document.getElementById('quick-sub').textContent = `${d.channel} · ${r.dayDate(d.when)}, ${r.time(d.when)}`;
+    const open = document.getElementById('quick-record');
+    open.hidden = !page;
+    if (page) open.href = ZXA.isBuilt(page[0]) ? ZXA.href(...page) : `${ZXA.root}index.html#${page[0]}`;
+    document.getElementById('quick-resend').hidden = !['failed', 'bounced'].includes(d.status);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(...a.deliveryStatus[d.status])}${r.tag(d.channel, 'outline')}</div>
+      ${d.error ? `<div class="banner red">${r.icon('warning-circle')}<span class="grow"><b>${d.error}.</b> ${d.note || ''}</span></div>` : d.note ? `<div class="banner">${r.icon('info')}<span class="grow">${d.note}</span></div>` : ''}
+      <dl class="dl">
+        <dt>Recipient</dt><dd>${w.name}<br><span class="muted">${w.kind} · ${w.contact || 'no contact'}</span></dd>
+        <dt>Event</dt><dd>${d.event}</dd>
+        ${d.ref ? `<dt>Record</dt><dd class="mono">${d.ref}</dd>` : ''}
+        <dt>Queued</dt><dd>${r.time(d.when)}</dd>
+        <dt>${d.status === 'delivered' ? 'Delivered' : 'Last try'}</dt><dd>${d.status === 'queued' ? 'Not yet' : r.time(d.when)}</dd>
+        <dt>Provider id</dt><dd class="mono">${d.channel === 'Push' ? 'fcm' : d.channel === 'Email' ? 'ses' : 'msg91'}-${d.id.slice(4)}</dd>
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

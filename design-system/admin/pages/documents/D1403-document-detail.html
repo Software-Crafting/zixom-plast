@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1403 Document detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1403" data-nav="D1401">
+<main class="content">
+  <div data-when="ready archived">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1401">Documents</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="title" style="font-family:var(--font-display); font-weight:400"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="banner grey center" data-when="archived" style="margin-bottom:16px"><svg class="ic"><use href="#ph-archive"/></svg>
+      <span class="grow"><b>Archived.</b> Customers no longer see it in the app. Read only.</span></div>
+    <div id="edge" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Document sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-preview">Preview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-versions">Versions <span class="n" id="n-versions"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-access">Who can see it</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-downloads">Downloads</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-preview" role="tabpanel"></div>
+          <div id="tab-versions" role="tabpanel" hidden></div>
+          <div id="tab-access" role="tabpanel" hidden></div>
+          <div id="tab-downloads" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block" style="height:360px"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div></div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D1401">Go to documents</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ar-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ar-title"></h2><p id="ar-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep it</button><button class="btn btn-danger" type="button" data-close data-toast="Document archived. Removed from the app">Archive</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="share" hidden>
+  <div class="modal" role="dialog" aria-labelledby="sh-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-link"/></svg></span>
+      <div class="grow"><h2 id="sh-title">Share link</h2><p>Anyone with the link can download this version.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="sh-valid">Valid for</label><select class="select" id="sh-valid"><option>24 hours</option><option selected>7 days</option><option>30 days</option></select></div>
+      <div class="input-wrap"><input class="input mono" readonly value="https://files.zixom.in/s/8Kq2-Vx7D" aria-label="Link"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Close</button><button class="btn btn-primary" type="button" data-close data-toast="Link copied, valid 7 days">Copy link</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Customer view opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview as customer</button>
+  <button type="button" data-toast="Hidden from customers"><svg class="ic"><use href="#ph-eye-slash"/></svg>Hide from customers</button>
+  <hr><button class="danger" type="button" data-open="archive"><svg class="ic"><use href="#ph-archive"/></svg>Archive</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found archived error" data-mobile="../../../screens/customer/C902-document-viewer.html">
+  <div><h3>What it is</h3><p>One library document. Opens with <code>?d=afm760-manual</code>; try <code>?d=afm1000-wiring</code> or <code>?d=bsm300-manual-hi</code> (scanning).</p></div>
+  <div><h3>What you can do</h3><ul><li>Preview, download, replace with a new version, share a link.</li><li>See versions, who can see it and downloads.</li><li>Archive from the more menu.</li></ul></div>
+  <div><h3>What happens next</h3><p>Replace opens Upload (D1402); Archive returns to Documents (D1401).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Archived documents disappear from the app (state Archived).</li><li>Old versions stay; customers get the newest (C1702).</li><li>Still scanning: hidden from the app until clean.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/documents.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const d = ZX.data;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const id = new URLSearchParams(location.search).get('d') || 'afm760-manual';
+  const x = ZXA.data.documents.find((doc) => doc.id === id);
+  if (!x) { document.body.dataset.state = 'not-found'; ZXA.initialState = 'not-found'; return; }
+  if (x.status === 'archived') ZXA.initialState = 'archived';
+  const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
+  const [kind, value] = x.applies;
+  const machines = kind === 'all' ? r.machines : kind === 'model' ? r.machines.filter((m) => m.model.startsWith(value))
+    : kind === 'machine' ? r.machines.filter((m) => m.serial === value) : r.machines.filter((m) => m.company === value);
+  const companies = kind === 'all' || kind === 'company' ? d.companies.filter((c) => kind === 'all' || c.id === value) : d.companies.filter((c) => machines.some((m) => m.company === c.id));
+  const appliesLabel = { all: 'All customers', model: `Model ${value}`, machine: value, company: r.company(value)?.name }[kind];
+
+  document.title = `Zixom Admin - ${x.title}`;
+  $('crumb').textContent = x.title;
+  $('title').textContent = x.title;
+  $('chips').innerHTML = `${r.tag(x.type, 'outline')}${x.status === 'scanning' ? r.tag('Scanning', 'amber', 'hourglass') : x.status === 'archived' ? r.tag('Archived')
+    : x.visible ? r.tag('Visible to customers', 'green') : r.tag('Admin only')}<span class="tag outline mono">v${x.version}</span>`;
+  $('meta').innerHTML = `<span>${ic('file-pdf')}${x.file} · ${size(x.mb)}</span><span>${ic('calendar-blank')}Uploaded ${r.date(x.date)} by Rajesh Goyal</span><span>${ic('download-simple')}${x.downloads} downloads</span>`;
+  $('actions').innerHTML = x.status === 'archived'
+    ? '<button class="btn btn-primary" type="button" data-toast="Restored. Shows in the app again">Restore</button>'
+    : `<button class="btn btn-secondary" type="button" data-open="share">${ic('link')}Share link</button>
+       <a class="btn btn-secondary" href="${ZXA.href('D1402', `?replace=${x.id}`)}">${ic('upload-simple')}Replace</a>
+       <button class="btn btn-primary" type="button" data-toast="Download started">${ic('download-simple')}Download</button>
+       <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  $('ar-title').textContent = `Archive ${x.title}?`;
+  $('ar-text').textContent = `It disappears from the app for ${companies.map((c) => c.name).join(' and ') || 'all customers'}. You can restore it later.`;
+  if (x.status === 'scanning') $('edge').innerHTML = `<div class="banner amber center">${ic('hourglass')}<span class="grow"><b>Scanning for viruses.</b> Not shown in the app until the scan is clean.</span></div>`;
+
+  $('tab-preview').innerHTML = `<div class="gallery" style="grid-template-columns:1fr"><div class="ph" style="aspect-ratio:4 / 3">${ic('file-pdf')}<small>${x.file}, page 1 of ${Math.max(1, Math.round(x.mb * 4))}</small></div></div>`;
+  $('n-versions').textContent = x.versions.length;
+  $('tab-versions').innerHTML = `<table class="table compact"><thead><tr><th>Version</th><th>Uploaded</th><th class="num">Size</th><th>What changed</th><th class="actions"></th></tr></thead><tbody>
+    ${x.versions.map(([v, date, mb, note], i) => `<tr><td><span class="mono">v${v}</span> ${i === 0 ? r.tag('Current', 'green') : ''}</td><td class="nowrap">${r.date(date)}</td><td class="num">${size(mb)}</td><td>${note}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="Download v${v}" data-toast="Download started">${ic('download-simple')}</button></td></tr>`).join('')}</tbody></table>`;
+  $('tab-access').innerHTML = `<div class="stack"><dl class="dl"><dt>Applies to</dt><dd>${appliesLabel}</dd><dt>Visible to customers</dt><dd>${x.visible ? 'Yes' : 'No, Admin only'}</dd>
+      <dt>Engineers</dt><dd>Yes, on the machine in the engineer app (E304)</dd><dt>Language</dt><dd>${x.language}</dd></dl>
+    <table class="table compact"><thead><tr><th>Machine</th><th>Company and site</th></tr></thead><tbody>
+      ${machines.map((m) => `<tr data-href="D302"><td><span class="mono">${m.serial}</span><span class="sub">${m.nickname || m.model}</span></td><td>${r.company(m.company).name}<span class="sub">${r.site(m.company, m.site).name}</span></td></tr>`).join('')
+        || '<tr><td colspan="2" class="muted">No machines</td></tr>'}</tbody></table></div>`;
+  const who = [['Rakesh Mehta', 'Shree Packaging', '2026-11-22T16:10', 'App'], ['Sandeep Yadav', 'Engineer', '2026-11-21T09:40', 'Engineer app'],
+    ['Pooja Shah', 'Shree Packaging', '2026-11-20T18:02', 'App'], ['Imran Qureshi', 'Nova Cups', '2026-11-12T11:30', 'Share link']].slice(0, Math.min(4, x.downloads));
+  $('tab-downloads').innerHTML = who.length ? `<table class="table compact"><thead><tr><th>Who</th><th>From</th><th>When</th></tr></thead><tbody>
+    ${who.map(([n, c, w, from]) => `<tr><td>${n}<span class="sub">${c}</span></td><td>${from}</td><td class="nowrap">${r.dayDate(w)}, ${r.time(w)}</td></tr>`).join('')}</tbody></table>
+    <p class="muted" style="margin-top:10px; font-size:13px">${x.downloads} downloads in total, latest shown.</p>`
+    : `<div class="state"><span class="disc">${ic('download-simple')}</span><h3>No downloads yet</h3><p>Downloads from the app and share links appear here.</p></div>`;
+  $('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${x.versions.map(([v, date]) => `<tr><td class="nowrap">${r.date(date)}</td><td>Rajesh Goyal</td><td>Uploaded v${v}</td></tr>`).join('')}
+    ${x.archived ? `<tr><td class="nowrap">${r.date(x.archived)}</td><td>Rajesh Goyal</td><td>Archived</td></tr>` : ''}</tbody></table>`;
+
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">File</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Type</dt><dd>${x.type}</dd><dt>Size</dt><dd>${size(x.mb)}</dd><dt>Language</dt><dd>${x.language}</dd>
+        <dt>Version</dt><dd class="mono">v${x.version}</dd><dt>Scan</dt><dd>${x.status === 'scanning' ? '<span class="amber-text strong">In progress</span>' : '<span class="green-text strong">Clean</span>'}</dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Shown to</h3></div>
+      <ul class="mini">${x.visible ? companies.map((c) => `<li data-href="D202"><span class="ic-disc">${ic('buildings')}</span><span class="grow"><b>${c.name}</b>
+        <small>${((n) => `${n} machine${n === 1 ? '' : 's'}`)(machines.filter((m) => m.company === c.id).length)} · ${c.code}</small></span></li>`).join('') || '<li><span class="muted">Nobody yet</span></li>'
+        : `<li><span class="ic-disc">${ic('lock-simple')}</span><span class="grow"><b>Admin only</b><small>Hidden from the app</small></span></li>`}</ul></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Downloads</h3></div>
+      <div class="card-body"><p class="strong" style="font-size:24px">${x.downloads}</p><p class="muted" style="font-size:13px">${x.downloads ? 'Latest Sun 22 Nov' : 'None yet'}</p></div></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* Archived state: read only, actions off except Restore */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  document.querySelectorAll('#actions .btn-secondary, #actions .icon-btn').forEach((b) => b.toggleAttribute('aria-disabled', button.dataset.protoState === 'archived'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1310 Notification templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1310">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Notification templates</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D1325">Rules and timing</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="customer">To customers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="engineer">To engineers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="critical">Critical <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="off">Disabled <span class="n"></span></button>
+      </div>
+      <div class="toolbar">
+        <label class="search" data-filter="#templates"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Event, title or text" aria-label="Search templates"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="templates">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Event</th><th class="sortable">To</th><th>Channels</th><th>Opens in the app</th><th>Timing</th><th>Languages</th><th>Active</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Event</th><th>To</th><th>Channels</th><th>Timing</th><th>Active</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="templates" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Tests sent to admin@zixom.in and your phone">Send test</button>
+    <button class="btn" type="button" data-open="bulk-result">Disable</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-secondary" type="button" data-toast="Test sent to admin@zixom.in and your phone">Send test</button><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-open" href="#D1311">Edit template</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Channel</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Push</button><button class="chip" type="button" aria-pressed="false">Email</button>
+        <button class="chip" type="button" aria-pressed="false">SMS</button></div></div>
+      <div class="field"><span class="label">To</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Customer</button><button class="chip" type="button" aria-pressed="false">Engineer</button></div></div>
+      <label class="check"><input type="checkbox"> Changed from the default only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="br-title">Some templates stayed on</h2><p>Sign in code and assignment templates are critical and cannot be disabled. The others are off.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="templates"> Opens in the app</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="templates"> Timing</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="templates"> Languages</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error" data-mobile="../../../screens/customer/C1001-notifications.html">
+  <div><h3>What it is</h3><p>Every push, email and SMS the app sends, one per event in spec section 12.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by channel or audience.</li><li>Row click shows the text; Edit opens the editor.</li><li>Switch a template off, send a test to yourself.</li></ul></div>
+  <div><h3>What happens next</h3><p>Template editor (D1311), who gets what and when (D1325), delivery results (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Critical templates (sign in code, assignment) cannot be disabled; the switch is locked.</li><li>Bulk disable with critical ones selected shows the result dialog (EC-A64).</li><li>Every notification opens the exact screen it is about.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const list = a.templates;
+  const vars = (t) => [...new Set(`${t.title} ${t.body}`.match(/\{\w+\}/g) || [])];
+  const isOn = (t) => !a.templatesOff.includes(t.key);
+  const find = (key) => list.find((t) => t.key === key);
+  document.getElementById('head-sub').textContent = `${list.length} events · ${list.filter(isOn).length} active · English`;
+
+  document.querySelector('#templates tbody').innerHTML = list.map((t) => `<tr data-drawer="quick" data-key="${t.key}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${t.event}"></label></td>
+    <td><a class="strong" href="${ZXA.href('D1311', `?e=${t.key}`)}">${t.event}</a><span class="sub">${r.esc(t.title)}</span></td>
+    <td class="nowrap">${t.to}</td>
+    <td><span class="tags" style="flex-wrap:nowrap">${t.channels.map((c) => r.tag(c, 'outline')).join('')}</span></td>
+    <td class="nowrap mono" style="font-size:12px">${t.opens}</td>
+    <td><span class="clip">${t.timing}</span></td>
+    <td>English</td>
+    <td>${t.critical ? `<label class="switch" data-tip="Critical, cannot be disabled" data-critical><input type="checkbox" checked disabled aria-label="${t.event} active"><span></span>${r.icon('lock-simple')}</label>`
+      : `<label class="switch"><input type="checkbox" ${isOn(t) ? 'checked' : ''} aria-label="${t.event} active" data-toggle><span></span></label>`}</td>
+  </tr>`).join('');
+
+  const VIEWS = { all: () => true, customer: (t) => /Customer/.test(t.to), engineer: (t) => /Engineer|engineers/.test(t.to),
+    critical: (t) => t.critical, off: (t) => !isOn(t) };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#templates tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](find(row.dataset.key)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const t = find(event.detail.dataset.key);
+    document.getElementById('quick-title').textContent = t.event;
+    document.getElementById('quick-sub').textContent = `To ${t.to} · opens ${t.opens}`;
+    document.getElementById('quick-open').href = ZXA.href('D1311', `?e=${t.key}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${isOn(t) ? r.tag('Active', 'green') : r.tag('Disabled')}${t.critical ? r.tag('Critical', 'red', 'lock-simple') : ''}${t.urgent ? r.tag('Ignores quiet hours', 'amber') : ''}</div>
+      <div class="card pad"><b class="strong">${r.esc(t.title)}</b><p style="margin-top:4px">${r.esc(t.body)}</p></div>
+      <dl class="dl"><dt>Channels</dt><dd>${t.channels.join(', ')}</dd><dt>Timing</dt><dd>${t.timing}</dd>
+        <dt>Variables</dt><dd class="mono" style="font-size:12px">${vars(t).join(' ')}</dd><dt>Languages</dt><dd>English</dd>
+        <dt>Last changed</dt><dd>Default text</dd></dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-critical]')) { event.preventDefault(); ZXA.ui.toast('Sign in and assignment templates cannot be disabled', 'info'); }
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+  document.addEventListener('change', (event) => {
+    const toggle = event.target.closest('[data-toggle]');
+    if (toggle) ZXA.ui.toast(toggle.checked ? 'Template turned on' : 'Template turned off. The app will not send it');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

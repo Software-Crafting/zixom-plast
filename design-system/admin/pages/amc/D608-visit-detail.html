@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D608 Visit detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D608" data-nav="D601">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D607">Visit planner</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+    <div class="detail">
+      <div class="stack">
+        <section class="card"><div class="card-head"><h2 class="grow">Visit</h2></div><div class="card-body"><dl class="dl" id="facts"></dl></div></section>
+        <section class="card"><div class="card-head"><div class="grow"><h2>All visits on this contract</h2><p id="all-sub"></p></div></div>
+          <div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Visit</th><th>Due</th><th>Status</th><th>Engineer</th></tr></thead><tbody id="others"></tbody></table></div></section>
+      </div>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D607">Back to visit planner</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer asked to skip this visit</option><option>Machine not running this season</option><option>Planned by mistake</option><option>Other</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep visit</button><button class="btn btn-danger" type="button" data-close data-toast="Visit cancelled. Customer told">Cancel visit</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error" data-mobile="../../../screens/customer/C406-amc-visits.html">
+  <div><h3>What it is</h3><p>One planned AMC visit. <code>?amc=AMC-2026-0011&amp;n=4</code>; n=3 shows a done visit with its ticket.</p></div>
+  <div><h3>What you can do</h3><ul><li>Create the Preventive maintenance ticket.</li><li>Cancel the visit.</li><li>Open the contract, ticket or report.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket (D403) and its report; the contract (D602).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A visit with a linked ticket follows the ticket status.</li><li>Due in 7 days with no engineer: amber banner.</li><li>Visits of a suspended AMC are on hold.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const ic = r.icon;
+  const params = new URLSearchParams(location.search);
+  const v = A.visit(params.get('amc') || 'AMC-2026-0011', params.get('n') || 4);
+  if (!v) { ZXA.initialState = 'not-found'; return; }
+  const c = A.contract(v.amc);
+  const co = r.company(c.company);
+  const s = r.site(c.company, c.site);
+  const m = r.machine(c.machines[0]);
+  const t = v.ticket ? r.ticket(v.ticket) : null;
+  const e = v.engineer ? r.engineer(v.engineer) : null;
+  const left = r.daysFromToday(v.due);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const title = `Visit ${v.n} of ${c.visitsIncluded}`;
+
+  document.title = `Zixom Admin - ${c.number} ${title}`;
+  document.getElementById('crumb').textContent = `${c.number}, ${title.toLowerCase()}`;
+  document.getElementById('number').textContent = c.number;
+  /* with a linked ticket the visit follows the ticket status */
+  document.getElementById('chips').innerHTML = `<span class="tag outline">${title}</span>${t ? r.ticketTag(t.status) : A.visitTag(v.status)}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('buildings')}${co.name}, ${s.name}</span><span>${ic('calendar-blank')}Due ${r.dayDate(v.due)}${v.slot ? `, ${v.slot}` : ''}</span>`;
+
+  const canAct = v.status === 'planned';
+  document.getElementById('actions').innerHTML = canAct
+    ? `<button class="btn btn-secondary" type="button" data-open="cancel">Cancel visit</button><a class="btn btn-primary" href="${link('D607', `?amc=${c.number}`)}">Create ticket</a>`
+    : t ? `<a class="btn btn-primary" href="${link('D403', `?t=${t.number}`)}">Open ticket</a>` : '';
+  document.getElementById('cancel-title').textContent = `Cancel ${title.toLowerCase()} on ${c.number}?`;
+  document.getElementById('cancel-text').textContent = `${co.name} will be told. The visit is not added back to the contract.`;
+
+  const banners = [];
+  if (canAct && !e && left >= 0 && left <= 7) banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>Due in ${left} days with no engineer.</b> Create the ticket to assign one.</span></div>`);
+  if (v.request) banners.push(`<div class="banner">${ic('calendar-check')}<span class="grow"><b>The customer asked to move this visit.</b> Decide in Reschedule requests.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D612')}">Open request</a></span></div>`);
+  if (v.status === 'on-hold') banners.push(`<div class="banner red">${ic('pause')}<span class="grow"><b>On hold.</b> ${c.number} is suspended. The visit resumes when it is reactivated.</span></div>`);
+  document.getElementById('edge-banners').innerHTML = banners.join('');
+
+  document.getElementById('facts').innerHTML = `
+    <dt>Contract</dt><dd><a href="${link('D602', `?amc=${c.number}`)}" class="mono">${c.number}</a> · ${c.plan}</dd>
+    <dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd>
+    <dt>Due date</dt><dd>${r.date(v.due)}${v.moved ? ` <span class="muted">· moved to ${r.date(v.moved)}</span>` : ''}</dd>
+    <dt>Window</dt><dd>${v.slot || (t?.window ? t.window.slot : '<span class="faint">Not set</span>')}</dd>
+    <dt>Engineer</dt><dd>${e ? e.name : '<span class="faint">Not assigned</span>'}</dd>
+    <dt>Ticket</dt><dd>${t ? `<a class="mono" href="${link('D403', `?t=${t.number}`)}">${t.number}</a> · ${t.type}` : '<span class="faint">Not created yet</span>'}</dd>
+    <dt>Report</dt><dd>${v.report ? `<span class="mono">${v.report}</span> · approved and sent` : '<span class="faint">After the visit</span>'}</dd>
+    ${v.why ? `<dt>Note</dt><dd>${v.why}</dd>` : ''}
+    <dt>Reminders</dt><dd>7 days and 1 day before, to the customer and the engineer</dd>`;
+
+  const all = A.visitsOf(c.number);
+  document.getElementById('all-sub').textContent = `${c.visitsUsed} of ${c.visitsIncluded} used`;
+  document.getElementById('others').innerHTML = all.map((x) => `<tr data-href="D608?amc=${c.number}&n=${x.n}"${x.n === v.n ? ' aria-selected="true"' : ''}>
+    <td>Visit ${x.n}</td><td class="nowrap">${r.dayDate(x.due)}</td><td>${A.visitTag(x.status)}</td><td>${x.engineer ? r.engineer(x.engineer).name : '<span class="faint">Not assigned</span>'}</td></tr>`).join('');
+
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Site</h3><a class="card-link" href="${link('D202', `?c=${co.id}`)}">Open customer</a></div>
+      <div class="card-body"><dl class="dl"><dt>Address</dt><dd>${s.address}, ${s.pincode}</dd><dt>Contact</dt><dd>${s.contact.name}<br><a href="tel:${s.contact.phone.replace(/\s/g, '')}">${s.contact.phone}</a></dd>
+        <dt>Access</dt><dd>${s.access || '<span class="faint">None</span>'}</dd></dl></div></section>
+    ${e ? `<section class="card side-card"><div class="card-head"><h3 class="grow">Engineer</h3><a class="card-link" href="${link('D702', `?e=${e.id}`)}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${e.region}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${e.phone.replace(/\s/g, '')}">${ic('phone')}Call</a></div></div></section>` : ''}`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

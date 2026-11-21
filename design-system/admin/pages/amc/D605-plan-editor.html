@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D605 Plan editor</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-amc.css">
+</head>
+<body class="adm" data-page="D605" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><a href="#D604">Plans</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+      <div class="record-head"><h1 id="title" style="font-family:var(--font-display); font-weight:400"></h1><span class="tags" id="chips"></span></div>
+    </div>
+  </div>
+
+  <div data-when="ready in-use">
+    <div class="banner amber" data-when="in-use" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+      <span class="grow"><b id="in-use-text"></b> Changes apply to new contracts and renewals. Live contracts keep their terms.</span></div>
+
+    <div class="grid side-right">
+      <div class="stack">
+        <section class="card"><div class="card-body" style="padding-top:20px">
+          <div class="form-section">
+            <h3>Plan</h3><p>Name and description as the customer sees them.</p>
+            <div class="form-grid">
+              <div class="field"><label for="name">Name</label><input class="input" id="name" maxlength="40"></div>
+              <div class="field"><label for="visits">Preventive visits a year</label><input class="input" id="visits" type="number" min="1" max="12"></div>
+              <div class="field full"><label for="summary">Short description <span class="count" id="summary-count"></span></label><input class="input" id="summary" maxlength="80"></div>
+              <div class="field"><label for="response">Breakdown response time</label><select class="select" id="response"><option>8 hours</option><option>24 hours</option><option>48 hours</option></select></div>
+              <div class="field"><label for="discount">Discount on parts</label><div class="input-wrap"><input class="input" id="discount" type="number" min="0" max="50" style="padding-left:12px"><span class="suffix muted" style="right:14px">%</span></div></div>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3>Included and not included</h3><p>One line each. Shown on the plan card in the app.</p>
+            <div class="form-grid">
+              <div class="field"><span class="label">Included</span><div class="stack-sm" id="includes"></div>
+                <button class="btn btn-sm btn-ghost" type="button" data-add="includes" style="align-self:flex-start"><svg class="ic"><use href="#ph-plus"/></svg>Add line</button></div>
+              <div class="field"><span class="label">Not included</span><div class="stack-sm" id="excludes"></div>
+                <button class="btn btn-sm btn-ghost" type="button" data-add="excludes" style="align-self:flex-start"><svg class="ic"><use href="#ph-plus"/></svg>Add line</button></div>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3>Price by series and term</h3><p>Per machine, before GST. Leave blank when the plan is not offered for a series.</p>
+            <div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Series</th><th class="num">1 year</th><th class="num">2 years, 5% off</th><th class="num">3 years, 10% off</th></tr></thead>
+              <tbody id="prices"></tbody></table></div>
+          </div>
+          <div class="form-section">
+            <h3>Terms</h3>
+            <div class="field"><label for="terms" class="sr-only">Terms</label><textarea class="textarea" id="terms">Labour for included visits is free. Parts fitted on a visit are billed after it at the plan discount. Visits missed by the customer are not carried over. Renewal reminders go 60, 30 and 7 days before the end date.</textarea></div>
+          </div>
+        </div></section>
+        <div class="form-bar"><span class="grow autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 12:00</span>
+          <a class="btn btn-ghost" href="#D604">Cancel</a><button class="btn btn-secondary" type="button" data-busy data-toast="Draft saved">Save draft</button>
+          <button class="btn btn-primary" type="button" data-busy data-toast="Plan published. It shows in the app">Publish</button></div>
+      </div>
+
+      <aside class="card side-card amc-sticky">
+        <div class="card-head"><h3 class="grow">Preview as in the app</h3><span class="muted" style="font-size:12px">C403</span></div>
+        <div class="card-body"><div class="card amc-plan" style="background:var(--surface)"><div class="card-body" id="preview"></div></div></div>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:300px"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready in-use loading error" data-mobile="../../../screens/customer/C403-amc-plans.html">
+  <div><h3>What it is</h3><p>Edit one AMC plan. <code>?plan=Essential</code>, <code>?plan=new</code> for a blank plan.</p></div>
+  <div><h3>What you can do</h3><ul><li>Name, description, visits, response time, parts discount.</li><li>Lines included and not included.</li><li>Price by machine series and term; terms text.</li><li>Save draft or Publish.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Plans (D604). Published changes show in the app (C403) on next open.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The preview updates as you type.</li><li>A plan in use: changes apply to new contracts and renewals only (In use state).</li><li>App picks up the change within 15 minutes (EC-A62).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const ic = r.icon;
+  const { SERIES, TERM_DISCOUNT } = ZXA.data.amc;
+  const $ = (id) => document.getElementById(id);
+  const name = new URLSearchParams(location.search).get('plan') || 'Preventive Plus';
+  const blank = { name: '', status: 'draft', price: 0, visits: 4, response: '48 hours', discount: 5, summary: '', includes: [''], excludes: [''], prices: SERIES.map(() => null), inUse: 0 };
+  const p = name === 'new' ? blank : ZXA.amc.plan(name) || blank;
+  if (p.inUse) ZXA.initialState = 'in-use';
+  $('in-use-text').textContent = `${p.inUse || 'No'} contract${p.inUse === 1 ? ' uses' : 's use'} this plan.`;
+
+  $('title').textContent = p.name || 'New plan';
+  $('crumb').textContent = p.name || 'New plan';
+  $('chips').innerHTML = p.status === 'published' ? r.tag('Published', 'green') : r.tag('Draft', 'outline');
+  $('name').value = p.name;
+  $('visits').value = p.visits;
+  $('summary').value = p.summary;
+  $('response').value = p.response;
+  $('discount').value = p.discount;
+  const line = (v) => `<div class="row"><input class="input" value="${r.esc(v)}" aria-label="Line"><button class="icon-btn sm" type="button" aria-label="Remove line" data-remove>${ic('x')}</button></div>`;
+  $('includes').innerHTML = p.includes.map(line).join('');
+  $('excludes').innerHTML = p.excludes.map(line).join('');
+  const cell = (v) => `<td class="num"><div class="input-wrap prefix" style="max-width:150px; margin-left:auto"><b>₹</b><input class="input sm" value="${v ? v.toLocaleString('en-IN') : ''}" aria-label="Price"></div></td>`;
+  $('prices').innerHTML = SERIES.map((s, i) => { const v = p.prices[i]; return `<tr><td>${s}</td>${[1, 2, 3].map((y) => cell(v && v * (1 - TERM_DISCOUNT[y] / 100))).join('')}</tr>`; }).join('');
+
+  const preview = () => {
+    const lines = (id) => [...$(id).querySelectorAll('input')].map((x) => x.value).filter(Boolean);
+    /* the app shows the first series with a price (thermoforming for most plans) */
+    const price = [...$('prices').querySelectorAll('tr')].map((tr) => Number(tr.querySelector('input').value.replace(/,/g, ''))).find(Boolean) ?? Infinity;
+    $('summary-count').textContent = `${$('summary').value.length} / 80`;
+    $('preview').innerHTML = `<h2 style="font-size:18px">${r.esc($('name').value) || 'Plan name'}</h2>
+      <p class="amc-price">${Number.isFinite(price) ? r.money(price).replace('.00', '') : '₹0'} <small>per machine per year</small></p>
+      <div class="amc-facts"><div class="kv"><span>Visits a year</span><b>${r.esc($('visits').value)}</b></div><div class="kv"><span>Response</span><b>${$('response').value.replace('hours', 'h')}</b></div>
+        <div class="kv"><span>Parts</span><b>${r.esc($('discount').value)}% off</b></div></div>
+      <ul class="amc-list">${lines('includes').map((x) => `<li>${ic('check')}${r.esc(x)}</li>`).join('')}</ul>
+      <span class="btn btn-secondary btn-block" aria-hidden="true">Choose plan</span>`;
+  };
+  preview();
+  document.addEventListener('input', preview);
+  document.addEventListener('click', (e) => {
+    const add = e.target.closest('[data-add]');
+    if (add) { $(add.dataset.add).insertAdjacentHTML('beforeend', line('')); $(add.dataset.add).lastElementChild.querySelector('input').focus(); }
+    const rm = e.target.closest('[data-remove]');
+    if (rm) { rm.parentElement.remove(); preview(); }
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D612 AMC visit reschedule requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D612" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><a href="#D607">Visit planner</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reschedule requests</span></nav>
+      <h1>AMC visit reschedule requests</h1><p id="summary"></p>
+    </div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="pending">Waiting <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="decided">Decided <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#requests"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Request, contract or customer" aria-label="Search requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="requests">
+          <thead><tr><th class="sortable">Request</th><th class="sortable">Contract and machine</th><th class="sortable">Planned</th><th>Asked for</th><th>Reason</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-calendar-check"/></svg></span>
+        <h3>No reschedule requests</h3><p>Requests to move an AMC visit from the app appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Request</th><th>Contract</th><th>Planned</th><th>Asked for</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="approve" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ap-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ap-title">Approve with a date</h2><p id="ap-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">New date</span><div class="choices" id="ap-dates"></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="ap-slot">Window</label><select class="select" id="ap-slot"><option>9 AM to 12 PM</option><option>12 to 3 PM</option><option>3 to 6 PM</option></select></div>
+        <div class="field"><label for="ap-eng">Engineer</label><select class="select" id="ap-eng"><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      </div>
+      <div class="banner"><svg class="ic"><use href="#ph-bell"/></svg><span class="grow">Customer and engineer are notified. Visit reminders move with the date.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Visit moved. Customer notified">Approve</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="decline" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="de-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="de-title">Decline this request?</h2><p>The visit stays on its planned date. The customer sees your reason.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="de-reason">Reason</label><select class="select" id="de-reason"><option>No engineer free on those dates</option><option>Less than 4 hours before the window</option><option>Dates outside the contract</option><option>Other</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request declined. Customer notified">Decline</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Reason</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Production run</button><button class="chip" type="button" aria-pressed="false">Plant closed</button>
+        <button class="chip" type="button" aria-pressed="false">Contact not available</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C407-reschedule-amc-visit.html">
+  <div><h3>What it is</h3><p>Requests from the app to move a planned AMC visit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Approve with one of the asked dates or another date.</li><li>Decline with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>The visit moves in the planner (D607); the customer is notified either way.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Requests within 4 hours of the window are declined.</li><li>Reminders follow the new date: 7 days and 1 day before.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const { reschedules } = ZXA.data.amc;
+  const STATUS = { pending: ['Waiting', 'amber'], approved: ['Approved', 'green'], declined: ['Declined', ''] };
+  const waiting = reschedules.filter((x) => x.status === 'pending');
+  document.getElementById('summary').textContent = `${waiting.length} waiting · customers are notified of every decision`;
+
+  document.querySelector('#requests tbody').innerHTML = reschedules.map((x) => {
+    const c = A.contract(x.amc);
+    const m = r.machine(c.machines[0]);
+    return `<tr data-href="D608?amc=${x.amc}&n=${x.n}" data-status="${x.status}">
+      <td><span class="mono strong">${x.id}</span><span class="sub">${r.person(x.by).name} · ${r.ago(x.on)}</span></td>
+      <td><a class="rec" href="#D602?amc=${x.amc}">${x.amc}</a><span class="sub">Visit ${x.n} · ${m.nickname || m.model}</span></td>
+      <td class="nowrap" data-sort="${x.original}">${r.dayDate(x.original)}<span class="sub">${x.slot}</span></td>
+      <td>${x.requested.map((d) => r.dayDate(d)).join(', ')}${x.decided ? `<span class="sub">Moved to ${r.dayDate(x.decided)}</span>` : ''}</td>
+      <td><span class="clip">${x.reason}</span><span class="sub">${x.why || x.note}</span></td>
+      <td>${r.tag(...STATUS[x.status])}</td>
+      <td class="actions">${x.status === 'pending' ? `<span class="row" style="gap:6px"><button class="btn btn-sm btn-ghost" type="button" data-open="decline">Decline</button>
+        <button class="btn btn-sm btn-secondary" type="button" data-open="approve" data-req="${x.id}">Approve</button></span>` : ''}</td></tr>`;
+  }).join('');
+
+  const fill = (x) => {
+    document.getElementById('ap-sub').textContent = `${x.amc}, visit ${x.n} · planned ${r.dayDate(x.original)}`;
+    document.getElementById('ap-dates').innerHTML = [...x.requested, 'other'].map((d, i) => `<label class="choice"><input type="radio" name="d" class="sr-only"${i === 0 ? ' checked' : ''}>
+      <span>${d === 'other' ? '<b>Another date</b><small>Pick in the planner</small>' : `<b>${r.dayDate(d)}</b><small>${i === 0 ? 'First choice · Sandeep is free' : 'Asked by the customer'}</small>`}</span></label>`).join('');
+  };
+  if (waiting[0]) fill(waiting[0]);
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-req]');
+    if (b) fill(reschedules.find((x) => x.id === b.dataset.req));
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  const showView = (k) => {
+    const trs = [...document.querySelectorAll('#requests tbody tr')];
+    trs.forEach((tr) => { tr.hidden = k === 'pending' ? tr.dataset.status !== 'pending' : k === 'decided' ? tr.dataset.status === 'pending' : false; });
+    const n = trs.filter((tr) => !tr.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const k = tab.dataset.view;
+    tab.querySelector('.n').textContent = reschedules.filter((x) => (k === 'pending' ? x.status === 'pending' : k === 'decided' ? x.status !== 'pending' : true)).length;
+    tab.addEventListener('click', () => showView(k));
+  });
+  showView('pending');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D611 Not renewing</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D611" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><a href="#D609">Renewals</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Not renewing</span></nav>
+      <h1>Not renewing</h1><p>Customers who chose Do not renew in the app. Reasons feed the AMC report.</p>
+    </div>
+    <a class="btn btn-secondary" href="#D1501">AMC report</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <div class="grid side-right">
+      <section class="card list-card">
+        <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+          <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+          <button role="tab" aria-selected="false" data-view="done">Closed <span class="n"></span></button>
+          <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+        </div>
+        <div class="toolbar" data-when="ready no-results">
+          <label class="search" data-filter="#list"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+            <input type="search" placeholder="Contract, customer or reason" aria-label="Search"></label>
+          <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        </div>
+        <div class="table-wrap" data-when="ready no-results">
+          <table class="table" id="list">
+            <thead><tr><th class="sortable">Contract</th><th class="sortable">Customer and machine</th><th class="sortable">Reason</th><th class="sortable">Ended</th><th>Status</th><th class="actions"></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+            <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+            <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+        </div>
+        <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+        <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-smiley-sad"/></svg></span>
+          <h3>No one has said no yet</h3><p>Do not renew answers from the app appear here.</p></div>
+      </section>
+      <section class="card" data-when="ready no-results">
+        <div class="card-head"><div class="grow"><h2>Reasons this year</h2><p>From the app and Admin</p></div></div>
+        <ul class="mini" id="reasons"></ul>
+      </section>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="offer" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="offer-title">
+    <div class="drawer-head"><div class="grow"><h2 id="offer-title">Offer a discount</h2><p id="offer-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="of-plan">Plan</label><select class="select" id="of-plan"><option>Essential</option><option>Preventive Plus</option></select></div>
+        <div class="field"><label for="of-disc">Discount</label><div class="input-wrap"><input class="input" id="of-disc" type="number" value="10" style="padding-left:12px"><span class="suffix muted" style="right:14px">%</span></div></div>
+        <div class="field"><label for="of-valid">Valid until</label><input class="input" id="of-valid" type="date" value="2026-12-07"></div>
+        <div class="field"><span class="label">New price</span><b style="line-height:40px">₹21,600.00 <span class="muted" style="font-weight:400">before GST</span></b></div>
+        <div class="field full"><label for="of-note">Message</label><textarea class="textarea" id="of-note">We would like to keep looking after your machine. Here is 10% off the Essential plan if you renew by 7 Dec.</textarea></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Offer sent as a quotation">Send offer</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Reason</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Price is too high</button><button class="chip" type="button" aria-pressed="false">Machine sold or retired</button>
+        <button class="chip" type="button" aria-pressed="false">We did not use the visits</button><button class="chip" type="button" aria-pressed="false">Not happy with the service</button>
+        <button class="chip" type="button" aria-pressed="false">Moving to another provider</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C408-do-not-renew.html">
+  <div><h3>What it is</h3><p>Customers who said they will not renew, with their reason and comment.</p></div>
+  <div><h3>What you can do</h3><ul><li>Contact the customer.</li><li>Offer a discount (sent as a quotation).</li><li>Close the case.</li></ul></div>
+  <div><h3>What happens next</h3><p>A won back customer gets a new contract (D603). Reasons go to the AMC report (D1501).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reason and comment are optional in the app; blank shows as No comment.</li><li>A sold machine is closed with no follow up.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const ic = r.icon;
+  const { notRenewing } = ZXA.data.amc;
+  const STATUS = { open: ['Open', 'blue'], won: ['Won back', 'green'], closed: ['Closed', ''] };
+  const model = (x) => x.model || r.machine(x.machine).model;
+  const first = notRenewing.find((x) => x.status === 'open');
+  document.getElementById('offer-sub').textContent = first ? `${r.company(first.company).name} · ${model(first)}` : '';
+
+  document.querySelector('#list tbody').innerHTML = notRenewing.map((x) => {
+    const co = r.company(x.company);
+    return `<tr data-drawer="quick" data-amc="${x.amc}">
+      <td><span class="mono strong nowrap">${x.amc}</span><span class="sub">${x.plan}</span></td>
+      <td><b class="clip">${co.name}</b><span class="sub">${model(x)} · ${x.machine}</span></td>
+      <td><span class="clip">${x.reason}</span><span class="sub">${x.comment ? `“${x.comment}”` : 'No comment'}</span></td>
+      <td class="nowrap" data-sort="${x.ended}">${r.date(x.ended)}</td>
+      <td>${r.tag(...STATUS[x.status])}</td>
+      <td class="actions">${x.status === 'open' ? `<button class="btn btn-sm btn-secondary" type="button" data-open="offer">Offer a discount</button>` : ''}</td></tr>`;
+  }).join('');
+
+  const showView = (k) => {
+    const trs = [...document.querySelectorAll('#list tbody tr')];
+    trs.forEach((tr) => { const s = notRenewing.find((x) => x.amc === tr.dataset.amc).status; tr.hidden = k === 'open' ? s !== 'open' : k === 'done' ? s === 'open' : false; });
+    const n = trs.filter((tr) => !tr.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const k = tab.dataset.view;
+    tab.querySelector('.n').textContent = notRenewing.filter((x) => (k === 'open' ? x.status === 'open' : k === 'done' ? x.status !== 'open' : true)).length;
+    tab.addEventListener('click', () => showView(k));
+  });
+  showView('open');
+
+  /* reasons this year: the app answers plus older ones counted in the AMC report */
+  const REASONS = [['Price is too high', 4], ['Machine sold or retired', 3], ['We did not use the visits', 2], ['Not happy with the service', 1], ['Moving to another provider', 1], ['Other', 1]];
+  const max = REASONS[0][1];
+  document.getElementById('reasons').innerHTML = REASONS.map(([label, n]) => `<li><span class="grow"><b style="font-weight:500">${label}</b>
+    <span class="progress" style="margin-top:6px; display:block"><span style="width:${(n / max) * 100}%"></span></span></span><span class="end strong">${n}</span></li>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = notRenewing.find((y) => y.amc === event.detail.dataset.amc);
+    const co = r.company(x.company);
+    const p = r.person(x.by);
+    document.getElementById('quick-title').textContent = x.amc;
+    document.getElementById('quick-sub').textContent = `${x.plan} · ${co.name}`;
+    document.getElementById('offer-sub').textContent = `${co.name} · ${model(x)}`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${r.tag(...STATUS[x.status])}</div>
+      <dl class="dl"><dt>Reason</dt><dd>${x.reason}</dd><dt>Comment</dt><dd>${x.comment || '<span class="faint">No comment</span>'}</dd>
+        <dt>Said by</dt><dd>${p.name}, ${r.date(x.on)}</dd><dt>Machine</dt><dd>${model(x)}<br><span class="mono muted">${x.machine}</span></dd>
+        <dt>Contract ended</dt><dd>${r.date(x.ended)}</dd>${x.outcome ? `<dt>Outcome</dt><dd>${x.outcome}</dd>` : ''}</dl>`;
+    document.getElementById('quick-foot').innerHTML = x.status === 'open'
+      ? `<button class="btn btn-ghost" type="button" data-close data-toast="Case closed">Close</button><span class="grow"></span>
+         <a class="btn btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}Contact customer</a><button class="btn btn-primary" type="button" data-close data-open="offer">Offer a discount</button>`
+      : '<span class="grow"></span><button class="btn btn-secondary" type="button" data-close>Close</button>';
+  });
+  document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

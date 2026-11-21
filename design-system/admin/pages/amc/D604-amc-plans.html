@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D604 AMC plans</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-amc.css">
+</head>
+<body class="adm" data-page="D604" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Plans</span></nav>
+      <h1>AMC plans</h1><p>Published plans show in the app. Prices per machine per year, before GST.</p>
+    </div>
+    <a class="btn btn-primary" href="#D605?plan=new"><svg class="ic"><use href="#ph-plus"/></svg>Add plan</a>
+  </div>
+
+  <div data-when="ready">
+    <div class="amc-plans" id="plans"></div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-seal-check"/></svg></span>
+      <h3>No AMC plans yet</h3><p>Customers see Contact us for AMC in the app until a plan is published.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D605?plan=new">Add plan</a></div></div></div>
+  </div>
+
+  <div data-when="loading">
+    <div class="amc-plans">
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ar-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ar-title"></h2><p id="ar-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep plan</button><button class="btn btn-danger" type="button" data-close data-toast="Plan archived. Removed from the app">Archive plan</button></div>
+  </div>
+</div>
+<div class="overlay center" id="in-use" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="iu-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="iu-title">This plan is in use</h2><p id="iu-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Close</button><button class="btn btn-primary" type="button" data-close data-toast="Plan archived. Live contracts keep their terms">Archive anyway</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C403-amc-plans.html">
+  <div><h3>What it is</h3><p>The AMC plans Zixom sells, as cards.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a plan (D605).</li><li>Publish a draft so it shows in the app (C403).</li><li>Archive a plan.</li></ul></div>
+  <div><h3>What happens next</h3><p>Plan editor (D605). Published plans appear in Buy AMC in the app.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Plans in use cannot be deleted; archive keeps live contracts on their terms.</li><li>Price by machine series; a blank price means the plan is not offered for that series.</li><li>Prices follow the app and invoices (₹24,000 and ₹36,000), not the Q15 defaults.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const ic = r.icon;
+  const { plans } = ZXA.data.amc;
+  const q = (p) => `?plan=${encodeURIComponent(p.name)}`;
+  document.getElementById('plans').innerHTML = plans.map((p) => `<section class="card amc-plan">
+    <div class="card-head"><h2 class="grow">${p.name}</h2>${p.status === 'published' ? r.tag('Published', 'green') : r.tag('Draft', 'outline')}
+      <button class="icon-btn sm" type="button" aria-label="Plan actions" data-menu="menu-${p.name.replace(/\s/g, '')}">${ic('dots-three')}</button></div>
+    <div class="card-body">
+      <p class="muted" style="font-size:13px">${p.summary}</p>
+      <p class="amc-price">${r.money(p.price).replace('.00', '')} <small>per machine per year</small></p>
+      <div class="amc-facts"><div class="kv"><span>Visits a year</span><b>${p.visits}</b></div><div class="kv"><span>Response</span><b>${p.response}</b></div><div class="kv"><span>Parts</span><b>${p.parts}</b></div></div>
+      <ul class="amc-list">${p.includes.map((x) => `<li>${ic('check')}${x}</li>`).join('')}</ul>
+      <ul class="amc-list out">${p.excludes.map((x) => `<li>${ic('minus')}${x}</li>`).join('')}</ul>
+      <div class="tags">${p.notFor ? r.tag(p.notFor) : ''}${p.inUse ? r.tag(`${p.inUse} contract${p.inUse > 1 ? 's' : ''}`, 'blue') : r.tag('Not in use', 'outline')}</div>
+    </div>
+    <div class="card-foot"><a class="btn btn-sm btn-secondary" href="#D605${q(p)}">Edit</a><span class="grow"></span>
+      ${p.status === 'draft' ? '<button class="btn btn-sm btn-secondary" type="button" data-toast="Plan published. It now shows in the app">Publish</button>' : ''}</div>
+  </section>`).join('');
+  document.body.insertAdjacentHTML('beforeend', plans.map((p) => `<div class="menu" id="menu-${p.name.replace(/\s/g, '')}" hidden>
+    <a href="#D605${q(p)}">${ic('pencil-simple')}Edit</a>
+    <button type="button" data-toast="Plan copied as a draft">${ic('copy')}Duplicate</button>
+    <hr><button class="danger" type="button" data-open="${p.inUse ? 'in-use' : 'archive'}" data-plan="${p.name}">${ic('archive')}Archive</button></div>`).join(''));
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-plan]');
+    if (!b) return;
+    const p = plans.find((x) => x.name === b.dataset.plan);
+    document.getElementById('ar-title').textContent = `Archive ${p.name}?`;
+    document.getElementById('ar-text').textContent = 'It disappears from the app. You can publish it again later.';
+    document.getElementById('iu-text').textContent = `${p.inUse} contracts use ${p.name}, so it cannot be deleted. Archiving removes it from the app; those contracts keep their terms until they end.`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1321 Broadcast to a group</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-communication.css">
+</head>
+<body class="adm" data-page="D1321" data-nav="D1301">
+<main class="content">
+  <div data-when="ready sent quiet">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1301">Announcements</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Broadcast</span></nav>
+        <h1 style="font-size:var(--fs-28)">Broadcast to a group</h1>
+        <div class="meta"><span><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>A quick message by push, email or SMS. Not kept in Announcements.</span></div>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner green center" data-when="sent"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b>Sent to 2 people.</b> Results show in the delivery log in a minute.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1320">Delivery log</a></span></div>
+      <div class="banner amber center" data-when="quiet"><svg class="ic"><use href="#ph-bell-off"/></svg>
+        <span class="grow"><b>Quiet hours for customers, 9 PM to 7 AM.</b> Push waits until 7 AM; email goes now.</span></div>
+    </div>
+
+    <div class="detail">
+      <section class="card"><div class="card-body" style="padding-top:20px">
+        <div class="form-section">
+          <h3>Send to</h3><p id="count-line"></p>
+          <div class="stack">
+            <div class="choices" style="grid-template-columns:repeat(3, minmax(0, 1fr))" role="radiogroup" aria-label="Send to">
+              <label class="choice"><input type="radio" name="to" value="person" class="sr-only"><span><b>A customer</b><small>One person</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="company" class="sr-only" checked><span><b>A company</b><small>Everyone in it</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="engineer" class="sr-only"><span><b>An engineer</b><small>One engineer</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="customers" class="sr-only"><span><b>All customers</b><small>3 people</small></span></label>
+              <label class="choice"><input type="radio" name="to" value="engineers" class="sr-only"><span><b>All engineers</b><small>2 engineers</small></span></label>
+            </div>
+            <div class="field" id="pick-field"><label for="pick" id="pick-label">Company</label><select class="select" id="pick"></select></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Message</h3><p>Pick a template or write your own.</p>
+          <div class="form-grid">
+            <div class="field full"><label for="tpl">Template</label><select class="select" id="tpl">
+              <option value="">Free text</option><option value="delay">Engineer running late</option><option value="holiday">Office closed</option><option value="app">Please update the app</option></select></div>
+            <div class="field full"><label for="b-title">Title <span class="count" id="b-title-count"></span></label><input class="input" id="b-title" maxlength="50" value="Engineer running late today"></div>
+            <div class="field full"><label for="b-text">Text <span class="count" id="b-text-count"></span></label><textarea class="textarea" id="b-text" maxlength="140">Sandeep is held up at another site. He will reach you by 4 PM. Sorry for the wait.</textarea>
+              <span class="hint">Push title 50 and text 140 characters.</span></div>
+            <div class="row wrap full"><label class="check"><input type="checkbox" id="ch-push" checked> Push</label><label class="check"><input type="checkbox" id="ch-email"> Email</label>
+              <label class="check"><input type="checkbox" id="ch-sms"> SMS</label></div>
+          </div>
+        </div>
+      </div></section>
+
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Preview</h3></div>
+          <div class="card-body"><div class="phone"><div class="phone-top"><span>12:00</span><span id="pv-app">Zixom Connect</span></div>
+            <div class="phone-screen" id="pv"></div></div></div></section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note"></span>
+      <a class="btn btn-ghost" href="#D1301">Cancel</a>
+      <button class="btn btn-primary" type="button" id="send" data-busy data-toast="Message sent">Send</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-block"></span></div><div class="card pad"><span class="sk sk-block" style="height:440px"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready sent quiet loading error" data-mobile="../../../screens/customer/C1001-notifications.html">
+  <div><h3>What it is</h3><p>A quick message to a customer, a company, an engineer or everyone.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose who gets it; the count updates.</li><li>Use a template or free text, pick push, email or SMS.</li><li>Send.</li></ul></div>
+  <div><h3>What happens next</h3><p>It lands in the app's Notifications; results are in the delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Customers get no push 9 PM to 7 AM (state Quiet); engineers always.</li><li>Person with no email gets SMS instead (EC-A61).</li><li>For a notice that stays in the app use an announcement (D1302).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const d = ZX.data;
+  const $ = (id) => document.getElementById(id);
+  const PICK = {
+    person: ['Customer', d.users.map((u) => [u.id, `${u.name}, ${u.designation}`])],
+    company: ['Company', d.companies.map((c) => [c.id, `${c.name} (${c.code})`])],
+    engineer: ['Engineer', d.engineers.map((e) => [e.id, `${e.name}, ${e.region}`])],
+  };
+  const TEMPLATES = {
+    delay: ['Engineer running late today', 'Sandeep is held up at another site. He will reach you by 4 PM. Sorry for the wait.'],
+    holiday: ['Office closed on 25 Dec', 'Field visits are paused. Phone and WhatsApp support stay open 24x7.'],
+    app: ['Please update Zixom Connect', 'Version 1.1.0 lets you reschedule AMC visits. Update from the store.'],
+  };
+  const countFor = (to) => {
+    if (to === 'company') return d.users.filter((u) => u.companies.some((c) => c.id === $('pick').value)).length;
+    return { person: 1, engineer: 1, customers: d.users.length, engineers: d.engineers.length }[to];
+  };
+  const draw = () => {
+    const to = document.querySelector('[name="to"]:checked').value;
+    const pick = PICK[to];
+    $('pick-field').hidden = !pick;
+    if (pick && $('pick-label').textContent !== pick[0]) {
+      $('pick-label').textContent = pick[0];
+      $('pick').innerHTML = pick[1].map(([id, label]) => `<option value="${id}">${label}</option>`).join('');
+    }
+    const n = countFor(to);
+    const engineer = ['engineer', 'engineers'].includes(to);
+    $('count-line').textContent = `${n} ${n === 1 ? 'person' : 'people'} will get this in the ${engineer ? 'engineer' : 'customer'} app.`;
+    $('bar-note').textContent = `${n} ${n === 1 ? 'recipient' : 'recipients'}`;
+    $('b-title-count').textContent = `${$('b-title').value.length} / 50`;
+    $('b-text-count').textContent = `${$('b-text').value.length} / 140`;
+    const channels = ['push', 'email', 'sms'].filter((c) => $(`ch-${c}`).checked);
+    $('send').disabled = !channels.length || !$('b-title').value.trim();
+    $('pv-app').textContent = engineer ? 'Zixom Engineer' : 'Zixom Connect';
+    const t = r.esc($('b-title').value);
+    const x = r.esc($('b-text').value);
+    $('pv').innerHTML = `<span class="phone-label">Lock screen</span>
+      ${channels.includes('push') ? `<div class="push"><span class="logo">${r.icon(engineer ? 'hard-hat' : 'bell')}</span><span class="grow"><b>${t}</b><span>${x}</span></span><small>now</small></div>` : ''}
+      ${channels.includes('sms') ? `<div class="push"><span class="logo">${r.icon('chat-text')}</span><span class="grow"><b>ZIXOMP</b><span>${t}. ${x}</span></span><small>now</small></div>` : ''}
+      ${channels.includes('email') ? `<span class="phone-label">Email</span><div class="mail"><span class="from">Zixom Plast &lt;info@zixom.in&gt;</span><h5>${t}</h5><p>${x}</p></div>` : ''}
+      ${!channels.length ? '<p class="muted" style="font-size:13px">Pick at least one channel.</p>' : ''}`;
+  };
+  $('tpl').addEventListener('change', () => {
+    const tpl = TEMPLATES[$('tpl').value];
+    if (tpl) [$('b-title').value, $('b-text').value] = tpl;
+    draw();
+  });
+  document.querySelectorAll('input, select, textarea').forEach((el) => el.addEventListener('input', draw));
+  document.querySelectorAll('[name="to"], #pick').forEach((el) => el.addEventListener('change', draw));
+  draw();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

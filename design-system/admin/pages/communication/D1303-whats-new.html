@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1303 What's new</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1303" data-nav="D1301">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>What's new</h1><p>Release notes the app shows once after an update · live 1.1.0</p></div>
+    <button class="btn btn-primary" type="button" data-open="add"><svg class="ic"><use href="#ph-plus"/></svg>Add release notes</button>
+  </div>
+
+  <div data-when="ready" class="stack" id="releases"></div>
+
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-sparkles"/></svg></span>
+    <h3>No release notes yet</h3><p>Notes you publish for an app version appear here.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-open="add">Add release notes</button></div></div></div></div>
+
+  <div data-when="loading" class="stack">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+  </div>
+</main>
+
+<div class="overlay right" id="add" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="add-title">
+    <div class="drawer-head"><div class="grow"><h2 id="add-title">Add release notes</h2><p>Shown once in the app after the person updates.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="v">App version</label><input class="input mono" id="v" value="1.2.0" autofocus><span class="hint">Must match the store version</span></div>
+        <div class="field"><label for="app">App</label><select class="select" id="app"><option>Customer and engineer</option><option>Customer</option><option>Engineer</option></select></div>
+      </div>
+      <div class="field"><label for="e1">Change 1</label><input class="input" id="e1" value="Scan the machine QR"><textarea class="textarea" aria-label="Change 1 text" style="min-height:60px">Open a machine from its nameplate QR code.</textarea></div>
+      <div class="field"><label for="e2">Change 2</label><input class="input" id="e2" value="Statements"><textarea class="textarea" aria-label="Change 2 text" style="min-height:60px">Download a statement of account for any month.</textarea></div>
+      <button class="btn btn-ghost btn-sm" type="button" data-toast="Change added" style="align-self:flex-start"><svg class="ic"><use href="#ph-plus"/></svg>Add a change</button>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close data-toast="Draft saved">Save draft</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Published. Shown after the 1.2.0 update">Publish</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="unpublish" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="up-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-eye-slash"/></svg></span>
+      <div class="grow"><h2 id="up-title">Unpublish 1.1.0 notes?</h2><p>People who update to 1.1.0 from now will not see them.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep published</button><button class="btn btn-danger" type="button" data-close data-toast="Release notes unpublished">Unpublish</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C1304-whats-new.html">
+  <div><h3>What it is</h3><p>Release notes per app version, shown once in the app after an update (C1304).</p></div>
+  <div><h3>What you can do</h3><ul><li>Add notes for a version, save a draft or publish.</li><li>Edit or unpublish published notes.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app shows the notes on first open after updating to that version.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>One set of notes per app version.</li><li>A draft for a version not yet in the store is not shown.</li><li>Section 13, D1303.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  document.getElementById('releases').innerHTML = ZXA.data.releases.map((x, i) => `<section class="card">
+    <div class="card-head"><div class="grow"><h2 class="row"><span class="mono">${x.version}</span>${x.status === 'draft' ? r.tag('Draft') : r.tag(i === 1 ? 'Live' : 'Published', i === 1 ? 'green' : 'outline')}</h2>
+      <p>${x.apps} app · ${x.date ? `published ${r.date(x.date)}` : 'not published'}</p></div>
+      ${x.status === 'draft' ? '<button class="btn btn-secondary btn-sm" type="button" data-toast="Published. Shown after the 1.2.0 update">Publish</button>'
+        : `<button class="btn btn-ghost btn-sm" type="button" data-open="add">Edit</button>${i === 1 ? '<button class="btn btn-ghost btn-sm" type="button" data-open="unpublish">Unpublish</button>' : ''}`}</div>
+    <ul class="mini" style="margin-top:8px">${x.entries.map(([icon, title, text]) => `<li><span class="ic-disc">${r.icon(icon)}</span>
+      <span class="grow"><b>${title}</b><small>${text}</small></span></li>`).join('')}</ul></section>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

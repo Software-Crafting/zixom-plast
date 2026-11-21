@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1301 Announcements</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1301">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Announcements</h1><p>1 pinned · 1 scheduled · 1 draft</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1302"><svg class="ic"><use href="#ph-plus"/></svg>New announcement</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="sent">Sent <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="scheduled">Scheduled <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="draft">Drafts <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="ended">Ended <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#announcements"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Number, title or audience" aria-label="Search announcements"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="announcements">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Announcement</th><th class="sortable">Status</th><th class="sortable">Audience</th><th>Pinned</th>
+            <th class="sortable">Send date</th><th class="sortable num">Reach</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-megaphone"/></svg></span>
+        <h3>No announcements yet</h3><p>Notices you send to the app appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D1302">New announcement</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Announcement</th><th>Status</th><th>Audience</th><th>Send date</th><th>Reach</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="announcements" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Copies saved as drafts">Duplicate</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D1302">Open</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Copy saved as a draft">Duplicate</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Draft</button><button class="chip" type="button" aria-pressed="false">Scheduled</button>
+        <button class="chip" type="button" aria-pressed="false">Sent</button><button class="chip" type="button" aria-pressed="false">Withdrawn</button>
+        <button class="chip" type="button" aria-pressed="false">Expired</button></div></div>
+      <div class="field"><span class="label">Audience</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">All customers</button><button class="chip" type="button" aria-pressed="false">Region</button>
+        <button class="chip" type="button" aria-pressed="false">Company</button><button class="chip" type="button" aria-pressed="false">Machine series</button>
+        <button class="chip" type="button" aria-pressed="false">Engineers</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">Sent from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Pinned only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="announcements"> Audience</label>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="announcements"> Pinned</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="announcements"> Reach</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D1302"><svg class="ic"><use href="#ph-external-link"/></svg>Open</a>
+  <button type="button" data-toast="Copy saved as a draft"><svg class="ic"><use href="#ph-copy"/></svg>Duplicate</button>
+  <hr><button class="danger" type="button" data-open="withdraw"><svg class="ic"><use href="#ph-undo"/></svg>Withdraw</button>
+</div>
+
+<div class="overlay center" id="withdraw" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="wd-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-undo"/></svg></span>
+      <div class="grow"><h2 id="wd-title">Withdraw this announcement?</h2><p>It is removed from the app on the next refresh. Push already delivered cannot be recalled.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep it</button><button class="btn btn-danger" type="button" data-close data-toast="Announcement withdrawn">Withdraw</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1302-announcements.html">
+  <div><h3>What it is</h3><p>Every notice sent to the app: draft, scheduled, sent, withdrawn or expired.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter and switch saved views.</li><li>Click a row for the quick view; the number opens it.</li><li>Duplicate, withdraw a sent one, export.</li></ul></div>
+  <div><h3>What happens next</h3><p>Create or open (D1302), delivery of each push (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Sent items are read only except Withdraw (section 11).</li><li>Reach counts delivered pushes and opens; failures are in D1320.</li><li>More than 3 pinned shows a warning in D1302.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const list = a.announcements;
+  const statusTag = (s) => r.tag(...a.annStatus[s]);
+  const sendDate = (x) => {
+    if (x.status === 'scheduled') return `${r.dayDate(x.scheduled)}<span class="sub">${r.time(x.scheduled)} · scheduled</span>`;
+    if (x.status === 'draft') return `<span class="faint">Not sent</span><span class="sub">Saved ${r.ago(x.saved)}</span>`;
+    return `${r.date(x.sent)}<span class="sub">${r.time(x.sent)}</span>`;
+  };
+  const reach = (x) => (x.reach ? `${x.reach.delivered} of ${x.count}<span class="sub">${x.reach.opened} opened${x.reach.failed ? ` · <span class="red-text">${x.reach.failed} failed</span>` : ''}</span>` : `<span class="faint">${x.count} people</span>`);
+
+  document.querySelector('#announcements tbody').innerHTML = list.map((x) => `<tr data-drawer="quick" data-n="${x.number}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+    <td><a class="rec" href="${ZXA.href('D1302', `?n=${x.number}`)}">${x.number}</a><span class="sub">${r.esc(x.title)}</span></td>
+    <td>${statusTag(x.status)}</td>
+    <td>${x.audience}<span class="sub">${x.delivery}</span></td>
+    <td>${x.pinned ? r.tag('Pinned', 'red', 'pin') : '<span class="faint">–</span>'}</td>
+    <td class="nowrap" data-sort="${x.sent || x.scheduled || '9'}">${sendDate(x)}</td>
+    <td class="num" data-sort="${x.reach?.delivered ?? -1}">${reach(x)}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+  </tr>`).join('');
+
+  const VIEWS = { all: () => true, sent: (x) => x.status === 'sent', scheduled: (x) => x.status === 'scheduled', draft: (x) => x.status === 'draft',
+    ended: (x) => ['withdrawn', 'expired'].includes(x.status) };
+  const find = (n) => list.find((x) => x.number === n);
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#announcements tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](find(row.dataset.n)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = find(event.detail.dataset.n);
+    document.getElementById('quick-title').textContent = x.number;
+    document.getElementById('quick-sub').textContent = `${x.kind} · by ${x.by}`;
+    document.getElementById('quick-open').href = ZXA.href('D1302', `?n=${x.number}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${statusTag(x.status)}${x.pinned ? r.tag('Pinned', 'red', 'pin') : ''}</div>
+      <div><b class="strong">${r.esc(x.title)}</b><p style="margin-top:6px">${r.esc(x.text)}</p></div>
+      <dl class="dl">
+        <dt>Audience</dt><dd>${x.audience}, ${x.count} people</dd>
+        <dt>Delivery</dt><dd>${x.delivery}</dd>
+        <dt>Link</dt><dd>${x.link}</dd>
+        <dt>${x.status === 'scheduled' ? 'Scheduled' : 'Sent'}</dt><dd>${x.sent ? `${r.date(x.sent)}, ${r.time(x.sent)}` : x.scheduled ? `${r.date(x.scheduled)}, ${r.time(x.scheduled)}` : 'Not sent'}</dd>
+        ${x.showTo ? `<dt>Shown until</dt><dd>${r.date(x.showTo)}</dd>` : ''}
+        ${x.reach ? `<dt>Reach</dt><dd>${x.reach.delivered} delivered, ${x.reach.opened} opened${x.reach.failed ? `, <a href="${ZXA.href('D1320', `?ref=${x.number}`)}">${x.reach.failed} failed</a>` : ''}</dd>` : ''}
+        ${x.withdrawn ? `<dt>Withdrawn</dt><dd>${r.date(x.withdrawn)}, ${r.time(x.withdrawn)}</dd>` : ''}
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

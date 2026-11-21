@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D603 Create contract</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-amc.css">
+</head>
+<body class="adm" data-page="D603" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb">Create contract</span></nav>
+      <h1 id="title">Create contract</h1><p id="sub">Customer, machines, plan, price and visits.</p>
+    </div>
+    <span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 12:00</span>
+  </div>
+
+  <div data-when="ready overlap created">
+    <div class="banner red" data-when="overlap" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>ZP-CF-2011 is already under AMC-2026-0010 until 31 Mar 2027.</b> A machine can be under one AMC at a time. End the old contract first or start after it ends.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D602?amc=AMC-2026-0010">Open AMC-2026-0010</a></span></div>
+    <div class="banner green" data-when="created" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg>
+      <span class="grow"><b>AMC-2026-0018 created as Pending payment.</b> Invoice INV-2026-0992 and a payment link went to the customer.</span>
+      <span class="btns"><a class="btn btn-sm btn-primary" href="#D602?amc=AMC-2026-0012">Open contract</a></span></div>
+
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-body" style="padding-bottom:0"><ol class="steps" id="steps">
+          <li aria-current="step"><span class="n">1</span>Customer</li><li><span class="n">2</span>Machines</li><li><span class="n">3</span>Plan and term</li>
+          <li><span class="n">4</span>Price and visits</li><li><span class="n">5</span>Review</li></ol></div>
+
+        <div class="card-body" data-step="1">
+          <div class="form-grid">
+            <div class="field full"><label for="company">Customer</label><select class="select" id="company"></select></div>
+            <div class="field full"><span class="label">Site</span><div class="choices amc-two" id="sites"></div></div>
+          </div>
+        </div>
+
+        <div class="card-body" data-step="2" hidden>
+          <div class="field"><span class="label">Machines</span><span class="hint">Machines under another AMC or not verified cannot be added.</span></div>
+          <div class="choices" id="machines" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card-body" data-step="3" hidden>
+          <div class="stack">
+            <div class="field"><span class="label">Plan</span><div class="choices amc-three" id="plans"></div></div>
+            <div class="form-grid">
+              <div class="field"><span class="label">Term</span><div class="segment" role="tablist" aria-label="Term" id="term">
+                <button role="tab" aria-selected="true" data-years="1">1 year</button><button role="tab" aria-selected="false" data-years="2">2 years</button>
+                <button role="tab" aria-selected="false" data-years="3">3 years</button></div><span class="hint">2 years 5% off, 3 years 10% off.</span></div>
+              <div class="field"><label for="start">Start date</label><input class="input" id="start" type="date" value="2026-12-01"><span class="hint" id="end-hint"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body" data-step="4" hidden>
+          <div class="stack">
+            <div class="field"><span class="label">Price</span><div class="choices amc-two">
+              <label class="choice"><input type="radio" name="price" class="sr-only" value="plan" checked><span><b>From the plan</b><small id="plan-price"></small></span></label>
+              <label class="choice"><input type="radio" name="price" class="sr-only" value="custom"><span><b>Custom price</b><small>Needs a reason</small></span></label></div></div>
+            <div class="form-grid" id="custom" hidden>
+              <div class="field"><label for="custom-price">Price for the term, before GST</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="custom-price" value="34,200.00"></div></div>
+              <div class="field"><label for="custom-reason">Reason</label><input class="input" id="custom-reason" aria-invalid="true" placeholder="For example, loyal customer discount">
+                <span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Enter a reason for the custom price</span></div>
+            </div>
+            <div class="field"><span class="label">Visit schedule</span><span class="hint">Spread evenly over the term. Change any date.</span></div>
+            <div class="table-wrap no-top" style="max-height:none; margin-top:-6px"><table class="table compact"><thead><tr><th>Visit</th><th>Due date</th><th>Window</th></tr></thead><tbody id="schedule"></tbody></table></div>
+            <div class="field"><label for="terms">Terms</label><textarea class="textarea" id="terms">Labour for included visits is free. Parts fitted on a visit are billed after it at the plan discount. Response times count from the request in the app. Visits missed by the customer are not carried over.</textarea></div>
+          </div>
+        </div>
+
+        <div class="card-body" data-step="5" hidden>
+          <div class="stack">
+            <dl class="dl" id="review"></dl>
+            <div class="field"><span class="label">Create as</span><div class="choices amc-two">
+              <label class="choice"><input type="radio" name="mode" class="sr-only" value="pending" checked><span><b>Pending payment</b><small>Invoice created, payment link sent</small></span></label>
+              <label class="choice"><input type="radio" name="mode" class="sr-only" value="active"><span><b>Active</b><small>Offline payment already received</small></span></label></div></div>
+            <div class="form-grid" id="offline" hidden>
+              <div class="field"><label for="off-ref">Payment reference</label><input class="input mono" id="off-ref" placeholder="UTR or cheque number"></div>
+              <div class="field"><label for="off-pass">Your password</label><input class="input" id="off-pass" type="password" autocomplete="current-password"><span class="hint">Money actions ask for your password again.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-foot"><button class="btn btn-ghost" type="button" id="back" disabled>Back</button><span class="grow"></span>
+          <a class="btn btn-ghost" href="#D601">Cancel</a><button class="btn btn-primary" type="button" id="next">Next</button></div>
+      </section>
+
+      <aside class="card side-card amc-sticky">
+        <div class="card-head"><h3 class="grow">Summary</h3></div>
+        <div class="card-body"><dl class="dl" id="summary"></dl>
+          <div class="divider"></div>
+          <div class="row"><span class="grow muted">Total with GST 18%</span><b class="num" id="total" style="font-size:18px"></b></div></div>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-line" style="width:70%"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready overlap created loading error" data-mobile="../../../screens/customer/C404-buy-amc.html">
+  <div><h3>What it is</h3><p>Wizard to create, renew or edit an AMC. <code>?renew=AMC-2026-0011</code> fills it from the old contract.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick customer, site, machines, plan, term and start.</li><li>Use the plan price or a custom price with a reason.</li><li>Create as Pending payment (invoice and link) or Active (offline payment received).</li></ul></div>
+  <div><h3>What happens next</h3><p>The contract opens (D602). Pending payment sends invoice and link; visits go to the planner (D607).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Overlap with another AMC is blocked (EC-A39, Overlap state).</li><li>Custom price needs a reason.</li><li>Active without payment asks for the reference and your password (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const { plans, contracts, TERM_DISCOUNT } = ZXA.data.amc;
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const from = A.contract(params.get('renew') || params.get('edit') || params.get('from') || '');
+  const mode = params.get('renew') ? 'renew' : params.get('edit') ? 'edit' : 'new';
+  const SERIES_OF = { AFM: 0, CFM: 1, SVF: 2, BSM: 3, PCR: 4 };
+  const series = (m) => SERIES_OF[m.model.slice(0, 3)];
+  const addDays = (iso, n) => { const x = new Date(`${iso}T00:00:00`); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); };
+
+  const state = { company: from?.company ?? 'shree', site: from?.site ?? 'vatva', machines: new Set(from?.machines ?? []),
+    plan: from?.plan ?? 'Preventive Plus', years: from?.years ?? 1, start: from ? (mode === 'renew' ? addDays(from.end, 1) : from.start) : '2026-12-01', step: 1 };
+
+  if (from) {
+    const titles = { renew: `Renew ${from.number}`, edit: `Edit ${from.number}`, new: `New contract from ${from.number}` };
+    $('title').textContent = titles[mode];
+    $('crumb').textContent = titles[mode];
+    $('sub').textContent = mode === 'renew' ? 'Same machines and plan, starting the day after the end date.' : 'Change machines, plan, price or visits.';
+  }
+  $('start').value = state.start;
+
+  /* step 1: customer and site */
+  const companies = ZX.data.companies;
+  $('company').innerHTML = companies.map((c) => `<option value="${c.id}"${c.id === state.company ? ' selected' : ''}>${c.name} · ${c.code}</option>`).join('');
+  const drawSites = () => {
+    const sites = r.company(state.company).sites;
+    if (!sites.some((s) => s.id === state.site)) state.site = sites[0].id;
+    $('sites').innerHTML = sites.map((s) => `<label class="choice"><input type="radio" name="site" class="sr-only" value="${s.id}"${s.id === state.site ? ' checked' : ''}>
+      <span><b>${s.name}</b><small>${s.address}, ${s.pincode}</small></span></label>`).join('');
+  };
+
+  /* step 2: machines; under another AMC (not this one) or not verified are disabled (EC-A39) */
+  const blocker = (m) => {
+    if (m.status === 'pending') return 'Not verified';
+    const other = contracts.find((c) => c.machines.includes(m.serial) && c !== from && !['cancelled', 'quote'].includes(c.status)
+      && !(c.status === 'expired' && A.graceLeft(c) <= 0));
+    return other ? `Under ${other.number} to ${r.date(other.end)}` : '';
+  };
+  const drawMachines = () => {
+    const list = r.machines.filter((m) => m.company === state.company);
+    $('machines').innerHTML = list.map((m) => {
+      const why = blocker(m);
+      return `<label class="choice amc-machine"${why ? ' aria-disabled="true"' : ''}><span class="check"><input type="checkbox" value="${m.serial}"${state.machines.has(m.serial) ? ' checked' : ''}${why ? ' disabled' : ''}></span>
+        <span class="grow"><b>${m.nickname || m.model}</b><small><span class="mono">${m.serial}</span> · ${m.model} · ${r.site(m.company, m.site).name}</small></span>
+        ${why ? r.tag(why, why.startsWith('Under') ? 'blue' : '') : ''}</label>`;
+    }).join('');
+  };
+
+  /* step 3: plans */
+  $('plans').innerHTML = plans.filter((p) => p.status === 'published').map((p) => `<label class="choice"><input type="radio" name="plan" class="sr-only" value="${p.name}"${p.name === state.plan ? ' checked' : ''}>
+    <span><b>${p.name}</b><small>${p.visits} visits a year · ${p.response} response · ${r.money(p.price).replace('.00', '')} a machine a year</small></span></label>`).join('');
+  $('term').querySelectorAll('[data-years]').forEach((b) => b.setAttribute('aria-selected', String(Number(b.dataset.years) === state.years)));
+
+  const price = () => {
+    const p = A.plan(state.plan);
+    const perYear = [...state.machines].reduce((n, serial) => n + (p.prices[series(r.machine(serial))] ?? 0), 0);
+    return perYear * state.years * (1 - TERM_DISCOUNT[state.years] / 100);
+  };
+  const endDate = () => addDays(state.start, state.years * 365 - 1);
+
+  /* step 4: visit schedule spread over the term */
+  const drawSchedule = () => {
+    const p = A.plan(state.plan);
+    const count = p.visits * state.years;
+    const gap = Math.floor((state.years * 365) / count);
+    const rows = Array.from({ length: count }, (_, i) => addDays(state.start, gap * i + Math.floor(gap / 2)));
+    $('schedule').innerHTML = rows.slice(0, 8).map((due, i) => `<tr><td>Visit ${i + 1}</td><td><input class="input sm" type="date" value="${due}" aria-label="Visit ${i + 1} due date" style="max-width:180px"></td>
+      <td><select class="select sm" aria-label="Visit ${i + 1} window" style="max-width:180px"><option>9 AM to 12 PM</option><option>12 to 3 PM</option><option>3 to 6 PM</option></select></td></tr>`).join('')
+      + (count > 8 ? `<tr><td colspan="3" class="muted">and ${count - 8} more, every ${Math.round(gap / 7)} weeks</td></tr>` : '');
+  };
+
+  const update = () => {
+    const co = r.company(state.company);
+    const p = A.plan(state.plan);
+    const total = price();
+    $('end-hint').textContent = `Ends ${r.date(endDate())}`;
+    $('plan-price').textContent = `${r.money(total)} for ${state.machines.size} machine${state.machines.size === 1 ? '' : 's'}, ${state.years} year${state.years > 1 ? 's' : ''}`;
+    const rows = [['Customer', co.name], ['Site', r.site(state.company, state.site).name],
+      ['Machines', state.machines.size ? [...state.machines].map((s) => `<span class="mono">${s}</span>`).join('<br>') : '<span class="faint">None yet</span>'],
+      ['Plan', `${p.name}, ${p.visits} visits a year`], ['Term', `${r.date(state.start)} to ${r.date(endDate())}`], ['Price', `${r.money(total)} <span class="muted">before GST</span>`]];
+    $('summary').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    $('review').innerHTML = $('summary').innerHTML + `<dt>Visits</dt><dd>${p.visits * state.years}</dd>`;
+    $('total').textContent = r.money(total * 1.18);
+  };
+
+  const goStep = (n) => {
+    state.step = n;
+    document.querySelectorAll('[data-step]').forEach((el) => { el.hidden = Number(el.dataset.step) !== n; });
+    document.querySelectorAll('#steps li').forEach((li, i) => {
+      li.classList.toggle('done', i + 1 < n);
+      li.querySelector('.n').textContent = i + 1 < n ? '✓' : i + 1;
+      if (i + 1 === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    $('back').disabled = n === 1;
+    $('next').textContent = n === 5 ? (mode === 'edit' ? 'Save changes' : 'Create contract') : 'Next';
+    $('next').disabled = n === 2 && !state.machines.size;
+    if (n === 4) drawSchedule();
+  };
+
+  drawSites();
+  drawMachines();
+  update();
+  goStep(1);
+
+  $('company').addEventListener('change', (e) => { state.company = e.target.value; state.machines.clear(); drawSites(); drawMachines(); update(); });
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.name === 'site') state.site = t.value;
+    if (t.name === 'plan') state.plan = t.value;
+    if (t.name === 'price') $('custom').hidden = t.value !== 'custom';
+    if (t.name === 'mode') $('offline').hidden = t.value !== 'active';
+    if (t.closest('#machines')) { state.machines[t.checked ? 'add' : 'delete'](t.value); $('next').disabled = !state.machines.size; }
+    if (t.id === 'start') state.start = t.value;
+    update();
+  });
+  $('term').addEventListener('click', (e) => { const b = e.target.closest('[data-years]'); if (b) { state.years = Number(b.dataset.years); update(); } });
+  $('back').addEventListener('click', () => goStep(state.step - 1));
+  $('next').addEventListener('click', () => {
+    if (state.step < 5) { goStep(state.step + 1); return; }
+    ZXA.ui.setState('created');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

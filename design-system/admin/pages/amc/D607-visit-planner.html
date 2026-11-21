@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D607 Visit planner</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-amc.css">
+</head>
+<body class="adm" data-page="D607" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Visit planner</span></nav>
+      <h1>Visit planner</h1><p id="summary"></p>
+    </div>
+    <div class="segment" role="tablist" aria-label="Layout">
+      <button role="tab" aria-selected="true" aria-controls="view-calendar">Calendar</button>
+      <button role="tab" aria-selected="false" aria-controls="view-list">List</button>
+    </div>
+    <a class="btn btn-secondary" href="#D612">Reschedule requests<span class="tag amber" style="height:20px; padding:0 7px">1</span></a>
+    <button class="btn btn-primary" type="button" data-open="schedule"><svg class="ic"><use href="#ph-plus"/></svg>Schedule a visit</button>
+  </div>
+
+  <div data-when="ready">
+    <section class="card" id="view-calendar" role="tabpanel">
+      <div class="card-head"><div class="grow"><h2>23 Nov to 27 Dec 2026</h2><p>Amber: due in 7 days with no engineer</p></div>
+        <button class="icon-btn" type="button" aria-label="Previous weeks" data-toast="Showing earlier weeks"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+        <button class="btn btn-sm btn-secondary" type="button">Today</button>
+        <button class="icon-btn" type="button" aria-label="Next weeks" data-toast="Showing later weeks"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      <div class="card-body" style="padding:14px 0 0; overflow-x:auto"><div class="amc-month" id="month"></div></div>
+    </section>
+
+    <section class="card list-card" id="view-list" role="tabpanel" hidden>
+      <div class="views tabs" role="tablist" aria-label="Saved views">
+        <button role="tab" aria-selected="true" data-view="upcoming">Upcoming <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="soon">Due in 7 days <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="done">Done <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="missed">Missed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar">
+        <label class="search" data-filter="#visits"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Contract, customer or machine" aria-label="Search visits"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-secondary btn-sm" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="visits">
+          <thead><tr>
+            <th class="sortable">Visit</th><th class="sortable">Customer and machine</th><th class="sortable">Due</th><th>Engineer</th>
+            <th class="sortable">Status</th><th>Ticket</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:420px"></span></div>
+  </div>
+</main>
+
+<!-- schedule a visit: creates a Preventive maintenance ticket -->
+<div class="overlay right" id="schedule" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="sch-title">
+    <div class="drawer-head"><div class="grow"><h2 id="sch-title">Schedule a visit</h2><p>Creates a Preventive maintenance ticket and offers it to the engineer.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="sch-visit">Visit</label><select class="select" id="sch-visit"></select></div>
+      <div class="form-grid">
+        <div class="field"><label for="sch-date">Date</label><input class="input" id="sch-date" type="date" value="2026-11-30"></div>
+        <div class="field"><label for="sch-slot">Window</label><select class="select" id="sch-slot"><option>9 AM to 12 PM</option><option>12 to 3 PM</option><option>3 to 6 PM</option></select></div>
+        <div class="field full"><label for="sch-eng">Engineer</label><select class="select" id="sch-eng"><option>Sandeep Yadav, Ahmedabad · 2 jobs that day</option><option>Anita Verma, Pune · free</option></select></div>
+      </div>
+      <div class="banner"><svg class="ic"><use href="#ph-bell"/></svg><span class="grow">Customer and engineer get a reminder 7 days and 1 day before.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Visit scheduled. Ticket TKT-2026-0134 created and offered to Sandeep">Schedule visit</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="missed" hidden>
+  <div class="modal" role="dialog" aria-labelledby="miss-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span>
+      <div class="grow"><h2 id="miss-title">Mark visit as missed?</h2><p>It counts as used. The customer sees the reason in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="miss-reason">Reason</label><select class="select" id="miss-reason"><option>Machine was not free on the day</option><option>Customer not available</option><option>Plant closed</option><option>Other</option></select></div>
+      <label class="check"><input type="checkbox"> Do not count it as used</label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Visit marked as missed">Mark missed</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Planned</button><button class="chip" type="button" aria-pressed="false">Scheduled</button>
+        <button class="chip" type="button" aria-pressed="false">Done</button><button class="chip" type="button" aria-pressed="false">Missed</button><button class="chip" type="button" aria-pressed="false">Rescheduled</button></div></div>
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option><option>Not assigned</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show visits</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="schedule"><svg class="ic"><use href="#ph-calendar-check"/></svg>Schedule or reschedule</button>
+  <button type="button" data-open="missed"><svg class="ic"><use href="#ph-calendar-blank"/></svg>Mark missed</button>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C406-amc-visits.html">
+  <div><h3>What it is</h3><p>Planned AMC visits per contract and machine, as a calendar or a list.</p></div>
+  <div><h3>What you can do</h3><ul><li>Schedule a visit: creates a Preventive maintenance ticket.</li><li>Reschedule, or mark missed with a reason.</li><li>Click a visit to open it (D608).</li></ul></div>
+  <div><h3>What happens next</h3><p>Visit detail (D608), the ticket (D403), reschedule requests from the app (D612).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Due in 7 days with no engineer is amber.</li><li>Visits of a suspended AMC are on hold.</li><li>Reminders go 7 days and 1 day before the visit.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const { visits } = ZXA.data.amc;
+  const today = ZX.data.today;
+  const machineOf = (v) => r.machine(A.contract(v.amc).machines[0]);
+  const soon = (v) => v.status === 'planned' && !v.engineer && r.daysFromToday(v.due) >= 0 && r.daysFromToday(v.due) <= 7;
+  const upcoming = (v) => ['planned', 'scheduled', 'on-hold'].includes(v.status) && v.due >= today;
+  const sorted = [...visits].sort((x, y) => x.due.localeCompare(y.due));
+  const q = (v) => `?amc=${v.amc}&n=${v.n}`;
+
+  document.getElementById('summary').textContent = `${visits.filter(upcoming).length} upcoming · ${visits.filter(soon).length} due in 7 days with no engineer`;
+
+  /* calendar: five weeks from Monday 23 Nov */
+  const days = Array.from({ length: 35 }, (_, i) => { const d = new Date('2026-11-23T00:00:00'); d.setDate(d.getDate() + i); return d; });
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const tone = (v) => (soon(v) ? 'amber' : v.status === 'on-hold' ? 'grey' : v.status === 'done' ? 'green' : v.status === 'missed' ? 'red' : '');
+  document.getElementById('month').innerHTML = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((x) => `<div class="dow">${x}</div>`).join('')
+    + days.map((d) => {
+      const list = visits.filter((v) => v.due === iso(d));
+      return `<div class="day${iso(d) === today ? ' today' : ''}"><small>${d.getDate() === 1 || iso(d) === '2026-11-23' ? d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : d.getDate()}</small>
+        ${list.map((v) => `<div class="job ${tone(v)}" data-href="D608${q(v)}" title="${v.amc}"><b>${v.amc.slice(-4)}</b><span>${machineOf(v).nickname || machineOf(v).model}</span></div>`).join('')}</div>`;
+    }).join('');
+
+  /* list */
+  document.querySelector('#visits tbody').innerHTML = sorted.map((v) => {
+    const c = A.contract(v.amc);
+    const m = machineOf(v);
+    return `<tr data-href="D608${q(v)}" data-key="${v.amc}-${v.n}" class="${soon(v) ? 'urgent' : ''}">
+      <td><a class="rec" href="#D602?amc=${v.amc}">${v.amc}</a><span class="sub">Visit ${v.n} of ${c.visitsIncluded} · ${c.plan}</span></td>
+      <td><b class="clip">${r.company(c.company).name}</b><span class="sub">${m.model} · ${m.serial}</span></td>
+      <td class="nowrap" data-sort="${v.due}">${r.dayDate(v.due)}<span class="sub">${v.slot || ''}${v.moved ? `Moved to ${r.dayDate(v.moved)}` : ''}</span></td>
+      <td>${v.engineer ? `<span class="who">${r.avatar(r.engineer(v.engineer), 'sm')}<span>${r.engineer(v.engineer).name.split(' ')[0]}</span></span>` : `<span class="${soon(v) ? 'amber-text strong' : 'faint'}">Not assigned</span>`}</td>
+      <td>${A.visitTag(v.status)}${v.request ? ' <span class="tag amber">Reschedule asked</span>' : ''}</td>
+      <td>${v.ticket ? `<a class="rec" href="#D403?t=${v.ticket}">${v.ticket}</a>` : '<span class="faint">–</span>'}</td>
+      <td class="actions">${['planned', 'scheduled'].includes(v.status) ? `<button class="icon-btn sm" type="button" aria-label="Visit actions" data-menu="row-menu">${r.icon('dots-three')}</button>` : ''}</td>
+    </tr>`;
+  }).join('');
+  const VIEWS = { upcoming, soon, done: (v) => v.status === 'done', missed: (v) => v.status === 'missed', all: () => true };
+  const byKey = (key) => visits.find((v) => `${v.amc}-${v.n}` === key);
+  const showView = (k) => {
+    const rows = [...document.querySelectorAll('#visits tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[k](byKey(row.dataset.key)); });
+    const n = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = visits.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('upcoming');
+
+  /* schedule drawer: planned visits without a ticket; ?amc= opens it for that contract's next visit */
+  const open = sorted.filter((v) => v.status === 'planned' && v.due >= today);
+  const wanted = new URLSearchParams(location.search).get('amc');
+  document.getElementById('sch-visit').innerHTML = open.map((v) => `<option${v.amc === wanted ? ' selected' : ''}>${v.amc} · visit ${v.n} · due ${r.dayDate(v.due)} · ${machineOf(v).model}</option>`).join('');
+  if (wanted && open.some((v) => v.amc === wanted)) document.getElementById('schedule').hidden = false;
+  document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

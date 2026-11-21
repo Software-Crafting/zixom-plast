@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1325 Notification rules</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1325" data-nav="D1310">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Notification rules</h1><p>Who gets each notification, how and when</p></div>
+    <a class="btn btn-secondary" href="#D1310">Templates</a>
+  </div>
+
+  <div data-when="ready no-results">
+    <div class="grid cols-3">
+      <section class="card"><div class="card-head"><div class="grow"><h2>Quiet hours</h2><p>Customers only</p></div>
+        <button class="btn btn-ghost btn-sm" type="button" data-open="quiet">Edit</button></div>
+        <div class="card-body"><p class="strong" style="font-size:20px">9 PM to 7 AM</p><p class="muted" style="margin-top:4px; font-size:13px">Push waits until 7 AM. Email is not held.</p></div></section>
+      <section class="card"><div class="card-head"><div class="grow"><h2>Always sent</h2><p>Ignore quiet hours</p></div></div>
+        <ul class="mini"><li><span class="ic-disc red"><svg class="ic"><use href="#ph-siren"/></svg></span><span class="grow"><b>Machine down updates</b><small>To customers</small></span></li>
+          <li><span class="ic-disc amber"><svg class="ic"><use href="#ph-bell-ring"/></svg></span><span class="grow"><b>Urgent engineer alerts</b><small>Offers, escalations, response time</small></span></li></ul></section>
+      <section class="card"><div class="card-head"><div class="grow"><h2>Reminders</h2><p>Days before the date</p></div></div>
+        <div class="card-body"><dl class="dl"><dt>AMC renewal</dt><dd>60, 30, 7, on the day</dd><dt>Warranty ending</dt><dd>60, 30, 7</dd>
+          <dt>AMC visit</dt><dd>7 and 1</dd><dt>Payment due</dt><dd>3 before, on the day, weekly</dd></dl></div></section>
+    </div>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="views tabs" role="tablist" aria-label="Audience">
+        <button role="tab" aria-selected="true" aria-controls="panel-app">To customers and engineers <span class="n" id="n-app"></span></button>
+        <button role="tab" aria-selected="false" aria-controls="panel-admin">To Admin <span class="n" id="n-admin"></span></button>
+      </div>
+      <div class="toolbar">
+        <label class="search" data-filter="#rules-wrap"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Event or channel" aria-label="Search rules"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div id="rules-wrap">
+        <div class="table-wrap" id="panel-app" role="tabpanel">
+          <table class="table" id="rules"><thead><tr><th class="sortable">Event</th><th class="sortable">Who gets it</th><th>Channels</th><th>Timing</th><th>Quiet hours</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="table-wrap" id="panel-admin" role="tabpanel" hidden>
+          <table class="table" id="admin-rules"><thead><tr><th class="sortable">Event</th><th>Channels</th><th>Timing</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span>The app picks up changes within 15 minutes (EC-A62)</span></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid cols-3"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div></div>
+    <section class="card list-card" style="margin-top:16px"><div class="table-wrap"><table class="table"><thead><tr><th>Event</th><th>Who gets it</th><th>Channels</th><th>Timing</th></tr></thead>
+      <tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit rule</h2><p id="edit-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="edit-body"></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Default rule restored">Reset to default</button><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved. The app picks it up within 15 minutes">Save</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="quiet" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quiet-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quiet-title">Quiet hours</h2><p>No push to customers in this window.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid"><div class="field"><label for="q-from">From</label><input class="input" id="q-from" type="time" value="21:00"></div>
+        <div class="field"><label for="q-to">To</label><input class="input" id="q-to" type="time" value="07:00"></div></div>
+      <label class="switch"><input type="checkbox" checked disabled><span></span>Machine down updates always go</label>
+      <label class="switch"><input type="checkbox" checked disabled><span></span>Engineer assignments always go</label>
+      <span class="hint">Times are IST. Customers can add their own quiet hours in the app (C1002).</span>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Quiet hours saved">Save</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Channel</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Push</button><button class="chip" type="button" aria-pressed="false">Email</button>
+        <button class="chip" type="button" aria-pressed="false">SMS</button><button class="chip" type="button" aria-pressed="false">Bell</button></div></div>
+      <label class="check"><input type="checkbox"> Ignores quiet hours only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error" data-mobile="../../../screens/customer/C1002-notification-settings.html">
+  <div><h3>What it is</h3><p>For each event in spec section 12: who gets it, by which channel and when.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit recipients, channels and timing, such as reminder days.</li><li>Set the customer quiet hours.</li></ul></div>
+  <div><h3>What happens next</h3><p>Texts are in Templates (D1310, D1311); results in the delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Customers get nothing 9 PM to 7 AM except machine down updates.</li><li>Urgent engineer alerts ignore quiet hours.</li><li>Changes reach the app within 15 minutes (EC-A62).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  /* machine down updates and urgent engineer alerts go in quiet hours; engineers have no quiet hours */
+  const quiet = (t) => {
+    if (t.urgent || t.critical) return r.tag('Always sent', 'amber');
+    if (!/Customer/.test(t.to)) return '<span class="faint">Not used</span>';
+    return r.tag('Held until 7 AM', 'outline');
+  };
+  const edit = (i, tab) => `<button class="btn btn-ghost btn-sm" type="button" data-edit="${tab}:${i}">Edit</button>`;
+  document.querySelector('#rules tbody').innerHTML = a.templates.filter((t) => t.key !== 'otp').map((t, i) => `<tr>
+    <td><b class="strong">${t.event}</b><span class="sub">Opens ${t.opens}</span></td><td class="nowrap">${t.to}</td>
+    <td><span class="tags" style="flex-wrap:nowrap">${t.channels.map((c) => r.tag(c, 'outline')).join('')}</span></td>
+    <td><span class="clip" style="max-width:260px">${t.timing}</span></td><td>${quiet(t)}</td><td class="actions">${edit(i, 'app')}</td></tr>`).join('');
+  document.querySelector('#admin-rules tbody').innerHTML = a.adminAlerts.map(([event, channels, timing], i) => `<tr>
+    <td><b class="strong">${event}</b></td><td><span class="tags" style="flex-wrap:nowrap">${channels.split(', ').map((c) => r.tag(c, c === 'sound' || c === 'SMS' ? 'amber' : 'outline')).join('')}</span></td>
+    <td><span class="clip" style="max-width:320px">${timing}</span></td><td class="actions">${edit(i, 'admin')}</td></tr>`).join('');
+  document.getElementById('n-app').textContent = a.templates.length - 1;
+  document.getElementById('n-admin').textContent = a.adminAlerts.length;
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+
+  const reminderDays = (timing) => (timing.match(/\d+(?=[ ,]|$)/g) || []);
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+    const button = event.target.closest('[data-edit]');
+    if (!button) return;
+    const [tab, i] = button.dataset.edit.split(':');
+    const body = document.getElementById('edit-body');
+    if (tab === 'app') {
+      const t = a.templates.filter((x) => x.key !== 'otp')[i];
+      const days = reminderDays(t.timing);
+      document.getElementById('edit-title').textContent = t.event;
+      document.getElementById('edit-sub').textContent = `Opens ${t.opens} in the app`;
+      body.innerHTML = `
+        <div class="field"><span class="label">Who gets it</span><div class="row wrap">
+          <label class="check"><input type="checkbox" ${/Customer/.test(t.to) ? 'checked' : ''}> Customer people of the company</label>
+          <label class="check"><input type="checkbox" ${/Engineer|engineers/.test(t.to) ? 'checked' : ''}> Assigned engineer</label></div></div>
+        <div class="field"><span class="label">Channels</span><div class="row wrap">${['Push', 'Email', 'SMS'].map((c) => `<label class="check"><input type="checkbox" ${t.channels.includes(c) ? 'checked' : ''}> ${c}</label>`).join('')}</div>
+          <span class="hint">If a person has no email or mobile the other channel is used (EC-A61).</span></div>
+        <div class="field"><label for="r-timing">Timing</label><input class="input" id="r-timing" value="${t.timing}"></div>
+        ${days.length ? `<div class="field"><span class="label">Reminder days before</span><div class="row wrap">${days.map((d) => `<span class="chip applied"><b>${d}</b> days${r.icon('x', 'x')}</span>`).join('')}
+          <button class="btn btn-ghost btn-sm" type="button" data-toast="Reminder added">Add</button></div></div>` : ''}
+        <label class="switch"><input type="checkbox" ${t.urgent || t.critical ? 'checked disabled' : ''}><span></span>Send in quiet hours</label>
+        ${t.urgent || t.critical ? '<span class="hint">Urgent and critical alerts always go.</span>' : ''}`;
+    } else {
+      const [ev, channels, timing] = a.adminAlerts[i];
+      document.getElementById('edit-title').textContent = ev;
+      document.getElementById('edit-sub').textContent = 'Sent to Admin';
+      body.innerHTML = `<div class="field"><span class="label">Channels</span><div class="row wrap">${['Bell', 'Email', 'Sound', 'SMS', 'Work queue'].map((c) => `<label class="check"><input type="checkbox" ${channels.toLowerCase().includes(c.toLowerCase()) ? 'checked' : ''}> ${c}</label>`).join('')}</div></div>
+        <div class="field"><label for="r-timing">Timing</label><input class="input" id="r-timing" value="${timing}"></div>`;
+    }
+    ZXA.ui.openOverlay('edit');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D610 Suspend or reactivate</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D610" data-nav="D601">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar"><button class="btn btn-primary" type="button" data-open="decide" id="reopen"></button></div>
+    </div>
+    <section class="card"><div class="card-body" style="padding-top:20px"><dl class="dl" id="facts"></dl></div></section>
+  </div>
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="card pad stack"><span class="sk sk-block"></span></div>
+  </div>
+</main>
+
+<!-- the page is this modal, open on load over the contract -->
+<div class="overlay center" id="decide" data-static>
+  <div class="modal" role="alertdialog" aria-labelledby="d-title">
+    <div class="modal-head"><span class="disc" id="d-disc"></span><div class="grow"><h2 id="d-title"></h2><p id="d-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field" id="reason-field"><span class="label">Reason</span><div class="choices" id="reasons"></div></div>
+      <div class="field"><label for="d-note">Note <span class="opt">optional, only Admins see it</span></label><textarea class="textarea" id="d-note" maxlength="300"></textarea></div>
+      <div class="field"><span class="label">In the app</span><ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line)" id="effects"></ul></div>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="d-back" href="#D602">Cancel</a><button class="btn" type="button" data-close id="d-go"></button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C402-amc-contract.html">
+  <div><h3>What it is</h3><p>Suspend or reactivate an AMC. <code>?amc=AMC-2026-0013</code> reactivates; <code>?amc=AMC-2026-0010</code> suspends.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason: non payment, customer request, other.</li><li>See what changes in the app, then confirm.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to the contract (D602) with the new status; the customer is notified.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Suspended AMC shows a banner and Pay now in the app.</li><li>Visits are on hold and tickets are not covered while suspended.</li><li>Only Active, Expiring (suspend) and Suspended (reactivate) allow this (section 11).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const c = A.contract(new URLSearchParams(location.search).get('amc') || 'AMC-2026-0013') || A.contract('AMC-2026-0013');
+  const co = r.company(c.company);
+  const suspend = c.status !== 'suspended';
+  const inv = c.invoices.map((n) => ZX.data.invoices.find((i) => i.number === n)).find((i) => ['due', 'overdue'].includes(i.status));
+
+  $('crumb').textContent = c.number;
+  $('number').textContent = c.number;
+  $('chips').innerHTML = `${A.tag(c.status)}<span class="tag outline">${c.plan}</span>`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${co.name}, ${r.site(c.company, c.site).name}</span><span>${ic('calendar-blank')}${r.date(c.start)} to ${r.date(c.end)}</span>`;
+  $('reopen').textContent = suspend ? 'Suspend' : 'Reactivate';
+  $('facts').innerHTML = `<dt>Machines</dt><dd>${c.machines.map((x) => `${r.machine(x).model} <span class="mono muted">${x}</span>`).join('<br>')}</dd>
+    <dt>Visits</dt><dd>${c.visitsUsed} of ${c.visitsIncluded} used</dd>
+    <dt>Payment</dt><dd>${inv ? `<span class="mono">${inv.number}</span> ${A.invoiceTag(inv)} · ${r.money(r.balance(inv))}` : 'Nothing due'}</dd>
+    ${c.suspended ? `<dt>Suspended</dt><dd>${r.date(c.suspended.on)} · ${c.suspended.reason}<br><span class="muted">${c.suspended.note}</span></dd>` : ''}`;
+
+  $('d-back').setAttribute('href', `#D602?amc=${c.number}`);
+  $('d-disc').className = `disc ${suspend ? 'red' : 'green'}`;
+  $('d-disc').innerHTML = ic(suspend ? 'pause' : 'play');
+  $('d-title').textContent = suspend ? `Suspend ${c.number}?` : `Reactivate ${c.number}?`;
+  $('d-text').textContent = suspend ? `${co.name} will be told. AMC cover and visits stop until you reactivate.` : `${co.name} will be told. Cover and planned visits resume today.`;
+  const reasons = suspend ? ['Non payment', 'Customer request', 'Other'] : ['Payment received', 'Customer request', 'Other'];
+  $('reasons').innerHTML = reasons.map((x, i) => `<label class="choice"><input type="radio" name="reason" class="sr-only"${i === 0 ? ' checked' : ''}><span><b>${x}</b>
+    ${i === 0 && inv && suspend ? `<small>${inv.number}, ${r.money(r.balance(inv))} overdue</small>` : ''}${i === 0 && !suspend && inv ? `<small>${inv.number} is still ${inv.status}. Record the payment first or reactivate anyway.</small>` : ''}</span></label>`).join('');
+  const effects = suspend
+    ? [['warning', 'red', 'Suspended banner on the contract and Machines tab'], ['credit-card', '', 'Pay now button for the overdue invoice'], ['calendar-blank', '', 'Planned visits show On hold'], ['wrench', '', 'New tickets on these machines are chargeable']]
+    : [['check-circle', 'green', 'Banner removed, status Active'], ['calendar-check', '', 'Planned visits come back with their dates'], ['wrench', '', 'Tickets get AMC coverage again']];
+  $('effects').innerHTML = effects.map(([i, tone, text]) => `<li><span class="ic-disc ${tone}">${ic(i)}</span><span class="grow"><b style="font-weight:500; white-space:normal">${text}</b></span></li>`).join('');
+  $('d-go').className = `btn ${suspend ? 'btn-danger' : 'btn-primary'}`;
+  $('d-go').textContent = suspend ? 'Suspend AMC' : 'Reactivate AMC';
+  $('d-go').dataset.toast = suspend ? 'AMC suspended. Customer told' : 'AMC reactivated. Customer told';
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

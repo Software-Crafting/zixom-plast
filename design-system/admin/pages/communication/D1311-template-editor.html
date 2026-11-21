@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1311 Template editor</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-communication.css">
+</head>
+<body class="adm" data-page="D1311" data-nav="D1310">
+<main class="content">
+  <div data-when="ready limit">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1310">Notification templates</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="heading" style="font-family:var(--font-display); font-weight:400"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar"><button class="btn btn-secondary" type="button" data-toast="Test sent to admin@zixom.in and your phone">Send test to myself</button></div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px" id="banners"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="card-body" style="padding-top:20px">
+          <div class="form-section">
+            <h3>Variables</h3><p>Click to insert where the cursor is. Filled from the record when sent.</p>
+            <div class="var-chips" id="vars"></div>
+          </div>
+          <div class="form-section" id="push-section">
+            <h3>Push</h3><p>Short; the phone cuts longer text.</p>
+            <div class="stack">
+              <div class="field"><label for="p-title">Title <span class="count" id="p-title-count"></span></label><input class="input" id="p-title">
+                <span class="error" id="p-title-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Push title is limited to 50 characters</span></div>
+              <div class="field"><label for="p-body">Body <span class="count" id="p-body-count"></span></label><textarea class="textarea" id="p-body" style="min-height:72px"></textarea>
+                <span class="error" id="p-body-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Push body is limited to 140 characters</span></div>
+            </div>
+          </div>
+          <div class="form-section" id="email-section">
+            <h3>Email</h3><p>Sent from info@zixom.in with the Zixom header and footer.</p>
+            <div class="form-grid">
+              <div class="field full"><label for="e-subject">Subject</label><input class="input" id="e-subject"></div>
+              <div class="field full"><label for="e-body">Body</label><textarea class="textarea" id="e-body" style="min-height:140px"></textarea></div>
+              <div class="field"><label for="e-layout">Layout</label><select class="select" id="e-layout"><option>Standard with logo</option><option>Plain text</option><option>With button to the app</option></select></div>
+              <div class="field"><label for="lang">Language</label><select class="select" id="lang"><option>English</option></select><span class="hint">Language and region: English, India</span></div>
+            </div>
+          </div>
+          <div class="form-section" id="sms-section" hidden>
+            <h3>SMS</h3><p>Plain text, 160 characters, from ZIXOMP.</p>
+            <div class="field"><label for="s-body">Text <span class="count" id="s-count"></span></label><textarea class="textarea" id="s-body" style="min-height:72px" maxlength="160"></textarea></div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <section class="card side-card">
+          <div class="card-head"><h3 class="grow">Preview</h3>
+            <div class="segment" role="tablist" aria-label="Preview for"><button role="tab" aria-selected="true" data-who="customer">Customer</button><button role="tab" aria-selected="false" data-who="engineer">Engineer</button></div></div>
+          <div class="card-body"><div class="phone"><div class="phone-top"><span>12:00</span><span id="pv-app">Zixom Connect</span></div>
+            <div class="phone-screen" id="pv"></div></div>
+            <p class="muted" style="margin-top:10px; font-size:12px; text-align:center">Sample values from TKT-2026-0123</p></div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow"><span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Last published 12 Nov 2026 by Rajesh Goyal</span></span>
+      <button class="btn btn-ghost" type="button" data-open="reset">Reset to default</button>
+      <button class="btn btn-secondary" type="button" data-toast="Saved as a draft. The app still uses the published text">Save</button>
+      <button class="btn btn-primary" type="button" id="publish" data-busy data-toast="Published. New notifications use this text">Publish</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-block"></span></div><div class="card pad"><span class="sk sk-block" style="height:440px"></span></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="reset" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reset-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span>
+      <div class="grow"><h2 id="reset-title">Reset to the default text?</h2><p>Your push, email and SMS text for this event is replaced by Zixom's default. Publish to use it.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep my text</button><button class="btn btn-danger" type="button" data-close data-toast="Default text restored">Reset</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready limit loading error" data-mobile="../../../screens/customer/C1001-notifications.html">
+  <div><h3>What it is</h3><p>Text of one notification for push, email and SMS. Opens with <code>?e=assigned</code>; also try <code>?e=otp</code>, <code>?e=offer</code>, <code>?e=amc-renewal</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit the text, insert variables, see it as the customer or the engineer gets it.</li><li>Save a draft, publish, reset to default, send a test.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to templates (D1310); sends show in the delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Push title 50, body 140 characters; over the limit blocks Publish (state Limit).</li><li>Critical templates can be edited, not disabled.</li><li>An unknown variable shows as an error in the preview.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/communication.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const ic = r.icon;
+  const key = new URLSearchParams(location.search).get('e') || 'assigned';
+  const t = ZXA.data.templates.find((x) => x.key === key) || ZXA.data.templates.find((x) => x.key === 'assigned');
+  /* sample values from the demo records, so the preview reads like a real message */
+  const SAMPLE = { ticket: 'TKT-2026-0123', machine: 'CFM-450 Cup Former', date: 'Tue 24 Nov', window: '12 to 3 PM', engineer: 'Sandeep Yadav',
+    name: 'Rakesh', company: 'Shree Packaging Industries', code: '481 207', record: 'TKT-2026-0121', amount: '₹8,968.00', invoice: 'INV-2026-0980',
+    receipt: 'RCP-2026-0650', claim: 'WCL-2026-0042', order: 'ORD-2026-0209', status: 'dispatched', agent: 'Neha', question: 'QRY-2026-0031',
+    days: '12', amc: 'AMC-2026-0011', site: 'Sanand plant', message: 'Spare chain is in the store room', request: 'SPR-2026-0030', part: 'PID temperature controller',
+    title: 'Check heater guard interlocks on AFM machines', text: 'Test the guard interlock before each shift.' };
+  const VARS = ['ticket', 'machine', 'date', 'window', 'engineer', 'name', 'company', 'amount', 'invoice', 'site', 'amc'];
+  const fill = (s) => r.esc(s).replace(/\{(\w+)\}/g, (m, v) => (SAMPLE[v] ? `<b style="display:inline">${SAMPLE[v]}</b>` : `<span class="red-text">${m}</span>`));
+  const own = [...new Set(`${t.title} ${t.body}`.match(/\{\w+\}/g) || [])].map((v) => v.slice(1, -1));
+
+  document.title = `Zixom Admin - ${t.event}`;
+  $('crumb').textContent = t.event;
+  $('heading').textContent = t.event;
+  $('chips').innerHTML = `${r.tag('Active', 'green')}${t.critical ? r.tag('Critical', 'red', 'lock-simple') : ''}`;
+  $('meta').innerHTML = `<span>${ic('users')}To ${t.to}</span><span>${ic('device-mobile')}Opens ${t.opens}</span><span>${ic('clock')}${t.timing}</span>`;
+  $('banners').innerHTML = `${t.critical ? `<div class="banner center">${ic('lock-simple')}<span class="grow"><b>Critical template.</b> You can change the text; it cannot be switched off.</span></div>` : ''}
+    ${t.urgent ? `<div class="banner amber center">${ic('bell-ring')}<span class="grow"><b>Urgent.</b> Sent even in quiet hours (9 PM to 7 AM).</span></div>` : ''}`;
+  $('vars').innerHTML = [...new Set([...own, ...VARS])].map((v) => `<button class="chip" type="button" data-var="${v}">{${v}}</button>`).join('');
+
+  const hasPush = t.channels.includes('Push');
+  const hasEmail = t.channels.includes('Email');
+  $('push-section').hidden = !hasPush;
+  $('email-section').hidden = !hasEmail;
+  $('sms-section').hidden = !t.channels.includes('SMS');
+  $('p-title').value = t.title;
+  $('p-body').value = t.body;
+  $('e-subject').value = t.title;
+  $('e-body').value = `Hello {name},\n\n${t.body}\n\nZixom Plast service team\n+91 99919 10097`;
+  $('s-body').value = t.body.slice(0, 160);
+
+  const toCustomer = /Customer/.test(t.to);
+  const toEngineer = /Engineer|engineers/.test(t.to);
+  const segButtons = document.querySelectorAll('[data-who]');
+  segButtons[0].disabled = !toCustomer;
+  segButtons[1].disabled = !toEngineer;
+  let who = toCustomer ? 'customer' : 'engineer';
+  if (!toCustomer) { segButtons[0].setAttribute('aria-selected', 'false'); segButtons[1].setAttribute('aria-selected', 'true'); }
+
+  let lastField = $('p-title');
+  const draw = () => {
+    const pt = $('p-title').value;
+    const pb = $('p-body').value;
+    $('p-title-count').textContent = `${pt.length} / 50`;
+    $('p-body-count').textContent = `${pb.length} / 140`;
+    $('s-count').textContent = `${$('s-body').value.length} / 160`;
+    const overTitle = pt.length > 50;
+    const overBody = pb.length > 140;
+    $('p-title-error').hidden = !overTitle;
+    $('p-body-error').hidden = !overBody;
+    $('p-title').setAttribute('aria-invalid', String(overTitle));
+    $('p-body').setAttribute('aria-invalid', String(overBody));
+    $('publish').disabled = hasPush && (overTitle || overBody);
+    $('pv-app').textContent = who === 'customer' ? 'Zixom Connect' : 'Zixom Engineer';
+    $('pv').innerHTML = `<span class="phone-label">Lock screen</span>
+      ${hasPush ? `<div class="push"><span class="logo">${ic(who === 'customer' ? 'bell' : 'hard-hat')}</span><span class="grow"><b>${fill(pt)}</b><span>${fill(pb)}</span></span><small>now</small></div>` : ''}
+      ${t.channels.includes('SMS') ? `<div class="push"><span class="logo">${ic('chat-text')}</span><span class="grow"><b>ZIXOMP</b><span>${fill($('s-body').value)}</span></span><small>now</small></div>` : ''}
+      ${hasEmail ? `<span class="phone-label">Email</span><div class="mail"><span class="from">Zixom Plast &lt;info@zixom.in&gt;</span><h5>${fill($('e-subject').value)}</h5>
+        <p style="white-space:pre-line">${fill($('e-body').value)}</p></div>` : ''}`;
+  };
+  document.querySelectorAll('#p-title, #p-body, #e-subject, #e-body, #s-body').forEach((el) => {
+    el.addEventListener('input', draw);
+    el.addEventListener('focus', () => { lastField = el; });
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-var]');
+    if (chip) {
+      const at = lastField.selectionStart ?? lastField.value.length;
+      lastField.value = `${lastField.value.slice(0, at)}{${chip.dataset.var}}${lastField.value.slice(lastField.selectionEnd ?? at)}`;
+      lastField.focus();
+      draw();
+    }
+    const seg = event.target.closest('[data-who]');
+    if (seg && !seg.disabled) { who = seg.dataset.who; draw(); }
+  });
+  ZXA.tplDraw = draw;
+  draw();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* Limit state: a push title over 50 characters blocks Publish */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  const title = document.getElementById('p-title');
+  if (button.dataset.protoState === 'limit') title.value = `${title.value} today between 12 and 3 PM at your site`;
+  ZXA.tplDraw();
+});
+</script>
+</body>
+</html>

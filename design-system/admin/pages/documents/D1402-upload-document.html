@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1402 Upload document</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1402" data-nav="D1401">
+<main class="content">
+  <div data-when="ready scanning file-error uploaded">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1401">Documents</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb">Upload</span></nav>
+        <h1 style="font-size:var(--fs-28)" id="heading">Upload document</h1>
+        <div class="meta"><span><svg class="ic"><use href="#ph-folder"/></svg>Shows in the app in Documents and on the machines it applies to</span></div>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner center" id="replace-banner" hidden><svg class="ic"><use href="#ph-files"/></svg><span class="grow" id="replace-text"></span></div>
+      <div class="banner green center" data-when="uploaded"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b>Uploaded.</b> It shows in the app once the scan is clean, in about a minute.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1403?d=afm760-manual">Open document</a></span></div>
+    </div>
+
+    <div class="detail">
+      <section class="card"><div class="card-body" style="padding-top:20px">
+        <div class="form-section">
+          <h3>File</h3><p>One file per document. A new version keeps the old one in the history.</p>
+          <div class="stack">
+            <div class="drop" data-when="ready file-error"><svg class="ic"><use href="#ph-upload-cloud"/></svg><b>Drop a file here or click to choose</b>PDF, DOCX, XLSX, JPG or PNG up to 100 MB</div>
+            <div class="file-row" data-when="ready uploaded"><span class="thumb"><svg class="ic"><use href="#ph-file-pdf"/></svg></span>
+              <span class="grow"><b class="strong" id="file-name">AFM-760-manual-v3.3.pdf</b><small class="muted">49 MB · ready to upload</small></span>
+              <button class="icon-btn sm" type="button" aria-label="Remove file" data-toast="File removed"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+            <div class="file-row" data-when="scanning"><span class="thumb"><svg class="ic"><use href="#ph-file-pdf"/></svg></span>
+              <span class="grow"><b class="strong">AFM-760-manual-v3.3.pdf</b><small class="muted">Scanning for viruses · 49 MB</small><span class="progress"><span style="width:64%"></span></span></span></div>
+            <div class="file-row" data-when="file-error"><span class="thumb"><svg class="ic"><use href="#ph-file-x"/></svg></span>
+              <span class="grow"><b class="strong">Line 2 trial run.mov</b><small class="red-text">240 MB is over the 100 MB limit. Upload a shorter clip or a link.</small></span>
+              <button class="btn btn-sm btn-secondary" type="button" data-toast="Choose another file">Choose another</button></div>
+            <div class="file-row" data-when="file-error"><span class="thumb"><svg class="ic"><use href="#ph-file-x"/></svg></span>
+              <span class="grow"><b class="strong">AFM-760-manual-v3.3.pdf</b><small class="red-text">Upload stopped at 72%. The connection dropped.</small></span>
+              <button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="Upload restarted">Retry</button></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Details</h3><p>What customers see in the app.</p>
+          <div class="form-grid">
+            <div class="field full"><label for="title">Title</label><input class="input" id="title" maxlength="120" value="AFM-760 operating manual"></div>
+            <div class="field"><label for="type">Type</label><select class="select" id="type">
+              <option>Manual</option><option>Datasheet</option><option>Certificate</option><option>Quotation</option><option>Invoice</option><option>Report</option><option>Brochure</option><option>Other</option></select></div>
+            <div class="field"><label for="version">Version</label><input class="input mono" id="version" value="3.3"><span class="hint">Current 3.2</span></div>
+            <div class="field"><label for="applies">Applies to</label><select class="select" id="applies">
+              <option value="all">All customers</option><option value="model" selected>Models</option><option value="machine">A machine</option><option value="company">A company</option></select></div>
+            <div class="field"><label for="lang">Language</label><select class="select" id="lang"><option>English</option><option>Hindi</option><option>Gujarati</option><option>Marathi</option></select></div>
+            <div class="field full" id="target-field"></div>
+            <div class="field full"><label for="notes">What changed <span class="opt">optional</span></label><textarea class="textarea" id="notes" style="min-height:72px">Heater zone chapter rewritten.</textarea></div>
+            <div class="field full"><label class="switch"><input type="checkbox" checked id="visible"><span></span>Visible to customers</label>
+              <span class="hint" id="visible-hint">Customers with these machines see it in Documents (C901).</span></div>
+          </div>
+        </div>
+      </div></section>
+
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">File rules</h3></div>
+          <div class="card-body"><dl class="dl"><dt>Types</dt><dd>PDF, DOCX, XLSX, JPG, PNG</dd><dt>Size</dt><dd>Up to 100 MB</dd><dt>Scan</dt><dd>Every file, before it shows</dd><dt>Versions</dt><dd>Old versions stay in history</dd></dl></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Who will see it</h3></div>
+          <ul class="mini" id="reach"></ul></section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow" data-when="ready file-error">Nothing is shown in the app until you upload</span>
+      <span class="grow" data-when="scanning">Scanning, 64%</span>
+      <span class="grow" data-when="uploaded">Uploaded 12:00 PM</span>
+      <a class="btn btn-ghost" href="#D1401">Cancel</a>
+      <button class="btn btn-primary" type="button" id="upload" data-busy data-toast="Uploading. Scanning before it shows in the app">Upload</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-block"></span></div><div class="card pad"><span class="sk sk-block"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready scanning file-error uploaded loading error" data-mobile="../../../screens/customer/C1702-document-versions.html">
+  <div><h3>What it is</h3><p>Add a file to the library. Open with <code>?replace=afm760-manual</code> to upload a new version.</p></div>
+  <div><h3>What you can do</h3><ul><li>Drop a file, set title, type, version, language.</li><li>Choose the models, a machine or a company it applies to.</li><li>Show it to customers or keep it for Admin.</li></ul></div>
+  <div><h3>What happens next</h3><p>The file is scanned, then shows in the app. Opens in Document detail (D1403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Scanning state before the file is live.</li><li>Too large or failed upload: per file error with Retry (EC-A29).</li><li>A new version keeps the old one (C1702).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/documents.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const d = ZX.data;
+  const $ = (id) => document.getElementById(id);
+  const replace = ZXA.data.documents.find((x) => x.id === new URLSearchParams(location.search).get('replace'));
+  const MODELS = [...new Set(r.machines.map((m) => m.model.split(' ')[0]))];
+  const checked = { model: ['AFM-760'] };
+
+  if (replace) {
+    $('crumb').textContent = replace.title;
+    $('heading').textContent = 'Upload a new version';
+    $('replace-banner').hidden = false;
+    $('replace-text').innerHTML = `<b>New version of ${r.esc(replace.title)}.</b> v${replace.version} stays in the version history; customers get the new one.`;
+    $('title').value = replace.title;
+    $('type').value = replace.type;
+    $('applies').value = replace.applies[0];
+    checked[replace.applies[0]] = [replace.applies[1]];
+    $('version').value = (Number(replace.version) + 0.1).toFixed(1);
+    $('version').nextElementSibling.textContent = `Current ${replace.version}`;
+    $('upload').textContent = 'Upload new version';
+  }
+
+  const drawTarget = () => {
+    const kind = $('applies').value;
+    const field = $('target-field');
+    field.hidden = kind === 'all';
+    if (kind === 'model') field.innerHTML = `<span class="label">Models</span><div class="row wrap">${MODELS.map((m) => `<label class="check"><input type="checkbox" value="${m}" ${(checked.model || []).includes(m) ? 'checked' : ''}> ${m}</label>`).join('')}</div>`;
+    if (kind === 'machine') field.innerHTML = `<label for="t-machine">Machine</label><select class="select" id="t-machine">${r.machines.map((m) => `<option value="${m.serial}" ${(checked.machine || []).includes(m.serial) ? 'selected' : ''}>${m.serial} · ${m.nickname || m.model}, ${r.company(m.company).name}</option>`).join('')}</select>`;
+    if (kind === 'company') field.innerHTML = `<label for="t-company">Company</label><select class="select" id="t-company">${d.companies.map((c) => `<option value="${c.id}" ${(checked.company || []).includes(c.id) ? 'selected' : ''}>${c.name} (${c.code})</option>`).join('')}</select>`;
+    drawReach();
+  };
+  const drawReach = () => {
+    const kind = $('applies').value;
+    const visible = $('visible').checked;
+    let machines = r.machines;
+    if (kind === 'model') { const models = [...document.querySelectorAll('#target-field input:checked')].map((x) => x.value); machines = r.machines.filter((m) => models.includes(m.model.split(' ')[0])); }
+    if (kind === 'machine') machines = r.machines.filter((m) => m.serial === $('t-machine').value);
+    if (kind === 'company') machines = r.machines.filter((m) => m.company === $('t-company').value);
+    const companies = kind === 'all' ? d.companies : d.companies.filter((c) => machines.some((m) => m.company === c.id));
+    $('visible-hint').textContent = visible ? 'Customers with these machines see it in Documents (C901).' : 'Only Admins can see it.';
+    $('reach').innerHTML = !visible ? '<li><span class="ic-disc"><svg class="ic"><use href="#ph-lock-simple"/></svg></span><span class="grow"><b>Admin only</b><small>Hidden from the app</small></span></li>'
+      : companies.length ? companies.map((c) => `<li><span class="ic-disc"><svg class="ic"><use href="#ph-buildings"/></svg></span><span class="grow"><b>${c.name}</b>
+        <small>${kind === 'all' || kind === 'company' ? 'Every person' : ((n) => `${n} machine${n === 1 ? '' : 's'}`)(machines.filter((m) => m.company === c.id).length)}</small></span></li>`).join('')
+      : '<li><span class="muted">No machines match</span></li>';
+    $('upload').disabled = !$('title').value.trim() || (visible && kind !== 'all' && !companies.length);
+  };
+  $('applies').addEventListener('change', drawTarget);
+  document.addEventListener('change', (event) => { if (event.target.closest('#target-field, #visible')) drawReach(); });
+  $('title').addEventListener('input', drawReach);
+  drawTarget();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

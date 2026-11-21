@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D601 AMC contracts</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>AMC contracts</h1><p id="summary"></p></div>
+    <a class="btn btn-secondary" href="#D604">Plans</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D603"><svg class="ic"><use href="#ph-plus"/></svg>Create contract</a>
+  </div>
+
+  <div data-when="ready no-results">
+    <section class="kpis" id="kpis" aria-label="AMC numbers"></section>
+  </div>
+
+  <div data-when="ready empty no-results" style="margin-top:16px">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="expiring">Expiring <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="pending">Pending payment <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="quote">Quote requested <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="suspended">Suspended <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="expired">Expired <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#contracts"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="AMC number, customer, machine or serial" aria-label="Search contracts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="contracts">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Contract</th><th class="sortable">Customer</th><th class="sortable">Plan and machines</th>
+            <th class="sortable">Status</th><th class="sortable">Ends</th><th class="sortable">Visits</th>
+            <th class="sortable num">Value</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-seal-check"/></svg></span>
+        <h3>No AMC contracts yet</h3><p>Contracts you create and AMC bought in the app appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D603">Create contract</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="kpis"><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div></section>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Contract</th><th>Customer</th><th>Plan</th><th>Status</th><th>Ends</th><th>Value</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="contracts" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Renewal reminders sent">Send reminder</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D602">Open contract</a><span class="grow"></span>
+      <span id="quick-action"></span></div>
+  </div>
+</div>
+
+<!-- filters -->
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Quote requested</button><button class="chip" type="button" aria-pressed="false">Pending payment</button>
+        <button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">Expiring</button>
+        <button class="chip" type="button" aria-pressed="false">Suspended</button><button class="chip" type="button" aria-pressed="false">Expired</button>
+        <button class="chip" type="button" aria-pressed="false">Cancelled</button></div></div>
+      <div class="field"><span class="label">Plan</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Essential</button><button class="chip" type="button" aria-pressed="false">Preventive Plus</button>
+        <button class="chip" type="button" aria-pressed="false">Comprehensive</button></div></div>
+      <div class="field"><span class="label">Ends</span><div class="row wrap" data-single>
+        <button class="chip" type="button" aria-pressed="true">Any time</button><button class="chip" type="button" aria-pressed="false">In 30 days</button>
+        <button class="chip" type="button" aria-pressed="false">In 60 days</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-co">Customer</label><select class="select" id="f-co"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option>Ahmedabad, Pune</option><option>Ahmedabad</option><option>Pune</option></select></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show contracts</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="contracts"> Plan and machines</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="contracts"> Visits</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="contracts"> Value</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C401-amc.html">
+  <div><h3>What it is</h3><p>Every AMC contract, from quote request to expiry.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by status, plan and end date, use saved views.</li><li>Click a row for the quick view; the number opens the contract.</li><li>Select rows to send renewal reminders or export.</li></ul></div>
+  <div><h3>What happens next</h3><p>Contract detail (D602), Create contract (D603), Renewals (D609), Plans (D604).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Ending in 7 days or in the 7 day grace period shows red.</li><li>Statuses and actions follow section 11.</li><li>Values are per year before GST.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const { contracts, visits } = ZXA.data.amc;
+  const href = (c) => ZXA.href('D602', `?amc=${c.number}`);
+  const nextVisit = (c) => visits.filter((v) => v.amc === c.number && ['planned', 'scheduled'].includes(v.status) && v.due >= ZX.data.today)
+    .sort((x, y) => x.due.localeCompare(y.due))[0];
+  const endsSoon = (c) => (['active', 'expiring'].includes(c.status) && r.daysFromToday(c.end) <= 7) || (c.status === 'expired' && A.graceLeft(c) > 0);
+  const live = contracts.filter((c) => ['active', 'expiring'].includes(c.status));
+  const pending = contracts.filter((c) => c.status === 'pending');
+
+  document.getElementById('summary').textContent = `${live.length} live · ${pending.length} waiting for payment · ${contracts.filter((c) => c.status === 'quote').length} quote requests`;
+  document.getElementById('kpis').innerHTML = [
+    ['Live contracts', live.length, `${live.reduce((n, c) => n + c.machines.length, 0)} machines covered`, 'D601'],
+    ['Ending in 60 days', contracts.filter((c) => c.status === 'expiring').length, '1 in grace period', 'D609'],
+    ['Pending payment', r.moneyShort(pending.reduce((n, c) => n + c.value * 1.18, 0)), `${pending.length} contracts`, 'D601'],
+    ['Value per year', r.moneyShort(live.reduce((n, c) => n + c.value, 0)), 'live contracts, before GST', 'D1501'],
+  ].map(([label, value, foot, id]) => `<a class="card kpi" href="#${id}"><span class="label">${label}</span><span class="value">${value}</span><span class="foot">${foot}</span></a>`).join('');
+
+  document.querySelector('#contracts tbody').innerHTML = contracts.map((c) => {
+    const co = r.company(c.company);
+    const s = r.site(c.company, c.site);
+    const m = r.machine(c.machines[0]);
+    const v = nextVisit(c);
+    const left = r.daysFromToday(c.end);
+    const red = endsSoon(c);
+    const endNote = c.status === 'expired' ? (A.graceLeft(c) > 0 ? `Grace ends in ${A.graceLeft(c)} days` : 'Grace ended')
+      : ['active', 'expiring'].includes(c.status) ? `${left} days left` : `Starts ${r.date(c.start)}`;
+    return `<tr data-drawer="quick" data-amc="${c.number}" class="${red ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.number}"></label></td>
+      <td><a class="rec" href="${href(c)}">${c.number}</a><span class="sub">${c.years} year${c.years > 1 ? 's' : ''}</span></td>
+      <td><b class="clip">${co.name}</b><span class="sub">${s.name}</span></td>
+      <td><span class="clip">${c.plan}</span><span class="sub">${c.machines.length > 1 ? `${c.machines.length} machines` : m.model}</span></td>
+      <td data-sort="${Object.keys(A.STATUS).indexOf(c.status)}">${A.tag(c.status)}</td>
+      <td class="nowrap" data-sort="${c.end}">${r.date(c.end)}<span class="sub ${red ? 'red-text' : ''}">${endNote}</span></td>
+      <td class="nowrap" data-sort="${v?.due ?? '9'}">${c.visitsUsed} of ${c.visitsIncluded}<span class="sub">${v ? `Next ${r.date(v.due).slice(0, -5)}${v.engineer ? '' : ' · <span class="amber-text">no engineer</span>'}` : 'No visit planned'}</span></td>
+      <td class="num" data-sort="${c.value}">${r.money(c.value).replace('.00', '')}</td>
+    </tr>`;
+  }).join('');
+
+  /* saved views */
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#contracts tbody tr')];
+    rows.forEach((row) => { row.hidden = key !== 'all' && A.contract(row.dataset.amc).status !== key; });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const key = tab.dataset.view;
+    tab.querySelector('.n').textContent = contracts.filter((c) => key === 'all' || c.status === key).length;
+    tab.addEventListener('click', () => showView(key));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* primary action per status (section 11) */
+  const PRIMARY = {
+    quote: ['Send quotation', 'D606'], pending: ['Send payment link', null], active: ['Schedule visit', 'D607'], expiring: ['Renew', 'D603'],
+    suspended: ['Reactivate', 'D610'], expired: ['Renew', 'D603'], cancelled: null,
+  };
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const c = A.contract(event.detail.dataset.amc);
+    const co = r.company(c.company);
+    const s = r.site(c.company, c.site);
+    const p = A.plan(c.plan);
+    document.getElementById('quick-title').textContent = c.number;
+    document.getElementById('quick-sub').textContent = `${c.plan} · ${co.name}`;
+    document.getElementById('quick-open').href = href(c);
+    const action = PRIMARY[c.status];
+    const q = c.status === 'expiring' || c.status === 'expired' ? `?renew=${c.number}` : `?amc=${c.number}`;
+    document.getElementById('quick-action').innerHTML = !action ? '' : action[1]
+      ? `<a class="btn btn-primary" href="${ZXA.isBuilt(action[1]) ? ZXA.href(action[1], q) : `${ZXA.root}index.html#${action[1]}`}">${action[0]}</a>`
+      : `<button class="btn btn-primary" type="button" data-close data-toast="Payment link sent to ${r.person(c.by).name}">${action[0]}</button>`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${A.tag(c.status)}<span class="tag outline">${c.plan}</span></div>
+      <dl class="dl">
+        <dt>Customer</dt><dd>${co.name}<br><span class="muted">${s.name}</span></dd>
+        <dt>Machines</dt><dd>${c.machines.map((x) => `${r.machine(x).model}<br><span class="mono muted">${x}</span>`).join('<br>')}</dd>
+        <dt>Term</dt><dd>${r.date(c.start)} to ${r.date(c.end)}</dd>
+        <dt>Visits</dt><dd>${c.visitsUsed} of ${c.visitsIncluded} used</dd>
+        <dt>Response</dt><dd>${p.response}</dd>
+        <dt>Value</dt><dd>${r.money(c.value)} before GST</dd>
+        <dt>Invoices</dt><dd>${c.invoices.length ? c.invoices.map((i) => { const inv = ZX.data.invoices.find((x) => x.number === i); return `<span class="mono">${i}</span> ${A.invoiceTag(inv)}`; }).join('<br>') : '<span class="faint">None yet</span>'}</dd>
+      </dl>`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

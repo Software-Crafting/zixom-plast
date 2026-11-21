@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D602 AMC contract detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-amc.css">
+</head>
+<body class="adm" data-page="D602" data-nav="D601">
+<main class="content">
+  <div data-when="ready pdf-failed">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="inline-error" data-when="pdf-failed" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow">Could not create the PDF. The contract is saved.</span><button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="Contract PDF created">Retry</button></div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Contract sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-machines">Machines <span class="n" id="n-machines"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-visits">Visits <span class="n" id="n-visits"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-invoices">Invoices</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-documents">Documents</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-machines" role="tabpanel" hidden></div>
+          <div id="tab-visits" role="tabpanel" hidden></div>
+          <div id="tab-invoices" role="tabpanel" hidden></div>
+          <div id="tab-documents" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D601">Back to AMC contracts</a></div></div></div>
+  </div>
+</main>
+
+<!-- cancel: destructive, names the record and the consequence -->
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer asked to cancel</option><option>Non payment</option><option>Machine sold or retired</option><option>Created by mistake</option><option>Other</option></select></div>
+      <div class="field"><label for="cancel-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="cancel-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep contract</button><button class="btn btn-danger" type="button" data-close data-toast="Contract cancelled. Customer told">Cancel contract</button></div>
+  </div>
+</div>
+
+<!-- decline a quote request -->
+<div class="overlay center" id="decline" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="decline-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="decline-title">Decline this request?</h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="decline-reason">Reason</label><select class="select" id="decline-reason"><option>Plan not offered for this machine</option><option>Machine too old for AMC</option><option>Machine not verified</option><option>Other</option></select></div>
+      <div class="field"><label for="decline-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="decline-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request declined. Customer told">Decline</button></div>
+  </div>
+</div>
+
+<!-- will not renew -->
+<div class="overlay center" id="no-renew" hidden>
+  <div class="modal" role="dialog" aria-labelledby="nr-title">
+    <div class="modal-head"><div class="grow"><h2 id="nr-title">Mark as will not renew?</h2><p>Renewal reminders stop. The contract stays active until its end date.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="nr-reason">Reason</label><select class="select" id="nr-reason"><option>Price is too high</option><option>Machine sold or retired</option><option>We did not use the visits</option><option>Not happy with the service</option><option>Moving to another provider</option><option>Other</option></select></div>
+      <div class="field"><label for="nr-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="nr-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked as will not renew. Listed in Not renewing">Mark will not renew</button></div>
+  </div>
+</div>
+
+<!-- record offline payment: money action, password and reason (section 14) -->
+<div class="overlay right" id="offline" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="off-title">
+    <div class="drawer-head"><div class="grow"><h2 id="off-title">Record offline payment</h2><p id="off-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="off-method">Method</label><select class="select" id="off-method"><option>Bank transfer</option><option>UPI</option><option>Cheque</option></select></div>
+        <div class="field"><label for="off-date">Received on</label><input class="input" id="off-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="off-amount">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="off-amount"></div></div>
+        <div class="field"><label for="off-ref">Reference</label><input class="input mono" id="off-ref" placeholder="UTR or cheque number"></div>
+        <div class="field full"><label for="off-reason">Reason</label><input class="input" id="off-reason" value="Paid by bank transfer, confirmed on the statement"></div>
+        <div class="field full"><label for="off-pass">Your password</label><input class="input" id="off-pass" type="password" autocomplete="current-password"><span class="hint">Money actions ask for your password again.</span></div>
+      </div>
+      <div class="banner"><svg class="ic"><use href="#ph-info"/></svg><span class="grow">The contract becomes Active and a receipt is sent to the customer.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Payment recorded. Contract is now Active">Record payment</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Contract PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download contract PDF</button>
+  <button type="button" data-toast="Customer view opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview as customer</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr id="more-cancel-sep"><button class="danger" type="button" data-open="cancel" id="more-cancel"><svg class="ic"><use href="#ph-x"/></svg>Cancel contract</button>
+</div>
+<div class="menu" id="machine-menu" hidden>
+  <button type="button" data-toast="Machine page opened"><svg class="ic"><use href="#ph-external-link"/></svg>Open machine</button>
+  <hr><button class="danger" type="button" data-toast="Machine removed. Its visit history stays on the contract"><svg class="ic"><use href="#ph-minus"/></svg>Remove from contract</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found pdf-failed error" data-mobile="../../../screens/customer/C402-amc-contract.html">
+  <div><h3>What it is</h3><p>One AMC contract. Opens with <code>?amc=AMC-2026-0010</code>; try 0011 to 0017.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions allowed for the status show (section 11).</li><li>Tabs: overview, machines, visits, invoices, documents, history.</li><li>Download the contract PDF, send a renewal reminder.</li></ul></div>
+  <div><h3>What happens next</h3><p>Create or renew (D603), Visit planner (D607), Suspend or reactivate (D610), Invoice (D903).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Contract PDF comes from the template (D1612); a failed PDF shows Retry (EC-A30).</li><li>A machine removed from a contract keeps its history.</li><li>Expired: Renew only within the 7 day grace period.</li><li>An action from an old page is refused (EC-A14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const ic = r.icon;
+  const c = A.contract(new URLSearchParams(location.search).get('amc') || 'AMC-2026-0010');
+  if (!c) { ZXA.initialState = 'not-found'; return; }
+  const co = r.company(c.company);
+  const s = r.site(c.company, c.site);
+  const p = A.plan(c.plan);
+  const by = r.person(c.by);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const aq = `?amc=${c.number}`;
+  const invoices = c.invoices.map((n) => ZX.data.invoices.find((i) => i.number === n));
+  const due = invoices.find((i) => !['paid', 'cancelled'].includes(i.status));
+  const left = r.daysFromToday(c.end);
+  const grace = A.graceLeft(c);
+  const total = c.value * 1.18;
+
+  document.title = `Zixom Admin - ${c.number}`;
+  document.getElementById('crumb').textContent = c.number;
+  document.getElementById('number').textContent = c.number;
+  document.getElementById('chips').innerHTML = `${A.tag(c.status)}<span class="tag outline">${c.plan}</span>`;
+  document.getElementById('meta').innerHTML = `<span>${ic('buildings')}${co.name}, ${s.name}</span>
+    <span>${ic('calendar-blank')}${r.date(c.start)} to ${r.date(c.end)} · ${c.years} year${c.years > 1 ? 's' : ''}</span>
+    <span>${ic('clock')}Created ${r.date(c.created)}</span>`;
+
+  /* actions allowed for the status (section 11). The first is the primary action */
+  const ACT = {
+    quote: [['Send quotation', link('D606', aq)], ['Create contract', link('D603', `?from=${c.number}`)], ['Decline', '#decline']],
+    pending: [['Send payment link', `toast:Payment link sent to ${by.name}`], ['Record offline payment', '#offline']],
+    active: [['Schedule visit', link('D607', aq)], ['Renew', link('D603', `?renew=${c.number}`)], ['Suspend', link('D610', aq)], ['Edit', link('D603', `?edit=${c.number}`)]],
+    expiring: [['Renew', link('D603', `?renew=${c.number}`)], ['Send reminder', 'toast:Renewal reminder sent'], ['Mark will not renew', '#no-renew']],
+    suspended: [['Reactivate', link('D610', aq)]],
+    expired: grace > 0 ? [['Renew', link('D603', `?renew=${c.number}`)]] : [['Create new contract', link('D603', `?from=${c.number}`)]],
+    cancelled: [],
+  };
+  const cancellable = ['pending', 'active', 'suspended'].includes(c.status);
+  const button = ([label, target], primary) => {
+    const cls = primary ? 'btn btn-primary' : 'btn btn-secondary';
+    if (target.startsWith('#')) return `<button class="${cls}" type="button" data-open="${target.slice(1)}">${label}</button>`;
+    if (target.startsWith('toast:')) return `<button class="${cls}" type="button" data-toast="${target.slice(6)}">${label}</button>`;
+    return `<a class="${cls}" href="${target}">${label}</a>`;
+  };
+  const acts = ACT[c.status];
+  document.getElementById('actions').innerHTML = `${acts.slice(1).map((x) => button(x, false)).join('')}${acts[0] ? button(acts[0], true) : ''}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.getElementById('more-cancel').hidden = !cancellable;
+  document.getElementById('more-cancel-sep').hidden = !cancellable;
+  document.getElementById('cancel-title').textContent = `Cancel ${c.number}?`;
+  document.getElementById('cancel-text').textContent = `${co.name} will be told. AMC cover and planned visits stop. This cannot be undone.`;
+  if (due) {
+    document.getElementById('off-sub').textContent = `${due.number} · ${r.money(r.balance(due))} due`;
+    document.getElementById('off-amount').value = r.money(r.balance(due)).replace('₹', '');
+  }
+
+  /* edge case banners */
+  const banner = (tone, icon, text, btn = '') => `<div class="banner ${tone}">${ic(icon)}<span class="grow">${text}</span>${btn ? `<span class="btns">${btn}</span>` : ''}</div>`;
+  const banners = {
+    quote: () => banner('', 'info', `<b>Quote requested by ${by.name} on ${r.date(c.created)}.</b> ${c.machines.length} machine${c.machines.length > 1 ? 's' : ''}, ${c.years} year${c.years > 1 ? 's' : ''}, starting ${r.date(c.start)}.`),
+    pending: () => due && banner('amber', 'receipt', `<b>Waiting for payment of ${r.money(r.balance(due))}.</b> ${due.number} ${due.status === 'draft' ? 'was created when the customer chose Pay now.' : `is due ${r.date(due.due)}.`} Cover starts once paid.`),
+    expiring: () => banner('amber', 'clock-countdown', `<b>Ends in ${left} days.</b> Reminders sent ${c.reminders.filter(Boolean).map((x) => r.date(x).slice(0, -5)).join(' and ')}. Renewal invoice ${c.renewal} is partly paid.`),
+    suspended: () => c.suspended && banner('red', 'pause', `<b>Suspended on ${r.date(c.suspended.on)}, ${c.suspended.reason.toLowerCase()}.</b> The customer sees a banner and Pay now in the app. Visits are on hold.`),
+    expired: () => (grace > 0 ? banner('red', 'warning', `<b>Expired ${r.date(c.end)}. Grace period ends in ${grace} days.</b> After that a renewal is a new contract.`)
+      : banner('grey', 'archive', '<b>Expired.</b> The grace period has ended. A renewal is a new contract.')),
+  };
+  document.getElementById('edge-banners').innerHTML = banners[c.status]?.() || '';
+
+  /* ---------- overview ---------- */
+  const visits = A.visitsOf(c.number);
+  const next = visits.find((v) => ['planned', 'scheduled'].includes(v.status) && v.due >= ZX.data.today);
+  const REMINDER = ['60 days', '30 days', '7 days', 'End date'];
+  document.getElementById('tab-overview').innerHTML = `<div class="stack">
+    <div class="grid cols-3">
+      <div class="kv"><span>Visits used</span><b>${c.visitsUsed} of ${c.visitsIncluded}</b><div class="progress" style="margin-top:6px"><span style="width:${(c.visitsUsed / c.visitsIncluded) * 100}%"></span></div></div>
+      <div class="kv"><span>Next visit</span><b>${next ? r.dayDate(next.due) : 'None planned'}</b><span>${next ? (next.engineer ? r.engineer(next.engineer).name : '<span class="amber-text">No engineer yet</span>') : ''}</span></div>
+      <div class="kv"><span>${['active', 'expiring'].includes(c.status) ? 'Days left' : 'Starts'}</span><b>${['active', 'expiring'].includes(c.status) ? left : r.date(c.start)}</b><span>Ends ${r.date(c.end)}</span></div>
+    </div>
+    <div class="divider" style="margin:0"></div>
+    <div class="grid cols-2" style="gap:20px">
+      <dl class="dl stack"><dt>Customer</dt><dd>${co.name} <span class="mono muted">${co.code}</span></dd>
+        <dt>Site</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd>
+        <dt>Site contact</dt><dd>${s.contact.name} · <a href="tel:${s.contact.phone.replace(/\s/g, '')}">${s.contact.phone}</a></dd></dl>
+      <dl class="dl stack"><dt>Plan</dt><dd>${c.plan} · ${p.visits} visits a year · ${p.response} response</dd>
+        <dt>Source</dt><dd>${c.from || (c.status === 'quote' ? 'Quote request from the app' : `Created by Rajesh Goyal for ${by.name}`)}</dd>
+        <dt>Coverage</dt><dd>${['active', 'expiring'].includes(c.status) ? 'Tickets on these machines get coverage AMC for included visits' : '<span class="faint">Not covering tickets now</span>'}</dd></dl>
+    </div>
+    ${c.reminders ? `<div><h3 style="font-size:16px; margin-bottom:10px">Renewal reminders</h3><div class="tags">${c.reminders.map((x, i) => (x
+      ? r.tag(`${REMINDER[i]}, sent ${r.date(x).slice(0, -5)}`, 'green', 'check') : r.tag(`${REMINDER[i]}, due`, 'outline'))).join('')}</div></div>` : ''}
+  </div>`;
+
+  /* ---------- machines ---------- */
+  document.getElementById('n-machines').textContent = c.machines.length;
+  document.getElementById('tab-machines').innerHTML = `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Machine</th><th>Site</th><th>Warranty</th><th>Running hours</th><th class="actions"></th></tr></thead><tbody>
+    ${c.machines.map((x) => { const m = r.machine(x); return `<tr><td><b>${m.model}</b><span class="sub mono">${m.serial}${m.nickname ? ` · ${m.nickname}` : ''}</span></td>
+      <td>${r.site(m.company, m.site).name}</td><td>${m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0 ? r.tag(`To ${r.date(m.warrantyEnd)}`, 'green') : r.tag('Out of warranty')}</td>
+      <td class="num">${m.runningHours ? m.runningHours.toLocaleString('en-IN') : '<span class="faint">–</span>'}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="Machine actions" data-menu="machine-menu">${ic('dots-three')}</button></td></tr>`; }).join('')}</tbody></table></div>
+    <p class="muted" style="margin-top:12px; font-size:13px">Machines under another AMC cannot be added (EC-A39). A removed machine keeps its visit history here.</p>`;
+
+  /* ---------- visits ---------- */
+  document.getElementById('n-visits').textContent = visits.length;
+  document.getElementById('tab-visits').innerHTML = visits.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Visit</th><th>Due</th><th>Status</th><th>Engineer</th><th>Ticket</th></tr></thead><tbody>
+    ${visits.map((v) => `<tr data-href="D608?amc=${c.number}&n=${v.n}"><td>Visit ${v.n} of ${c.visitsIncluded}</td><td class="nowrap">${r.dayDate(v.due)}${v.moved ? `<span class="sub">Moved to ${r.dayDate(v.moved)}</span>` : ''}</td>
+      <td>${A.visitTag(v.status)}${v.request ? ' <span class="tag amber">Reschedule asked</span>' : ''}</td><td>${v.engineer ? r.engineer(v.engineer).name : '<span class="faint">Not assigned</span>'}</td>
+      <td>${v.ticket ? `<span class="mono">${v.ticket}</span>` : '<span class="faint">–</span>'}</td></tr>`).join('')}</tbody></table></div>`
+    : `<div class="state"><span class="disc">${ic('calendar-blank')}</span><h3>No visits planned</h3><p>Visits are planned once the contract is active.</p></div>`;
+
+  /* ---------- invoices ---------- */
+  document.getElementById('tab-invoices').innerHTML = invoices.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Invoice</th><th>Issued</th><th>Due</th><th>Status</th><th class="num">Amount</th></tr></thead><tbody>
+    ${invoices.map((i) => `<tr data-href="D903?i=${i.number}"><td><span class="mono">${i.number}</span><span class="sub">${i.title}</span></td><td class="nowrap">${r.date(i.issued)}</td><td class="nowrap">${r.date(i.due)}</td>
+      <td>${A.invoiceTag(i)}</td><td class="num">${r.money(i.amount)}${i.paid && i.paid < i.amount ? `<span class="sub">${r.money(i.paid)} paid</span>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+    : `<div class="state"><span class="disc">${ic('receipt')}</span><h3>No invoices yet</h3><p>An invoice is created when the quotation is accepted.</p></div>`;
+
+  /* ---------- documents ---------- */
+  const docs = [['file-pdf', `AMC contract ${c.number}`, 'Generated from the AMC contract template', c.status === 'quote' ? null : r.date(c.created)],
+    ...invoices.filter((i) => i.status !== 'draft').map((i) => ['receipt', `Invoice ${i.number}`, 'Generated on issue', r.date(i.issued)])];
+  document.getElementById('tab-documents').innerHTML = `<ul class="mini" style="margin:0 -20px">${docs.map(([icon, title, sub, when]) => `<li><span class="ic-disc">${ic(icon)}</span>
+    <span class="grow"><b>${title}</b><small>${sub}${when ? ` · ${when}` : ''}</small></span>
+    ${when ? `<button class="btn btn-sm btn-ghost" type="button" data-toast="PDF downloaded">${ic('download-simple')}Download</button>` : '<span class="end">After the contract is created</span>'}</li>`).join('')}</ul>`;
+
+  /* ---------- history ---------- */
+  const history = [
+    [r.date(c.created), c.status === 'quote' || c.from ? by.name : 'Rajesh Goyal', c.status === 'quote' ? 'Quote requested in the app' : 'Contract created'],
+    ...(c.status !== 'quote' && c.status !== 'pending' ? [[r.date(c.start), 'System', 'Status: Pending payment → Active']] : []),
+    ...(c.status === 'expiring' ? [['22 Oct 2026', 'System', 'Status: Active → Expiring']] : []),
+    ...(c.suspended ? [[r.date(c.suspended.on), 'Rajesh Goyal', `Status: Active → Suspended. Reason: ${c.suspended.reason}`]] : []),
+    ...(c.status === 'expired' ? [[r.date(c.end), 'System', 'Status: Expiring → Expired. Grace period started']] : []),
+  ].reverse();
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Date</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${history.map(([when, who, what]) => `<tr><td class="nowrap">${when}</td><td>${who}</td><td>${what}</td></tr>`).join('')}</tbody></table>`;
+
+  /* ---------- side cards ---------- */
+  const paid = invoices.reduce((n, i) => n + (i.status === 'paid' ? i.amount : (i.paid || 0)), 0);
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Value and payment</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Value</dt><dd>${r.money(c.value)} <span class="muted">before GST</span></dd>
+        <dt>With GST 18%</dt><dd>${r.money(total)}</dd>
+        <dt>Payment</dt><dd>${due ? A.invoiceTag(due) : invoices.length ? r.tag('Paid', 'green') : '<span class="faint">No invoice yet</span>'}</dd>
+        ${paid ? `<dt>Received</dt><dd>${r.money(paid)}</dd>` : ''}</dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">${c.plan}</h3><a class="card-link" href="${link('D605', `?plan=${encodeURIComponent(c.plan)}`)}">Open plan</a></div>
+      <div class="card-body stack-sm"><p class="muted" style="font-size:12px">Included</p>
+        <ul class="amc-list">${[...p.includes, p.parts, `${p.response} breakdown response`].map((x) => `<li>${ic('check')}${x}</li>`).join('')}</ul>
+        <p class="muted" style="font-size:12px; margin-top:8px">Not included</p>
+        <ul class="amc-list out">${p.excludes.map((x) => `<li>${ic('minus')}${x}</li>`).join('')}</ul></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="${link('D202', `?c=${co.id}`)}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${by.initials}</span><span><b>${by.name}</b><small>${by.designation}, ${co.name}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${by.mobile.replace(/\s/g, '')}">${ic('phone')}${by.mobile}</a></div></div></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

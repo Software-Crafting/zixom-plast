@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D609 Renewals</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D609" data-nav="D601">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D601">AMC contracts</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Renewals</span></nav>
+      <h1>Renewals</h1><p id="summary"></p>
+    </div>
+    <a class="btn btn-secondary" href="#D611">Not renewing</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="ending">Ending in 60 days <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="grace">Grace period <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="lapsed">Lapsed <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#renewals"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Contract, customer or machine" aria-label="Search renewals"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="renewals">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Contract</th><th class="sortable">Customer and machine</th><th class="sortable">Ends</th>
+            <th>Reminders</th><th>Renewal</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-seal-check"/></svg></span>
+        <h3>No renewals due</h3><p>Contracts ending in the next 60 days appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Contract</th><th>Customer</th><th>Ends</th><th>Reminders</th></tr></thead><tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="renewals" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Renewal reminders sent">Send reminder now</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay center" id="no-renew" hidden>
+  <div class="modal" role="dialog" aria-labelledby="nr-title">
+    <div class="modal-head"><div class="grow"><h2 id="nr-title">Mark as will not renew?</h2><p>Reminders stop. It moves to Not renewing.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="nr-reason">Reason</label><select class="select" id="nr-reason"><option>Price is too high</option><option>Machine sold or retired</option><option>We did not use the visits</option><option>Not happy with the service</option><option>Moving to another provider</option><option>Other</option></select></div>
+      <div class="field"><label for="nr-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="nr-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked as will not renew">Mark will not renew</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Plan</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Essential</button><button class="chip" type="button" aria-pressed="false">Preventive Plus</button><button class="chip" type="button" aria-pressed="false">Comprehensive</button></div></div>
+      <div class="field"><span class="label">Renewal</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Not started</button><button class="chip" type="button" aria-pressed="false">Invoice sent</button><button class="chip" type="button" aria-pressed="false">Partly paid</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show renewals</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Renewal reminder sent"><svg class="ic"><use href="#ph-bell"/></svg>Send reminder now</button>
+  <a href="tel:+919825011410"><svg class="ic"><use href="#ph-phone"/></svg>Call customer</a>
+  <hr><button type="button" data-open="no-renew"><svg class="ic"><use href="#ph-user-x"/></svg>Mark will not renew</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C405-renew-amc.html">
+  <div><h3>What it is</h3><p>Contracts ending in 60 days, in the 7 day grace period, or lapsed.</p></div>
+  <div><h3>What you can do</h3><ul><li>Send a reminder now, create the renewal (D603).</li><li>Call the customer, mark will not renew.</li></ul></div>
+  <div><h3>What happens next</h3><p>Renewal opens Create contract (D603) filled from the old contract. Will not renew goes to D611.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reminders 60, 30, 7 days before and on the end date.</li><li>Grace ends 7 days after expiry; then a renewal is a new contract.</li><li>Ending in 7 days or in grace is red.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/amc.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const A = ZXA.amc;
+  const ic = r.icon;
+  const { contracts, notRenewing } = ZXA.data.amc;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  /* live contracts plus the lapsed one that chose not to renew but is still worth a call */
+  const lapsed = notRenewing.filter((x) => x.status === 'open').map((x) => ({ number: x.amc, company: x.company, machines: [x.machine], plan: x.plan,
+    end: x.ended, reminders: ['sent', 'sent', null, null], lapsedReason: x.reason }));
+  const rows = [...contracts.filter((c) => c.status === 'expiring' || (c.status === 'expired' && A.graceLeft(c) > 0)), ...lapsed];
+  const group = (c) => (c.lapsedReason ? 'lapsed' : c.status === 'expired' ? 'grace' : 'ending');
+  const LABEL = ['60 days', '30 days', '7 days', 'End date'];
+
+  document.getElementById('summary').textContent = `${rows.filter((c) => group(c) === 'ending').length} ending in 60 days · ${rows.filter((c) => group(c) === 'grace').length} in grace · ${lapsed.length} lapsed`;
+  document.querySelector('#renewals tbody').innerHTML = rows.map((c) => {
+    const co = r.company(c.company);
+    const m = r.machine(c.machines[0]);
+    const g = group(c);
+    const left = r.daysFromToday(c.end);
+    const red = g === 'grace' || (g === 'ending' && left <= 7);
+    const when = g === 'ending' ? `${left} days left` : g === 'grace' ? `Grace ends in ${A.graceLeft(c)} days` : 'Grace ended';
+    const inv = c.renewal && ZX.data.invoices.find((i) => i.number === c.renewal);
+    const reminders = (c.reminders || []).map((sent, i) => {
+      return sent ? `<span class="tag green" title="${LABEL[i]} reminder sent">${ic('check')}${LABEL[i].replace(' days', ' d')}</span>`
+        : `<span class="tag outline" title="${LABEL[i]} reminder ${g === 'lapsed' ? 'stopped' : 'due'}">${LABEL[i].replace(' days', ' d')}</span>`;
+    }).join('');
+    const renew = link('D603', `?renew=${c.number}`);
+    return `<tr data-href="${g === 'lapsed' ? 'D611' : `D602?amc=${c.number}`}" data-group="${g}" class="${red ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.number}"></label></td>
+      <td>${g === 'lapsed' ? `<span class="mono strong nowrap">${c.number}</span>` : `<a class="rec" href="#D602?amc=${c.number}">${c.number}</a>`}<span class="sub">${c.plan}</span></td>
+      <td><b class="clip">${co.name}</b><span class="sub">${m.model} · ${m.serial}</span></td>
+      <td class="nowrap" data-sort="${c.end}">${r.date(c.end)}<span class="sub ${red ? 'red-text' : ''}">${when}</span></td>
+      <td><span class="tags" style="flex-wrap:nowrap">${reminders}</span></td>
+      <td>${inv ? `<span class="mono nowrap">${inv.number}</span><div style="margin-top:3px">${A.invoiceTag(inv)}</div>` : g === 'lapsed' ? `<span class="muted clip">${c.lapsedReason}</span>` : '<span class="faint">Not started</span>'}</td>
+      <td class="actions"><span class="row" style="justify-content:flex-end; gap:6px">${g === 'lapsed' ? `<a class="btn btn-sm btn-secondary" href="tel:${r.person('imran').mobile.replace(/\s/g, '')}">${ic('phone')}Call</a>`
+        : `<a class="btn btn-sm btn-secondary" href="${renew}">${inv ? 'Open renewal' : 'Create renewal'}</a>`}
+        <button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${ic('dots-three')}</button></span></td>
+    </tr>`;
+  }).join('');
+
+  const showView = (k) => {
+    const trs = [...document.querySelectorAll('#renewals tbody tr')];
+    trs.forEach((tr) => { tr.hidden = k !== 'all' && tr.dataset.group !== k; });
+    const n = trs.filter((tr) => !tr.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const k = tab.dataset.view;
+    tab.querySelector('.n').textContent = rows.filter((c) => k === 'all' || group(c) === k).length;
+    tab.addEventListener('click', () => showView(k));
+  });
+  showView('all');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+  document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

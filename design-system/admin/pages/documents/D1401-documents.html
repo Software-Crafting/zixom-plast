@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1401 Documents</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Documents</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D1410">Auto generated</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export list<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1402"><svg class="ic"><use href="#ph-upload-simple"/></svg>Upload</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="manual">Manuals <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="cert">Certificates <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="hidden">Hidden from customers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#docs"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Title, model, serial or company" aria-label="Search documents"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="docs">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Title</th><th class="sortable">Type</th><th class="sortable">Applies to</th><th class="sortable">Version</th>
+            <th class="sortable num">Size</th><th class="sortable">Date</th><th class="sortable num">Downloads</th><th>Visible</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-folder"/></svg></span>
+        <h3>No documents yet</h3><p>Manuals, datasheets and certificates you upload appear here and in the app.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D1402">Upload</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Title</th><th>Type</th><th>Applies to</th><th>Version</th><th>Date</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="docs" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Hidden from customers">Hide from customers</button>
+    <button class="btn" type="button" data-toast="Download started">Download</button>
+    <button class="btn" type="button" data-open="bulk-archive">Archive</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D1403">Open</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-toast="Download started">Download</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Manual</button><button class="chip" type="button" aria-pressed="false">Datasheet</button>
+        <button class="chip" type="button" aria-pressed="false">Certificate</button><button class="chip" type="button" aria-pressed="false">Quotation</button>
+        <button class="chip" type="button" aria-pressed="false">Invoice</button><button class="chip" type="button" aria-pressed="false">Report</button>
+        <button class="chip" type="button" aria-pressed="false">Brochure</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
+      <div class="field"><span class="label">Applies to</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">All customers</button><button class="chip" type="button" aria-pressed="false">A model</button>
+        <button class="chip" type="button" aria-pressed="false">A machine</button><button class="chip" type="button" aria-pressed="false">A company</button></div></div>
+      <div class="field"><label for="f-lang">Language</label><select class="select" id="f-lang"><option>Any</option><option>English</option><option>Hindi</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ba-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ba-title">Archive the selected documents?</h2><p>They disappear from the app at once. Customers can no longer open them.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep</button><button class="btn btn-danger" type="button" data-close data-toast="Documents archived">Archive</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="docs"> Version</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="docs"> Size</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="docs"> Downloads</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Download started"><svg class="ic"><use href="#ph-download-simple"/></svg>Download</button>
+  <a href="#D1402?replace=afm760-manual"><svg class="ic"><use href="#ph-upload-simple"/></svg>Replace with new version</a>
+  <button type="button" data-toast="Link copied, valid 7 days"><svg class="ic"><use href="#ph-link"/></svg>Copy share link</button>
+  <hr><button class="danger" type="button" data-open="bulk-archive"><svg class="ic"><use href="#ph-archive"/></svg>Archive</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C901-documents.html">
+  <div><h3>What it is</h3><p>Manuals, datasheets, certificates and files the app shows in Documents and on machines.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, switch views, choose columns.</li><li>Row click for the quick view; the title opens the document.</li><li>Hide, download or archive in bulk; export the list.</li></ul></div>
+  <div><h3>What happens next</h3><p>Upload (D1402), Document detail (D1403), system made files (D1410).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A new upload is scanned before it shows in the app.</li><li>Archived documents disappear from the app.</li><li>Hidden documents are for Admin only.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/documents.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const list = ZXA.data.documents;
+  const appliesTo = ([kind, value]) => {
+    if (kind === 'all') return ['All customers', 'Every machine'];
+    if (kind === 'model') return [`Model ${value}`, ((n) => `${n} machine${n === 1 ? '' : 's'}`)(r.machines.filter((m) => m.model.startsWith(value)).length)];
+    if (kind === 'machine') { const m = r.machine(value); return [m.nickname || m.model, value]; }
+    return [r.company(value).name, r.company(value).code];
+  };
+  const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
+  const visible = (x) => {
+    if (x.status === 'archived') return r.tag('Archived', 'outline');
+    if (x.status === 'scanning') return r.tag('Scanning', 'amber', 'hourglass');
+    return x.visible ? r.tag('Customers', 'green') : r.tag('Admin only');
+  };
+  const TYPE_ICON = { Manual: 'book-open', Datasheet: 'file-spreadsheet', Certificate: 'certificate', Report: 'clipboard-text', Brochure: 'image', Other: 'file-text' };
+  ZXA.docAppliesTo = appliesTo;
+  const active = list.filter((x) => x.status !== 'archived');
+  document.getElementById('head-sub').textContent = `${active.length} documents · ${active.filter((x) => x.visible).length} visible in the app · ${active.reduce((s, x) => s + x.downloads, 0)} downloads`;
+
+  document.querySelector('#docs tbody').innerHTML = list.map((x) => {
+    const [to, toSub] = appliesTo(x.applies);
+    return `<tr data-drawer="quick" data-id="${x.id}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${r.esc(x.title)}"></label></td>
+      <td><span class="who"><span class="thumb" style="width:32px; height:32px; border-radius:10px">${r.icon(TYPE_ICON[x.type] || 'file-text')}</span>
+        <span><a class="strong clip" href="${ZXA.href('D1403', `?d=${x.id}`)}">${r.esc(x.title)}</a><span class="sub">${x.file}</span></span></span></td>
+      <td>${x.type}</td>
+      <td><span class="clip">${to}</span><span class="sub ${x.applies[0] === 'machine' ? 'mono' : ''}">${toSub}</span></td>
+      <td class="mono" style="font-size:13px">v${x.version}</td>
+      <td class="num" data-sort="${String(x.mb * 1000).padStart(7, '0')}">${size(x.mb)}</td>
+      <td class="nowrap" data-sort="${x.date}">${r.date(x.date)}</td>
+      <td class="num">${x.downloads}</td>
+      <td>${visible(x)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { all: (x) => x.status !== 'archived', manual: (x) => x.type === 'Manual' && x.status !== 'archived', cert: (x) => x.type === 'Certificate',
+    hidden: (x) => !x.visible && x.status !== 'archived', archived: (x) => x.status === 'archived' };
+  const find = (id) => list.find((x) => x.id === id);
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#docs tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](find(row.dataset.id)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = find(event.detail.dataset.id);
+    const [to, toSub] = appliesTo(x.applies);
+    document.getElementById('quick-title').textContent = x.title;
+    document.getElementById('quick-sub').textContent = `${x.type} · v${x.version} · ${size(x.mb)}`;
+    document.getElementById('quick-open').href = ZXA.href('D1403', `?d=${x.id}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${visible(x)}${r.tag(x.language, 'outline')}</div>
+      <div class="gallery" style="grid-template-columns:1fr"><div class="ph" style="aspect-ratio:16 / 9">${r.icon('file-pdf')}<small>${x.file}</small></div></div>
+      <dl class="dl"><dt>Applies to</dt><dd>${to}<br><span class="muted">${toSub}</span></dd>
+        <dt>Uploaded</dt><dd>${r.date(x.date)}</dd><dt>Versions</dt><dd>${x.versions.length}</dd><dt>Downloads</dt><dd>${x.downloads}</dd></dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/* Communication: a drawn phone for live previews (D1302 announcement, D1311 template, D1321 broadcast).
+   The shared .phone-preview frames an iframe; these previews change as the form is typed, so they are drawn. */
+.phone{width:300px; max-width:100%; margin:0 auto; border:8px solid #12181F; border-radius:40px; background:var(--surface); overflow:hidden}
+.phone-top{display:flex; justify-content:space-between; padding:10px 20px 4px; font-size:11px; font-weight:600; color:var(--slate-700)}
+.phone-screen{display:flex; flex-direction:column; gap:10px; min-height:440px; padding:8px 14px 18px}
+.phone-screen h4{font-size:var(--fs-18); font-family:var(--font-display); font-weight:400; color:var(--slate-900)}
+.phone-label{font-size:var(--fs-11); font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-faint)}
+.app-card{padding:12px 14px; border-radius:18px; background:#fff; border:1px solid var(--line); font-size:var(--fs-13); color:var(--text)}
+.app-card b{display:block; color:var(--slate-900); font-weight:600; overflow-wrap:anywhere}
+.app-card small{display:block; margin-top:4px; font-size:var(--fs-11); color:var(--text-muted)}
+.app-card p{margin-top:6px; overflow-wrap:anywhere; white-space:pre-line}
+.app-card .tags{margin-bottom:6px}
+.app-card.pinned{border-color:var(--red); background:var(--red-50)}
+.app-img{aspect-ratio:16 / 9; display:grid; place-items:center; margin:-2px 0 8px; border-radius:12px; background:var(--slate-100); color:var(--slate-500)}
+/* a push notification as it lands on the lock screen */
+.push{display:flex; gap:10px; padding:10px 12px; border-radius:16px; background:rgba(255,255,255,.9); border:1px solid var(--line); font-size:var(--fs-12)}
+.push .logo{width:28px; height:28px; flex-shrink:0; display:grid; place-items:center; border-radius:8px; background:var(--slate-800); color:#fff}
+.push .logo .ic{width:15px; height:15px}
+.push b{display:block; color:var(--slate-900); font-size:var(--fs-13); overflow-wrap:anywhere}
+.push span{display:block; color:var(--text); overflow-wrap:anywhere}
+.push small{margin-left:auto; color:var(--text-faint); white-space:nowrap}
+.mail{padding:14px; border-radius:14px; background:#fff; border:1px solid var(--line); font-size:var(--fs-13)}
+.mail .from{font-size:var(--fs-12); color:var(--text-muted)}
+.mail h5{margin:6px 0 8px; font-size:var(--fs-14); color:var(--slate-900)}
+.var-chips{display:flex; flex-wrap:wrap; gap:6px}
+.var-chips .chip{font-family:var(--font-mono); font-size:12px; height:28px}
+@media (max-width:640px){
+  .phone{width:280px}
+  .phone-screen{min-height:360px}
+}
