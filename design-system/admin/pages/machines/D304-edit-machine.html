@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D304 Edit machine</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D304">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg>
+      <a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Edit</span></nav>
+      <h1>Edit machine</h1><p id="sub"></p></div>
+  </div>
+
+  <div data-when="ready warning">
+    <div class="banner amber" data-when="warning" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+      <span class="grow" id="warn-text"></span></div>
+    <form class="card pad" id="form" onsubmit="return false"></form>
+    <section class="card pad" style="margin-top:16px">
+      <div class="field"><label for="f-reason">Reason for the change</label>
+        <textarea class="textarea" id="f-reason" maxlength="300" placeholder="For example: serial corrected from the nameplate photo"></textarea>
+        <span class="hint">Needed when the serial, customer or warranty dates change. Kept in the machine history.</span></div>
+    </section>
+    <div class="form-bar"><span class="grow">The customer sees changes in the app at once.</span>
+      <a class="btn btn-ghost" id="cancel" href="#D302">Cancel</a>
+      <button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready warning loading error" data-mobile="../../../screens/customer/C206-edit-machine.html">
+  <div><h3>What it is</h3><p>Edit one machine. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change any field from Add machine.</li><li>Give a reason when serial, customer or warranty dates change.</li><li>Save or cancel.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302). Customer moves use Transfer (D306).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Warranty dates changed with claims on the machine: warning, old decisions stay (EC-A38).</li><li>Another Admin saved first: stale banner with Reload or Compare (EC-A12).</li><li>Serial clash is blocked (EC-A36).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const $ = (id) => document.getElementById(id);
+  const claims = ZXA.cl.claims.filter((c) => c.machine === m.serial);
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('cancel').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  $('form').innerHTML = x.form(m);
+  $('f-hours').closest('.field').remove();
+  $('warn-text').innerHTML = claims.length
+    ? `<b>Warranty dates changed. ${claims.length} claims exist on this machine.</b> They keep their original decision: ${claims.map((c) => c.number).join(', ')}.`
+    : '<b>Warranty dates changed.</b> The customer is told and the change is logged.';
+  /* changing a warranty date shows the claim warning (EC-A38) */
+  ['f-ws', 'f-we'].forEach((id) => $(id).addEventListener('change', () => ZXA.ui.setState('warning')));
+  x.watchInvalid();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

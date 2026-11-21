@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D507 Create claim on behalf</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D507">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D501">Warranty claims</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Create claim</span></nav>
+      <h1>Create claim on behalf</h1><p>For a claim that came by phone or email. The customer sees it in the app.</p></div>
+  </div>
+
+  <div data-when="ready errors">
+    <div class="banner red" data-when="errors" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow"><b>2 fields need attention.</b> Category and description.</span></div>
+    <div id="flags" class="stack" style="margin-bottom:16px"></div>
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section"><h3>Source</h3><p>Recorded on the claim as created by Admin.</p>
+        <div class="form-grid">
+          <div class="field"><span class="label">Received by</span><div class="segment" role="tablist" aria-label="Received by">
+            <button role="tab" aria-selected="true">Phone</button><button role="tab" aria-selected="false">Email</button></div></div>
+          <div class="field"><label for="c-when">Received at</label><input class="input" id="c-when" type="datetime-local" value="2026-11-23T11:40"></div>
+        </div></section>
+      <section class="form-section"><h3>Customer and machine</h3><p>Only verified machines of the customer are listed.</p>
+        <div class="form-grid">
+          <div class="field"><label for="c-company">Customer</label><select class="select" id="c-company"></select></div>
+          <div class="field"><label for="c-person">Reported by</label><select class="select" id="c-person"></select></div>
+          <div class="field full"><label for="c-machine">Machine</label><select class="select" id="c-machine"></select><span class="hint" id="c-machine-hint"></span></div>
+        </div></section>
+      <section class="form-section"><h3>Problem</h3><p>As the customer described it.</p>
+        <div class="stack">
+          <div class="field"><span class="label">Category</span><div class="row wrap" data-single id="c-cat"></div>
+            <span class="error" data-when="errors"><svg class="ic"><use href="#ph-warning-circle"/></svg>Choose a category</span></div>
+          <div class="form-grid">
+            <div class="field"><label for="c-part">Part <span class="opt">optional</span></label><select class="select" id="c-part"><option>Not sure</option></select></div>
+            <div class="field"><label for="c-started">Started on</label><input class="input" id="c-started" type="date" value="2026-11-22" max="2026-11-23"></div>
+            <div class="field"><label for="c-code">Error code <span class="opt">optional</span></label><input class="input mono" id="c-code" maxlength="12"></div>
+            <div class="field"><span class="label">Machine stopped</span><label class="switch" style="margin-top:8px"><input type="checkbox"><span></span>Yes, production stopped</label></div>
+          </div>
+          <div class="field"><label for="c-desc">Description</label><textarea class="textarea" id="c-desc" maxlength="1000" data-invalid-on="errors"></textarea>
+            <span class="hint" data-when="ready">20 to 1,000 characters</span>
+            <span class="error" data-when="errors"><svg class="ic"><use href="#ph-warning-circle"/></svg>Describe what happened in at least 20 characters</span></div>
+        </div></section>
+      <section class="form-section"><h3>Evidence</h3><p>Up to 10 photos and 1 video of 60 seconds. Or ask the customer to add them in the app.</p>
+        <div class="stack-sm"><div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop photos or a video</b>JPG, PNG, HEIC up to 10 MB · MP4 or MOV up to 50 MB</div>
+          <label class="check"><input type="checkbox" checked> Ask the customer to add photos in the app</label></div></section>
+    </form>
+    <div class="form-bar"><span class="grow">Review target starts now: 2 working days.</span>
+      <button class="btn btn-ghost" type="button" data-toast="Draft saved">Save draft</button>
+      <button class="btn btn-primary" type="button" data-busy data-toast="Claim WCL-2026-0047 created. Customer told">Submit claim</button></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready errors loading error" data-mobile="../../../screens/customer/C303-claim-machine.html">
+  <div><h3>What it is</h3><p>The app's claim wizard as one form, for phone or email claims. <code>?m=ZP-TF-2310</code> picks the machine.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose customer, person and machine.</li><li>Fill the problem and add evidence, or ask the customer to add it.</li><li>Submit or save a draft.</li></ul></div>
+  <div><h3>What happens next</h3><p>The claim opens (D502) as Submitted; the customer sees it in C308.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Source is recorded as Admin.</li><li>Same fault on the same machine within 30 days: flagged (try Heating on ZP-TF-2310).</li><li>Machine out of warranty: warned; Approve will need an extension (D307).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const cl = ZXA.cl;
+  const $ = (id) => document.getElementById(id);
+  const CATEGORIES = ['Mechanical', 'Electrical', 'Heating', 'Vacuum or pneumatic', 'Control or PLC', 'Other'];
+  const start = x.fromQuery('ZP-TF-2310');
+
+  $('c-company').innerHTML = ZX.data.companies.map((c) => `<option value="${c.id}"${c.id === start.company ? ' selected' : ''}>${c.name} · ${c.code}</option>`).join('');
+  $('c-cat').innerHTML = CATEGORIES.map((c) => `<button class="chip" type="button" aria-pressed="${c === 'Heating'}" data-cat="${c}">${c}</button>`).join('');
+  $('c-part').innerHTML += ZX.data.parts.map((p) => `<option>${p.name}</option>`).join('');
+
+  const fillCompany = () => {
+    const id = $('c-company').value;
+    $('c-person').innerHTML = ZX.data.users.filter((u) => u.companies.some((c) => c.id === id)).map((u) => `<option>${u.name} · ${u.mobile}</option>`).join('');
+    $('c-machine').innerHTML = x.all.filter((m) => m.company === id && m.status !== 'pending')
+      .map((m) => `<option value="${m.serial}"${m === start ? ' selected' : ''}>${m.serial} · ${m.model}${m.nickname ? ` · ${m.nickname}` : ''}</option>`).join('');
+  };
+  /* warranty and duplicate flags follow the machine and category */
+  const flags = () => {
+    const m = r.machine($('c-machine').value);
+    const cat = document.querySelector('#c-cat [aria-pressed="true"]')?.dataset.cat;
+    const w = x.warranty(m);
+    $('c-machine-hint').innerHTML = `${r.site(m.company, m.site).name} · ${w.label}${m.warrantyEnd ? `, ends ${r.date(m.warrantyEnd)}` : ''}`;
+    const dup = cl.claims.find((c) => c.machine === m.serial && c.category === cat && c.status !== 'cancelled' && r.daysFromToday(c.submitted) >= -30);
+    $('flags').innerHTML = [
+      w.state === 'out' ? `<div class="banner red">${r.icon('shield-off')}<span class="grow"><b>Out of warranty since ${r.date(m.warrantyEnd)}.</b> You can record the claim; approving it needs an extension first.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D307', `?m=${m.serial}`)}">Warranty</a></span></div>` : '',
+      dup ? `<div class="banner amber">${r.icon('copy')}<span class="grow"><b>Possible duplicate of ${dup.number}.</b> ${cat} on ${m.serial}, ${r.date(dup.submitted)}: ${r.esc(dup.summary)}</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D502', `?c=${dup.number}`)}">Open</a></span></div>` : '',
+    ].join('');
+  };
+  $('c-company').addEventListener('change', () => { fillCompany(); flags(); });
+  $('c-machine').addEventListener('change', flags);
+  $('c-cat').addEventListener('click', () => setTimeout(flags));
+  fillCompany();
+  flags();
+  x.watchInvalid();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

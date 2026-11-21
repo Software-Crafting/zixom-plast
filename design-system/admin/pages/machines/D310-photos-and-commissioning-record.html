@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D310 Photos and commissioning record</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D310">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Photos</span></nav>
+      <h1>Photos and commissioning record</h1><p id="sub"></p></div>
+  </div>
+
+  <div data-when="ready empty">
+    <div class="grid side-right">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Photos and videos</h2><p id="ph-sub"></p></div></div>
+          <div class="card-body stack">
+            <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop photos or a video here, or browse</b>JPG, PNG, HEIC up to 10 MB · MP4 or MOV up to 60 s and 50 MB</div>
+            <div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-image"/></svg></span><span class="grow"><b>heater-bank-close.jpg</b>
+              <span class="muted" style="display:block; font-size:12px">Checking for viruses · 3.4 MB</span><span class="progress"><span style="width:70%"></span></span></span></div>
+            <div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-video-camera"/></svg></span><span class="grow"><b>trial-run-full.mov</b>
+              <span class="red-text" style="display:block; font-size:12px">Too large: 84 MB. Videos can be up to 50 MB.</span></span>
+              <button class="btn btn-sm btn-secondary" type="button" data-toast="Choose a smaller file">Retry</button><button class="icon-btn sm" type="button" aria-label="Remove"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+            <div class="gallery" id="gallery" data-when="ready"></div>
+            <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-camera"/></svg></span><h3>No photos yet</h3><p>Photos from installation and visits appear here.</p></div>
+          </div>
+        </section>
+      </div>
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Commissioning record</h2></div></div>
+          <div class="card-body stack-sm" id="record"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Handover checklist</h2><p id="check-sub"></p></div></div>
+          <ul class="mini" id="checklist"></ul>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div data-when="loading"><div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div></div></div>
+</main>
+
+<div class="menu" id="photo-menu" hidden>
+  <button type="button" data-toast="Photo downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download</button>
+  <button type="button" data-toast="Choose the new photo"><svg class="ic"><use href="#ph-refresh-ccw"/></svg>Replace</button>
+  <button type="button" data-toast="Marked as commissioning record"><svg class="ic"><use href="#ph-file-check"/></svg>Mark as commissioning record</button>
+  <hr><button class="danger" type="button" data-open="delete"><svg class="ic"><use href="#ph-trash"/></svg>Delete photo</button>
+</div>
+<div class="overlay center" id="delete" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="del-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="del-title">Delete this photo?</h2><p>It is removed from the machine and the app. This cannot be undone.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep photo</button><button class="btn btn-danger" type="button" data-close data-toast="Photo deleted">Delete</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C202-machine-detail.html">
+  <div><h3>What it is</h3><p>Photos of one machine, its commissioning report and handover checklist. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Upload, replace or delete photos.</li><li>Mark a file as the commissioning record.</li><li>Download the signed report.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Files are checked for viruses before they show.</li><li>Too large or wrong type: per file error with Retry (EC-A29).</li><li>10 MB per photo, 1 video up to 60 s and 50 MB.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const i = x.info(m.serial);
+  const $ = (id) => document.getElementById(id);
+  const CHECKLIST = ['Machine levelled and anchored', 'Power and earthing checked', 'All heater zones tested', 'Safety interlocks tested',
+    'Trial run with customer sheet', 'Operators trained', 'Manuals handed over'];
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  $('ph-sub').textContent = `${i.photos.length} files`;
+  if (!i.photos.length) document.body.dataset.state = 'empty';
+  $('gallery').innerHTML = i.photos.map(([label, icon, when]) => `<div class="ph">${r.icon(icon)}<small>${label}</small>
+    <button class="icon-btn sm white" type="button" style="position:absolute; top:6px; right:6px" aria-label="Actions for ${label}" data-menu="photo-menu">${r.icon('dots-three')}</button>
+    <span class="sr-only">Added ${r.date(when)}</span></div>`).join('');
+  const rec = i.commissioning;
+  $('record').innerHTML = rec ? `<div class="file-row"><span class="thumb">${r.icon('file-pdf')}</span><span class="grow"><b>${rec.file}</b>
+      <span class="muted" style="display:block; font-size:12px">Signed ${r.date(rec.date)}</span></span>
+      <button class="icon-btn sm" type="button" aria-label="Download" data-toast="Download started">${r.icon('download-simple')}</button></div>
+    <dl class="dl"><dt>Commissioned</dt><dd>${r.date(rec.date)}</dd><dt>Engineer</dt><dd>${rec.by}</dd><dt>Signed by</dt><dd>${rec.signedBy}</dd></dl>`
+    : '<p class="muted">No commissioning record yet. Mark a file as the record.</p>';
+  const done = rec ? CHECKLIST.length : 0;
+  $('check-sub').textContent = `${done} of ${CHECKLIST.length} done`;
+  $('checklist').innerHTML = CHECKLIST.map((c, n) => `<li><span class="ic-disc ${n < done ? 'green' : ''}">${r.icon(n < done ? 'check' : 'circle')}</span><span class="grow"><b>${c}</b></span></li>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

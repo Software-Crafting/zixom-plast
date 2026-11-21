@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D301 Machine register</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D301">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Machine register</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D303"><svg class="ic"><use href="#ph-plus"/></svg>Add machine</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All machines <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="verify">Needs verification <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="expiring">Warranty expiring <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="out">Out of warranty <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="amc">Under AMC <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="tickets">Open tickets <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#machines"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Serial, model, customer or nickname" aria-label="Search machines"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved as My machines"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="applied-row" data-when="ready no-results">
+        <span class="chip applied">Status: <b>Not decommissioned</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+        <button class="btn-link btn" type="button" data-toast="Filters cleared">Clear all</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="machines">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Serial</th><th class="sortable">Model and series</th><th class="sortable">Customer and site</th>
+            <th class="sortable">Installed</th><th class="sortable">Warranty end</th><th>AMC</th><th class="sortable">Status</th>
+            <th class="sortable num">Open tickets</th><th class="sortable num">Running hours</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-factory"/></svg></span>
+        <h3>No machines yet</h3><p>Machines you add or import appear here.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D1510">Import</a><a class="btn btn-primary" href="#D303">Add machine</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Serial</th><th>Model and series</th><th>Customer and site</th><th>Warranty end</th><th>Status</th><th>Running hours</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="machines" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-warranty">Update warranty end</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view: a row click opens it, the serial opens the machine -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D302">Open machine</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-action" href="#D402">Create ticket</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Series</span><div class="row wrap" data-chips id="f-series"></div></div>
+      <div class="field"><span class="label">Warranty</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">In warranty</button><button class="chip" type="button" aria-pressed="false">Expiring</button>
+        <button class="chip" type="button" aria-pressed="false">Out of warranty</button></div></div>
+      <div class="field"><span class="label">AMC</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">Expiring</button>
+        <button class="chip" type="button" aria-pressed="false">Expired</button><button class="chip" type="button" aria-pressed="false">None</button></div></div>
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Running</button><button class="chip" type="button" aria-pressed="false">Idle</button>
+        <button class="chip" type="button" aria-pressed="false">Repair</button><button class="chip" type="button" aria-pressed="false">Pending</button>
+        <button class="chip" type="button" aria-pressed="false">Decommissioned</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-company">Customer</label><select class="select" id="f-company"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-state">State</label><select class="select" id="f-state"><option>Any</option><option>Gujarat</option><option>Maharashtra</option></select></div>
+      </div>
+      <label class="check"><input type="checkbox"> Has an open ticket</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied" id="f-apply">Show machines</button></div>
+  </div>
+</div>
+
+<!-- bulk: update warranty end, with the claim warning (EC-A38) -->
+<div class="overlay center" id="bulk-warranty" hidden>
+  <div class="modal" role="dialog" aria-labelledby="bw-title">
+    <div class="modal-head"><div class="grow"><h2 id="bw-title">Update warranty end</h2><p>Applies to the selected machines. Each change lands in the machine history.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="bw-date">New warranty end</label><input class="input" id="bw-date" type="date" value="2027-06-30"></div>
+      <div class="field"><label for="bw-reason">Reason</label><textarea class="textarea" id="bw-reason" maxlength="300">Goodwill extension after the heater recall.</textarea></div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Machines with claims keep the original decision on those claims.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-open="bulk-result">Update</button></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>ZP-TF-2501 is pending verification and has no warranty yet.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="machines"> Installed</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="machines"> AMC</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="machines"> Open tickets</label>
+  <label class="check"><input type="checkbox" checked data-col="9" data-table="machines"> Running hours</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D302"><svg class="ic"><use href="#ph-external-link"/></svg>Open machine</a>
+  <a href="#D402"><svg class="ic"><use href="#ph-wrench"/></svg>Create ticket</a>
+  <a href="#D311"><svg class="ic"><use href="#ph-qr-code"/></svg>Print label</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><a href="#D313"><svg class="ic"><use href="#ph-toggle"/></svg>Change status</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C201-machines.html">
+  <div><h3>What it is</h3><p>Every machine Zixom has sold, one row each. Replaces the paper register.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the serial for the machine.</li><li>Select rows to update the warranty end or export.</li><li>Add a machine or import from Excel.</li></ul></div>
+  <div><h3>What happens next</h3><p>Machine detail (D302), Add machine (D303), Import (D1510), Bulk result (D1809).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machines added by customers are Pending and sit in Needs verification.</li><li>Warranty: In warranty, Expiring (60 days or fewer), Out of warranty.</li><li>Serials are unique and never reused.</li><li>Changing a warranty end keeps old claim decisions (EC-A38). Partial bulk failure (EC-A64).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  /* pending first (they need verifying), then by serial */
+  const machines = [...x.all].sort((p, q) => Number(q.status === 'pending') - Number(p.status === 'pending') || p.serial.localeCompare(q.serial));
+  const mq = (m) => `?m=${m.serial}`;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+
+  document.getElementById('head-sub').textContent = `${machines.length} machines · ${machines.filter((m) => m.status === 'pending').length} to verify · ${machines.filter((m) => x.warranty(m).state === 'expiring').length} warranty expiring`;
+  document.querySelector('#machines tbody').innerHTML = machines.map((m) => {
+    const open = x.openTickets(m.serial).length;
+    const h = x.hours(m);
+    return `<tr data-drawer="quick" data-serial="${m.serial}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${m.serial}"></label></td>
+      <td><a class="rec" href="#D302${mq(m)}">${m.serial}</a><span class="sub">${m.nickname || r.esc(m.type)}</span></td>
+      <td><b class="clip">${m.model}</b><span class="sub">${x.series(m)}</span></td>
+      <td><b class="clip">${r.company(m.company).name}</b><span class="sub">${r.site(m.company, m.site).name}</span></td>
+      <td class="nowrap" data-sort="${m.installed ?? '9'}">${m.installed ? r.date(m.installed) : '<span class="faint">Not set</span>'}</td>
+      <td class="nowrap" data-sort="${m.warrantyEnd ?? '9'}">${m.warrantyEnd ? `${r.date(m.warrantyEnd)}<span class="sub">${x.warrantyTag(m)}</span>` : x.warrantyTag(m)}</td>
+      <td>${x.amcTag(m)}</td>
+      <td>${x.statusTag(m.status)}</td>
+      <td class="num" data-sort="${open}">${open || '<span class="faint">0</span>'}</td>
+      <td class="num" data-sort="${h ?? -1}">${h === null ? '<span class="faint">–</span>' : h.toLocaleString('en-IN')}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = {
+    all: (m) => m.status !== 'decommissioned', verify: (m) => m.status === 'pending', expiring: (m) => x.warranty(m).state === 'expiring',
+    out: (m) => x.warranty(m).state === 'out', amc: (m) => Boolean(m.amc), tickets: (m) => x.openTickets(m.serial).length > 0,
+  };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#machines tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](r.machine(row.dataset.serial)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = machines.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  /* ?view=verify opens Needs verification (dashboard KPI, D210) */
+  const startView = VIEWS[new URLSearchParams(location.search).get('view')] ? new URLSearchParams(location.search).get('view') : 'all';
+  document.querySelector(`[data-view="${startView}"]`).setAttribute('aria-selected', 'true');
+  if (startView !== 'all') document.querySelector('[data-view="all"]').setAttribute('aria-selected', 'false');
+  showView(startView);
+
+  document.getElementById('f-series').innerHTML = ZXA.data.series.map((s) => `<button class="chip" type="button" aria-pressed="false">${s.name}</button>`).join('');
+  document.getElementById('f-apply').textContent = `Show ${machines.length} machines`;
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* quick view */
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const m = r.machine(event.detail.dataset.serial);
+    const c = r.company(m.company);
+    const s = r.site(m.company, m.site);
+    const open = x.openTickets(m.serial);
+    const pending = m.status === 'pending';
+    document.getElementById('quick-title').textContent = m.serial;
+    document.getElementById('quick-sub').textContent = `${m.model} · ${x.series(m)}`;
+    document.getElementById('quick-open').href = link('D302', mq(m));
+    const action = document.getElementById('quick-action');
+    action.textContent = pending ? 'Verify machine' : 'Create ticket';
+    action.href = pending ? link('D302', mq(m)) : link('D402', mq(m));
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${x.statusTag(m.status)}${x.warrantyTag(m)}${m.amc ? x.amcTag(m) : ''}</div>
+      ${pending ? '<div class="banner amber"><svg class="ic"><use href="#ph-hourglass"/></svg><span class="grow"><b>Added by the customer.</b> Check the nameplate photo, then verify.</span></div>' : ''}
+      <dl class="dl">
+        <dt>Customer</dt><dd>${c.name}<br><span class="muted">${s.name}, ${s.pincode}</span></dd>
+        <dt>Nickname</dt><dd>${m.nickname || '<span class="faint">None</span>'}</dd>
+        <dt>Installed</dt><dd>${m.installed ? r.date(m.installed) : 'Not set'}</dd>
+        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}` : 'Starts after verification'}</dd>
+        <dt>AMC</dt><dd>${m.amc ? `<span class="mono">${m.amc}</span>` : 'None'}</dd>
+        <dt>Running hours</dt><dd>${x.hours(m)?.toLocaleString('en-IN') ?? '–'}</dd>
+        <dt>Open tickets</dt><dd>${open.length ? open.map((t) => `<a class="mono" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a>`).join('<br>') : 'None'}</dd>
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

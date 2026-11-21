@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D315 Customer log report</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-machines.css">
+</head>
+<body class="adm" data-page="D315">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Customer log report</span></nav>
+      <h1>Customer log report</h1><p>Printable log for one machine or one customer. Replaces the paper register page.</p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel</button>
+    <button class="btn btn-primary" type="button" data-busy data-toast="PDF downloaded" id="pdf"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button>
+  </div>
+
+  <div data-when="ready background">
+    <section class="card pad" style="margin-bottom:16px">
+      <div class="row wrap" style="gap:16px">
+        <div class="segment" role="tablist" aria-label="Report for">
+          <button role="tab" aria-selected="true" aria-controls="for-machine" data-scope="machine">One machine</button>
+          <button role="tab" aria-selected="false" aria-controls="for-company" data-scope="company">One customer</button></div>
+        <div class="grow" style="min-width:240px"><select class="select" id="pick" aria-label="Machine or customer"></select></div>
+        <label class="check"><input type="checkbox" checked> Include hidden notes</label>
+      </div>
+    </section>
+    <div class="banner" data-when="background" style="margin-bottom:16px"><svg class="ic"><use href="#ph-hourglass"/></svg>
+      <span class="grow"><b>Large report, running in the background.</b> 6 machines, 41 visits. You can leave this page; a notification arrives when it is ready.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1520">Exports</a></span></div>
+
+    <section class="card" id="for-machine" role="tabpanel"><div class="log-doc" id="doc"></div></section>
+    <section class="card" id="for-company" role="tabpanel" hidden><div class="log-doc" id="doc-company"></div></section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+</main>
+
+<aside class="proto" data-states="ready background loading error">
+  <div><h3>What it is</h3><p>The customer log: machine, warranty, AMC, every visit, parts and notes. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose one machine or one customer.</li><li>Download as PDF or Excel.</li><li>Leave hidden notes out for a copy the customer sees.</li></ul></div>
+  <div><h3>What happens next</h3><p>Large reports land in Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Large reports run in the background (EC-A34).</li><li>PDF fails: Could not create the PDF with Retry (EC-A30).</li><li>Hindi and special characters print correctly (EC-A08).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const $ = (id) => document.getElementById(id);
+  let m = x.fromQuery('ZP-TF-2310');
+  const docHead = (title, sub) => `<div class="doc-head"><div class="grow"><b style="letter-spacing:.04em">ZIXOM PLAST</b><h2 style="margin:6px 0 2px; font-size:22px">${title}</h2>
+    <p class="muted">${sub}</p></div><p class="muted" style="font-size:12px">Printed ${r.date(ZX.data.today)}, 12:00 IST<br>by ${ZXA.data.admin.name}</p></div>`;
+
+  const machineDoc = (mc) => {
+    const i = x.info(mc.serial);
+    const amc = x.amcOf(mc);
+    const tickets = [...x.tickets(mc.serial)].sort((p, q) => q.created.localeCompare(p.created));
+    const parts = tickets.flatMap((t) => ZX.data.reports.filter((rep) => rep.ticket === t.number).flatMap((rep) => rep.parts.map((p) => [...p, t.number, rep.date])));
+    const c = r.company(mc.company);
+    return `${docHead(`Customer log · ${mc.serial}`, `${c.name} (${c.code}) · ${r.site(mc.company, mc.site).name}`)}
+      <h2>Machine</h2><dl class="dl"><dt>Model</dt><dd>${mc.model} · ${x.series(mc)}</dd><dt>Serial</dt><dd class="mono">${mc.serial}</dd>
+        <dt>Installed</dt><dd>${mc.installed ? r.date(mc.installed) : '–'}</dd><dt>Commissioned</dt><dd>${mc.commissioned ? r.date(mc.commissioned) : '–'}</dd>
+        <dt>Running hours</dt><dd>${x.hours(mc)?.toLocaleString('en-IN') ?? '–'}</dd><dt>Status</dt><dd>${x.STATUS[mc.status][0]}</dd></dl>
+      <h2>Warranty and AMC</h2><dl class="dl"><dt>Warranty</dt><dd>${mc.warrantyEnd ? `${r.date(x.warrantyStart(mc))} to ${r.date(mc.warrantyEnd)} · ${i.warrantyType} · ${x.warranty(mc).label}` : 'Not started'}</dd>
+        <dt>AMC</dt><dd>${amc ? `${amc.number} · ${amc.plan} · ${r.date(amc.start)} to ${r.date(amc.end)} · ${amc.visitsUsed} of ${amc.visitsIncluded} visits` : 'None'}</dd></dl>
+      <h2>Service visits</h2>${tickets.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Date</th><th>Ticket</th><th>Type</th><th>Work</th><th>Status</th></tr></thead><tbody>
+        ${tickets.map((t) => `<tr><td class="nowrap">${r.date(t.created)}</td><td class="mono nowrap">${t.number}</td><td>${t.type}</td><td>${r.esc(t.summary)}</td><td class="nowrap">${r.ticketLabel(t.status)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None.</p>'}
+      <h2>Parts used</h2>${parts.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Date</th><th>Part</th><th class="num">Qty</th><th>Ticket</th></tr></thead><tbody>
+        ${parts.map(([no, name, qty, , tk, when]) => `<tr><td class="nowrap">${r.date(when)}</td><td>${name} <span class="mono muted">${no}</span></td><td class="num">${qty}</td><td class="mono">${tk}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None.</p>'}
+      <h2>Notes</h2>${i.notes.length ? `<ul class="stack-sm" style="padding-left:18px">${i.notes.map((n) => `<li>${r.esc(n.text)} <span class="muted">· ${n.by}, ${r.date(n.when)}</span></li>`).join('')}</ul>` : '<p class="muted">None.</p>'}`;
+  };
+  const companyDoc = (id) => {
+    const c = r.company(id);
+    const list = x.all.filter((mc) => mc.company === id);
+    return `${docHead(`Customer log · ${c.name}`, `${c.code} · ${list.length} machines`)}
+      <h2>Machines</h2><div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Serial</th><th>Model</th><th>Site</th><th>Warranty</th><th>AMC</th><th class="num">Visits</th></tr></thead><tbody>
+      ${list.map((mc) => `<tr><td class="mono">${mc.serial}</td><td>${mc.model}</td><td>${r.site(id, mc.site).name}</td><td class="nowrap">${x.warranty(mc).label}</td>
+        <td class="nowrap">${mc.amc ?? '–'}</td><td class="num">${x.tickets(mc.serial).length}</td></tr>`).join('')}</tbody></table></div>
+      <p class="muted" style="margin-top:16px">Each machine's full log follows on its own page in the PDF.</p>`;
+  };
+
+  let scope = 'machine';
+  const fillPick = () => {
+    $('pick').innerHTML = scope === 'machine'
+      ? x.all.map((mc) => `<option value="${mc.serial}"${mc === m ? ' selected' : ''}>${mc.serial} · ${mc.model} · ${r.company(mc.company).name}</option>`).join('')
+      : ZX.data.companies.map((c) => `<option value="${c.id}"${c.id === m.company ? ' selected' : ''}>${c.name} · ${c.code}</option>`).join('');
+  };
+  const render = () => {
+    if (scope === 'machine') { m = r.machine($('pick').value); $('doc').innerHTML = machineDoc(m); } else $('doc-company').innerHTML = companyDoc($('pick').value);
+  };
+  document.querySelectorAll('[data-scope]').forEach((b) => b.addEventListener('click', () => { scope = b.dataset.scope; fillPick(); render(); }));
+  $('pick').addEventListener('change', render);
+  fillPick();
+  render();
+  $('doc-company').innerHTML = companyDoc(m.company);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

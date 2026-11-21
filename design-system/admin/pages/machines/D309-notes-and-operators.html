@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D309 Notes and operators</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D309">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Notes and operators</span></nav>
+      <h1>Notes and operators</h1><p id="sub"></p></div>
+  </div>
+
+  <div data-when="ready">
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Notes</h2><p>From the app, engineers and Admin. Hidden notes are for Zixom and engineers only.</p></div>
+          <button class="btn btn-sm btn-primary" type="button" data-open="note"><svg class="ic"><use href="#ph-plus"/></svg>Add note</button></div>
+        <ul class="mini" id="notes"></ul>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Operators</h2><p id="op-sub"></p></div>
+          <button class="btn btn-sm btn-secondary" type="button" data-open="operator"><svg class="ic"><use href="#ph-user-plus"/></svg>Add</button></div>
+        <ul class="mini" id="operators"></ul>
+      </section>
+    </div>
+  </div>
+  <div data-when="loading"><div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div></div></div>
+</main>
+
+<div class="overlay right" id="note" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="note-title">
+    <div class="drawer-head"><div class="grow"><h2 id="note-title">Add note</h2><p id="note-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="n-text">Note</label><textarea class="textarea" id="n-text" maxlength="500" autofocus></textarea><span class="hint">Up to 500 characters</span></div>
+      <label class="switch"><input type="checkbox" checked><span></span>Hide from customer</label>
+      <label class="check"><input type="checkbox"> Pin to the top</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Note added">Save</button></div>
+  </div>
+</div>
+<div class="overlay right" id="operator" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="op-title">
+    <div class="drawer-head"><div class="grow"><h2 id="op-title">Add operator</h2><p>People at the customer who run this machine.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="o-name">Name</label><input class="input" id="o-name" maxlength="60"></div>
+      <div class="field"><label for="o-mobile">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="o-mobile" inputmode="numeric" maxlength="11" style="padding-left:44px"></div></div>
+      <div class="field"><label for="o-date">Trained on <span class="opt">optional</span></label><input class="input" id="o-date" type="date"><span class="hint">Leave empty if not trained yet</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Operator added">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="note-menu" hidden>
+  <button type="button" data-open="note"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <button type="button" data-toast="Note pinned"><svg class="ic"><use href="#ph-pin"/></svg>Pin or unpin</button>
+  <button type="button" data-toast="Visibility changed"><svg class="ic"><use href="#ph-eye-slash"/></svg>Hide or show to customer</button>
+</div>
+<div class="menu" id="op-menu" hidden>
+  <button type="button" data-open="operator"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <a href="#D402"><svg class="ic"><use href="#ph-calendar-check"/></svg>Book training</a>
+  <hr><button class="danger" type="button" data-toast="Operator removed"><svg class="ic"><use href="#ph-trash"/></svg>Remove</button>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C207-machine-history.html">
+  <div><h3>What it is</h3><p>Notes about one machine and the people who run it. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add, edit or pin a note.</li><li>Hide a note from the customer.</li><li>Add operators with their training date.</li></ul></div>
+  <div><h3>What happens next</h3><p>Notes show in the machine history (D314) and, unless hidden, in the app.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Hidden notes show to Zixom and engineers only.</li><li>Notes from the app cannot be hidden from their author.</li><li>Untrained operators get a Book training action.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const i = x.info(m.serial);
+  const $ = (id) => document.getElementById(id);
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  $('note-sub').innerHTML = `<span class="mono">${m.serial}</span>`;
+  const notes = [...i.notes].sort((p, q) => Number(q.pinned) - Number(p.pinned) || q.when.localeCompare(p.when));
+  const SRC = { Admin: 'blue', Engineer: 'amber', App: 'green' };
+  $('notes').innerHTML = notes.length ? notes.map((n) => `<li><span class="ic-disc ${SRC[n.source]}">${r.icon(n.pinned ? 'pin' : 'sticky-note')}</span>
+    <span class="grow"><b style="white-space:normal">${r.esc(n.text)}</b><small>${n.by} · ${n.source} · ${r.date(n.when)}, ${r.time(n.when)}</small></span>
+    <span class="end tags">${n.pinned ? r.tag('Pinned', 'outline') : ''}${n.hidden ? r.tag('Hidden', 'outline', 'eye-slash') : ''}</span>
+    <button class="icon-btn sm" type="button" aria-label="Note actions" data-menu="note-menu">${r.icon('dots-three')}</button></li>`).join('')
+    : '<li><span class="muted">No notes yet.</span></li>';
+  $('op-sub').textContent = `${i.operators.length} people · ${i.operators.filter((o) => o.trained).length} trained`;
+  $('operators').innerHTML = i.operators.length ? i.operators.map((o) => `<li><span class="avatar">${o.name.split(' ').map((w) => w[0]).join('')}</span>
+    <span class="grow"><b>${o.name}</b><small>${o.mobile}</small><small>${o.trained ? `Trained ${r.date(o.trained)} by ${o.by}` : '<span class="amber-text">Not trained yet</span>'}</small></span>
+    <button class="icon-btn sm" type="button" aria-label="Operator actions" data-menu="op-menu">${r.icon('dots-three')}</button></li>`).join('')
+    : '<li><span class="muted">No operators listed.</span></li>';
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

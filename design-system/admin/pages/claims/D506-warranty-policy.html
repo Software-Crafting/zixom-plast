@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D506 Warranty policy</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D506">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D501">Warranty claims</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Warranty policy</span></nav>
+      <h1>Warranty policy</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-open="versions"><svg class="ic"><use href="#ph-history"/></svg>Versions</button>
+    <button class="btn btn-primary" type="button" id="edit" data-when="ready"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  </div>
+
+  <div data-when="ready">
+    <div class="detail">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Terms</h2><p>Shown to customers in the app (C302)</p></div></div>
+        <div class="card-body stack" id="terms"></div>
+      </section>
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Published version</h3></div><div class="card-body" id="current"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Period</h3><a class="card-link" href="#D1605">Settings</a></div>
+          <div class="card-body"><dl class="dl"><dt>Default</dt><dd>12 months, all models</dd><dt>Starts</dt><dd>Commissioning date</dd><dt>Reminders</dt><dd>60, 30 and 7 days before the end</dd></dl></div></section>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="editing">
+    <div class="banner" style="margin-bottom:16px"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>Editing v4 draft.</b> Claims already decided keep the version they were decided on.</span></div>
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section"><h3>Cover</h3><p>One item per line.</p>
+        <div class="form-grid"><div class="field"><label for="e-cov">Covered</label><textarea class="textarea" id="e-cov" rows="5"></textarea></div>
+          <div class="field"><label for="e-exc">Not covered</label><textarea class="textarea" id="e-exc" rows="5"></textarea></div></div></section>
+      <section class="form-section"><h3>Wear parts and conditions</h3><p>Wear parts are never covered. Conditions must be met for any claim.</p>
+        <div class="form-grid"><div class="field"><label for="e-wear">Wear parts</label><textarea class="textarea" id="e-wear" rows="5"></textarea></div>
+          <div class="field"><label for="e-cond">Conditions</label><textarea class="textarea" id="e-cond" rows="5"></textarea></div></div></section>
+      <section class="form-section"><h3>Version note</h3><p>What changed, for the version list.</p>
+        <div class="field"><label for="e-note">Note</label><input class="input" id="e-note" maxlength="120" value="Fuses and lamps now covered"></div></section>
+    </form>
+    <div class="form-bar"><span class="grow"><span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 11:58 AM</span></span>
+      <button class="btn btn-ghost" type="button" id="discard">Discard draft</button>
+      <button class="btn btn-secondary" type="button" data-toast="Customer view opened">Preview in app</button>
+      <button class="btn btn-primary" type="button" data-open="publish">Publish v4</button></div>
+  </div>
+  <div data-when="loading"><div class="detail"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div></div>
+</main>
+
+<div class="overlay right" id="versions" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="v-title">
+    <div class="drawer-head"><div class="grow"><h2 id="v-title">Versions</h2><p>Older versions are kept for the claims decided on them.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <ul class="mini" id="version-list"></ul>
+  </div>
+</div>
+<div class="overlay center" id="publish" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="pb-title">
+    <div class="modal-head"><div class="grow"><h2 id="pb-title">Publish v4?</h2><p>Customers see the new terms in the app within 15 minutes. v3 stays for claims already decided on it.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="v4 published">Publish</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready editing loading error" data-mobile="../../../screens/customer/C302-warranty-details.html">
+  <div><h3>What it is</h3><p>The warranty terms customers see, by series, with every older version kept.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit and publish a new version.</li><li>See older versions and how many claims used each.</li></ul></div>
+  <div><h3>What happens next</h3><p>Published terms show in the app (C302); claim decisions refer to them (D503).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Older versions are kept for past claims.</li><li>The app picks up changes within 15 minutes (EC-A62).</li><li>Draft autosaves; leaving asks first (D1808).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const { policy, policyVersions } = ZXA.data;
+  const $ = (id) => document.getElementById(id);
+  const cur = policyVersions.find((v) => v.status === 'published');
+  const list = (items, icon, tone) => `<ul class="mini" style="margin:0 -20px">${items.map((x) => `<li><span class="ic-disc ${tone}">${r.icon(icon)}</span><span class="grow"><b style="font-weight:500">${x}</b></span></li>`).join('')}</ul>`;
+  $('head-sub').textContent = `${cur.version} published ${r.date(cur.when)} · 12 months for all models`;
+  $('terms').innerHTML = `
+    <div class="grid cols-2" style="gap:24px"><div><h3 style="font-size:15px; margin-bottom:6px">Covered</h3>${list(policy.covered, 'check', 'green')}</div>
+      <div><h3 style="font-size:15px; margin-bottom:6px">Not covered</h3>${list(policy.excluded, 'x', 'red')}</div></div>
+    <div class="grid cols-2" style="gap:24px"><div><h3 style="font-size:15px; margin-bottom:6px">Wear parts</h3>${list(policy.wear, 'nut', '')}</div>
+      <div><h3 style="font-size:15px; margin-bottom:6px">Conditions</h3>${list(policy.conditions, 'list-checks', 'blue')}</div></div>
+    <div><h3 style="font-size:15px; margin-bottom:10px">By series</h3><div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Series</th><th>Covered parts</th><th>Excluded parts</th></tr></thead><tbody>
+      ${policy.bySeries.map(([s, cov, exc]) => `<tr><td><b>${s}</b></td><td>${cov}</td><td>${exc}</td></tr>`).join('')}</tbody></table></div></div>`;
+  $('current').innerHTML = `<dl class="dl"><dt>Version</dt><dd>${cur.version} ${r.tag('Published', 'green')}</dd><dt>Published</dt><dd>${r.date(cur.when)} · ${cur.by}</dd>
+    <dt>Claims decided</dt><dd>${cur.claims}</dd><dt>Change</dt><dd>${cur.note}</dd></dl>`;
+  $('version-list').innerHTML = policyVersions.map((v) => `<li><span class="ic-disc ${v.status === 'published' ? 'green' : ''}">${r.icon('file-text')}</span>
+    <span class="grow"><b>${v.version} · ${v.note}</b><small>${r.date(v.when)} · ${v.by} · ${v.claims} claims</small></span>
+    <span class="end">${v.status === 'published' ? r.tag('Published', 'green') : `<button class="btn btn-sm btn-ghost" type="button" data-toast="${v.version} opened read only">View</button>`}</span></li>`).join('');
+  $('e-cov').value = policy.covered.join('\n');
+  $('e-exc').value = policy.excluded.join('\n');
+  $('e-wear').value = policy.wear.filter((w) => !w.startsWith('Fuses')).join('\n');
+  $('e-cond').value = policy.conditions.join('\n');
+  $('edit').addEventListener('click', () => ZXA.ui.setState('editing'));
+  $('discard').addEventListener('click', () => { ZXA.ui.setState('ready'); ZXA.ui.toast('Draft discarded', 'info'); });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D504 Information requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D504">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D501">Warranty claims</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Information requests</span></nav>
+      <h1>Information requests</h1><p id="head-sub"></p></div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">Waiting <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="late">Past deadline <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#requests"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Claim, customer or machine" aria-label="Search requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="requests"><thead><tr>
+          <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+          <th class="sortable">Claim</th><th class="sortable">Customer and machine</th><th class="sortable">Asked</th><th>Questions</th>
+          <th class="sortable">Reply by</th><th class="num">Reminders</th><th>Auto reject</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>Nothing waiting</h3><p>Claims waiting for the customer's reply appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Claim</th><th>Customer</th><th>Reply by</th><th>Reminders</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="requests" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Reminders sent">Send reminder</button>
+    <button class="btn" type="button" data-open="extend">Extend deadline</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-ghost" id="quick-reject" href="#D503">Reject for no response</a><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" data-open="extend">Extend</button><button class="btn btn-primary" type="button" data-toast="Reminder sent to the customer">Send reminder</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><label for="f-company">Customer</label><select class="select" id="f-company"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <label class="check"><input type="checkbox"> No reminder sent yet</label></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+<div class="overlay center" id="extend" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ext-title">
+    <div class="modal-head"><div class="grow"><h2 id="ext-title">Extend deadline</h2><p>The customer gets a push with the new date. Auto reject moves with it.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ext-date">New deadline</label><input class="input" id="ext-date" type="date" value="2026-11-30"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Deadline extended. Customer told">Extend</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Reminder sent to the customer"><svg class="ic"><use href="#ph-bell"/></svg>Send reminder</button>
+  <button type="button" data-open="extend"><svg class="ic"><use href="#ph-calendar-days"/></svg>Extend deadline</button>
+  <hr><a class="danger" href="#D503"><svg class="ic"><use href="#ph-x"/></svg>Reject for no response</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C308-claim.html">
+  <div><h3>What it is</h3><p>Claims waiting for the customer to answer your questions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Send a reminder, extend the deadline, or reject for no response.</li><li>Select rows to remind or extend in bulk.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer replies in the app (C308); the claim goes back to Under review (D502).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Past the deadline is red.</li><li>No reply 7 days after the request: rejected automatically with a message (Settings).</li><li>Partial bulk failures show done and failed counts (EC-A64).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const AUTO_REJECT_DAYS = 7;
+  const list = cl.claims.filter((c) => c.status === 'info-requested').sort((p, q) => p.deadline.localeCompare(q.deadline));
+  const late = (c) => r.daysFromToday(c.deadline) < 0;
+  const autoReject = (c) => { const d = new Date(`${c.requested.slice(0, 10)}T12:00:00`); d.setDate(d.getDate() + AUTO_REJECT_DAYS); return d.toISOString().slice(0, 10); };
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  document.getElementById('head-sub').textContent = `${list.length} waiting for the customer · ${list.filter(late).length} past deadline`;
+  if (!list.length) document.body.dataset.state = 'empty';
+
+  document.querySelector('#requests tbody').innerHTML = list.map((c) => {
+    const m = r.machine(c.machine);
+    return `<tr data-drawer="quick" data-claim="${c.number}" class="${late(c) ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.number}"></label></td>
+      <td><a class="rec" href="#D502?c=${c.number}">${c.number}</a><span class="sub">${c.category}</span></td>
+      <td><b class="clip">${r.company(c.company).name}</b><span class="sub">${m.model} · <span class="mono">${m.serial}</span></span></td>
+      <td class="nowrap" data-sort="${c.requested}">${r.date(c.requested)}<span class="sub">${r.ago(c.requested)}</span></td>
+      <td><span class="clip" style="max-width:260px; display:block">${r.esc(c.questions[0])}</span>${c.questions.length > 1 ? `<span class="sub">and ${c.questions.length - 1} more</span>` : ''}</td>
+      <td class="nowrap" data-sort="${c.deadline}">${cl.deadline(c)}</td>
+      <td class="num">${c.reminders}</td>
+      <td class="nowrap">${r.date(autoReject(c))}<span class="sub">${r.daysFromToday(autoReject(c))} d left</span></td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${r.icon('dots-three')}</button></td></tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, late };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => {
+      const rows = [...document.querySelectorAll('#requests tbody tr')];
+      rows.forEach((row) => { row.hidden = !VIEWS[tab.dataset.view](cl.claim(row.dataset.claim)); });
+      document.getElementById('foot-count').textContent = `1 to ${rows.filter((row) => !row.hidden).length} of ${rows.filter((row) => !row.hidden).length}`;
+    });
+  });
+  document.getElementById('foot-count').textContent = `1 to ${list.length} of ${list.length}`;
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 4 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const c = cl.claim(event.detail.dataset.claim);
+    const p = r.person(c.by);
+    document.getElementById('quick-title').textContent = c.number;
+    document.getElementById('quick-sub').textContent = `${r.company(c.company).name} · asked ${r.ago(c.requested)}`;
+    document.getElementById('quick-reject').href = link('D503', `?c=${c.number}&choice=reject`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${cl.tag(c)}${late(c) ? r.tag('Past deadline', 'red') : ''}</div>
+      <p style="color:var(--text-strong)">${r.esc(c.summary)}</p>
+      <div><b class="strong">Questions</b><ol style="padding-left:18px; margin-top:6px" class="stack-sm">${c.questions.map((x) => `<li>${r.esc(x)}</li>`).join('')}</ol></div>
+      <dl class="dl"><dt>Reply by</dt><dd>${r.date(c.deadline)}</dd><dt>Reminders</dt><dd>${c.reminders} sent</dd><dt>Auto reject</dt><dd>${r.date(autoReject(c))}</dd>
+        <dt>Customer</dt><dd>${p.name}<br><span class="muted">${p.mobile}</span></dd></dl>
+      <a class="btn btn-sm btn-secondary" style="align-self:flex-start" href="${link('D502', `?c=${c.number}`)}">Open claim</a>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

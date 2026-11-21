@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D502 Claim detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D502">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow" id="head"></div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Claim sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-claim">Claim</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-decision">Decision</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-messages">Messages <span class="n" id="n-msg"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-ticket">Linked ticket</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-claim" role="tabpanel"></div>
+          <div id="tab-decision" role="tabpanel" hidden></div>
+          <div id="tab-messages" role="tabpanel" hidden></div>
+          <div id="tab-ticket" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D501">Go to claims</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer asked to withdraw</option><option>Duplicate claim</option><option>Raised by mistake</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep claim</button><button class="btn btn-danger" type="button" data-close data-toast="Claim cancelled. Customer told">Cancel claim</button></div>
+  </div>
+</div>
+<div class="overlay right" id="extend" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ext-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ext-title">Extend deadline</h2><p>The customer gets a push with the new date.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="ext-date">New deadline</label><input class="input" id="ext-date" type="date" value="2026-11-30"><span class="hint">Auto reject moves to 7 days after this date</span></div>
+      <div class="field"><label for="ext-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="ext-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Deadline extended. Customer told">Extend</button></div>
+  </div>
+</div>
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+  <hr><button class="danger" type="button" data-open="cancel" id="menu-cancel"><svg class="ic"><use href="#ph-x"/></svg>Cancel claim</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error" data-mobile="../../../screens/customer/C308-claim.html">
+  <div><h3>What it is</h3><p>One warranty claim. Opens with <code>?c=WCL-2026-0041</code>; try 0039 (out of warranty), 0040 (duplicate), 0042, 0043, 0044.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show (section 11).</li><li>Check the evidence, message the customer, see the decision and linked ticket.</li><li>Decide opens the decision drawer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Decide claim (D503), Ticket (D403), Appeals (D505), Warranty (D307).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machine out of warranty: red banner, Reject suggested.</li><li>Same fault on the same machine within 30 days: flagged.</li><li>Opening a Submitted claim marks it Under review.</li><li>A decision cannot change after 24 hours except by appeal.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const c = cl.fromQuery('WCL-2026-0041');
+  if (!c) { document.body.dataset.state = 'not-found'; return; }
+  const m = r.machine(c.machine);
+  const comp = r.company(c.company);
+  const p = r.person(c.by);
+  const ic = r.icon;
+  const q = `?c=${c.number}`;
+  const st = cl.state(c);
+  const link = (id, query = '') => (ZXA.isBuilt(id) ? ZXA.href(id, query) : `${ZXA.root}index.html#${id}`);
+  const $ = (id) => document.getElementById(id);
+  const ended = cl.warrantyEnded(c);
+  const ticket = c.ticket ? r.ticket(c.ticket) : null;
+
+  document.title = `Zixom Admin - ${c.number}`;
+  $('head').innerHTML = cl.head(c);
+
+  /* actions by status (section 11); the last one is primary */
+  const btn = (label, href, primary = false) => `<a class="btn ${primary ? 'btn-primary' : 'btn-secondary'}" href="${href}">${label}</a>`;
+  const ACTIONS = {
+    'submitted': [btn('Request information', link('D503', `${q}&choice=info`)), btn('Decide claim', link('D503', q), true)],
+    'under-review': [btn('Request information', link('D503', `${q}&choice=info`)), btn('Decide claim', link('D503', q), true)],
+    'info-requested': [btn('Reject for no response', link('D503', `${q}&choice=reject`)), '<button class="btn btn-secondary" type="button" data-open="extend">Extend deadline</button>',
+      '<button class="btn btn-primary" type="button" data-toast="Reminder sent to the customer">Send reminder</button>'],
+    'approved': [btn('Open ticket', link('D403', `?t=${c.ticket}`), true)],
+    'appeal': [btn('Review appeal', link('D505', q), true)],
+    'resolved': [btn('Open ticket', link('D403', `?t=${c.ticket}`))],
+  };
+  $('actions').innerHTML = `${(ACTIONS[st] || []).join('')}<button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  /* only open claims can be cancelled */
+  if (!['submitted', 'under-review', 'info-requested'].includes(st)) {
+    $('menu-cancel').previousElementSibling.remove();
+    $('menu-cancel').remove();
+  }
+  $('cancel-title').textContent = `Cancel ${c.number}?`;
+  $('cancel-text').textContent = `${comp.name} will be told. This cannot be undone.`;
+
+  /* edge banners */
+  const banners = [];
+  if (ended && cl.OPEN.includes(c.status)) banners.push(`<div class="banner red">${ic('shield-off')}<span class="grow"><b>Out of warranty.</b> Warranty ended ${r.date(m.warrantyEnd)}, before the fault on ${r.date(c.started)}. Reject is suggested, or extend the warranty first.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D307', `?m=${m.serial}`)}">Extend warranty</a></span></div>`);
+  const dup = cl.duplicateOf(c);
+  if (dup) banners.push(`<div class="banner amber">${ic('copy')}<span class="grow"><b>Possible duplicate of ${dup.number}.</b> Same machine and category ${Math.round((new Date(c.submitted) - new Date(dup.submitted)) / 86400000)} days earlier: ${r.esc(dup.summary)}</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D502', `?c=${dup.number}`)}">Open ${dup.number.slice(-4)}</a></span></div>`);
+  if (c.status === 'info-requested' && r.daysFromToday(c.deadline) < 0) banners.push(`<div class="banner red">${ic('clock-countdown')}<span class="grow"><b>Deadline passed ${r.date(c.deadline)}.</b> No reply yet. Auto reject on ${r.date('2026-11-25')}.</span></div>`);
+  if (st === 'appeal') banners.push(`<div class="banner amber">${ic('scale')}<span class="grow"><b>The customer appealed on ${r.date(c.appeal.submitted)}.</b> Answer by ${r.date(c.appeal.due)}.</span></div>`);
+  $('edge-banners').innerHTML = banners.join('');
+  if (!banners.length) $('edge-banners').remove();
+
+  $('tab-claim').innerHTML = cl.claimTab(c);
+
+  /* decision */
+  $('tab-decision').innerHTML = c.decided ? `<div class="stack">
+      <div class="row">${cl.tag({ status: c.status })}<span class="muted">${r.date(c.decided)}, ${r.time(c.decided)} · Rajesh Goyal</span></div>
+      <dl class="dl">${c.coverage ? `<dt>Coverage</dt><dd>${c.coverage}</dd>` : ''}${c.rejectReason ? `<dt>Reason</dt><dd>${c.rejectReason}</dd>` : ''}
+        <dt>Message to the customer</dt><dd>${r.esc(c.reason)}</dd>${c.ticket ? `<dt>Ticket</dt><dd><a class="mono" href="${link('D403', `?t=${c.ticket}`)}">${c.ticket}</a></dd>` : ''}</dl>
+      ${c.appeal ? `<div class="banner amber">${ic('scale')}<span class="grow"><b>Appeal:</b> ${r.esc(c.appeal.reason)}</span></div>` : ''}
+      <p class="muted">Locked: a decision cannot change after 24 hours except through an appeal.</p></div>`
+    : c.status === 'cancelled' ? `<div class="state"><span class="disc">${ic('x')}</span><h3>Withdrawn</h3><p>${r.esc(c.reason)} · ${r.date(c.cancelled)}</p></div>`
+      : c.status === 'info-requested' ? `<div class="stack"><div class="row">${cl.tag(c)}<span class="muted">Asked ${r.date(c.requested)} · reply by ${r.date(c.deadline)} · ${c.reminders} reminder${c.reminders === 1 ? '' : 's'} sent</span></div>
+        <ol style="padding-left:18px" class="stack-sm">${c.questions.map((x) => `<li>${r.esc(x)}</li>`).join('')}</ol></div>`
+        : `<div class="state"><span class="disc">${ic('scale')}</span><h3>Not decided yet</h3><p>Review target ${r.date(c.due)}, ${r.time(c.due)}.</p>
+          <div class="btns"><a class="btn btn-primary" href="${link('D503', q)}">Decide claim</a></div></div>`;
+
+  /* messages */
+  const msgs = ZXA.data.claimMessages[c.number] || [];
+  $('n-msg').textContent = msgs.length;
+  $('tab-messages').innerHTML = `<div class="card" style="box-shadow:inset 0 0 0 1px var(--line)"><div class="thread">
+      ${msgs.length ? msgs.map(([who, text, when]) => `<div class="msg ${who === 'me' ? 'me' : who === 'note' ? 'note' : ''}">${r.esc(text)}<small>${when}</small></div>`).join('') : '<p class="muted">No messages yet.</p>'}</div>
+    <div class="composer"><textarea class="textarea" placeholder="Write to ${p.name}" aria-label="Message"></textarea>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox"><span></span>Internal</label>
+      <button class="btn btn-primary" type="button" data-toast="Message sent">Send</button></div></div>`;
+
+  $('tab-ticket').innerHTML = ticket ? `<div class="stack"><div class="row"><a class="mono strong" href="${link('D403', `?t=${ticket.number}`)}">${ticket.number}</a>${r.ticketTag(ticket.status)}${r.coverageTag(ticket.coverage)}</div>
+      <p>${r.esc(ticket.summary)}</p><dl class="dl"><dt>Engineer</dt><dd>${ticket.engineer ? r.engineer(ticket.engineer).name : 'Not assigned'}</dd><dt>Raised</dt><dd>${r.date(ticket.created)}</dd></dl></div>`
+    : `<div class="state"><span class="disc">${ic('wrench')}</span><h3>No ticket</h3><p>Approving creates a no charge service request linked here.</p></div>`;
+
+  const hist = [
+    [c.submitted, 'Submitted in the app', p.name],
+    c.reviewed && [c.reviewed, 'Status: Submitted to Under review', 'Rajesh Goyal'],
+    c.requested && [c.requested, 'Information requested', 'Rajesh Goyal'],
+    c.decided && [c.decided, `Decision: ${cl.STATUS[c.status === 'resolved' ? 'approved' : c.status][0]}`, 'Rajesh Goyal'],
+    c.ticket && [c.decided, `Ticket ${c.ticket} created, coverage Warranty`, 'System'],
+    c.appeal && [c.appeal.submitted, 'Appeal received', p.name],
+    c.cancelled && [c.cancelled, 'Withdrawn by the customer', p.name],
+  ].filter(Boolean).sort((x, y) => y[0].localeCompare(x[0]));
+  $('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${hist.map(([when, what, who]) => `<tr><td class="nowrap">${r.date(when)}, ${r.time(when)}</td><td>${who}</td><td>${what}</td></tr>`).join('')}</tbody></table>`;
+
+  const w = ZXA.mx.warranty(m);
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Machine</h3><a class="card-link" href="${link('D302', `?m=${m.serial}`)}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="thumb">${ic('factory')}</span><span><b>${m.model}</b><small class="mono">${m.serial}</small></span></div>
+        <dl class="dl"><dt>Warranty end</dt><dd>${m.warrantyEnd ? r.date(m.warrantyEnd) : '–'}</dd><dt>Days left</dt><dd class="${w.state === 'out' ? 'red-text strong' : w.state === 'expiring' ? 'amber-text strong' : ''}">${w.left >= 0 ? w.left : 'Ended'}</dd>
+        <dt>Other claims</dt><dd>${cl.claims.filter((o) => o.machine === m.serial && o !== c).length}</dd></dl>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="${link('D307', `?m=${m.serial}`)}">Warranty</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="${link('D202')}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${p.initials}</span><span><b>${p.name}</b><small>${p.designation}, ${comp.name}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}${p.mobile}</a></div></div></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

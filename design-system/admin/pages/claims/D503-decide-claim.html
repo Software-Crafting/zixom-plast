@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D503 Decide claim</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D503">
+<main class="content">
+  <!-- the claim behind the drawer -->
+  <div data-when="ready out-of-warranty cancelled replied failed">
+    <div class="detail-head"><div class="grow" id="head"></div>
+      <div class="action-bar"><button class="btn btn-primary" type="button" data-open="decide">Decide claim</button></div></div>
+    <section class="card"><div class="card-body" style="padding-top:20px" id="claim"></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="decide" data-static>
+  <div class="drawer" role="dialog" aria-labelledby="dc-title">
+    <div class="drawer-head"><div class="grow"><h2 id="dc-title">Decide claim</h2><p id="dc-sub"></p></div>
+      <a class="icon-btn" id="dc-x" href="#D502" aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></a></div>
+    <div class="drawer-body stack">
+      <div class="banner red" data-when="out-of-warranty"><svg class="ic"><use href="#ph-shield-off"/></svg><span class="grow" id="oow-text"></span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" id="oow-link" href="#D307">Extend warranty</a></span></div>
+      <div class="banner grey" data-when="cancelled"><svg class="ic"><use href="#ph-x"/></svg><span class="grow"><b>The customer cancelled this claim a moment ago.</b> No decision is needed. The drawer will close.</span></div>
+      <div class="banner" data-when="replied"><svg class="ic"><use href="#ph-chat-text"/></svg><span class="grow" id="reply-text"></span></div>
+      <div class="inline-error" data-when="failed"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not save the decision. Nothing was sent.<button class="btn btn-sm btn-secondary" type="button" data-busy>Retry</button></div>
+
+      <div class="choices" id="choices">
+        <label class="choice" id="choice-approve"><input type="radio" name="choice" class="sr-only" value="approve"><span><b>Approve</b><small>Create a no charge service request</small></span></label>
+        <label class="choice"><input type="radio" name="choice" class="sr-only" value="info"><span><b>Request information</b><small>Up to 5 questions with a deadline</small></span></label>
+        <label class="choice"><input type="radio" name="choice" class="sr-only" value="reject"><span><b>Reject</b><small>With a reason the customer sees</small></span></label>
+      </div>
+
+      <!-- approve -->
+      <div class="stack" data-form="approve" hidden>
+        <div class="field"><span class="label">Coverage</span><div class="segment" role="tablist" aria-label="Coverage">
+          <button role="tab" aria-selected="true">Full</button><button role="tab" aria-selected="false">Parts only</button><button role="tab" aria-selected="false">Labour only</button></div></div>
+        <label class="switch"><input type="checkbox" checked><span></span>Create service request now</label>
+        <div class="form-grid">
+          <div class="field"><label for="ap-sev">Severity</label><select class="select" id="ap-sev"><option>Production affected</option><option>Machine down</option><option>Minor</option></select></div>
+          <div class="field"><label for="ap-pri">Priority</label><select class="select" id="ap-pri"><option>High</option><option>Urgent</option><option>Normal</option><option>Low</option></select></div>
+        </div>
+        <div class="field"><label for="ap-eng">Preferred engineer <span class="opt">optional</span></label><select class="select" id="ap-eng"><option>Any available</option><option>Sandeep Yadav, Ahmedabad</option><option>Anita Verma, Pune</option></select></div>
+        <div class="field"><label for="ap-tpl">Message to the customer</label><select class="select" id="ap-tpl"><option>Full cover</option><option>Parts only</option></select>
+          <textarea class="textarea" id="ap-msg" maxlength="500" aria-label="Message text"></textarea></div>
+        <div class="field"><label for="ap-note">Internal note <span class="opt">optional</span></label><textarea class="textarea" id="ap-note" maxlength="500" placeholder="Only Admins see this"></textarea></div>
+      </div>
+
+      <!-- request information -->
+      <div class="stack" data-form="info" hidden>
+        <div class="field"><span class="label">Questions</span><div class="stack-sm" id="questions"></div>
+          <button class="btn btn-sm btn-ghost" type="button" style="align-self:flex-start" data-toast="Question added"><svg class="ic"><use href="#ph-plus"/></svg>Add question</button><span class="hint">Up to 5</span></div>
+        <div class="field"><label for="in-due">Reply by</label><input class="input" id="in-due" type="date" value="2026-11-30"><span class="hint">Default 7 days. No reply 7 days after the request rejects the claim.</span></div>
+        <div class="field"><span class="label">Ask for</span><div class="row wrap">
+          <label class="check"><input type="checkbox" checked> Photos</label><label class="check"><input type="checkbox" checked> Video</label>
+          <label class="check"><input type="checkbox"> Invoice</label><label class="check"><input type="checkbox"> Meter reading</label></div></div>
+      </div>
+
+      <!-- reject -->
+      <div class="stack" data-form="reject" hidden>
+        <div class="field"><label for="rj-reason">Reason</label><select class="select" id="rj-reason"><option>Out of warranty</option><option>Not a defect</option><option>Misuse</option>
+          <option>Unauthorised repair</option><option>Insufficient evidence</option><option>Other</option></select></div>
+        <div class="field"><label for="rj-text">Explanation to the customer</label><textarea class="textarea" id="rj-text" maxlength="500"></textarea>
+          <span class="row"><span class="hint">20 to 500 characters. The customer can appeal within 7 days.</span><span class="count" id="rj-count"></span></span></div>
+        <label class="check"><input type="checkbox" checked> Offer a paid service visit</label>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><a class="btn btn-ghost" id="dc-cancel" href="#D502">Cancel</a>
+      <button class="btn btn-primary" type="button" id="confirm">Confirm decision</button></div>
+  </div>
+</div>
+
+<!-- confirm (spec section 18) -->
+<div class="overlay center" id="confirm-approve" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ca-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><div class="grow"><h2 id="ca-title"></h2><p>A no charge service request will be created and the customer will be told.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Approved. Ticket TKT-2026-0134 created">Approve</button></div>
+  </div>
+</div>
+<div class="overlay center" id="confirm-reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cr-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span><div class="grow"><h2 id="cr-title"></h2><p>The customer will see your reason in the app and can appeal.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-busy data-toast="Claim rejected. Customer told">Reject</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready out-of-warranty replied cancelled failed" data-mobile="../../../screens/customer/C308-claim.html">
+  <div><h3>What it is</h3><p>Drawer over the claim to approve, reject or ask for information. <code>?c=WCL-2026-0041</code>, <code>&amp;choice=info</code> or <code>reject</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Approve: coverage, ticket severity and priority, engineer, message.</li><li>Request information: up to 5 questions, deadline (7 days).</li><li>Reject: reason, explanation of 20 to 500 characters, offer a paid visit.</li></ul></div>
+  <div><h3>What happens next</h3><p>Approve creates a Warranty ticket (D403) linked to the claim; the customer sees the decision in C308.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Warranty ended before the fault: Approve is hidden (<code>?c=WCL-2026-0039</code>).</li><li>Claim cancelled meanwhile: drawer closes with a message.</li><li>Customer replies while deciding: reply shows first and must be confirmed.</li><li>Decision locked after 24 hours except by appeal (D505).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const c = cl.fromQuery('WCL-2026-0041');
+  const m = r.machine(c.machine);
+  const p = r.person(c.by);
+  const $ = (id) => document.getElementById(id);
+  const back = `#D502?c=${c.number}`;
+  const tpl = (name) => ZXA.data.claimTemplates.find((t) => t.name === name).text
+    .replace('{claim}', c.number).replace('{machine}', m.model).replace('{serial}', m.serial).replace('{ticket}', 'TKT-2026-0134')
+    .replace('{engineer}', 'Sandeep Yadav').replace('{warranty_end}', m.warrantyEnd ? r.date(m.warrantyEnd) : '–');
+
+  $('head').innerHTML = cl.head(c);
+  $('claim').innerHTML = cl.claimTab(c);
+  ['dc-x', 'dc-cancel'].forEach((id) => $(id).setAttribute('href', back));
+  $('dc-sub').innerHTML = `<span class="mono">${c.number}</span> · ${r.company(c.company).name} · ${c.category}`;
+  $('oow-text').innerHTML = `<b>Warranty ended ${m.warrantyEnd ? r.date(m.warrantyEnd) : ''}, before the fault on ${r.date(c.started)}.</b> Approve is hidden. Extend the warranty first if Zixom agrees.`;
+  $('oow-link').setAttribute('href', `#D307?m=${m.serial}`);
+  $('reply-text').innerHTML = `<b>${p.name} replied while you were deciding.</b> "The right clamp also leaks oil at the cylinder." Read it before you confirm.`;
+  $('ca-title').textContent = `Approve ${c.number}?`;
+  $('cr-title').textContent = `Reject ${c.number}?`;
+  $('ap-msg').value = tpl('Full cover');
+  $('ap-tpl').addEventListener('change', (event) => { $('ap-msg').value = tpl(event.target.value); });
+  $('questions').innerHTML = ['Share a short video of the fault during one cycle.', 'Add a photo of the part.', '']
+    .map((v, n) => `<input class="input" aria-label="Question ${n + 1}" value="${v}" placeholder="Question ${n + 1}">`).join('');
+  const syncCount = () => { $('rj-count').textContent = `${$('rj-text').value.length} / 500`; };
+  $('rj-text').addEventListener('input', syncCount);
+
+  /* choice cards open their form */
+  const choose = (value) => {
+    document.querySelector(`[name="choice"][value="${value}"]`).checked = true;
+    document.querySelectorAll('[data-form]').forEach((f) => { f.hidden = f.dataset.form !== value; });
+    $('confirm').textContent = { approve: 'Confirm decision', info: 'Send request', reject: 'Confirm decision' }[value];
+  };
+  $('choices').addEventListener('change', (event) => choose(event.target.value));
+  $('confirm').addEventListener('click', () => {
+    const value = document.querySelector('[name="choice"]:checked').value;
+    if (value === 'info') { ZXA.ui.toast('Request sent. Customer has until 30 Nov'); return; }
+    ZXA.ui.openOverlay(`confirm-${value}`);
+  });
+
+  /* Approve is hidden when the warranty ended before the fault (D503, F4) */
+  const sync = () => {
+    const state = document.body.dataset.state;
+    const ended = cl.warrantyEnded(c) || state === 'out-of-warranty';
+    $('choice-approve').hidden = ended;
+    if (ended && document.querySelector('[name="choice"]:checked')?.value === 'approve') choose('reject');
+    $('confirm').toggleAttribute('disabled', state === 'cancelled');
+  };
+  const pick = new URLSearchParams(location.search).get('choice');
+  choose(['info', 'reject'].includes(pick) ? pick : 'approve');
+  if (cl.warrantyEnded(c)) {
+    $('rj-text').value = tpl('Out of warranty');
+    document.body.dataset.state = 'out-of-warranty';
+  }
+  syncCount();
+  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  sync();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

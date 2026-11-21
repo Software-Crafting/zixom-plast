@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D308 Running hours</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D308">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Running hours</span></nav>
+      <h1>Running hours</h1><p id="sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Export</button>
+    <button class="btn btn-primary" type="button" data-open="add"><svg class="ic"><use href="#ph-plus"/></svg>Add reading</button>
+  </div>
+
+  <div data-when="ready">
+    <div class="banner amber" id="flag-banner" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow" id="flag-text"></span></div>
+    <section class="kpis" id="kpis"></section>
+    <section class="card">
+      <div class="card-head"><div class="grow"><h2>Hours over time</h2><p>Each point is a reading</p></div></div>
+      <div class="card-body"><div class="chart"><canvas id="chart" aria-label="Running hours by reading date"></canvas></div></div>
+    </section>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2>Readings</h2></div></div>
+      <div class="table-wrap"><table class="table" id="readings"><thead><tr><th class="sortable">Date</th><th class="sortable num">Hours</th><th class="num">Change</th><th>Source</th><th>Proof</th><th>Check</th><th class="actions"></th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+  <div data-when="empty"><section class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-timer"/></svg></span>
+    <h3>No readings yet</h3><p>Customers and engineers log running hours in the app. You can add one too.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-open="add">Add reading</button></div></div></section></div>
+  <div data-when="loading"><section class="kpis"><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div></section>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:220px"></span></div></div>
+</main>
+
+<div class="overlay right" id="add" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="add-title">
+    <div class="drawer-head"><div class="grow"><h2 id="add-title">Add reading</h2><p id="add-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid"><div class="field"><label for="a-date">Date</label><input class="input" id="a-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="a-hours">Hours on the meter</label><input class="input" id="a-hours" type="number" min="0"></div></div>
+      <div class="field"><label for="a-src">Source</label><select class="select" id="a-src"><option>Phone call with the customer</option><option>Email</option><option>Visit report</option></select></div>
+      <div class="field"><span class="label">Meter photo <span class="opt">optional</span></span><div class="drop"><svg class="ic"><use href="#ph-camera"/></svg><b>Drop a photo</b>JPG, PNG or HEIC up to 10 MB</div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Reading added">Add</button></div>
+  </div>
+</div>
+<div class="overlay right" id="correct" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="co-title">
+    <div class="drawer-head"><div class="grow"><h2 id="co-title">Correct reading</h2><p>The old value stays in the history.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="co-hours">Correct hours</label><input class="input" id="co-hours" type="number" value="7790"></div>
+      <div class="field"><label for="co-why">Reason</label><textarea class="textarea" id="co-why" maxlength="300">Photo shows 7,790. Typed wrong in the app.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Reading corrected">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="delete" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="del-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="del-title">Delete this reading?</h2><p>It is removed from the chart. The deletion is logged.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep reading</button><button class="btn btn-danger" type="button" data-close data-toast="Reading deleted">Delete</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="correct"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Correct</button>
+  <hr><button class="danger" type="button" data-open="delete"><svg class="ic"><use href="#ph-trash"/></svg>Delete</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C202-machine-detail.html">
+  <div><h3>What it is</h3><p>Running hours logged for one machine, as a chart and a list. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a reading from a call or email.</li><li>Correct a reading with a reason.</li><li>Delete a wrong reading.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302). Hours feed AMC visit planning (D607).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A reading lower than the one before is flagged.</li><li>Corrections keep the old value in the history.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const log = x.info(m.serial).hours;
+  const $ = (id) => document.getElementById(id);
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  $('add-sub').innerHTML = `<span class="mono">${m.serial}</span> · last ${log[0] ? `${log[0][1].toLocaleString('en-IN')} h on ${r.date(log[0][0])}` : 'none'}`;
+  if (!log.length) { document.body.dataset.state = 'empty'; return; }
+
+  /* a reading lower than the earlier one is flagged */
+  const lower = (n) => n < log.length - 1 && log[n][1] < log[n + 1][1];
+  const flagged = log.filter((_, n) => lower(n));
+  if (flagged.length) $('flag-text').innerHTML = `<b>${flagged.length} reading lower than the one before.</b> ${r.date(flagged[0][0])}: ${flagged[0][1].toLocaleString('en-IN')} h by ${flagged[0][3]}. Correct or delete it.`;
+  else $('flag-banner').remove();
+
+  const first = log.at(-1);
+  const days = (new Date(log[0][0]) - new Date(first[0])) / 86400000;
+  const perDay = (log[0][1] - first[1]) / days;
+  $('kpis').innerHTML = [
+    ['Current', `${log[0][1].toLocaleString('en-IN')} h`, `on ${r.date(log[0][0])}`],
+    ['Average per day', `${perDay.toFixed(1)} h`, `last ${Math.round(days)} days`],
+    ['Readings', String(log.length), `${log.filter((l) => l[2] === 'Customer').length} from the customer`],
+    ['Next service at', `${(Math.ceil(log[0][1] / 2000) * 2000).toLocaleString('en-IN')} h`, 'every 2,000 h'],
+  ].map(([label, value, foot]) => `<div class="card kpi"><span class="label">${label}</span><span class="value">${value}</span><span class="foot">${foot}</span></div>`).join('');
+
+  document.querySelector('#readings tbody').innerHTML = log.map(([d, h, src, who, proof], n) => {
+    const change = n < log.length - 1 ? h - log[n + 1][1] : null;
+    return `<tr class="${lower(n) ? 'urgent' : ''}"><td class="nowrap" data-sort="${d}">${r.date(d)}</td><td class="num" data-sort="${h}"><b>${h.toLocaleString('en-IN')}</b></td>
+      <td class="num">${change === null ? '<span class="faint">–</span>' : `<span class="${change < 0 ? 'red-text strong' : ''}">${change > 0 ? '+' : ''}${change.toLocaleString('en-IN')}</span>`}</td>
+      <td>${src}<span class="sub">${who}</span></td><td>${proof.includes('photo') ? `<span class="row" style="gap:6px">${r.icon('image')}Photo</span>` : `<span class="muted">${r.esc(proof)}</span>`}</td>
+      <td>${lower(n) ? r.tag('Lower than last', 'amber', 'warning') : r.tag('OK', 'green')}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="Reading actions" data-menu="row-menu">${r.icon('dots-three')}</button></td></tr>`;
+  }).join('');
+
+  ZXA.drawHours = () => {
+    const pts = [...log].reverse();
+    ZXA.chart($('chart'), { type: 'line', data: { labels: pts.map((p) => r.date(p[0]).replace(/ 20\d\d$/, '')),
+      datasets: [{ data: pts.map((p) => p[1]), borderColor: ZXA.colors.slate, backgroundColor: ZXA.colors.slate, tension: 0.3, borderWidth: 2, pointRadius: 4,
+        pointBackgroundColor: pts.map((p, n) => (n > 0 && p[1] < pts[n - 1][1] ? ZXA.colors.red : ZXA.colors.slate)) }] },
+      options: { scales: { y: { beginAtZero: false } } } });
+  };
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script src="../../assets/vendor/chart.umd.js"></script>
+<script>ZXA.drawHours?.();</script>
+</body>
+</html>

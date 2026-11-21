@@ -1,0 +1,24 @@
+/* Machine register layouts no shared class covers: the nameplate label preview and the 12 per page sheet (D311),
+   and the printable customer log (D315). */
+.label-preview{display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center; width:100%; max-width:420px; padding:18px 20px;
+  border-radius:14px; background:#fff; box-shadow:inset 0 0 0 1.5px var(--slate-800)}
+.label-preview .brand{font:700 var(--fs-16) var(--font-display); letter-spacing:.02em; color:var(--slate-900)}
+.label-preview .model{margin-top:10px; font-size:var(--fs-13); color:var(--text)}
+.label-preview .serial{margin-top:2px; font:500 var(--fs-18) var(--font-mono); color:var(--slate-900)}
+.label-preview .foot{margin-top:10px; font-size:var(--fs-11); color:var(--text-muted)}
+.label-sheet{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; padding:12px; border-radius:12px; background:var(--slate-100)}
+.label-sheet span{display:grid; place-items:center; aspect-ratio:2 / 1; border-radius:6px; background:#fff; font:500 10px var(--font-mono); color:var(--slate-700)}
+.label-stage{display:grid; place-items:center; padding:28px 16px; border-radius:var(--r-md); background:var(--slate-50)}
+
+.log-doc{max-width:900px; margin:0 auto; padding:32px 36px}
+.log-doc h2{font-size:var(--fs-18); margin-top:24px; margin-bottom:10px}
+.log-doc .doc-head{display:flex; gap:16px; align-items:flex-start; padding-bottom:16px; border-bottom:1px solid var(--line)}
+
+/* D314: the search no results block replaces the timeline */
+.show-noresults #events{display:none}
+
+@media (max-width:640px){
+  .label-preview{grid-template-columns:1fr; justify-items:start}
+  .log-doc{padding:20px 16px}
+  .log-doc .doc-head{flex-direction:column}
+}

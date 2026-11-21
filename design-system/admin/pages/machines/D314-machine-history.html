@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D314 Machine history (full)</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-machines.css">
+</head>
+<body class="adm" data-page="D314">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>History</span></nav>
+      <h1>Machine history</h1><p id="sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="History PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Export PDF</button>
+  </div>
+
+  <div data-when="ready no-results empty">
+    <section class="card">
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#events" data-empty="#no-events"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket, claim, part or note" aria-label="Search history"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="applied-row row wrap" id="kinds" data-when="ready no-results"></div>
+      <div class="card-body" data-when="ready no-results">
+        <div id="events"></div>
+        <div class="state" id="no-events" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+        <div class="row" style="justify-content:center; margin-top:8px"><span class="muted" id="count"></span></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-history"/></svg></span><h3>No history yet</h3><p>Visits, parts, claims and notes appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span><span class="sk sk-line"></span></div></div>
+</main>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid"><div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2025-06-01"></div>
+        <div class="field"><label for="f-to">To</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+      <div class="field"><label for="f-who">By</label><select class="select" id="f-who"><option>Anyone</option><option>Customer</option><option>Engineer</option><option>Admin</option><option>System</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show history</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C207-machine-history.html">
+  <div><h3>What it is</h3><p>Everything that happened to one machine, newest first. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by type and date, search the text.</li><li>Open any ticket, claim or warranty entry.</li><li>Export the history as PDF.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403), Claim detail (D502), Warranty (D307), Customer log report (D315).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Long timelines load in pages of 50.</li><li>Print hides navigation and repeats headers (EC-A58).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const $ = (id) => document.getElementById(id);
+  const hist = x.history(m);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  if (!hist.length) { document.body.dataset.state = 'empty'; return; }
+
+  const kinds = Object.keys(x.KIND).filter((k) => hist.some((e) => e.kind === k));
+  $('kinds').innerHTML = `<button class="chip" type="button" aria-pressed="true" data-kind="all">All <span class="n">${hist.length}</span></button>
+    ${kinds.map((k) => `<button class="chip" type="button" aria-pressed="false" data-kind="${k}">${x.KIND[k][0]} <span class="n">${hist.filter((e) => e.kind === k).length}</span></button>`).join('')}`;
+  /* grouped by month; each entry is a search item */
+  let month = '';
+  $('events').innerHTML = hist.map((e) => {
+    const key = e.when.slice(0, 7);
+    const head = key !== month ? `<h3 class="muted" data-month="${key}" style="font-size:13px; margin:${month ? 18 : 0}px 0 12px">${MONTHS[Number(key.slice(5)) - 1]} ${key.slice(0, 4)}</h3>` : '';
+    month = key;
+    return `${head}<ol class="timeline" data-search-item data-k="${e.kind}" data-m="${key}"><li style="padding-bottom:14px"><span class="node ${e.tone}">${r.icon(e.icon)}</span>
+      <div><b>${e.href ? `<a href="${link(...e.href.split(/(?=\?)/))}">${r.esc(e.title)}</a>` : r.esc(e.title)}</b><p>${r.esc(e.sub)}</p></div>
+      <small>${r.dayDate(e.when)}, ${r.time(e.when)}</small></li></ol>`;
+  }).join('');
+  $('count').textContent = `${hist.length} of ${hist.length} entries · pages of 50`;
+
+  $('kinds').addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-kind]');
+    if (!chip) return;
+    $('kinds').querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+    const items = [...document.querySelectorAll('#events [data-search-item]')];
+    items.forEach((el) => { el.hidden = chip.dataset.kind !== 'all' && el.dataset.k !== chip.dataset.kind; });
+    document.querySelectorAll('#events [data-month]').forEach((h) => { h.hidden = !items.some((el) => !el.hidden && el.dataset.m === h.dataset.month); });
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

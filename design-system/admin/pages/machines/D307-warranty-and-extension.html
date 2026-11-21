@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D307 Warranty and extension</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D307">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Warranty</span></nav>
+      <div class="record-head"><h1>Warranty</h1><span class="tags" id="chips"></span></div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-danger-soft" type="button" data-open="void">Void warranty</button>
+      <button class="btn btn-secondary" type="button" data-open="terms">Change terms</button>
+      <button class="btn btn-primary" type="button" data-open="extend">Extend warranty</button>
+    </div>
+  </div>
+
+  <div data-when="ready">
+    <div class="detail">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Current warranty</h2><p id="period-sub"></p></div></div>
+          <div class="card-body stack">
+            <div class="row"><span class="progress grow" id="bar"><span></span></span><span class="muted nowrap" id="bar-label"></span></div>
+            <div class="grid cols-2" style="gap:20px"><dl class="dl" id="facts-1"></dl><dl class="dl" id="facts-2"></dl></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Extensions and changes</h2><p>Every change is in the machine history and the customer is told.</p></div></div>
+          <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Date</th><th>Change</th><th>Reason</th><th>By</th><th>Document</th></tr></thead><tbody id="changes"></tbody></table></div>
+        </section>
+      </div>
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Claims on this machine</h3><a class="card-link" href="#D501">All claims</a></div><ul class="mini" id="claims"></ul></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Reminders to the customer</h3></div><ul class="mini" id="reminders"></ul></section>
+      </aside>
+    </div>
+  </div>
+  <div data-when="loading"><div class="detail"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+    <div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-block" style="height:80px"></span></div></div></div>
+</main>
+
+<div class="overlay right" id="extend" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ex-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ex-title">Extend warranty</h2><p id="ex-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Extend by</span><div class="row wrap" data-single id="ex-months">
+        <button class="chip" type="button" aria-pressed="false" data-months="6">6 months</button><button class="chip" type="button" aria-pressed="true" data-months="12">12 months</button>
+        <button class="chip" type="button" aria-pressed="false" data-months="24">24 months</button></div></div>
+      <div class="field"><label for="ex-end">New end date</label><input class="input" id="ex-end" type="date"></div>
+      <div class="field"><label for="ex-why">Reason</label><select class="select" id="ex-why"><option>Paid extension</option><option>Goodwill</option><option>Late commissioning</option><option>Other</option></select></div>
+      <div class="field"><label for="ex-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="ex-note" maxlength="300"></textarea></div>
+      <div class="field"><span class="label">Document</span><div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Signed order or invoice</b>PDF, JPG or PNG up to 10 MB</div></div>
+      <div class="banner amber" id="ex-warn"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow" id="ex-warn-text"></span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Warranty extended. Customer told">Extend</button></div>
+  </div>
+</div>
+<div class="overlay right" id="terms" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="tm-title">
+    <div class="drawer-head"><div class="grow"><h2 id="tm-title">Change terms</h2><p>Applies from today. Past claims keep the terms they were decided on.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="tm-type">Warranty type</label><select class="select" id="tm-type"><option>Standard</option><option>Extended</option></select></div>
+      <div class="field"><label for="tm-v">Terms</label><select class="select" id="tm-v"><option>Standard terms v3 (published)</option><option>Custom for this machine</option></select><span class="hint"><a href="#D506">Open warranty policy</a></span></div>
+      <div class="field"><label for="tm-why">Reason</label><textarea class="textarea" id="tm-why" maxlength="300"></textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Terms changed. Customer told">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="void" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="void-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-shield-off"/></svg></span>
+      <div class="grow"><h2 id="void-title"></h2><p id="void-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="void-why">Reason</label><select class="select" id="void-why"><option>Repaired by someone other than Zixom</option><option>Non genuine parts fitted</option><option>Machine misused</option><option>Other</option></select></div>
+      <div class="field"><label for="void-note">Message to the customer</label><textarea class="textarea" id="void-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep warranty</button><button class="btn btn-danger" type="button" data-close data-toast="Warranty voided. Customer told">Void warranty</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C302-warranty-details.html">
+  <div><h3>What it is</h3><p>Warranty of one machine: dates, type, terms and every change. Opens with <code>?m=ZP-TF-2204</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Extend with a reason and a document.</li><li>Change the type or terms.</li><li>Void with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302); claims on the machine (D502).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>12 months from the start date for all models; reminders at 60, 30 and 7 days.</li><li>Changing dates with claims: old decisions stay (EC-A38).</li><li>A claim for an ended warranty needs an extension first.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2204');
+  const i = x.info(m.serial);
+  const w = x.warranty(m);
+  const $ = (id) => document.getElementById(id);
+  const claims = ZXA.cl.claims.filter((c) => c.machine === m.serial);
+  const start = x.warrantyStart(m);
+  const addMonths = (iso, n) => { const d = new Date(`${iso}T12:00:00`); d.setMonth(d.getMonth() + n); return d.toISOString().slice(0, 10); };
+
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('chips').innerHTML = `${x.warrantyTag(m)}${r.tag(i.warrantyType, 'outline')}`;
+  $('meta').innerHTML = `<span>${r.icon('factory')}${m.model}</span><span>${r.icon('buildings')}${r.company(m.company).name}</span>`;
+
+  if (m.warrantyEnd) {
+    const total = r.daysFromToday(m.warrantyEnd) - r.daysFromToday(start);
+    const used = Math.min(100, Math.max(0, Math.round((-r.daysFromToday(start) / total) * 100)));
+    $('bar').classList.add(w.state === 'in' ? 'green' : w.state === 'expiring' ? 'amber' : 'red');
+    $('bar').firstElementChild.style.width = `${used}%`;
+    $('bar-label').textContent = w.left >= 0 ? `${w.left} days left` : `Ended ${-w.left} days ago`;
+    $('period-sub').textContent = `${r.date(start)} to ${r.date(m.warrantyEnd)}`;
+  } else {
+    $('bar').closest('.row').remove();
+    $('period-sub').textContent = 'Starts when the machine is verified';
+  }
+  $('facts-1').innerHTML = `<dt>Start</dt><dd>${start ? r.date(start) : '–'}<br><span class="muted">Commissioning date</span></dd>
+    <dt>End</dt><dd>${m.warrantyEnd ? r.date(m.warrantyEnd) : '–'}</dd><dt>Period</dt><dd>12 months${i.extensions.length ? ` plus ${i.extensions.length} extension` : ''}</dd>`;
+  $('facts-2').innerHTML = `<dt>Type</dt><dd>${i.warrantyType}</dd><dt>Terms</dt><dd><a href="#D506">${i.terms}</a></dd>
+    <dt>Covers</dt><dd>Parts and labour</dd>`;
+
+  const rows = [
+    ...i.extensions.map((e) => `<tr><td class="nowrap">${r.date(e.when)}</td><td>End ${r.date(e.from)} to ${r.date(e.to)}</td><td>${r.esc(e.reason)}</td><td>${e.by}</td>
+      <td><button class="btn btn-sm btn-ghost" type="button" data-toast="Download started">${r.icon('file-pdf')}PDF</button></td></tr>`),
+    m.commissioned ? `<tr><td class="nowrap">${r.date(m.commissioned)}</td><td>Warranty started, ends ${r.date(x.baseEnd(m))}</td><td>Commissioned</td><td>System</td><td><span class="faint">–</span></td></tr>` : '',
+  ].join('');
+  $('changes').innerHTML = rows || '<tr><td colspan="5" class="muted">No changes yet.</td></tr>';
+
+  $('claims').innerHTML = claims.length ? claims.map((c) => `<li data-href="D502?c=${c.number}"><span class="ic-disc">${r.icon('shield-check')}</span>
+    <span class="grow"><b class="mono">${c.number}</b><small>${c.category} · ${r.date(c.started)}</small></span><span class="end">${ZXA.cl.tag(c)}</span></li>`).join('')
+    : '<li><span class="muted">No claims</span></li>';
+  const reminders = m.warrantyEnd ? [60, 30, 7].map((d) => {
+    const day = new Date(`${m.warrantyEnd}T12:00:00`);
+    day.setDate(day.getDate() - d);
+    const iso = day.toISOString().slice(0, 10);
+    const sent = r.daysFromToday(iso) <= 0;
+    return `<li><span class="ic-disc ${sent ? 'green' : ''}">${r.icon(sent ? 'check' : 'clock')}</span><span class="grow"><b>${d} days before</b><small>${r.date(iso)} · push and email</small></span>
+      <span class="end">${sent ? r.tag('Sent', 'green') : r.tag('Due', 'outline')}</span></li>`;
+  }).join('') : '<li><span class="muted">None</span></li>';
+  $('reminders').innerHTML = reminders;
+
+  /* extend: the new end follows the chosen months */
+  const setEnd = (n) => { if (m.warrantyEnd) $('ex-end').value = addMonths(m.warrantyEnd, n); };
+  setEnd(12);
+  $('ex-months').addEventListener('click', (event) => { const b = event.target.closest('[data-months]'); if (b) setEnd(Number(b.dataset.months)); });
+  $('ex-sub').innerHTML = `<span class="mono">${m.serial}</span> · now ends ${m.warrantyEnd ? r.date(m.warrantyEnd) : '–'}`;
+  if (claims.length) $('ex-warn-text').innerHTML = `<b>${claims.length} claims exist.</b> They keep their original decision (${claims.map((c) => c.number).join(', ')}).`;
+  else $('ex-warn').remove();
+  $('void-title').textContent = `Void the warranty on ${m.serial}?`;
+  $('void-text').textContent = `${r.company(m.company).name} will be told. New claims cannot be approved. This cannot be undone.`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

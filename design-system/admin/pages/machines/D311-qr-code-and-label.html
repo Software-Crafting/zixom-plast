@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D311 QR code and label</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-machines.css">
+</head>
+<body class="adm" data-page="D311">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>QR code and label</span></nav>
+      <h1>QR code and label</h1><p id="sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-toast="QR code downloaded as PNG"><svg class="ic"><use href="#ph-download-simple"/></svg>Download QR</button>
+    <button class="btn btn-primary" type="button" data-busy data-toast="Label PDF ready to print"><svg class="ic"><use href="#ph-printer"/></svg>Print label</button>
+  </div>
+
+  <div data-when="ready pdf-failed">
+    <div class="inline-error" data-when="pdf-failed" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not create the PDF<button class="btn btn-sm btn-secondary" type="button" data-busy>Retry</button></div>
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Label preview</h2><p>Printed at 100 x 50 mm, stuck beside the nameplate.</p></div></div>
+        <div class="card-body stack">
+          <div class="label-stage" id="stage"></div>
+          <div class="field"><span class="label">Sheet</span><div class="segment" role="tablist" aria-label="Labels per page">
+            <button role="tab" aria-selected="true" aria-controls="one">1 per page</button><button role="tab" aria-selected="false" aria-controls="twelve">12 per page</button></div></div>
+          <div id="one" role="tabpanel"><p class="muted">One label on an A6 sheet. For a single machine.</p></div>
+          <div id="twelve" role="tabpanel" hidden><div class="stack-sm"><p class="muted">12 labels on A4. Add more machines of the same customer to fill the sheet.</p><div class="label-sheet" id="sheet"></div></div></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>QR code</h2></div></div>
+        <div class="card-body stack">
+          <div class="label-stage" id="qr-big"></div>
+          <dl class="dl"><dt>Encodes</dt><dd class="mono" id="qr-link"></dd><dt>Opens</dt><dd>Machine detail in the app (C202) for a signed in person of the company</dd>
+            <dt>Others</dt><dd>See the Zixom contact page</dd></dl>
+          <button class="btn btn-sm btn-ghost" type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div data-when="loading"><div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block" style="height:200px"></span></div><div class="card pad stack"><span class="sk sk-block"></span></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready loading pdf-failed error" data-mobile="../../../screens/customer/C205-scan-qr.html">
+  <div><h3>What it is</h3><p>The QR label for one machine. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Print one label or a sheet of 12.</li><li>Download the QR as PNG.</li><li>Copy the app link.</li></ul></div>
+  <div><h3>What happens next</h3><p>A customer scans it in the app (C205) and lands on the machine (C202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The QR encodes the serial as a zixomconnect:// link.</li><li>PDF fails: Could not create the PDF with Retry (EC-A30).</li><li>Prototype QR is a look-alike pattern.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const $ = (id) => document.getElementById(id);
+  const url = `zixomconnect://machine/${m.serial}`;
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · ${r.company(m.company).name}`;
+  /* text brand on the label: logos stay on the sign in pages in this prototype */
+  $('stage').innerHTML = `<div class="label-preview"><div><div class="brand">ZIXOM PLAST</div><div class="model">${m.model}</div>
+    <div class="serial">${m.serial}</div><div class="foot">Service 24x7 · +91 99919 10097</div></div>${x.qr(url, 104)}</div>`;
+  $('qr-big').innerHTML = x.qr(url, 200);
+  $('qr-link').textContent = url;
+  const same = x.all.filter((y) => y.company === m.company && y.status !== 'pending');
+  $('sheet').innerHTML = Array.from({ length: 12 }, (_, n) => `<span>${same[n]?.serial ?? ''}</span>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

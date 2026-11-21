@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D303 Add machine</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D303">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Add machine</span></nav>
+      <h1>Add machine</h1><p>One machine sold or installed by Zixom.</p></div>
+  </div>
+
+  <div data-when="ready errors serial-exists">
+    <div class="banner red" data-when="serial-exists" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>This serial is already in the register.</b> ZP-TF-2310, AFM-760 Single Station, Shree Packaging Industries.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D302?m=ZP-TF-2310">Open</a></span></div>
+    <div class="banner red" data-when="errors" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>3 fields need attention.</b> Serial, model and warranty end.</span></div>
+    <div class="banner" id="from-report" hidden style="margin-bottom:16px"><svg class="ic"><use href="#ph-info"/></svg>
+      <span class="grow" id="from-report-text"></span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D305">Open report</a></span></div>
+    <form class="card pad" id="form" onsubmit="return false"></form>
+    <div class="form-bar"><span class="grow">Saved machines show in the customer's app at once.</span>
+      <button class="btn btn-ghost" type="button" data-busy data-toast="Machine saved. Add the next one">Save and add another</button>
+      <a class="btn btn-secondary" href="#D603">Save and create AMC</a>
+      <button class="btn btn-primary" type="button" data-busy data-toast="Machine saved">Save</button></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready errors serial-exists loading error" data-mobile="../../../screens/customer/C203-add-machine.html">
+  <div><h3>What it is</h3><p>Form for a new machine in the register. <code>?report=u4</code> fills it from an unlisted machine report.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the model; specifications fill from it.</li><li>Set dates; warranty end fills as start plus 12 months.</li><li>Save, save and add another, or save and create an AMC.</li></ul></div>
+  <div><h3>What happens next</h3><p>Machine detail (D302), Create AMC contract (D603).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Serial already used: blocked with the existing machine and Open (EC-A36).</li><li>Warranty end before start, model missing: inline errors.</li><li>Offline: form keeps its data, Save waits (EC-A01). Double click saves once (EC-A09).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const x = ZXA.mx;
+  const $ = (id) => document.getElementById(id);
+  $('form').innerHTML = x.form(null);
+  /* prefill from an unlisted machine report (D305 Create machine from report) */
+  const report = ZXA.data.unlistedReports.find((u) => u.id === new URLSearchParams(location.search).get('report'));
+  if (report) {
+    $('from-report').hidden = false;
+    $('from-report-text').innerHTML = `<b>Filled from an unlisted machine report.</b> ${ZXA.r.person(report.by).name}, ${ZXA.r.company(report.company).name}. Check the nameplate photo.`;
+    $('f-serial').value = report.serial;
+    $('f-model').value = report.model;
+    $('f-company').value = report.company;
+    $('f-nick').value = ZXA.r.machine(report.serial)?.nickname ?? '';
+  }
+  /* warranty end follows the start: 12 months for every model */
+  $('f-ws').addEventListener('change', (event) => {
+    const start = event.target.value;
+    if (start) $('f-we').value = `${Number(start.slice(0, 4)) + 1}${start.slice(4)}`;
+  });
+  $('f-company').addEventListener('change', (event) => {
+    $('f-site').innerHTML = ZXA.r.company(event.target.value).sites.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
+  });
+  x.watchInvalid();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

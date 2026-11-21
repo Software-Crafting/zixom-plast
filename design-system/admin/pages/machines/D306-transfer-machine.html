@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D306 Transfer machine</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D306">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg>
+      <a id="crumb-machine" href="#D302"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Transfer</span></nav>
+      <h1>Transfer machine</h1><p id="sub"></p></div>
+  </div>
+
+  <div data-when="ready">
+    <section class="card">
+      <div class="card-body" style="padding-top:20px"><ol class="steps" id="steps">
+        <li aria-current="step"><span class="n">1</span>New owner</li><li><span class="n">2</span>What moves</li><li><span class="n">3</span>Date and reason</li></ol></div>
+      <div class="card-body">
+        <div data-step="1" class="stack">
+          <div class="form-grid">
+            <div class="field"><label for="t-company">New customer</label><select class="select" id="t-company"></select></div>
+            <div class="field"><label for="t-site">Site</label><select class="select" id="t-site"></select></div>
+          </div>
+          <div class="banner"><svg class="ic"><use href="#ph-info"/></svg><span class="grow">The machine moves out of the old customer's app and into the new one's.</span></div>
+        </div>
+        <div data-step="2" class="stack" hidden>
+          <div class="banner grey"><svg class="ic"><use href="#ph-history"/></svg><span class="grow"><b>History stays with the machine.</b> Past tickets, claims and notes move with it; the new owner sees them.</span></div>
+          <div class="banner amber" id="open-warn"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow" id="open-warn-text"></span></div>
+          <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Open item</th><th>Status</th><th>What happens</th></tr></thead><tbody id="open-items"></tbody></table></div>
+        </div>
+        <div data-step="3" class="stack" hidden>
+          <div class="form-grid">
+            <div class="field"><label for="t-date">Effective date</label><input class="input" id="t-date" type="date" value="2026-11-23"><span class="hint">Today or later</span></div>
+            <div class="field"><label for="t-why">Reason</label><select class="select" id="t-why"><option>Machine sold to another customer</option><option>Moved between group companies</option><option>Correction: wrong customer</option></select></div>
+            <div class="field full"><label for="t-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="t-note" maxlength="300"></textarea></div>
+          </div>
+          <dl class="dl" id="summary"></dl>
+        </div>
+      </div>
+    </section>
+    <div class="form-bar"><span class="grow">Both customers are notified.</span>
+      <a class="btn btn-ghost" id="cancel" href="#D302">Cancel</a>
+      <button class="btn btn-secondary" type="button" id="back" hidden>Back</button>
+      <button class="btn btn-primary" type="button" id="next">Next</button>
+      <button class="btn btn-primary" type="button" id="go" data-open="password" hidden>Transfer</button></div>
+  </div>
+</main>
+
+<div class="overlay center" id="password" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pw-title">
+    <div class="modal-head"><div class="grow"><h2 id="pw-title"></h2><p id="pw-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="pw">Your password</label><input class="input" id="pw" type="password" autocomplete="current-password" autofocus></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Machine transferred. Both customers told">Transfer</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C209-transfer-machine.html">
+  <div><h3>What it is</h3><p>Move a machine to another customer in three steps. Opens with <code>?m=ZP-PC-1805</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose the new customer and site.</li><li>Decide what happens to each open ticket and the AMC.</li><li>Set the date and reason, then confirm with your password.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302); the change lands in the history (D314).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open ticket or AMC: listed with Move, Keep with old customer or Cancel (EC-A37).</li><li>History always stays with the machine.</li><li>Password needed; both companies are notified.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-PC-1805');
+  const $ = (id) => document.getElementById(id);
+  const from = r.company(m.company);
+  const others = ZX.data.companies.filter((c) => c.id !== m.company);
+  const amc = x.amcOf(m);
+  const open = x.openTickets(m.serial);
+  $('crumb-machine').textContent = m.serial;
+  $('crumb-machine').setAttribute('href', `#D302?m=${m.serial}`);
+  $('cancel').setAttribute('href', `#D302?m=${m.serial}`);
+  $('sub').innerHTML = `<span class="mono">${m.serial}</span> · ${m.model} · now with ${from.name}`;
+
+  $('t-company').innerHTML = others.map((c) => `<option value="${c.id}">${c.name} · ${c.code}</option>`).join('');
+  const fillSites = () => { $('t-site').innerHTML = r.company($('t-company').value).sites.map((s) => `<option>${s.name}</option>`).join(''); };
+  $('t-company').addEventListener('change', fillSites);
+  fillSites();
+
+  /* open items: each ticket and the AMC gets a choice (EC-A37) */
+  const choice = (name, options) => `<select class="select sm" aria-label="What happens to ${name}">${options.map((o) => `<option>${o}</option>`).join('')}</select>`;
+  $('open-items').innerHTML = [
+    ...open.map((t) => `<tr><td><a class="mono" href="#D403?t=${t.number}">${t.number}</a><span class="sub">${r.esc(t.summary)}</span></td><td>${r.ticketTag(t.status)}</td>
+      <td>${choice(t.number, ['Keep with old customer', 'Move to new customer', 'Cancel ticket'])}</td></tr>`),
+    ...(amc ? [`<tr><td><span class="mono">${amc.number}</span><span class="sub">${amc.plan} AMC</span></td><td>${x.amcTag(m)}</td>
+      <td>${choice(amc.number, ['End with old customer', 'Move to new customer'])}</td></tr>`] : []),
+  ].join('') || '<tr><td colspan="3" class="muted">No open tickets or AMC.</td></tr>';
+  if (open.length || amc) $('open-warn-text').innerHTML = `<b>${open.length} open ticket${open.length === 1 ? '' : 's'}${amc ? ' and an AMC' : ''}.</b> Choose what happens to each.`;
+  else $('open-warn').remove();
+
+  /* wizard */
+  let step = 1;
+  const show = () => {
+    document.querySelectorAll('[data-step]').forEach((p) => { p.hidden = Number(p.dataset.step) !== step; });
+    document.querySelectorAll('#steps li').forEach((li, n) => {
+      li.classList.toggle('done', n + 1 < step);
+      li.querySelector('.n').textContent = n + 1 < step ? '✓' : n + 1;
+      if (n + 1 === step) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    $('back').hidden = step === 1;
+    $('next').hidden = step === 3;
+    $('go').hidden = step !== 3;
+    const to = r.company($('t-company').value);
+    $('summary').innerHTML = `<dt>Machine</dt><dd class="mono">${m.serial}</dd><dt>From</dt><dd>${from.name}</dd><dt>To</dt><dd>${to.name}, ${$('t-site').value}</dd>`;
+    $('pw-title').textContent = `Transfer ${m.serial}?`;
+    $('pw-text').textContent = `It moves from ${from.name} to ${to.name}. Both are told. Enter your password to continue.`;
+  };
+  $('next').addEventListener('click', () => { step += 1; show(); });
+  $('back').addEventListener('click', () => { step -= 1; show(); });
+  show();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

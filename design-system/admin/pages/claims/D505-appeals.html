@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D505 Appeals</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D505">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D501">Warranty claims</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Appeals</span></nav>
+      <h1>Appeals</h1><p id="head-sub"></p></div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="answered">Answered <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#appeals"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Claim, customer or machine" aria-label="Search appeals"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="appeals"><thead><tr><th class="sortable">Claim</th><th class="sortable">Customer and machine</th><th>Original decision</th>
+          <th>Customer's reason</th><th>New evidence</th><th class="sortable">Received</th><th>Answer by</th></tr></thead><tbody></tbody></table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No appeals</h3><p>Appeals against rejected claims appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Claim</th><th>Customer</th><th>Received</th><th>Answer by</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="overlay right" id="appeal" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="ap-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="ap-title"></h2><p id="ap-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="ap-body"></div>
+    <div class="drawer-foot"><button class="btn btn-secondary" type="button" data-open="ask">Ask for more</button><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" data-open="uphold">Uphold</button><button class="btn btn-primary" type="button" data-open="overturn">Overturn and approve</button></div>
+  </div>
+</div>
+<div class="overlay center" id="uphold" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="up-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span><div class="grow"><h2 id="up-title">Uphold the rejection?</h2><p>The customer sees your reason in the app. This is final.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="up-why">Reason</label><textarea class="textarea" id="up-why" maxlength="500">The stabiliser log covers the panel, not the motor feeder. The cable shows surge damage from outside the machine.</textarea>
+      <span class="hint">20 to 500 characters</span></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-busy data-toast="Rejection upheld. Customer told">Uphold</button></div>
+  </div>
+</div>
+<div class="overlay center" id="overturn" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ov-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><div class="grow"><h2 id="ov-title"></h2><p>A no charge service request will be created and the customer will be told.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ov-cov">Coverage</label><select class="select" id="ov-cov"><option>Full</option><option>Parts only</option><option>Labour only</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Overturned. Ticket TKT-2026-0134 created">Approve</button></div>
+  </div>
+</div>
+<div class="overlay center" id="ask" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ask-title">
+    <div class="modal-head"><div class="grow"><h2 id="ask-title">Ask for more</h2><p>The answer clock pauses until the customer replies.</p></div></div>
+    <div class="modal-body stack"><div class="field"><label for="ask-q">What do you need?</label><textarea class="textarea" id="ask-q" maxlength="300">Please share the stabiliser log for the motor feeder, not only the panel.</textarea></div>
+      <div class="field"><label for="ask-due">Reply by</label><input class="input" id="ask-due" type="date" value="2026-11-30"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Request sent to the customer">Send</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><label for="f-company">Customer</label><select class="select" id="f-company"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <label class="check"><input type="checkbox"> Past 3 working days only</label></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show appeals</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C310-appeal-claim.html">
+  <div><h3>What it is</h3><p>Appeals customers send against rejected claims (C310). <code>?c=WCL-2026-0044</code> opens one.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the original decision, the customer's reason and new evidence.</li><li>Uphold with a reason, overturn and approve, or ask for more.</li></ul></div>
+  <div><h3>What happens next</h3><p>Overturn creates the ticket (D403); the claim shows the outcome (D502, C308).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Answer within 3 working days; late appeals are red.</li><li>Customers can appeal within 7 days of the rejection.</li><li>Upheld appeals are final.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const appeals = cl.claims.filter(cl.isAppeal);
+  const due = (c) => {
+    const h = cl.hoursLeft(c.appeal.due);
+    return h < 0 ? `<span class="sla breach">${r.icon('warning-circle')}Overdue</span>` : `<span class="sla ${h <= 24 ? 'risk' : 'ok'}">${r.icon('clock-countdown')}${r.date(c.appeal.due)}, ${Math.round(h / 24)} d left</span>`;
+  };
+  document.getElementById('head-sub').textContent = `${appeals.filter((c) => c.appeal.status === 'open').length} open · answer within 3 working days`;
+  if (!appeals.length) document.body.dataset.state = 'empty';
+
+  document.querySelector('#appeals tbody').innerHTML = appeals.map((c) => {
+    const m = r.machine(c.machine);
+    return `<tr data-drawer="appeal" data-claim="${c.number}">
+      <td><a class="rec" href="#D502?c=${c.number}">${c.number}</a><span class="sub">${c.category}</span></td>
+      <td><b class="clip">${r.company(c.company).name}</b><span class="sub">${m.model} · <span class="mono">${m.serial}</span></span></td>
+      <td>${r.tag('Rejected', 'red')}<span class="sub">${c.rejectReason}</span></td>
+      <td><span class="clip" style="max-width:260px; display:block">${r.esc(c.appeal.reason)}</span></td>
+      <td><span class="row" style="gap:6px">${r.icon('paperclip')}${c.appeal.evidence.length} files</span></td>
+      <td class="nowrap">${r.date(c.appeal.submitted)}<span class="sub">${r.ago(c.appeal.submitted)}</span></td>
+      <td>${due(c)}</td></tr>`;
+  }).join('');
+  const VIEWS = { open: (c) => c.appeal.status === 'open', answered: (c) => c.appeal.status !== 'open' };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#appeals tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](cl.claim(row.dataset.claim)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : 'No answered appeals yet';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = appeals.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 3 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+
+  const fill = (c) => {
+    const m = r.machine(c.machine);
+    document.getElementById('ap-title').textContent = c.number;
+    document.getElementById('ap-sub').textContent = `${r.company(c.company).name} · ${m.model} · appeal received ${r.ago(c.appeal.submitted)}`;
+    document.getElementById('ov-title').textContent = `Approve ${c.number}?`;
+    document.getElementById('ap-body').innerHTML = `
+      <div class="row">${due(c)}<span class="grow"></span><a class="btn btn-sm btn-ghost" href="${link('D502', `?c=${c.number}`)}">Open claim</a></div>
+      <section><h3 style="font-size:16px; margin-bottom:8px">Original decision</h3>
+        <dl class="dl"><dt>Decision</dt><dd>Rejected, ${r.date(c.decided)} · Rajesh Goyal</dd><dt>Reason</dt><dd>${c.rejectReason}</dd><dt>Message</dt><dd>${r.esc(c.reason)}</dd>
+          <dt>Problem</dt><dd>${r.esc(c.summary)}</dd></dl></section>
+      <section><h3 style="font-size:16px; margin-bottom:8px">Customer's reason</h3><p style="color:var(--text-strong)">${r.esc(c.appeal.reason)}</p>
+        <p class="muted" style="margin-top:4px">${r.person(c.by).name}, ${r.date(c.appeal.submitted)}, ${r.time(c.appeal.submitted)}</p></section>
+      <section><h3 style="font-size:16px; margin-bottom:8px">New evidence</h3><div class="stack-sm">${c.appeal.evidence.map((f) => `<div class="file-row"><span class="thumb">${r.icon(f.endsWith('.pdf') ? 'file-pdf' : 'image')}</span>
+        <span class="grow"><b>${f}</b></span><button class="icon-btn sm" type="button" aria-label="Download ${f}" data-toast="Download started">${r.icon('download-simple')}</button></div>`).join('')}</div></section>`;
+  };
+  document.getElementById('appeal').addEventListener('zxa:row', (event) => fill(cl.claim(event.detail.dataset.claim)));
+  const open = cl.claim(new URLSearchParams(location.search).get('c'));
+  if (open?.appeal) { fill(open); document.getElementById('appeal').hidden = false; }
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

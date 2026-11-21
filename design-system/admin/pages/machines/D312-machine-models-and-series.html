@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D312 Machine models and series</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D312">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Models and series</span></nav>
+      <h1>Machine models and series</h1><p id="head-sub"></p></div>
+    <button class="btn btn-primary" type="button" data-open="model" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add model</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Series" id="views" data-when="ready no-results"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#models"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Model or part" aria-label="Search models"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="models"><thead><tr><th class="sortable">Model</th><th class="sortable">Series</th><th class="num">Warranty</th><th class="sortable num">Machines</th>
+          <th>Manuals</th><th class="num">Fits parts</th><th>Status</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-stack"/></svg></span><h3>No models yet</h3><p>Models give new machines their specifications and warranty.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="model">Add model</button></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Model</th><th>Series</th><th>Machines</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="overlay right" id="model" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="model-title">
+    <div class="drawer-head"><div class="grow"><h2 id="model-title">Edit model</h2><p id="model-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="md-name">Model name</label><input class="input" id="md-name" maxlength="60"></div>
+        <div class="field"><label for="md-series">Series</label><select class="select" id="md-series"></select></div>
+        <div class="field"><label for="md-months">Default warranty</label><input class="input" id="md-months" type="number" min="1" value="12"><span class="hint">12 months for all models</span></div>
+      </div>
+      <div class="field"><span class="label">Default specifications</span><div class="form-grid" id="md-specs"></div>
+        <button class="btn btn-sm btn-ghost" type="button" style="align-self:flex-start" data-toast="Row added"><svg class="ic"><use href="#ph-plus"/></svg>Add row</button></div>
+      <div class="field"><span class="label">Manuals</span><div class="stack-sm" id="md-manuals"></div></div>
+      <div class="field"><span class="label">Fits these parts</span><div class="tags" id="md-parts"></div><span class="hint">Drives the Fits these machines list in the app</span></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" id="md-archive" data-close data-toast="Model archived. Existing machines keep it">Archive</button><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><label class="check"><input type="checkbox"> Has machines</label><label class="check"><input type="checkbox"> Missing a manual</label></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show models</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="model"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <a href="#D301"><svg class="ic"><use href="#ph-factory"/></svg>See machines</a>
+  <hr><button type="button" data-toast="A model with machines cannot be deleted. Archive it instead"><svg class="ic"><use href="#ph-trash"/></svg>Delete</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>The master list of series and models new machines are created from.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a model: specifications, warranty, manuals, compatible parts.</li><li>Archive a model no longer sold.</li></ul></div>
+  <div><h3>What happens next</h3><p>Add machine (D303) uses these; parts catalogue (D802) shows the fit.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A model with machines cannot be deleted, only archived.</li><li>Default warranty is 12 months for all models.</li><li>Compatible parts drive Fits these machines in the app.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const { models, series } = ZXA.data;
+  const $ = (id) => document.getElementById(id);
+  const count = (md) => x.all.filter((m) => m.model === md.name).length;
+  const part = (no) => ZX.data.parts.find((p) => p.number === no);
+  $('head-sub').textContent = `${series.length} series · ${models.filter((md) => md.status === 'active').length} models on sale`;
+
+  $('views').innerHTML = [['all', 'All'], ...series.map((s) => [s.name, s.name]), ['archived', 'Archived']].map(([key, label], n) =>
+    `<button role="tab" aria-selected="${n === 0}" data-view="${key}">${label} <span class="n">${models.filter((md) => (key === 'all' ? md.status === 'active' : key === 'archived' ? md.status === 'archived' : md.series === key)).length}</span></button>`).join('');
+  document.querySelector('#models tbody').innerHTML = models.map((md, n) => `<tr data-drawer="model" data-n="${n}">
+    <td><b>${md.name}</b></td><td>${md.series}</td><td class="num">${md.months} months</td><td class="num" data-sort="${count(md)}">${count(md) || '<span class="faint">0</span>'}</td>
+    <td>${md.manuals.length} file${md.manuals.length === 1 ? '' : 's'}</td><td class="num">${md.parts.length}</td>
+    <td>${md.status === 'active' ? r.tag('On sale', 'green') : r.tag('Archived', 'outline')}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${r.icon('dots-three')}</button></td></tr>`).join('');
+  const show = (key) => document.querySelectorAll('#models tbody tr').forEach((row) => {
+    const md = models[row.dataset.n];
+    row.hidden = !(key === 'all' ? md.status === 'active' : key === 'archived' ? md.status === 'archived' : md.series === key);
+  });
+  $('views').addEventListener('click', (event) => { const t = event.target.closest('[data-view]'); if (t) show(t.dataset.view); });
+  show('all');
+  $('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+
+  $('md-series').innerHTML = series.map((s) => `<option>${s.name}</option>`).join('');
+  const fill = (md) => {
+    $('model-title').textContent = md ? 'Edit model' : 'Add model';
+    $('model-sub').textContent = md ? `${count(md)} machines use this model` : 'New machines of this model start with these values';
+    $('md-name').value = md?.name ?? '';
+    $('md-series').value = md?.series ?? series[0].name;
+    $('md-specs').innerHTML = (md?.specs ?? [['Forming area', ''], ['Control', '']]).map(([k, v], n) =>
+      `<input class="input" aria-label="Specification ${n + 1} name" value="${r.esc(k)}"><input class="input" aria-label="Specification ${n + 1} value" value="${r.esc(v)}">`).join('');
+    $('md-manuals').innerHTML = `${(md?.manuals ?? []).map((f) => `<div class="file-row"><span class="thumb">${r.icon('file-pdf')}</span><span class="grow"><b>${f}</b></span>
+      <button class="icon-btn sm" type="button" aria-label="Remove ${f}" data-toast="Manual removed">${r.icon('x')}</button></div>`).join('')}
+      <div class="drop">${r.icon('upload-simple')}<b>Add a manual</b>PDF up to 10 MB</div>`;
+    $('md-parts').innerHTML = `${(md?.parts ?? []).map((no) => `<span class="chip applied">${part(no).name}<svg class="ic x"><use href="#ph-x"/></svg></span>`).join('')}
+      <button class="btn btn-sm btn-ghost" type="button" data-toast="Part picker opened">${r.icon('plus')}Add part</button>`;
+    $('md-archive').hidden = !md || md.status === 'archived';
+  };
+  $('model').addEventListener('zxa:row', (event) => fill(models[event.detail.dataset.n]));
+  document.querySelector('[data-new]').addEventListener('click', () => fill(null));
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

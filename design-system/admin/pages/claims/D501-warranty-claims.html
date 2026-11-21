@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D501 Warranty claims</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D501">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Warranty claims</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D507"><svg class="ic"><use href="#ph-plus"/></svg>Create claim</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="review">To review <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="info">Information requested <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="appeal">Appeals <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="approved">Approved <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#claims"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Claim, customer, machine or serial" aria-label="Search claims"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved as My claims"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="claims">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Claim</th><th class="sortable">Status</th><th class="sortable">Customer and machine</th><th class="sortable">Category</th>
+            <th class="sortable">Submitted</th><th>Review</th><th class="sortable">Information by</th><th>Decision</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-shield-check"/></svg></span>
+        <h3>No claims yet</h3><p>Warranty claims from the app and ones you create appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D507">Create claim</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Claim</th><th>Status</th><th>Customer and machine</th><th>Category</th><th>Submitted</th><th>Review</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="claims" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D502">Open claim</a><span class="grow"></span><span id="quick-action"></span></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips id="f-status"></div></div>
+      <div class="field"><span class="label">Category</span><div class="row wrap" data-chips id="f-cat"></div></div>
+      <div class="field"><span class="label">Age</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Under 2 working days</button><button class="chip" type="button" aria-pressed="false">Past review target</button>
+        <button class="chip" type="button" aria-pressed="false">Older than 30 days</button></div></div>
+      <div class="field"><label for="f-company">Customer</label><select class="select" id="f-company"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show claims</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="claims"> Category</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="claims"> Information by</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="claims"> Decision</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D502"><svg class="ic"><use href="#ph-external-link"/></svg>Open claim</a>
+  <a href="#D503"><svg class="ic"><use href="#ph-scale"/></svg>Decide</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C301-warranty.html">
+  <div><h3>What it is</h3><p>Every warranty claim from the app, phone or email.</p></div>
+  <div><h3>What you can do</h3><ul><li>Use the saved views: To review, Information requested, Appeals.</li><li>Click a row for the quick view; click the number for the claim.</li><li>Decide from the quick view. Export selected rows.</li></ul></div>
+  <div><h3>What happens next</h3><p>Claim detail (D502), Decide claim (D503), Information requests (D504), Appeals (D505).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Review target 2 working days; claims past it are red.</li><li>Past the information deadline is red; auto reject 7 days after the request.</li><li>Rejected with an open appeal reads Appeal here and Rejected in the app.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const late = (c) => cl.OPEN.includes(c.status) && cl.hoursLeft(c.due) < 0;
+  const claims = [...cl.claims].sort((p, q) => Number(late(q)) - Number(late(p)));
+  const toReview = claims.filter((c) => cl.OPEN.includes(c.status));
+  document.getElementById('head-sub').textContent = `${toReview.length} to review · ${toReview.filter(late).length} past 2 working days · ${claims.filter((c) => cl.state(c) === 'appeal').length} appeal`;
+
+  document.querySelector('#claims tbody').innerHTML = claims.map((c) => {
+    const m = r.machine(c.machine);
+    return `<tr data-drawer="quick" data-claim="${c.number}" class="${late(c) ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.number}"></label></td>
+      <td><a class="rec" href="#D502?c=${c.number}">${c.number}</a><span class="sub clip" style="max-width:240px">${r.esc(c.summary)}</span></td>
+      <td>${cl.tag(c)}</td>
+      <td><b class="clip">${r.company(c.company).name}</b><span class="sub">${m.model} · <span class="mono">${m.serial}</span></span></td>
+      <td>${c.category}</td>
+      <td class="nowrap" data-sort="${c.submitted}">${r.date(c.submitted)}<span class="sub">${cl.age(c)} ago</span></td>
+      <td>${cl.review(c)}</td>
+      <td class="nowrap" data-sort="${c.deadline ?? '9'}">${cl.deadline(c)}</td>
+      <td>${cl.decision(c)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = {
+    review: (c) => cl.OPEN.includes(c.status), info: (c) => c.status === 'info-requested', appeal: (c) => cl.state(c) === 'appeal',
+    approved: (c) => c.status === 'approved', closed: (c) => ['rejected', 'resolved', 'closed', 'cancelled'].includes(cl.state(c)), all: () => true,
+  };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#claims tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](cl.claim(row.dataset.claim)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = claims.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('review');
+
+  document.getElementById('f-status').innerHTML = Object.values(cl.STATUS).map(([label]) => `<button class="chip" type="button" aria-pressed="false">${label}</button>`).join('');
+  document.getElementById('f-cat').innerHTML = ['Mechanical', 'Electrical', 'Heating', 'Vacuum or pneumatic', 'Control or PLC', 'Other']
+    .map((x) => `<button class="chip" type="button" aria-pressed="false">${x}</button>`).join('');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const c = cl.claim(event.detail.dataset.claim);
+    const m = r.machine(c.machine);
+    const p = r.person(c.by);
+    const q = `?c=${c.number}`;
+    document.getElementById('quick-title').textContent = c.number;
+    document.getElementById('quick-sub').textContent = `${c.category} · submitted ${r.ago(c.submitted)}`;
+    document.getElementById('quick-open').href = link('D502', q);
+    const open = cl.OPEN.includes(c.status);
+    document.getElementById('quick-action').innerHTML = open ? `<a class="btn btn-primary" href="${link('D503', q)}">Decide</a>`
+      : c.ticket ? `<a class="btn btn-primary" href="${link('D403', `?t=${c.ticket}`)}">Open ticket</a>`
+        : cl.state(c) === 'appeal' ? `<a class="btn btn-primary" href="${link('D505', q)}">Review appeal</a>` : '';
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${cl.tag(c)}${ZXA.mx.warrantyTag(m)}</div>
+      ${cl.warrantyEnded(c) ? `<div class="banner red">${r.icon('shield-off')}<span class="grow"><b>Warranty ended ${r.date(m.warrantyEnd)}.</b> Before the fault on ${r.date(c.started)}.</span></div>` : ''}
+      <p style="color:var(--text-strong)">${r.esc(c.summary)}</p>
+      <dl class="dl">
+        <dt>Review</dt><dd>${cl.review(c)}</dd>
+        <dt>Customer</dt><dd>${r.company(c.company).name}<br><span class="muted">${p.name} · ${p.mobile}</span></dd>
+        <dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd>
+        <dt>Fault started</dt><dd>${r.date(c.started)}${c.stopped ? ' · machine stopped' : ''}</dd>
+        <dt>Part</dt><dd>${c.part || '<span class="faint">Not given</span>'}</dd>
+        <dt>Evidence</dt><dd>${c.evidence[0]} photos${c.evidence[1] ? `, ${c.evidence[1]} video` : ''}</dd>
+        ${c.ticket ? `<dt>Ticket</dt><dd><a class="mono" href="${link('D403', `?t=${c.ticket}`)}">${c.ticket}</a></dd>` : ''}
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

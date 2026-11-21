@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D508 Claim reasons and templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D508">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D501">Warranty claims</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reasons and templates</span></nav>
+      <h1>Claim reasons and templates</h1><p id="head-sub"></p></div>
+    <button class="btn btn-primary" type="button" data-open="tpl" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add template</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Kind" id="views" data-when="ready no-results"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#templates"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Name or text" aria-label="Search templates"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="templates"><thead><tr><th class="sortable">Name</th><th>Kind</th><th>Text</th><th class="sortable num">Used</th><th>Enabled</th></tr></thead><tbody></tbody></table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-messages"/></svg></span><h3>No templates yet</h3><p>Templates fill the decision message in Decide claim.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="tpl">Add template</button></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Name</th><th>Kind</th><th>Text</th><th>Enabled</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="overlay right" id="tpl" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="tpl-title">
+    <div class="drawer-head"><div class="grow"><h2 id="tpl-title">Edit template</h2><p>Used in Decide claim (D503) and sent to the customer.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="t-name">Name</label><input class="input" id="t-name" maxlength="60"><span class="hint">Rejection names show as reasons in Decide claim</span></div>
+        <div class="field"><label for="t-kind">Kind</label><select class="select" id="t-kind"><option>Rejection</option><option>Approval</option><option>Information request</option></select></div>
+      </div>
+      <div class="field"><label for="t-text">Message</label><textarea class="textarea" id="t-text" maxlength="500" rows="5"></textarea>
+        <span class="row"><span class="hint">Click a variable to add it</span><span class="count" id="t-count"></span></span>
+        <div class="tags" id="vars"></div></div>
+      <div class="field"><span class="label">Preview with <span class="mono" id="sample-no"></span></span>
+        <div class="msg me" id="preview" style="max-width:none"></div></div>
+      <label class="switch"><input type="checkbox" id="t-on" checked><span></span>Enabled</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><label class="check"><input type="checkbox"> Enabled only</label><label class="check"><input type="checkbox"> Never used</label></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show templates</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Rejection reasons and the approval and information request messages, with variables.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a template; click variables to insert them.</li><li>Preview with a sample claim.</li><li>Disable a template without deleting it.</li></ul></div>
+  <div><h3>What happens next</h3><p>Decide claim (D503) offers the enabled templates.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Rejection reasons: Out of warranty, Not a defect, Misuse, Unauthorised repair, Insufficient evidence, Other.</li><li>Used templates are disabled, not deleted, so past claims keep their text.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cl = ZXA.cl;
+  const list = ZXA.data.claimTemplates;
+  const $ = (id) => document.getElementById(id);
+  const KINDS = ['Rejection', 'Approval', 'Information request'];
+  const SAMPLE = { Rejection: 'WCL-2026-0044', Approval: 'WCL-2026-0043', 'Information request': 'WCL-2026-0042' };
+  const VARS = ['claim', 'machine', 'serial', 'customer', 'reason', 'ticket', 'engineer', 'warranty_end', 'questions', 'deadline'];
+  $('head-sub').textContent = `${list.length} templates · ${list.filter((t) => t.on).length} enabled`;
+
+  $('views').innerHTML = KINDS.map((k, n) => `<button role="tab" aria-selected="${n === 0}" data-view="${k}">${k} <span class="n">${list.filter((t) => t.kind === k).length}</span></button>`).join('');
+  document.querySelector('#templates tbody').innerHTML = list.map((t, n) => `<tr data-drawer="tpl" data-n="${n}">
+    <td><b>${t.name}</b></td><td>${t.kind}</td><td><span class="clip" style="max-width:420px; display:block">${r.esc(t.text)}</span></td>
+    <td class="num">${t.uses}</td><td><label class="switch"><input type="checkbox"${t.on ? ' checked' : ''} aria-label="Enable ${t.name}" data-toast="${t.on ? 'Template disabled' : 'Template enabled'}"><span></span></label></td></tr>`).join('');
+  const show = (kind) => document.querySelectorAll('#templates tbody tr').forEach((row) => { row.hidden = list[row.dataset.n].kind !== kind; });
+  $('views').addEventListener('click', (event) => { const t = event.target.closest('[data-view]'); if (t) show(t.dataset.view); });
+  show(KINDS[0]);
+  $('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(4)}</tr>`).join('');
+
+  /* preview fills the variables from a sample claim of the same kind */
+  const preview = () => {
+    const c = cl.claim(SAMPLE[$('t-kind').value]);
+    const m = r.machine(c.machine);
+    const values = { claim: c.number, machine: m.model, serial: m.serial, customer: r.company(c.company).name, reason: c.reason ?? c.summary,
+      ticket: c.ticket ?? 'TKT-2026-0134', engineer: 'Sandeep Yadav', warranty_end: r.date(m.warrantyEnd), questions: (c.questions ?? []).join(' '), deadline: c.deadline ? r.date(c.deadline) : '30 Nov 2026' };
+    $('sample-no').textContent = c.number;
+    $('preview').textContent = $('t-text').value.replace(/\{(\w+)\}/g, (all, key) => values[key] ?? all);
+    $('t-count').textContent = `${$('t-text').value.length} / 500`;
+  };
+  $('vars').innerHTML = VARS.map((v) => `<button class="chip" type="button" data-var="${v}">{${v}}</button>`).join('');
+  $('vars').addEventListener('click', (event) => {
+    const b = event.target.closest('[data-var]');
+    if (!b) return;
+    const ta = $('t-text');
+    const at = ta.selectionStart ?? ta.value.length;
+    ta.value = `${ta.value.slice(0, at)}{${b.dataset.var}}${ta.value.slice(at)}`;
+    preview();
+  });
+  ['t-text', 't-kind'].forEach((id) => $(id).addEventListener('input', preview));
+  const fill = (t) => {
+    $('tpl-title').textContent = t ? 'Edit template' : 'Add template';
+    $('t-name').value = t?.name ?? '';
+    $('t-kind').value = t?.kind ?? document.querySelector('#views [aria-selected="true"]').dataset.view;
+    $('t-text').value = t?.text ?? 'Claim {claim}: ';
+    $('t-on').checked = t?.on ?? true;
+    preview();
+  };
+  $('tpl').addEventListener('zxa:row', (event) => fill(list[event.detail.dataset.n]));
+  document.querySelector('[data-new]').addEventListener('click', () => fill(null));
+  fill(list[0]);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

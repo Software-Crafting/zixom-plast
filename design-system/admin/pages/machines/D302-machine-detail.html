@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D302 Machine detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D302">
+<main class="content">
+  <div data-when="ready decommissioned">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><span class="thumb lg" id="thumb"></span><div><h1 id="serial"></h1><p class="muted" id="model"></p></div><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="banner grey" data-when="decommissioned" style="margin-bottom:16px"><svg class="ic"><use href="#ph-archive"/></svg>
+      <span class="grow"><b>Decommissioned on 20 Nov 2026.</b> This machine is read only. Its serial cannot be reused.</span></div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px" data-when="ready"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Machine sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-warranty">Warranty and AMC</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-docs">Documents</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-parts">Parts</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-notes">Notes and operators</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-photos">Photos</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-hours">Running hours</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-tickets">Tickets <span class="n" id="n-tickets"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-claims">Claims <span class="n" id="n-claims"></span></button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+          <div id="tab-warranty" role="tabpanel" hidden></div>
+          <div id="tab-docs" role="tabpanel" hidden></div>
+          <div id="tab-parts" role="tabpanel" hidden></div>
+          <div id="tab-notes" role="tabpanel" hidden></div>
+          <div id="tab-photos" role="tabpanel" hidden></div>
+          <div id="tab-hours" role="tabpanel" hidden></div>
+          <div id="tab-tickets" role="tabpanel" hidden></div>
+          <div id="tab-claims" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D301">Go to machines</a></div></div></div>
+  </div>
+</main>
+
+<!-- verify a machine the customer added (Pending) -->
+<div class="overlay center" id="verify" hidden>
+  <div class="modal" role="dialog" aria-labelledby="verify-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="verify-title">Verify this machine?</h2><p>It moves to the register and the warranty starts from the commissioning date.</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="v-inst">Installed</label><input class="input" id="v-inst" type="date" value="2021-03-10"></div>
+        <div class="field"><label for="v-comm">Commissioned</label><input class="input" id="v-comm" type="date" value="2021-03-18"></div>
+      </div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Commissioned over 12 months ago: no warranty. Offer an AMC.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Machine verified. Pooja Shah was told">Verify</button></div>
+  </div>
+</div>
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reject-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="reject-title">Reject this machine?</h2><p>The customer sees your reason in the app. The serial stays free.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="rj-reason">Reason</label><textarea class="textarea" id="rj-reason" maxlength="300">The serial on the nameplate does not match our records.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Machine rejected. Customer told">Reject</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <a href="#D306"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Transfer</a>
+  <a href="#D313"><svg class="ic"><use href="#ph-toggle"/></svg>Change status</a>
+  <a href="#D311"><svg class="ic"><use href="#ph-qr-code"/></svg>Print label</a>
+  <a href="#D315"><svg class="ic"><use href="#ph-file-text"/></svg>Customer log report</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found decommissioned error" data-mobile="../../../screens/customer/C202-machine-detail.html">
+  <div><h3>What it is</h3><p>One machine and everything that happened to it. Opens with <code>?m=ZP-TF-2310</code>; any serial works.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit, transfer, change status, print the label.</li><li>Create a ticket or a claim for this machine.</li><li>Pending machines (<code>?m=ZP-TF-2501</code>): verify or reject.</li><li>Tabs: history, warranty and AMC, documents, parts, notes, photos, hours, tickets, claims.</li></ul></div>
+  <div><h3>What happens next</h3><p>Edit (D304), Transfer (D306), Warranty (D307), Change status (D313), Full history (D314), Label (D311).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Decommissioned machines are read only.</li><li>Warranty expiring within 60 days shows amber.</li><li>Pending machines have no coverage until verified.</li><li>Another Admin saved: stale banner (EC-A12).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script src="../../assets/js/data/claims.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  if (!m) { document.body.dataset.state = 'not-found'; return; }
+  const c = r.company(m.company);
+  const s = r.site(m.company, m.site);
+  const i = x.info(m.serial);
+  const model = x.model(m);
+  const w = x.warranty(m);
+  const amc = x.amcOf(m);
+  const tickets = x.tickets(m.serial);
+  const open = x.openTickets(m.serial);
+  const claims = ZXA.cl.claims.filter((cl) => cl.machine === m.serial);
+  const pending = m.status === 'pending';
+  const ic = r.icon;
+  const mq = `?m=${m.serial}`;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const $ = (id) => document.getElementById(id);
+  const empty = (icon, title, text, btn = '') => `<div class="state"><span class="disc">${ic(icon)}</span><h3>${title}</h3><p>${text}</p>${btn ? `<div class="btns">${btn}</div>` : ''}</div>`;
+
+  document.title = `Zixom Admin - ${m.serial}`;
+  $('crumb').textContent = m.serial;
+  $('serial').textContent = m.serial;
+  $('model').textContent = `${m.model}${m.nickname ? ` · ${m.nickname}` : ''}`;
+  $('thumb').innerHTML = ic(m.type === 'Cup forming machine' ? 'cube' : m.type === 'Plastic crusher' ? 'gear-six' : 'factory');
+  $('chips').innerHTML = `${x.statusTag(m.status)}${x.warrantyTag(m)}${amc ? x.amcTag(m) : ''}`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${c.name}</span><span>${ic('map-pin')}${s.name}</span>
+    <span>${ic('stack')}${x.series(m)}</span>${x.hours(m) !== null ? `<span>${ic('timer')}${x.hours(m).toLocaleString('en-IN')} h</span>` : ''}`;
+
+  /* actions: pending machines are verified or rejected first; others get the service actions */
+  $('actions').innerHTML = pending
+    ? `<button class="btn btn-secondary" type="button" data-open="reject">Reject</button><a class="btn btn-secondary" href="${link('D304', mq)}">Edit</a>
+       <button class="btn btn-primary" type="button" data-open="verify">Verify machine</button>`
+    : `<a class="btn btn-secondary" href="${link('D304', mq)}">Edit</a><a class="btn btn-secondary" href="${link('D507', mq)}">Create claim</a>
+       <a class="btn btn-primary" href="${link('D402', mq)}">Create ticket</a>
+       <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.querySelectorAll('#more-menu a').forEach((a) => { a.setAttribute('href', `${a.getAttribute('href')}${mq}`); });
+
+  const banners = [];
+  if (pending) banners.push(`<div class="banner amber">${ic('hourglass')}<span class="grow"><b>Added by ${i.submittedBy} in the app, ${r.ago(i.submitted)}.</b> No coverage until verified. Check the nameplate photo.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D305')}">Open report</a></span></div>`);
+  if (w.state === 'expiring') banners.push(`<div class="banner amber">${ic('shield-warning')}<span class="grow"><b>Warranty ends in ${w.left} days.</b> The customer was reminded at 60 and 30 days.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D307', mq)}">Extend warranty</a></span></div>`);
+  if (amc?.status === 'expired') banners.push(`<div class="banner red">${ic('seal-check')}<span class="grow"><b>AMC expired on ${r.date(amc.end)}.</b> Grace ends ${r.date('2026-11-27')}.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D602')}">Open AMC</a></span></div>`);
+  $('edge-banners').innerHTML = banners.join('');
+  if (!banners.length) $('edge-banners').remove();
+
+  /* ---------- overview ---------- */
+  const hist = x.history(m);
+  const timeline = (list) => `<ol class="timeline">${list.map((e) => `<li><span class="node ${e.tone}">${ic(e.icon)}</span>
+    <div><b>${e.href ? `<a href="${link(...e.href.split(/(?=\?)/))}">${r.esc(e.title)}</a>` : r.esc(e.title)}</b><p>${r.esc(e.sub)}</p></div><small>${r.date(e.when)}</small></li>`).join('')}</ol>`;
+  $('tab-overview').innerHTML = `<div class="stack">
+    <div class="grid cols-2" style="gap:20px">
+      <dl class="dl"><dt>Customer</dt><dd><a href="${link('D202')}">${c.name}</a><br><span class="muted mono">${c.code}</span></dd>
+        <dt>Site</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd>
+        <dt>Nickname</dt><dd>${m.nickname || '<span class="faint">None</span>'}</dd><dt>Model</dt><dd>${m.model}<br><span class="muted">${x.series(m)}</span></dd></dl>
+      <dl class="dl"><dt>Installed</dt><dd>${m.installed ? r.date(m.installed) : '<span class="faint">Not set</span>'}</dd>
+        <dt>Commissioned</dt><dd>${m.commissioned ? r.date(m.commissioned) : '<span class="faint">Not set</span>'}</dd>
+        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}<br><span class="muted">${i.warrantyType}</span>` : '<span class="faint">Starts after verification</span>'}</dd>
+        <dt>AMC</dt><dd>${amc ? `<a class="mono" href="${link('D602')}">${amc.number}</a><br><span class="muted">${amc.plan} · to ${r.date(amc.end)}</span>` : '<span class="faint">None</span>'}</dd></dl>
+    </div>
+    <div><div class="row" style="margin-bottom:10px"><h3 class="grow" style="font-size:16px">Open tickets</h3><span class="muted">${open.length}</span></div>
+      ${open.length ? `<ul class="mini" style="margin:0 -20px">${open.map((t) => `<li data-href="D403?t=${t.number}"><span class="ic-disc ${t.severity === 'down' ? 'red' : 'blue'}">${ic(t.severity === 'down' ? 'siren' : 'wrench')}</span>
+        <span class="grow"><b class="mono">${t.number}</b><small>${t.type} · ${r.esc(t.summary)}</small></span><span class="end">${r.ticketTag(t.status)}</span></li>`).join('')}</ul>` : '<p class="muted">None open.</p>'}</div>
+    <div><div class="row" style="margin-bottom:12px"><h3 class="grow" style="font-size:16px">Latest</h3><a class="card-link" href="${link('D314', mq)}">Full history</a></div>${timeline(hist.slice(0, 4))}</div>
+  </div>`;
+
+  $('tab-history').innerHTML = hist.length ? `${timeline(hist.slice(0, 10))}<div class="btns"><a class="btn btn-secondary btn-sm" href="${link('D314', mq)}">Open full history</a></div>`
+    : empty('history', 'No history yet', 'Visits, parts, claims and notes appear here.');
+
+  /* ---------- warranty and AMC ---------- */
+  $('tab-warranty').innerHTML = `<div class="grid cols-2" style="gap:24px">
+    <div class="stack-sm"><div class="row"><h3 class="grow" style="font-size:16px">Warranty</h3>${x.warrantyTag(m)}</div>
+      <dl class="dl"><dt>Type</dt><dd>${i.warrantyType}</dd><dt>Start</dt><dd>${m.warrantyEnd ? r.date(x.warrantyStart(m)) : '–'}</dd>
+        <dt>End</dt><dd>${m.warrantyEnd ? r.date(m.warrantyEnd) : '–'}</dd><dt>Terms</dt><dd><a href="${link('D506')}">${i.terms}</a></dd>
+        <dt>Extensions</dt><dd>${i.extensions.length ? i.extensions.map((e) => `To ${r.date(e.to)}, ${r.esc(e.reason)}`).join('<br>') : 'None'}</dd></dl>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="${link('D307', mq)}">Manage warranty</a></div></div>
+    <div class="stack-sm"><div class="row"><h3 class="grow" style="font-size:16px">AMC</h3>${amc ? x.amcTag(m) : ''}</div>
+      ${amc ? `<dl class="dl"><dt>Contract</dt><dd><a class="mono" href="${link('D602')}">${amc.number}</a></dd><dt>Plan</dt><dd>${amc.plan}</dd>
+        <dt>Period</dt><dd>${r.date(amc.start)} to ${r.date(amc.end)}</dd><dt>Visits</dt><dd>${amc.visitsUsed} of ${amc.visitsIncluded} used</dd></dl>`
+        : `<p class="muted">No AMC on this machine.</p><div class="btns"><a class="btn btn-sm btn-secondary" href="${link('D603', mq)}">Create AMC</a></div>`}</div>
+  </div>`;
+
+  /* ---------- documents ---------- */
+  $('tab-docs').innerHTML = i.docs.length ? `<div class="row" style="margin-bottom:12px"><span class="grow muted">${i.docs.length} files</span><a class="btn btn-sm btn-secondary" href="${link('D1402')}">${ic('upload-simple')}Upload</a></div>
+    <table class="table compact"><thead><tr><th>File</th><th>Type</th><th>Added</th><th class="actions"></th></tr></thead><tbody>
+    ${i.docs.map(([name, kind, when]) => `<tr><td><span class="row">${ic('file-pdf')}${r.esc(name)}</span></td><td>${kind}</td><td class="nowrap">${r.date(when)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="Download ${r.esc(name)}" data-toast="Download started">${ic('download-simple')}</button></td></tr>`).join('')}</tbody></table>`
+    : empty('folder', 'No documents', 'Manuals, invoices and the commissioning report appear here.', `<a class="btn btn-secondary" href="${link('D1402')}">Upload</a>`);
+
+  /* ---------- parts: compatible (model) and fitted (reports) ---------- */
+  const fitted = tickets.flatMap((t) => ZX.data.reports.filter((rep) => rep.ticket === t.number).flatMap((rep) => rep.parts.map((p) => [...p, t.number, rep.date])));
+  const compatible = (model?.parts || []).map((no) => ZX.data.parts.find((p) => p.number === no));
+  $('tab-parts').innerHTML = `<div class="stack">
+    <div><h3 style="font-size:16px; margin-bottom:10px">Fits this machine</h3>${compatible.length ? `<table class="table compact"><thead><tr><th>Part</th><th>Stock</th><th class="num">Price</th></tr></thead><tbody>
+      ${compatible.map((p) => `<tr data-href="D802"><td>${p.name}<span class="sub mono">${p.number}</span></td><td>${r.stockTag(p.stock)}</td><td class="num">${p.price ? r.money(p.price) : '<span class="faint">On request</span>'}</td></tr>`).join('')}</tbody></table>`
+      : '<p class="muted">No parts linked to this model.</p>'}</div>
+    <div><h3 style="font-size:16px; margin-bottom:10px">Fitted on visits</h3>${fitted.length ? `<table class="table compact"><thead><tr><th>Part</th><th class="num">Qty</th><th>Ticket</th><th>Date</th></tr></thead><tbody>
+      ${fitted.map(([no, name, qty, , tk, when]) => `<tr><td>${name}<span class="sub mono">${no}</span></td><td class="num">${qty}</td><td><a class="mono" href="${link('D403', `?t=${tk}`)}">${tk}</a></td><td class="nowrap">${r.date(when)}</td></tr>`).join('')}</tbody></table>`
+      : '<p class="muted">No parts fitted yet.</p>'}</div></div>`;
+
+  /* ---------- notes, photos, hours: a summary here, the full page manages them ---------- */
+  $('tab-notes').innerHTML = `<div class="stack">
+    ${i.notes.length ? `<ul class="mini" style="margin:0 -20px">${i.notes.map((n) => `<li><span class="ic-disc">${ic(n.pinned ? 'pin' : 'sticky-note')}</span><span class="grow"><b>${r.esc(n.text)}</b><small>${n.by} · ${n.source} · ${r.date(n.when)}</small></span>
+      <span class="end">${n.hidden ? r.tag('Hidden from customer', 'outline', 'eye-slash') : ''}</span></li>`).join('')}</ul>` : '<p class="muted">No notes.</p>'}
+    <p class="muted">${i.operators.length ? `${i.operators.length} operators, ${i.operators.filter((o) => o.trained).length} trained.` : 'No operators listed.'}</p>
+    <div class="btns"><a class="btn btn-sm btn-secondary" href="${link('D309', mq)}">Manage notes and operators</a></div></div>`;
+  $('tab-photos').innerHTML = i.photos.length ? `<div class="stack"><div class="gallery">${i.photos.map(([label, icon]) => `<div class="ph">${ic(icon)}<small>${label}</small></div>`).join('')}</div>
+    <div class="btns"><a class="btn btn-sm btn-secondary" href="${link('D310', mq)}">Photos and commissioning record</a></div></div>`
+    : empty('camera', 'No photos', 'Photos from installation and visits appear here.', `<a class="btn btn-secondary" href="${link('D310', mq)}">Upload photos</a>`);
+  $('tab-hours').innerHTML = i.hours.length ? `<table class="table compact"><thead><tr><th>Date</th><th class="num">Hours</th><th>Source</th></tr></thead><tbody>
+    ${i.hours.slice(0, 5).map(([d, h, src, who]) => `<tr><td class="nowrap">${r.date(d)}</td><td class="num">${h.toLocaleString('en-IN')}</td><td>${src}<span class="sub">${who}</span></td></tr>`).join('')}</tbody></table>
+    <div class="btns" style="margin-top:12px"><a class="btn btn-sm btn-secondary" href="${link('D308', mq)}">All readings and chart</a></div>`
+    : empty('timer', 'No readings', 'Customers and engineers log running hours in the app.', `<a class="btn btn-secondary" href="${link('D308', mq)}">Add reading</a>`);
+
+  /* ---------- tickets and claims ---------- */
+  $('n-tickets').textContent = tickets.length;
+  $('n-claims').textContent = claims.length;
+  $('tab-tickets').innerHTML = tickets.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Ticket</th><th>Status</th><th>Type</th><th>Raised</th></tr></thead><tbody>
+    ${tickets.map((t) => `<tr data-href="D403?t=${t.number}"><td><a class="rec" href="#D403?t=${t.number}">${t.number}</a><span class="sub">${r.esc(t.summary)}</span></td><td>${r.ticketTag(t.status)}</td><td>${t.type}</td><td class="nowrap">${r.date(t.created)}</td></tr>`).join('')}</tbody></table></div>`
+    : empty('wrench', 'No tickets', 'Service requests for this machine appear here.');
+  $('tab-claims').innerHTML = claims.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Claim</th><th>Status</th><th>Category</th><th>Submitted</th></tr></thead><tbody>
+    ${claims.map((cl) => `<tr data-href="D502?c=${cl.number}"><td><a class="rec" href="#D502?c=${cl.number}">${cl.number}</a><span class="sub">${r.esc(cl.summary)}</span></td><td>${ZXA.cl.tag(cl)}</td><td>${cl.category}</td><td class="nowrap">${r.date(cl.submitted)}</td></tr>`).join('')}</tbody></table></div>`
+    : empty('shield-check', 'No claims', 'Warranty claims for this machine appear here.');
+
+  /* ---------- side cards ---------- */
+  const contact = r.person(c.id === 'nova' ? 'imran' : 'rakesh');
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="${link('D202')}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${contact.initials}</span><span><b>${contact.name}</b><small>${contact.designation}, ${c.name}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${contact.mobile.replace(/\s/g, '')}">${ic('phone')}${contact.mobile}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Specifications</h3><a class="card-link" href="${link('D312')}">Model</a></div>
+      <div class="card-body"><dl class="dl">${(model?.specs || []).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">QR code</h3><a class="card-link" href="${link('D311', mq)}">Print label</a></div>
+      <div class="card-body row" style="align-items:center">${x.qr(m.serial, 96)}<p class="muted" style="font-size:13px">Scanning opens this machine in the app for its company.</p></div></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* decommissioned: read only, actions off */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  document.querySelectorAll('#actions .btn, #actions .icon-btn').forEach((b) => b.toggleAttribute('aria-disabled', button.dataset.protoState === 'decommissioned'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D313 Change machine status</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D313">
+<main class="content">
+  <!-- the machine page behind the modal -->
+  <div data-when="ready decommission">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D301">Machine register</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="serial"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar"><a class="btn btn-secondary" id="back" href="#D302">Back to machine</a><button class="btn btn-primary" type="button" data-open="status">Change status</button></div>
+    </div>
+    <section class="card"><div class="card-head"><div class="grow"><h2>Status history</h2></div></div>
+      <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Date</th><th>Change</th><th>By</th></tr></thead><tbody id="log"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay center" id="status" data-static>
+  <div class="modal" role="dialog" aria-labelledby="st-title">
+    <div class="modal-head"><div class="grow"><h2 id="st-title">Change status</h2><p id="st-sub"></p></div></div>
+    <div class="modal-body stack">
+      <div class="choices" style="grid-template-columns:1fr 1fr" id="choices"></div>
+      <div class="field" data-decom hidden><label for="st-date">Decommissioned on</label><input class="input" id="st-date" type="date" value="2026-11-23"></div>
+      <div class="banner amber" data-decom hidden><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Service actions are hidden in the app.</b> The machine becomes read only. Its serial is never reused.</span></div>
+      <div class="field"><label for="st-why">Reason</label><textarea class="textarea" id="st-why" maxlength="300" placeholder="For example: waiting for the chain set"></textarea></div>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="st-cancel" href="#D302">Cancel</a><button class="btn btn-primary" type="button" data-close data-busy data-toast="Status saved. Customer told">Save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready decommission error" data-mobile="../../../screens/customer/C202-machine-detail.html">
+  <div><h3>What it is</h3><p>Modal over the machine to set its status. Opens with <code>?m=ZP-TF-2310</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose Running, Idle, Repair or Decommissioned.</li><li>Give a reason.</li><li>Decommissioned asks for a date.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Machine detail (D302); the change lands in the history (D314).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Decommissioned hides service actions in the app and makes the machine read only.</li><li>The serial stays reserved for ever.</li><li>Pending machines are verified on D302 first.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const x = ZXA.mx;
+  const m = x.fromQuery('ZP-TF-2310');
+  const $ = (id) => document.getElementById(id);
+  const back = `#D302?m=${m.serial}`;
+  $('crumb').textContent = m.serial;
+  $('serial').textContent = m.serial;
+  $('chips').innerHTML = `${x.statusTag(m.status)}${x.warrantyTag(m)}`;
+  $('meta').innerHTML = `<span>${r.icon('factory')}${m.model}</span><span>${r.icon('buildings')}${r.company(m.company).name}</span>`;
+  $('back').setAttribute('href', back);
+  $('st-cancel').setAttribute('href', back);
+  $('st-sub').innerHTML = `<span class="mono">${m.serial}</span> · now ${x.STATUS[m.status][0]}`;
+  const log = x.info(m.serial).statusLog || [];
+  $('log').innerHTML = [...log.map(([when, from, to, by]) => `<tr><td class="nowrap">${r.date(when)}</td><td>${from} to ${to}</td><td>${by}</td></tr>`),
+    m.commissioned ? `<tr><td class="nowrap">${r.date(m.commissioned)}</td><td>Set to Running</td><td>System, commissioned</td></tr>` : ''].join('')
+    || '<tr><td colspan="3" class="muted">No changes yet.</td></tr>';
+
+  const OPTIONS = [['running', 'Running', 'In production'], ['idle', 'Idle', 'Not in use for now'], ['repair', 'Repair', 'Stopped or under repair'],
+    ['decommissioned', 'Decommissioned', 'Removed from service for good']];
+  const current = m.status === 'down' ? 'repair' : m.status;
+  $('choices').innerHTML = OPTIONS.map(([v, label, hint]) => `<label class="choice"><input type="radio" name="st" class="sr-only" value="${v}"${v === current ? ' checked' : ''}>
+    <span><b>${label}</b><small>${hint}${v === current ? ' · current' : ''}</small></span></label>`).join('');
+  const sync = () => {
+    const decom = document.querySelector('[name="st"]:checked')?.value === 'decommissioned';
+    document.querySelectorAll('[data-decom]').forEach((el) => { el.hidden = !decom; });
+  };
+  $('choices').addEventListener('change', sync);
+  /* demo state: decommission picks that option */
+  new MutationObserver(() => {
+    if (document.body.dataset.state === 'decommission') { document.querySelector('[value="decommissioned"]').checked = true; sync(); }
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
