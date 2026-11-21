@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1501 Reports</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-reports.css">
+</head>
+<body class="adm" data-page="D1501">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Reports</h1><p>15 reports · data to 23 Nov 2026, 12:00 PM</p></div>
+    <a class="btn btn-secondary" href="#D1503"><svg class="ic"><use href="#ph-calendar-check"/></svg>Scheduled reports</a>
+    <a class="btn btn-secondary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+  </div>
+
+  <div data-when="ready">
+    <section class="card">
+      <div class="card-head"><div class="grow"><h2>Saved views</h2><p>Reports with your filters</p></div></div>
+      <ul class="mini">
+        <li data-href="D1502?r=tickets&amp;by=engineer"><span class="ic-disc"><svg class="ic"><use href="#ph-bookmark"/></svg></span>
+          <span class="grow"><b>Open tickets by engineer</b><small>Tickets · last 30 days · Ahmedabad, Pune</small></span><span class="end">Default</span></li>
+        <li data-href="D1502?r=payments"><span class="ic-disc"><svg class="ic"><use href="#ph-bookmark"/></svg></span>
+          <span class="grow"><b>Overdue invoices</b><small>Payments · aging · all customers</small></span><span class="end">Emailed monthly</span></li>
+      </ul>
+    </section>
+    <div id="library"></div>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-title" style="width:30%"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+    <div class="section-title"><span class="sk sk-line" style="width:160px"></span></div>
+    <div class="grid cols-3" id="sk-cards"></div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-bar-chart"/></svg></span>
+      <h3>No data to report yet</h3><p>Reports fill in once tickets, machines and invoices exist.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1510">Import data</a></div></div></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not load the reports.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<!-- schedule an email for one report -->
+<div class="overlay right" id="schedule" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="schedule-title">
+    <div class="drawer-head"><div class="grow"><h2 id="schedule-title">Schedule an email</h2><p id="schedule-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="s-every">Repeat</label><select class="select" id="s-every"><option>Every day</option><option selected>Every week</option><option>Every month</option></select></div>
+        <div class="field"><label for="s-day">Day</label><select class="select" id="s-day"><option>Monday</option><option>Friday</option></select></div>
+        <div class="field"><label for="s-time">Time</label><input class="input" id="s-time" type="time" value="08:00"><span class="hint">IST</span></div>
+        <div class="field"><label for="s-format">Format</label><select class="select" id="s-format"><option>PDF</option><option>Excel (.xlsx)</option></select></div>
+        <div class="field full"><label for="s-to">Send to</label><input class="input" id="s-to" type="email" multiple value="admin@zixom.in"><span class="hint">Separate addresses with commas</span></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Schedule saved. First email Mon 30 Nov, 8:00 AM">Save schedule</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>The report library. One card per report, grouped by area.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a report (D1502).</li><li>Open a saved view with your filters.</li><li>Schedule a report by email.</li></ul></div>
+  <div><h3>What happens next</h3><p>Report view (D1502), Scheduled reports (D1503), Import (D1510).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each card loads on its own; skeleton while loading.</li><li>New installation: no data yet, import first (F12).</li><li>Large reports run in the background (EC-A34).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/reports.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  document.getElementById('library').innerHTML = ZXA.data.reportLibrary.map((g) => `
+    <div class="section-title"><h2 class="grow">${g.group}</h2><span class="muted">${g.reports.length} reports</span></div>
+    <div class="grid cols-3">${g.reports.map((x) => `
+      <div class="card report-card" data-href="D1502?r=${x.key}">
+        <div class="card-body"><span class="thumb">${r.icon(x.icon)}</span><div class="grow"><h3>${x.title}</h3><p>${x.sub}</p></div></div>
+        <div class="card-foot"><span class="grow"></span>
+          <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved: ${x.title}">${r.icon('bookmark')}Save view</button>
+          <button class="btn btn-secondary btn-sm" type="button" data-open="schedule" data-report="${x.title}">${r.icon('calendar-check')}Schedule</button></div>
+      </div>`).join('')}</div>`).join('');
+  document.getElementById('sk-cards').innerHTML = '<div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-line"></span></div>'.repeat(6);
+  document.addEventListener('click', (event) => {
+    const b = event.target.closest('[data-report]');
+    if (b) document.getElementById('schedule-sub').textContent = b.dataset.report;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

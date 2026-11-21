@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1203 Quotation detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1203">
+<main class="content">
+  <div data-when="ready pdf-error">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1201">Quotations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 class="mono" id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner red" data-when="pdf-error"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>Could not create the PDF.</b> The quotation is saved. Try again in a moment.</span>
+        <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="PDF created">Retry</button></span></div>
+      <div id="edge-banners" class="stack"></div>
+    </div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Quotation sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-preview">Preview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-versions">Versions <span class="n" id="rev-count"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-activity">Activity</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-preview" role="tabpanel"></div>
+          <div id="tab-versions" role="tabpanel" hidden></div>
+          <div id="tab-activity" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1201">Back to quotations</a></div></div></div>
+  </div>
+</main>
+
+<!-- mark accepted: phone acceptance is recorded with who and when (section 12 rules) -->
+<div class="overlay center" id="accept" hidden>
+  <div class="modal" role="dialog" aria-labelledby="accept-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="accept-title"></h2><p>The lead moves to Won. You can create the order next.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="acc-who">Accepted by</label><input class="input" id="acc-who"></div>
+      <div class="field"><span class="label">How</span><div class="row wrap">
+        <label class="check"><input type="radio" name="acc-how" checked> Phone</label><label class="check"><input type="radio" name="acc-how"> Email</label>
+        <label class="check"><input type="radio" name="acc-how"> Signed PDF</label><label class="check"><input type="radio" name="acc-how"> In person</label></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="acc-date">Date</label><input class="input" id="acc-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="acc-time">Time</label><input class="input" id="acc-time" type="time" value="12:00"></div>
+      </div>
+      <div class="field"><label for="acc-po">Purchase order number <span class="opt">optional</span></label><input class="input" id="acc-po"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked accepted. Lead moved to Won">Mark accepted</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reject-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="reject-title"></h2><p>The lead moves to Lost with this reason. You can still revise it later.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="rej-reason">Reason</label><select class="select" id="rej-reason"><option>Price</option><option>Chose another supplier</option><option>Budget not approved</option><option>Delivery time</option><option>Requirement changed</option><option>Other</option></select></div>
+      <div class="field"><label for="rej-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="rej-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Quotation marked rejected">Mark rejected</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="convert" hidden>
+  <div class="modal" role="dialog" aria-labelledby="convert-title">
+    <div class="modal-head"><span class="disc blue"><svg class="ic"><use href="#ph-milestone"/></svg></span>
+      <div class="grow"><h2 id="convert-title"></h2><p>The order starts at Confirmed with the payment milestones below.</p></div></div>
+    <div class="modal-body stack" id="convert-body"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><a class="btn btn-primary" id="convert-go" href="#D1211">Create order</a></div>
+  </div>
+</div>
+
+<div class="overlay center" id="send-again" hidden>
+  <div class="modal" role="dialog" aria-labelledby="sa-title">
+    <div class="modal-head"><div class="grow"><h2 id="sa-title">Send again</h2><p id="sa-to"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="sa-msg">Message</label><textarea class="textarea" id="sa-msg">Sharing the quotation again for your reference. Happy to take a call to go through it.</textarea></div>
+      <p class="muted">Sent from info@zixom.in with the PDF attached.</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Quotation sent again">Send</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="delete" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="del-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="del-title"></h2><p>The draft is removed. It was never sent, so nobody is told.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep draft</button><button class="btn btn-danger" type="button" data-close data-toast="Draft deleted">Delete draft</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button>
+  <a href="#D1202"><svg class="ic"><use href="#ph-copy"/></svg>Duplicate</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+  <div id="more-extra"></div>
+</div>
+
+<aside class="proto" data-states="ready loading pdf-error not-found error">
+  <div><h3>What it is</h3><p>One quotation with its PDF preview, revisions and who opened it. Opens with <code>?q=QT-2026-0014-R2</code>; try 0010 to 0013.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show (section 11).</li><li>Mark accepted records who accepted and how, including by phone.</li><li>Mark rejected asks for a reason. Convert an accepted one to an order.</li></ul></div>
+  <div><h3>What happens next</h3><p>Revise (D1202), Order detail (D1211), Lead detail (D1103), Customer detail (D202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Revisions keep the number with R2, R3; older versions stay read only.</li><li>Expired quotations can be revised.</li><li>PDF failure shows Retry; the quotation stays saved (EC-A30).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const ic = r.icon;
+  const x = q.quotation(new URLSearchParams(location.search).get('q') || 'QT-2026-0014-R2');
+  if (!x) { ZXA.initialState = 'not-found'; return; }
+  const no = q.numberOf(x);
+  const who = q.party(x);
+  const t = q.totals(x.lines);
+  const terms = q.template(x.terms);
+  const pay = q.template(x.payment);
+  const stamp = (iso) => `${r.date(iso)}, ${r.time(iso)}`;
+
+  document.title = `Zixom Admin - ${no}`;
+  document.getElementById('crumb').textContent = no;
+  document.getElementById('number').textContent = no;
+  document.getElementById('chips').innerHTML = `${q.quoteTag(x.status)}${r.tag(who.kind, 'outline')}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('buildings')}${r.esc(who.name)}</span><span>${ic('file-text')}${r.esc(x.title)}</span>
+    <span>${ic('clock')}${x.sent ? `Sent ${stamp(x.sent)}` : `Autosaved ${stamp(x.autosaved)}`}</span>`;
+
+  /* actions allowed for the status; the first is the primary */
+  const A = {
+    edit: ['Edit', `link:D1202?q=${no}`], send: ['Send by email', `link:D1202?q=${no}`], again: ['Send again', 'open:send-again'],
+    accept: ['Mark accepted', 'open:accept'], reject: ['Mark rejected', 'open:reject'], revise: ['Revise', `link:D1202?q=${no}&revise=1`],
+    convert: ['Convert to order', 'open:convert'], order: ['Open order', `link:D1211?o=${x.order}`], pdf: ['Download PDF', 'toast:PDF downloaded'],
+  };
+  const BY_STATUS = { draft: ['send', 'edit'], sent: ['accept', 'again', 'revise', 'reject'], viewed: ['accept', 'again', 'revise', 'reject'],
+    revised: ['accept', 'again', 'revise', 'reject'], accepted: [x.order ? 'order' : 'convert', 'pdf'], rejected: ['revise', 'pdf'], expired: ['revise', 'pdf'] };
+  const button = (key, primary) => {
+    const [label, target] = A[key];
+    const [kind, value] = target.split(/:(.*)/);
+    const cls = primary ? 'btn btn-primary' : 'btn btn-secondary';
+    if (kind === 'open') return `<button class="${cls}" type="button" data-open="${value}">${label}</button>`;
+    if (kind === 'toast') return `<button class="${cls}" type="button" data-toast="${value}">${label}</button>`;
+    const [id, query] = value.split(/(?=\?)/);
+    return `<a class="${cls}" href="${ZXA.href(id, query)}">${label}</a>`;
+  };
+  const keys = BY_STATUS[x.status];
+  document.getElementById('actions').innerHTML = `${keys.slice(1).map((k) => button(k, false)).join('')}${button(keys[0], true)}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  if (x.status === 'draft') document.getElementById('more-extra').innerHTML = `<hr><button class="danger" type="button" data-open="delete">${ic('trash')}Delete draft</button>`;
+
+  document.getElementById('accept-title').textContent = `Mark ${no} accepted?`;
+  document.getElementById('acc-who').value = `${who.contact.name}, ${who.name}`;
+  document.getElementById('reject-title').textContent = `Mark ${no} rejected?`;
+  document.getElementById('del-title').textContent = `Delete draft ${no}?`;
+  document.getElementById('sa-to').textContent = `To ${who.contact.name}${who.contact.email ? `, ${who.contact.email}` : ''}`;
+  document.getElementById('convert-title').textContent = `Create an order from ${no}?`;
+  document.getElementById('convert-go').href = ZXA.href('D1211', '?o=ORD-2026-0213');
+  document.getElementById('convert-body').innerHTML = `<table class="table compact"><thead><tr><th>Milestone</th><th class="num">Share</th><th class="num">Amount</th></tr></thead>
+    <tbody>${pay.payment.map(([label, pct]) => `<tr><td>${label}</td><td class="num">${pct}%</td><td class="num">${q.money(t.total * pct / 100)}</td></tr>`).join('')}</tbody></table>
+    <label class="check"><input type="checkbox" checked> Tell ${r.esc(who.contact.name)} by email</label>`;
+
+  /* banners for the status */
+  const banners = [];
+  const left = x.validUntil ? r.daysFromToday(x.validUntil) : null;
+  if (['sent', 'viewed', 'revised'].includes(x.status) && left <= 7) banners.push(`<div class="banner amber">${ic('clock-countdown')}<span class="grow"><b>Expires in ${left} days.</b> Send a reminder or revise it.</span></div>`);
+  if (x.status === 'sent' && !x.viewed) banners.push(`<div class="banner grey">${ic('eye-slash')}<span class="grow"><b>Not opened yet.</b> Sent ${r.ago(x.sent)} to ${r.esc(who.contact.email)}.</span><span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-open="send-again">Send again</button></span></div>`);
+  if (x.status === 'accepted') banners.push(`<div class="banner green">${ic('check-circle')}<span class="grow"><b>Accepted ${stamp(x.accepted)}.</b> ${r.esc(x.acceptedBy)}.</span></div>`);
+  if (x.status === 'rejected') banners.push(`<div class="banner grey">${ic('circle-x')}<span class="grow"><b>Rejected ${r.date(x.rejected)}.</b> ${r.esc(x.rejectReason)}.</span></div>`);
+  if (x.status === 'draft') banners.push(`<div class="banner grey">${ic('note-pencil')}<span class="grow"><b>Draft.</b> Not sent. Validity starts when you send it.</span></div>`);
+  document.getElementById('edge-banners').innerHTML = banners.join('');
+
+  /* ---------- preview: what the customer receives ---------- */
+  const lineRows = (lines) => lines.map((line, i) => {
+    const [code, desc, qty, rate, disc] = line;
+    const p = q.product(code);
+    return `<tr><td class="num">${i + 1}</td><td>${r.esc(desc)}<span class="sub">HSN ${p.hsn}</span></td><td class="num">${qty}</td><td class="num">${q.money(rate)}</td>
+      <td class="num">${disc ? `${disc}%` : '–'}</td><td class="num">${q.money(q.lineAmount(line))}</td></tr>`;
+  }).join('');
+  document.getElementById('tab-preview').innerHTML = `
+    <div class="stack">
+      <div class="grid cols-2" style="gap:20px">
+        <div class="kv"><span>From</span><b>Zixom Plast</b><span>Seekri, Ballabhgarh, Faridabad, Haryana<br>GSTIN 06AAAAA0000A1Z5 · +91 99919 10097</span></div>
+        <div class="kv"><span>To</span><b>${r.esc(who.name)}</b><span>${r.esc(who.contact.name)} · ${r.esc(who.contact.mobile)}<br>${r.esc(who.sub)}${who.state ? `, ${who.state}` : ''}</span></div>
+      </div>
+      <dl class="dl"><dt>Quotation</dt><dd class="mono">${no}</dd><dt>Date</dt><dd>${r.date(x.sent || x.created)}</dd>
+        <dt>Valid until</dt><dd>${x.validUntil ? r.date(x.validUntil) : '30 days from sending'}</dd><dt>Delivery</dt><dd>${r.esc(x.delivery)}</dd></dl>
+      <div class="table-wrap no-top"><table class="table compact"><thead><tr><th class="num">#</th><th>Description</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Discount</th><th class="num">Amount</th></tr></thead>
+        <tbody>${lineRows(x.lines)}</tbody>
+        <tfoot><tr><td colspan="5">Subtotal</td><td class="num">${q.money(t.gross)}</td></tr>
+          ${t.discount ? `<tr><td colspan="5">Discount</td><td class="num">-${q.money(t.discount)}</td></tr>` : ''}
+          <tr><td colspan="5">IGST 18%</td><td class="num">${q.money(t.gst)}</td></tr>
+          <tr><td colspan="5"><b>Total</b></td><td class="num"><b>${q.money(t.total)}</b></td></tr></tfoot></table></div>
+      ${x.discountReason ? `<div class="banner grey">${ic('percent')}<span class="grow"><b>Discount above ${q.DISCOUNT_LIMIT}%.</b> ${r.esc(x.discountReason)}. Only Admins see this.</span></div>` : ''}
+      <div class="grid cols-2" style="gap:20px">
+        <div><h3 style="font-size:15px">Payment terms, ${pay.name}</h3><ul class="muted" style="margin-top:6px; padding-left:18px">${pay.payment.map(([label, pct, when]) => `<li>${pct}% ${label.toLowerCase()}, ${when.toLowerCase()}</li>`).join('')}</ul></div>
+        <div><h3 style="font-size:15px">Terms, ${terms.name}</h3><ul class="muted" style="margin-top:6px; padding-left:18px">${terms.text.map((line) => `<li>${r.esc(line)}</li>`).join('')}</ul></div>
+      </div>
+    </div>`;
+
+  /* ---------- versions ---------- */
+  const versions = [...x.revisions, { rev: x.rev || 'R1', status: x.status, sent: x.sent, viewed: x.viewed, payment: x.payment, lines: x.lines }];
+  document.getElementById('rev-count').textContent = versions.length;
+  const changes = [];
+  if (x.revisions.length) {
+    const before = x.revisions.at(-1);
+    x.lines.forEach((line, i) => {
+      const old = before.lines[i];
+      if (old && old[4] !== line[4]) changes.push([`${old[1]}: ${old[4] ? `${old[4]}% off` : 'no discount'}`, `${line[1]}: ${line[4] === 100 ? 'free' : `${line[4]}% off`}`]);
+    });
+    if (before.payment !== x.payment) changes.push([`Payment ${q.template(before.payment).name}`, `Payment ${pay.name}`]);
+    changes.push([`Total ${q.money(q.totals(before.lines).total)}`, `Total ${q.money(t.total)}`]);
+  }
+  document.getElementById('tab-versions').innerHTML = `<div class="stack">
+    <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Version</th><th>Status</th><th>Sent</th><th>Opened</th><th class="num">Total</th><th class="actions"></th></tr></thead><tbody>
+    ${versions.reverse().map((v, i) => `<tr><td><span class="mono strong">${x.number}${v.rev && v.rev !== 'R1' ? `-${v.rev}` : ''}</span><span class="sub">${v.rev}${i ? ', read only' : ', current'}</span></td>
+      <td>${q.quoteTag(v.status)}</td><td class="nowrap">${v.sent ? stamp(v.sent) : '<span class="faint">Not sent</span>'}</td><td class="nowrap">${v.viewed ? stamp(v.viewed) : '<span class="faint">No</span>'}</td>
+      <td class="num">${q.money(q.totals(v.lines).total)}</td><td class="actions"><button class="btn btn-sm btn-ghost" type="button" data-toast="PDF downloaded">PDF</button></td></tr>`).join('')}
+    </tbody></table></div>
+    ${changes.length ? `<div><h3 style="font-size:15px; margin-bottom:8px">What changed in ${x.rev}</h3><div class="stack-sm">${changes.map(([a, b]) => `<div class="diff"><span class="old">${r.esc(a)}</span><span class="new">${r.esc(b)}</span></div>`).join('')}</div></div>`
+      : '<p class="muted">Only one version. Revise to create R2; the number stays the same.</p>'}</div>`;
+
+  /* ---------- activity ---------- */
+  const events = [['note-pencil', '', 'Created', `By Rajesh Goyal${x.lead ? ` from ${x.lead}` : ''}`, x.created]];
+  x.revisions.forEach((v) => {
+    events.push(['paper-plane-tilt', 'blue', `${v.rev} sent by email`, `To ${who.contact.email || who.contact.mobile}`, v.sent]);
+    if (v.viewed) events.push(['eye', 'blue', `${v.rev} opened`, 'Customer opened the PDF link', v.viewed]);
+  });
+  if (x.sent) events.push(['paper-plane-tilt', 'blue', `${x.rev || 'Quotation'} sent by email`, `To ${who.contact.email || who.contact.mobile}`, x.sent]);
+  if (x.viewed) events.push(['eye', 'blue', `Opened ${x.views} ${x.views === 1 ? 'time' : 'times'}`, 'Last time shown', x.viewed]);
+  if (x.accepted) events.push(['check-circle', 'green', 'Marked accepted', x.acceptedBy, x.accepted]);
+  if (x.order) events.push(['milestone', 'green', 'Converted to order', x.order, '2026-11-17T10:05']);
+  if (x.rejected) events.push(['circle-x', 'red', 'Marked rejected', x.rejectReason, x.rejected]);
+  document.getElementById('tab-activity').innerHTML = `<ol class="timeline">${events.reverse().map(([i, tone, title, sub, when]) => `
+    <li><span class="node ${tone}">${ic(i)}</span><div><b>${r.esc(title)}</b><p>${r.esc(sub)}</p></div><small>${r.dayDate(when)}, ${r.time(when)}</small></li>`).join('')}</ol>`;
+
+  document.getElementById('tab-history').innerHTML = `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${x.revisions.length ? `<tr><td class="nowrap">${stamp(x.sent)}</td><td>Rajesh Goyal</td><td>Revision R1 → ${x.rev}</td></tr>` : ''}
+    ${x.status !== 'draft' ? `<tr><td class="nowrap">${stamp(x.sent)}</td><td>Rajesh Goyal</td><td>Status: Draft → Sent</td></tr>` : `<tr><td class="nowrap">${stamp(x.autosaved)}</td><td>Rajesh Goyal</td><td>Draft autosaved</td></tr>`}
+    <tr><td class="nowrap">${stamp(x.created)}</td><td>Rajesh Goyal</td><td>Created with ${x.lines.length} lines</td></tr></tbody></table></div>`;
+
+  /* ---------- side cards ---------- */
+  const ord = x.order ? q.order(x.order) : null;
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">${who.kind}</h3><a class="card-link" href="${ZXA.href(who.page, who.query)}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${r.esc(who.contact.initials)}</span><span><b>${r.esc(who.contact.name)}</b><small>${r.esc(who.name)}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${who.contact.mobile.replace(/\s/g, '')}">${ic('phone')}${r.esc(who.contact.mobile)}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Summary</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Before GST</dt><dd>${q.money(t.taxable)}</dd><dt>IGST 18%</dt><dd>${q.money(t.gst)}</dd><dt>Total</dt><dd class="strong">${q.money(t.total)}</dd>
+        <dt>Valid until</dt><dd>${x.validUntil ? `${r.date(x.validUntil)}${['accepted', 'rejected'].includes(x.status) ? '' : `<br><span class="muted">${left} days left</span>`}` : 'Set when sent'}</dd>
+        <dt>Owner</dt><dd>Rajesh Goyal</dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Linked</h3></div>
+      <ul class="mini">${x.lead ? `<li data-href="D1103?l=${x.lead}"><span class="ic-disc">${ic('chart-line-up')}</span><span class="grow"><b class="mono">${x.lead}</b><small>Lead · ${r.esc(q.lead(x.lead).stage)}</small></span></li>` : ''}
+        ${ord ? `<li data-href="D1211?o=${ord.number}"><span class="ic-disc green">${ic('milestone')}</span><span class="grow"><b class="mono">${ord.number}</b><small>${ord.kind} · ${q.STAGE[ord.stage]}</small></span></li>` : ''}</ul></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Files</h3></div>
+      <ul class="mini"><li><span class="ic-disc">${ic('file-pdf')}</span><span class="grow"><b>${no}.pdf</b><small>Quotation · 4 pages</small></span><button class="btn btn-sm btn-ghost" type="button" data-toast="PDF downloaded">Download</button></li>
+        ${[...new Set(x.lines.map(([code]) => q.product(code).brochure).filter(Boolean))].map((b) => `<li><span class="ic-disc">${ic('paperclip')}</span><span class="grow"><b>${b}</b><small>Attached brochure</small></span></li>`).join('')}</ul></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

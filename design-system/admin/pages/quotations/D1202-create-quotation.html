@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1202 Create quotation</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-quotations.css">
+</head>
+<body class="adm" data-page="D1202" data-nav="D1201">
+<main class="content">
+  <div data-when="ready revision pdf-error">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1201">Quotations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="title"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner red" data-when="pdf-error"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>Could not create the PDF.</b> Your draft is saved. Try again in a moment.</span>
+        <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="PDF created">Retry</button></span></div>
+      <div class="banner amber" data-when="revision"><svg class="ic"><use href="#ph-git-compare"/></svg>
+        <span class="grow"><b>Editing a sent quotation.</b> Saving creates <span class="mono">QT-2026-0014-R3</span>; R2 stays as sent and read only.</span></div>
+    </div>
+
+    <div class="detail">
+      <form class="card" id="builder" novalidate>
+        <div class="card-body">
+          <section class="form-section">
+            <h3>Customer or lead</h3><p>Leads become customers when the order is confirmed.</p>
+            <div class="form-grid">
+              <div class="field"><label for="for">For</label>
+                <select class="select" id="for"></select><span class="hint" id="for-hint"></span></div>
+              <div class="field"><label for="email">Send to</label><input class="input" id="email" type="email"></div>
+              <div class="field full"><label for="qt-title">Title</label><input class="input" id="qt-title" maxlength="80"><span class="hint">Shown in the list and the email subject.</span></div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="row"><div class="grow"><h3>Products</h3><p>Machines, moulds and services from the product list.</p></div>
+              <button class="btn btn-secondary btn-sm" type="button" data-open="picker"><svg class="ic"><use href="#ph-plus"/></svg>Add product</button></div>
+            <div class="table-wrap no-top lines-wrap">
+              <table class="table compact lines" id="lines">
+                <thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Discount %</th><th class="num">Amount</th><th class="actions"></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="field" id="reason-field" hidden style="margin-top:14px">
+              <label for="disc-reason">Reason for the discount</label>
+              <textarea class="textarea" id="disc-reason" maxlength="300"></textarea>
+              <span class="hint">Discount above <span id="limit"></span>% needs a reason. Only Admins see it.</span>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3>Terms</h3><p>Templates come from Terms templates; edits here apply to this quotation only.</p>
+            <div class="form-grid">
+              <div class="field"><label for="delivery">Delivery</label><input class="input" id="delivery"></div>
+              <div class="field"><label for="validity">Validity</label><select class="select" id="validity"><option value="15">15 days</option><option value="30" selected>30 days</option><option value="45">45 days</option></select>
+                <span class="hint" id="valid-hint"></span></div>
+              <div class="field"><label for="payment">Payment terms</label><select class="select" id="payment"></select><span class="hint" id="pay-hint"></span></div>
+              <div class="field"><label for="terms">Terms and conditions</label><select class="select" id="terms"></select></div>
+              <div class="field full"><label for="terms-text">Terms text</label><textarea class="textarea" id="terms-text" rows="5"></textarea></div>
+              <div class="field full"><label for="note">Note to the customer <span class="opt">optional</span></label><textarea class="textarea" id="note" maxlength="500">Trial with your film can be arranged at our Faridabad plant before you order.</textarea></div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3>Attachments</h3><p>Brochures of the products are attached automatically.</p>
+            <div class="stack-sm" id="files"></div>
+            <div class="drop" style="margin-top:10px"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop drawings or a layout here</b>PDF, JPG or PNG up to 10 MB each</div>
+          </section>
+        </div>
+      </form>
+
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Total</h3></div>
+          <div class="card-body"><dl class="dl" id="totals"></dl></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Versions</h3></div>
+          <ul class="mini" id="versions"></ul></section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow autosave"><svg class="ic"><use href="#ph-check-circle"/></svg><span id="autosave"></span></span>
+      <button class="btn btn-ghost" type="button" data-busy data-toast="PDF preview opened in a new tab">Preview PDF</button>
+      <button class="btn btn-secondary" type="button" data-when="ready pdf-error" data-busy data-toast="Draft saved">Save draft</button>
+      <button class="btn btn-secondary" type="button" data-when="revision" data-busy data-toast="Saved as QT-2026-0014-R3">Save as new revision</button>
+      <button class="btn btn-primary" type="button" id="send-btn">Send by email</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span><span class="sk sk-line" style="width:70%"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:120px"></span></div>
+    </div>
+  </div>
+</main>
+
+<!-- product picker from the catalogue (D1204) -->
+<div class="overlay right" id="picker" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="picker-title">
+    <div class="drawer-head"><div class="grow"><h2 id="picker-title">Add product</h2><p>Active products only. Spare parts are in the parts catalogue.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <label class="search" data-filter="#picker-list" data-empty="#picker-none"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Model, family or mould" aria-label="Search products"></label>
+      <ul class="mini" id="picker-list"></ul>
+      <div class="state" id="picker-none" hidden><h3>No matching results</h3><p>Try different words.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay center" id="send" hidden>
+  <div class="modal" role="dialog" aria-labelledby="send-title">
+    <div class="modal-head"><div class="grow"><h2 id="send-title">Send by email</h2><p>Sent from info@zixom.in with the PDF. Opens are tracked.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="send-to">To</label><input class="input" id="send-to"></div>
+      <div class="field"><label for="send-cc">CC <span class="opt">optional</span></label><input class="input" id="send-cc" value="info@zixom.in"></div>
+      <div class="field"><label for="send-subject">Subject</label><input class="input" id="send-subject"></div>
+      <div class="field"><label for="send-msg">Message</label><textarea class="textarea" id="send-msg">Please find our quotation attached. It is valid for 30 days. Call me on +91 99919 10097 for any question.</textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Quotation sent. Lead moved to Quotation sent">Send</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready revision pdf-error loading error">
+  <div><h3>What it is</h3><p>Quotation builder for a lead or customer. Opens the draft <code>QT-2026-0010</code>; <code>?q=QT-2026-0014-R2&amp;revise=1</code> opens a revision.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick products with options, set quantity, rate and discount; totals update as you type.</li><li>Choose payment terms, validity and terms templates.</li><li>Save draft, preview the PDF, send by email or save as a new revision.</li></ul></div>
+  <div><h3>What happens next</h3><p>Quotation detail (D1203). The lead moves to Quotation sent (D1103).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Autosave every 10 seconds; versions are kept.</li><li>Discount above 5% needs a reason (try 8 on a line).</li><li>PDF failure keeps the draft and offers Retry (EC-A30).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const d = ZXA.data;
+  const params = new URLSearchParams(location.search);
+  const x = q.quotation(params.get('q') || 'QT-2026-0010');
+  if (params.get('revise')) ZXA.initialState = 'revision';
+  const no = q.numberOf(x);
+  const who = q.party(x);
+  const $ = (id) => document.getElementById(id);
+
+  $('crumb').textContent = no;
+  $('title').textContent = no;
+  $('chips').innerHTML = q.quoteTag(x.status);
+  $('meta').innerHTML = `<span>${r.icon('note-pencil')}${x.status === 'draft' ? 'New quotation' : 'Revision of a sent quotation'}</span><span>${r.icon('buildings')}${r.esc(who.name)}</span>`;
+  $('autosave').textContent = `Draft saved ${r.time(x.autosaved || x.sent)}`;
+  $('limit').textContent = q.DISCOUNT_LIMIT;
+
+  /* customer or lead */
+  const leads = d.leads.filter((l) => !['Won', 'Lost'].includes(l.stage) || l.number === x.lead);
+  $('for').innerHTML = `<optgroup label="Leads">${leads.map((l) => `<option value="${l.number}" ${l.number === x.lead ? 'selected' : ''}>${l.company}, ${l.city} · ${l.number}</option>`).join('')}</optgroup>
+    <optgroup label="Customers">${ZX.data.companies.map((c) => `<option value="${c.id}" ${c.id === x.company ? 'selected' : ''}>${c.name} · ${c.code}</option>`).join('')}</optgroup>`;
+  $('for-hint').textContent = `${who.contact.name}${who.state ? ` · ${who.state}, IGST 18% applies` : ''}`;
+  $('email').value = who.contact.email;
+  $('qt-title').value = x.title;
+
+  /* lines: description, qty, rate, discount; totals recalculate on every change */
+  const rows = x.lines.map((line) => [...line]);
+  const drawLines = () => {
+    $('lines').tBodies[0].innerHTML = rows.map(([code, desc, qty, rate, disc], i) => `<tr data-i="${i}">
+      <td><input class="input sm" data-k="1" value="${r.esc(desc)}" aria-label="Description"><span class="sub">${r.esc(q.product(code).name)} · HSN ${q.product(code).hsn}</span></td>
+      <td class="num"><input class="input sm num-in" data-k="2" inputmode="decimal" value="${qty}" aria-label="Quantity"></td>
+      <td class="num"><input class="input sm money-in" data-k="3" inputmode="decimal" value="${rate.toLocaleString('en-IN')}" aria-label="Rate"></td>
+      <td class="num"><input class="input sm num-in" data-k="4" inputmode="decimal" value="${disc}" aria-label="Discount percent"></td>
+      <td class="num nowrap" data-amount>${q.money(q.lineAmount([code, desc, qty, rate, disc]))}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" data-remove aria-label="Remove line"><svg class="ic"><use href="#ph-trash"/></svg></button></td></tr>`).join('');
+    update();
+  };
+  const update = () => {
+    const t = q.totals(rows);
+    const pay = q.template($('payment').value);
+    $('totals').innerHTML = `<dt>Subtotal</dt><dd>${q.money(t.gross)}</dd>${t.discount ? `<dt>Discount</dt><dd>-${q.money(t.discount)}</dd>` : ''}
+      <dt>Before GST</dt><dd>${q.money(t.taxable)}</dd><dt>IGST 18%</dt><dd>${q.money(t.gst)}</dd><dt>Total</dt><dd class="strong">${q.money(t.total)}</dd>
+      ${pay ? pay.payment.map(([label, pct]) => `<dt>${label} ${pct}%</dt><dd>${q.money(t.total * pct / 100)}</dd>`).join('') : ''}`;
+    const over = rows.some((row) => row[4] > q.DISCOUNT_LIMIT);
+    $('reason-field').hidden = !over;
+    if (over && !$('disc-reason').value) $('disc-reason').value = x.discountReason || '';
+    $('send-btn').disabled = !rows.length;
+  };
+  $('lines').addEventListener('input', (event) => {
+    const input = event.target.closest('[data-k]');
+    const tr = event.target.closest('tr');
+    const k = Number(input.dataset.k);
+    const row = rows[tr.dataset.i];
+    if (k === 1) { row[1] = input.value; return; }
+    const value = Number(input.value.replace(/,/g, ''));
+    const bad = Number.isNaN(value) || value < 0 || (k === 4 && value > 100);
+    input.setAttribute('aria-invalid', String(bad));
+    if (bad) return;
+    row[k] = value;
+    tr.querySelector('[data-amount]').textContent = q.money(q.lineAmount(row));
+    update();
+  });
+  $('lines').addEventListener('click', (event) => {
+    const remove = event.target.closest('[data-remove]');
+    if (!remove) return;
+    rows.splice(Number(remove.closest('tr').dataset.i), 1);
+    drawLines();
+  });
+
+  /* product picker: a product and its chosen options become lines */
+  const active = d.products.filter((p) => p.status === 'active');
+  $('picker-list').innerHTML = active.map((p) => `<li data-search-item><span class="ic-disc">${r.icon(p.kind === 'Mould' ? 'cube' : p.kind === 'Service' ? 'wrench' : 'factory')}</span>
+    <span class="grow"><b>${r.esc(p.name)}</b><small>${p.family} · ${q.money(p.rate)}</small>
+      ${p.options.length ? `<span class="row wrap" style="margin-top:6px">${p.options.map(([name, rate], i) => `<label class="check"><input type="checkbox" data-opt="${i}"> ${r.esc(name)}, ${q.money(rate)}</label>`).join('')}</span>` : ''}</span>
+    <button class="btn btn-sm btn-secondary" type="button" data-add="${p.code}">Add</button></li>`).join('');
+  $('picker-list').addEventListener('click', (event) => {
+    const add = event.target.closest('[data-add]');
+    if (!add) return;
+    const p = q.product(add.dataset.add);
+    rows.push([p.code, p.name, 1, p.rate, 0]);
+    add.closest('li').querySelectorAll('[data-opt]:checked').forEach((box) => { const [name, rate] = p.options[box.dataset.opt]; rows.push([p.code, name, 1, rate, 0]); });
+    drawLines();
+    drawFiles();
+    ZXA.ui.toast(`${p.name} added`);
+  });
+
+  /* terms */
+  const options = (type, selected) => d.termTemplates.filter((t) => t.type === type).map((t) => `<option value="${t.id}" ${t.id === selected ? 'selected' : ''}>${t.name}${t.default ? ' (default)' : ''}</option>`).join('');
+  $('payment').innerHTML = options('Payment terms', x.payment);
+  $('terms').innerHTML = options('Terms and conditions', x.terms);
+  $('delivery').value = x.delivery;
+  const syncTerms = () => {
+    $('terms-text').value = q.template($('terms').value).text.join('\n');
+    $('pay-hint').textContent = q.template($('payment').value).payment.map(([label, pct, when]) => `${pct}% ${label.toLowerCase()} (${when.toLowerCase()})`).join(', ');
+    const until = new Date(`${ZX.data.today}T00:00:00`);
+    until.setDate(until.getDate() + Number($('validity').value));
+    $('valid-hint').textContent = `Valid until ${r.date(until.toISOString())} if sent today`;
+    update();
+  };
+  ['terms', 'payment', 'validity'].forEach((id) => $(id).addEventListener('change', syncTerms));
+
+  const drawFiles = () => {
+    const brochures = [...new Set(rows.map(([code]) => q.product(code).brochure).filter(Boolean))];
+    $('files').innerHTML = brochures.map((b) => `<div class="file-row"><span class="thumb">${r.icon('file-pdf')}</span><span class="grow"><b>${b}</b><br><small class="muted">From the product list</small></span>
+      <span class="tag green">Attached</span></div>`).join('') || '<p class="muted">No brochures for these products.</p>';
+  };
+
+  $('versions').innerHTML = [...x.revisions.map((v) => [`${x.number}${v.rev === 'R1' ? '' : `-${v.rev}`}`, `${v.rev}, sent ${r.date(v.sent)}`]),
+    [no, x.status === 'draft' ? 'Draft, not sent' : `${x.rev || 'R1'}, sent ${r.date(x.sent)}`]]
+    .map(([n, sub]) => `<li data-href="D1203?q=${n}"><span class="ic-disc">${r.icon('file-text')}</span><span class="grow"><b class="mono">${n}</b><small>${sub}</small></span></li>`).join('');
+
+  $('send-to').value = who.contact.email;
+  $('send-subject').value = `Quotation ${no} from Zixom Plast: ${x.title}`;
+  $('send-btn').addEventListener('click', () => {
+    const reason = $('disc-reason');
+    const missing = !$('reason-field').hidden && !reason.value.trim();
+    reason.setAttribute('aria-invalid', String(missing));
+    if (missing) { reason.focus(); ZXA.ui.toast('Add a reason for the discount', 'info'); return; }
+    ZXA.ui.openOverlay('send');
+  });
+
+  drawLines();
+  drawFiles();
+  syncTerms();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

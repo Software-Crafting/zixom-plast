@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1520 Exports</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1520">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Exports</h1><p>Lists over 5,000 rows export here. Links are valid for 7 days.</p></div>
+  </div>
+
+  <div data-when="ready no-results">
+    <section class="card list-card">
+      <div class="toolbar">
+        <label class="search" data-filter="#exports"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Export name" aria-label="Search exports"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="exports">
+          <thead><tr><th class="sortable">Export</th><th class="sortable num">Rows</th><th class="sortable">Status</th><th class="sortable">Requested</th><th>Link</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span>1 to 4 of 4</span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Export</th><th>Rows</th><th>Status</th><th>Requested</th><th>Link</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-download-simple"/></svg></span>
+      <h3>No exports yet</h3><p>Exports over 5,000 rows from any list appear here.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1501">Open reports</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Ready</button><button class="chip" type="button" aria-pressed="false">Running</button>
+        <button class="chip" type="button" aria-pressed="false">Failed</button><button class="chip" type="button" aria-pressed="false">Expired</button></div></div>
+      <div class="field"><span class="label">Format</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">XLSX</button><button class="chip" type="button" aria-pressed="false">CSV</button></div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
+  </div>
+</div>
+
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Link copied. Valid until 30 Nov"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><button class="danger" type="button" data-open="delete"><svg class="ic"><use href="#ph-trash"/></svg>Delete</button>
+</div>
+
+<div class="overlay center" id="delete" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="del-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="del-title">Delete this export?</h2><p id="del-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep export</button><button class="btn btn-danger" type="button" data-close data-toast="Export deleted">Delete export</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Background exports of large lists, with their status and download link.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download a ready file.</li><li>Retry a failed export.</li><li>Copy the link or delete the export.</li></ul></div>
+  <div><h3>What happens next</h3><p>A notification arrives when an export is ready. Started from Excel export (D1521).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Over 5,000 rows runs in the background (EC-A34).</li><li>Links expire after 7 days; export again.</li><li>Failed exports can be retried. Every export is in the activity log.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/reports.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const n = (x) => x.toLocaleString('en-IN');
+  const STATUS = {
+    ready: (x) => r.tag('Ready', 'green'),
+    running: (x) => `${r.tag('Running', 'blue')}<span class="row" style="margin-top:6px; gap:8px"><span class="progress grow" style="min-width:80px"><span style="width:${x.progress}%"></span></span><small class="muted">${x.progress}%</small></span>`,
+    failed: (x) => `${r.tag('Failed', 'red')}<span class="sub">${x.error}</span>`,
+    expired: (x) => r.tag('Expired'),
+  };
+  const LINK = {
+    ready: (x) => `<button class="btn btn-secondary btn-sm" type="button" data-toast="${x.name}.${x.format.toLowerCase()} downloaded">${r.icon('download-simple')}Download</button><span class="sub">${x.size} · until ${r.date(x.expires)}</span>`,
+    running: () => '<span class="faint">When ready</span>',
+    failed: () => '<button class="btn btn-secondary btn-sm" type="button" data-busy data-toast="Export restarted">Retry</button>',
+    expired: (x) => `<span class="faint">Expired ${r.date(x.expires)}</span>`,
+  };
+  document.querySelector('#exports tbody').innerHTML = ZXA.data.exports.map((x) => `<tr data-name="${x.name}">
+    <td><b>${x.name}</b><span class="sub">${ZXA.page(x.source).name} · ${x.format}</span></td>
+    <td class="num" data-sort="${x.rows}">${n(x.rows)}</td>
+    <td>${STATUS[x.status](x)}</td>
+    <td class="nowrap" data-sort="${x.when}">${r.dayDate(x.when)}, ${r.time(x.when)}<span class="sub">Rajesh Goyal</span></td>
+    <td class="nowrap">${LINK[x.status](x)}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`).join('');
+  document.getElementById('sk-rows').innerHTML = `<tr>${'<td><span class="sk sk-line"></span></td>'.repeat(5)}</tr>`.repeat(4);
+  document.addEventListener('click', (event) => {
+    const dots = event.target.closest('[data-menu="row-menu"]');
+    if (dots) document.getElementById('del-text').textContent = `${dots.closest('tr').dataset.name}. The download link stops working for everyone.`;
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

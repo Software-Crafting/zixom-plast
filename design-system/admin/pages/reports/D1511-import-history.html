@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1511 Import history</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1511" data-nav="D1510">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Import history</h1><p>9 imports · 1 can be undone</p></div>
+    <a class="btn btn-primary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>New import</a>
+  </div>
+
+  <div data-when="ready no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="undo">Can undo <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="failed">Failed <span class="n"></span></button>
+      </div>
+      <div class="toolbar">
+        <label class="search" data-filter="#imports"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="File, type or person" aria-label="Search imports"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="imports">
+          <thead><tr><th class="sortable">File</th><th class="sortable">Status</th><th class="num">Created</th><th class="num">Updated</th><th class="num">Errors</th>
+            <th class="sortable">By</th><th class="sortable">When</th><th>Undo</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span id="foot">1 to 9 of 9</span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>File</th><th>Status</th><th>Created</th><th>By</th><th>When</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span>
+      <h3>No imports yet</h3><p>Imports you run appear here with their counts.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1510">New import</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Customers</button><button class="chip" type="button" aria-pressed="false">People</button>
+        <button class="chip" type="button" aria-pressed="false">Machines</button><button class="chip" type="button" aria-pressed="false">Spare parts</button>
+        <button class="chip" type="button" aria-pressed="false">Stock</button><button class="chip" type="button" aria-pressed="false">Leads</button>
+        <button class="chip" type="button" aria-pressed="false">IndiaMART history</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="f-to">To</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="undo" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="undo-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-undo"/></svg></span>
+      <div class="grow"><h2 id="undo-title">Undo nova_machines_update.xlsx?</h2>
+        <p>The 2 machines it updated go back to their earlier values. Rows changed since the import are kept and listed. Available until Tue 24 Nov, 10:20 AM.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep import</button>
+      <button class="btn btn-danger" type="button" data-close data-toast="Import undone. 2 machines restored">Undo import</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Every import with its counts and who ran it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a row for the details.</li><li>Download the file or the error file.</li><li>Undo an import within 24 hours.</li></ul></div>
+  <div><h3>What happens next</h3><p>Fix the errors and import again (D1510).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Undo removes only rows created by that import that nobody changed since.</li><li>After 24 hours Undo is gone.</li><li>A failed import saved nothing; the reason is shown.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/reports.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const jobs = ZXA.data.imports;
+  const canUndo = (j) => j.status === 'done' && j.undoUntil && new Date(j.undoUntil) > new Date(ZX.data.now);
+  const statusTag = (j) => ({ done: j.errors ? r.tag('Done with errors', 'amber') : r.tag('Done', 'green'), failed: r.tag('Failed', 'red'), undone: r.tag('Undone') }[j.status]);
+  const when = (iso) => `${r.dayDate(iso)}, ${r.time(iso)}`;
+
+  document.querySelector('#imports tbody').innerHTML = jobs.map((j) => `<tr data-drawer="quick" data-job="${j.id}">
+    <td><b>${j.file}</b><span class="sub">${j.type} · ${j.rows} rows</span></td>
+    <td>${statusTag(j)}</td><td class="num">${j.created}</td><td class="num">${j.updated}</td>
+    <td class="num">${j.errors ? `<span class="red-text strong">${j.errors}</span>` : '0'}</td>
+    <td class="nowrap">${j.by}</td><td class="nowrap" data-sort="${j.when}">${when(j.when)}</td>
+    <td class="nowrap">${canUndo(j) ? '<button class="btn btn-secondary btn-sm" type="button" data-open="undo">Undo</button><span class="sub">until 24 Nov, 10:20</span>' : '<span class="faint">–</span>'}</td></tr>`).join('');
+
+  const VIEWS = { all: () => true, undo: canUndo, failed: (j) => j.status === 'failed' };
+  const job = (id) => jobs.find((j) => j.id === id);
+  const showView = (key) => {
+    let shown = 0;
+    document.querySelectorAll('#imports tbody tr').forEach((row) => { row.hidden = !VIEWS[key](job(row.dataset.job)); if (!row.hidden) shown += 1; });
+    document.getElementById('foot').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = jobs.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  document.getElementById('sk-rows').innerHTML = `<tr>${'<td><span class="sk sk-line"></span></td>'.repeat(5)}</tr>`.repeat(8);
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const j = job(event.detail.dataset.job);
+    document.getElementById('quick-title').textContent = j.file;
+    document.getElementById('quick-sub').textContent = `${j.type} · ${when(j.when)} · ${j.by}`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${statusTag(j)}</div>
+      ${j.status === 'failed' ? `<div class="banner red">${r.icon('warning-circle')}<span class="grow">${j.reason}</span></div>` : ''}
+      ${j.status === 'undone' ? `<div class="banner grey">${r.icon('undo')}<span class="grow">Undone by ${j.undoneBy}, ${when(j.undoneAt)}. The ${j.created} rows it created were removed.</span></div>` : ''}
+      <dl class="dl"><dt>Rows in file</dt><dd>${j.rows}</dd><dt>Created</dt><dd>${j.created}</dd><dt>Updated</dt><dd>${j.updated}</dd>
+        <dt>Errors</dt><dd>${j.errors}${j.errors ? ' · row 3: company code ZP-C-0009 does not exist' : ''}</dd>
+        <dt>Undo</dt><dd>${canUndo(j) ? 'Available until Tue 24 Nov, 10:20 AM' : j.status === 'done' ? 'Expired after 24 hours' : 'Not available'}</dd></dl>`;
+    document.getElementById('quick-foot').innerHTML = `<button class="btn btn-secondary" type="button" data-toast="${j.file} downloaded">${r.icon('download-simple')}File</button>
+      ${j.errors ? '<button class="btn btn-ghost" type="button" data-toast="Error file downloaded">Error file</button>' : ''}<span class="grow"></span>
+      ${canUndo(j) ? '<button class="btn btn-primary" type="button" data-open="undo">Undo import</button>' : j.status === 'failed' ? '<a class="btn btn-primary" href="#D1510">Import again</a>' : ''}`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+/* Quotations module layout the shared classes do not cover: the editable line table of the quotation builder (D1202)
+   and the stage stepper that wraps on order pages (D1211). */
+.lines td{vertical-align:top}
+.lines .input{min-width:220px}
+.lines .num-in, .num-in{min-width:0; width:76px; text-align:right}
+.lines .money-in, .money-in{min-width:0; width:124px; text-align:right}
+.lines [data-amount]{padding-top:18px}
+.steps.wrap{flex-wrap:wrap; row-gap:10px}
+
+@media (max-width:640px){
+  .lines .input{min-width:180px}
+  .steps.wrap{flex-wrap:nowrap}
+}

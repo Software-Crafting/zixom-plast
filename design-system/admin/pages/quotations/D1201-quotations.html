@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1201 Quotations</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Quotations</h1><p id="head-sub"></p></div>
+    <a class="btn btn-ghost" href="#D1204">Products</a>
+    <a class="btn btn-ghost" href="#D1205">Terms</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1202"><svg class="ic"><use href="#ph-plus"/></svg>New quotation</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="waiting">Waiting for customer <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="draft">Drafts <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="accepted">Accepted <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Rejected or expired <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#quotes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Quotation, customer, lead or product" aria-label="Search quotations"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved as High value"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="applied-row" data-when="ready no-results">
+        <span class="chip applied">Created: <b>This financial year</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+        <button class="btn-link btn" type="button" data-toast="Filters cleared">Clear all</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="quotes">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Quotation</th><th class="sortable">Customer or lead</th><th>Products</th>
+            <th class="sortable num">Value</th><th class="sortable">Status</th><th class="sortable">Valid until</th><th>Owner</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+        <h3>No quotations yet</h3><p>Quotations you build for leads and customers appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D1202">New quotation</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Quotation</th><th>Customer or lead</th><th>Products</th><th>Value</th><th>Status</th><th>Valid until</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="quotes" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="PDFs downloaded as a zip">Download PDFs</button>
+    <button class="btn" type="button" data-toast="Excel file downloaded">Export</button>
+    <button class="btn" type="button" data-open="bulk-result">Mark expired</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D1203">Open quotation</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-action" href="#D1203">Open</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Draft</button><button class="chip" type="button" aria-pressed="false">Sent</button>
+        <button class="chip" type="button" aria-pressed="false">Viewed</button><button class="chip" type="button" aria-pressed="false">Revised</button>
+        <button class="chip" type="button" aria-pressed="false">Accepted</button><button class="chip" type="button" aria-pressed="false">Rejected</button>
+        <button class="chip" type="button" aria-pressed="false">Expired</button></div></div>
+      <div class="field"><span class="label">For</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Leads</button><button class="chip" type="button" aria-pressed="false">Customers</button></div></div>
+      <div class="field"><span class="label">Product family</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Thermoforming</button><button class="chip" type="button" aria-pressed="false">Cup forming</button>
+        <button class="chip" type="button" aria-pressed="false">Vacuum forming</button><button class="chip" type="button" aria-pressed="false">Blister sealing</button>
+        <button class="chip" type="button" aria-pressed="false">Crusher</button><button class="chip" type="button" aria-pressed="false">Moulds</button>
+        <button class="chip" type="button" aria-pressed="false">Water plants</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-min">Value from</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="f-min" inputmode="decimal" placeholder="0"></div></div>
+        <div class="field"><label for="f-max">to</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="f-max" inputmode="decimal" placeholder="Any"></div></div>
+        <div class="field"><label for="f-from">Valid until from</label><input class="input" id="f-from" type="date"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Expiring in the next 7 days only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show quotations</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="quotes"> Products</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="quotes"> Valid until</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="quotes"> Owner</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</a>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</a>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D1203" id="row-open"><svg class="ic"><use href="#ph-external-link"/></svg>Open quotation</a>
+  <button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button>
+  <a href="#D1202"><svg class="ic"><use href="#ph-copy"/></svg>Duplicate</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">1 done, 1 failed</h2><p>QT-2026-0012 is accepted and cannot expire.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Every machine sale quotation for leads and customers, with value, status and validity.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the full quotation.</li><li>Select rows to download PDFs, export or mark expired.</li></ul></div>
+  <div><h3>What happens next</h3><p>New quotation (D1202), Quotation detail (D1203), Products (D1204), Terms (D1205), Export (D1521).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Statuses: Draft, Sent, Viewed, Accepted, Rejected, Expired, Revised (section 11).</li><li>Revisions keep the number with R2, R3.</li><li>Valid until within 7 days shows amber. Export over 5,000 rows runs in the background (EC-A34).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const quotes = ZXA.data.quotations;
+  const OPEN = ['draft', 'sent', 'viewed', 'revised'];
+  const validCell = (x) => {
+    if (!x.validUntil) return '<span class="faint">Set on send</span>';
+    const left = r.daysFromToday(x.validUntil);
+    const note = ['accepted', 'rejected'].includes(x.status) ? '' : `<span class="sub ${left <= 7 ? 'amber-text' : ''}">${left < 0 ? 'Expired' : `${left} days left`}</span>`;
+    return `${r.date(x.validUntil)}${note}`;
+  };
+
+  const open = quotes.filter((x) => OPEN.includes(x.status));
+  document.getElementById('head-sub').textContent = `${open.length} open · ${q.money(open.reduce((s, x) => s + q.totals(x.lines).taxable, 0))} before GST · 1 accepted this month`;
+
+  document.querySelector('#quotes tbody').innerHTML = quotes.map((x) => {
+    const who = q.party(x);
+    const no = q.numberOf(x);
+    const value = q.totals(x.lines).taxable;
+    return `<tr data-drawer="quick" data-quote="${no}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${no}"></label></td>
+      <td class="nowrap"><a class="rec" href="${ZXA.href('D1203', `?q=${no}`)}">${no}</a><span class="sub">Created ${r.date(x.created)}</span></td>
+      <td><b class="clip">${r.esc(who.name)}</b><span class="sub">${who.kind} · ${r.esc(who.contact.name)}</span></td>
+      <td><span class="clip">${r.esc(x.title)}</span><span class="sub">${r.esc(q.productsText(x.lines))}</span></td>
+      <td class="num" data-sort="${String(value).padStart(10, '0')}">${q.money(value)}</td>
+      <td>${q.quoteTag(x.status)}${x.views ? `<span class="sub">Opened ${x.views} ${x.views === 1 ? 'time' : 'times'}</span>` : ''}</td>
+      <td class="nowrap" data-sort="${x.validUntil ?? '9'}">${validCell(x)}</td>
+      <td><span class="who">${r.avatar(ZXA.data.admin, 'sm')}<span>Rajesh</span></span></td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu" data-row="${no}"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = {
+    open: (x) => OPEN.includes(x.status), waiting: (x) => ['sent', 'viewed', 'revised'].includes(x.status), draft: (x) => x.status === 'draft',
+    accepted: (x) => x.status === 'accepted', closed: (x) => ['rejected', 'expired'].includes(x.status), all: () => true,
+  };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#quotes tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](q.quotation(row.dataset.quote)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = quotes.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* the row menu opens the quotation it was opened from */
+  document.addEventListener('click', (event) => {
+    const more = event.target.closest('[data-row]');
+    if (more) document.getElementById('row-open').setAttribute('href', ZXA.href('D1203', `?q=${more.dataset.row}`));
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  /* quick view: the primary action follows the status (section 11) */
+  const NEXT = { draft: ['Edit and send', 'D1202'], sent: ['Mark accepted', 'D1203'], viewed: ['Mark accepted', 'D1203'], revised: ['Mark accepted', 'D1203'],
+    accepted: ['Open order', 'D1211'], rejected: ['Revise', 'D1202'], expired: ['Revise', 'D1202'] };
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = q.quotation(event.detail.dataset.quote);
+    const no = q.numberOf(x);
+    const who = q.party(x);
+    const t = q.totals(x.lines);
+    const [label, page] = NEXT[x.status];
+    const query = page === 'D1211' ? `?o=${x.order}` : `?q=${no}`;
+    document.getElementById('quick-title').textContent = no;
+    document.getElementById('quick-sub').textContent = x.title;
+    document.getElementById('quick-open').href = ZXA.href('D1203', `?q=${no}`);
+    const action = document.getElementById('quick-action');
+    action.textContent = label;
+    action.href = ZXA.href(page, query);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${q.quoteTag(x.status)}${r.tag(who.kind, 'outline')}${x.rev ? r.tag(`Revision ${x.rev}`, 'outline') : ''}</div>
+      <dl class="dl">
+        <dt>${who.kind}</dt><dd>${r.esc(who.name)}<br><span class="muted">${r.esc(who.contact.name)} · ${r.esc(who.contact.mobile)}</span></dd>
+        <dt>Products</dt><dd>${x.lines.map(([, desc, qty]) => `${r.esc(desc)}${qty > 1 ? ` x ${qty}` : ''}`).join('<br>')}</dd>
+        <dt>Value</dt><dd>${q.money(t.taxable)}<br><span class="muted">${q.money(t.total)} with IGST 18%</span></dd>
+        <dt>Valid until</dt><dd>${x.validUntil ? r.date(x.validUntil) : 'Set when sent'}</dd>
+        <dt>Sent</dt><dd>${x.sent ? `${r.date(x.sent)}, ${r.time(x.sent)}` : '<span class="faint">Not sent</span>'}</dd>
+        <dt>Opened</dt><dd>${x.viewed ? `${x.views} times, last ${r.ago(x.viewed)}` : '<span class="faint">Not yet</span>'}</dd>
+        ${x.rejectReason ? `<dt>Reason</dt><dd>${r.esc(x.rejectReason)}</dd>` : ''}
+        ${x.acceptedBy ? `<dt>Accepted by</dt><dd>${r.esc(x.acceptedBy)}</dd>` : ''}
+      </dl>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

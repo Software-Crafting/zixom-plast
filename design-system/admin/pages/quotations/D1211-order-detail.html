@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1211 Order detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-quotations.css">
+</head>
+<body class="adm" data-page="D1211">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1210">Orders and projects</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <section class="card pad" style="margin-bottom:16px"><ol class="steps wrap" id="stages" aria-label="Order stage"></ol></section>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Order sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-milestones">Milestones <span class="n" id="ms-count"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-payments">Payments</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-documents">Documents</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-machines">Machines</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-milestones" role="tabpanel" hidden></div>
+          <div id="tab-payments" role="tabpanel" hidden></div>
+          <div id="tab-documents" role="tabpanel" hidden></div>
+          <div id="tab-machines" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="card pad" style="margin-bottom:16px"><span class="sk sk-line"></span></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1210">Back to orders</a></div></div></div>
+  </div>
+</main>
+
+<!-- stage moves follow the order; each move can notify the customer -->
+<div class="overlay center" id="move" hidden>
+  <div class="modal" role="dialog" aria-labelledby="move-title">
+    <div class="modal-head"><span class="disc blue"><svg class="ic"><use href="#ph-arrow-right"/></svg></span>
+      <div class="grow"><h2 id="move-title"></h2><p>Stages move one step at a time, in order.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="move-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="move-note" maxlength="300"></textarea></div>
+      <label class="check"><input type="checkbox" checked> <span id="move-notify"></span></label>
+      <button class="btn btn-link" type="button" data-toast="Email preview opened">Preview the message</button>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Stage moved. Customer told" id="move-go">Move stage</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="advance" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="adv-title">
+    <div class="drawer-head"><div class="grow"><h2 id="adv-title">Record advance</h2><p>A receipt is created in Payments.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="adv-ms">Payment milestone</label><select class="select" id="adv-ms"></select></div>
+      <div class="form-grid">
+        <div class="field"><label for="adv-amount">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="adv-amount" inputmode="decimal"></div><span class="hint">Includes IGST 18%</span></div>
+        <div class="field"><label for="adv-date">Received on</label><input class="input" id="adv-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="adv-method">Method</label><select class="select" id="adv-method"><option>Bank transfer</option><option>UPI</option><option>Cheque</option><option>Demand draft</option></select></div>
+        <div class="field"><label for="adv-ref">Reference</label><input class="input mono" id="adv-ref" placeholder="UTR or cheque number"></div>
+      </div>
+      <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop the bank advice here</b>PDF, JPG or PNG up to 10 MB</div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Payment recorded">Record payment</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer cancelled</option><option>Payment not received</option><option>Duplicate order</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep order</button><button class="btn btn-danger" type="button" data-close data-toast="Order cancelled. Customer told">Cancel order</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Order PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download order PDF</button>
+  <a href="#D1213" id="more-machines"><svg class="ic"><use href="#ph-factory"/></svg>Create machine records</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
+  <hr><button class="danger" type="button" data-open="cancel"><svg class="ic"><use href="#ph-x"/></svg>Cancel order</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error">
+  <div><h3>What it is</h3><p>One sales order or turnkey project from confirmation to commissioning. Opens with <code>?o=PRJ-2026-001</code>; try ORD-2026-0213 or 0214.</p></div>
+  <div><h3>What you can do</h3><ul><li>Move to the next stage and tell the customer.</li><li>Record an advance, create the milestone invoice.</li><li>Open milestones, documents and the machines this order delivers.</li></ul></div>
+  <div><h3>What happens next</h3><p>Project milestones (D1212), Dispatch and installation (D1213), Create invoice (D902), Add machine (D303).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Stage moves follow the order; no skipping (section 11).</li><li>Late orders show a red banner with the reason.</li><li>An order for a lead asks you to create the customer first.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const ic = r.icon;
+  const stages = ZXA.data.stages;
+  const o = q.order(new URLSearchParams(location.search).get('o') || 'PRJ-2026-001');
+  if (!o) { ZXA.initialState = 'not-found'; return; }
+  const who = q.party(o);
+  const t = q.totals(o.lines);
+  const paid = q.received(o);
+  const at = stages.indexOf(o.stage);
+  const next = stages[at + 1];
+  const oq = `?o=${o.number}`;
+  const $ = (id) => document.getElementById(id);
+
+  document.title = `Zixom Admin - ${o.number}`;
+  $('crumb').textContent = o.number;
+  $('number').textContent = o.number;
+  $('chips').innerHTML = `${q.stageTag(o.stage)}${q.lateTag(o)}${r.tag(o.kind, 'outline')}`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${r.esc(who.name)}</span><span>${ic('file-text')}${r.esc(o.source)}</span>
+    <span>${ic('calendar-blank')}Expected ${r.date(o.expected)}</span>`;
+
+  /* actions: installed and dispatched orders go to D1213 */
+  const primary = { installed: ['Commission', 'D1213'], dispatched: ['Record installation', 'D1213'] }[o.stage];
+  $('actions').innerHTML = `<button class="btn btn-secondary" type="button" data-open="advance">Record advance</button>
+    <a class="btn btn-secondary" href="${ZXA.href('D902', oq)}">Create invoice</a>
+    ${o.kind === 'Turnkey project' ? `<a class="btn btn-secondary" href="${ZXA.href('D1212', oq)}">Add milestone</a>` : ''}
+    ${primary ? `<a class="btn btn-primary" href="${ZXA.href(primary[1], oq)}">${primary[0]}</a>` : next ? '<button class="btn btn-primary" type="button" data-open="move">Move stage</button>' : ''}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  $('more-machines').setAttribute('href', ZXA.href('D1213', oq));
+  if (next) {
+    $('move-title').textContent = `Move ${o.number} to ${q.STAGE[next]}?`;
+    $('move-notify').textContent = `Tell ${who.contact.name} by push and email`;
+  }
+  $('cancel-title').textContent = `Cancel ${o.number}?`;
+  $('cancel-text').textContent = `${who.name} will be told. Payments received stay recorded; refunds are made in Payments. This cannot be undone.`;
+
+  /* banners */
+  const banners = [];
+  if (o.late) banners.push(`<div class="banner red">${ic('clock-countdown')}<span class="grow"><b>Late by ${o.late} days.</b> ${r.esc(o.lateReason)}</span></div>`);
+  if (who.kind === 'Lead') banners.push(`<div class="banner amber">${ic('user-plus')}<span class="grow"><b>${r.esc(who.name)} is not a customer yet.</b> Create the company to issue invoices and invite them to the app.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D203">Create customer</a></span></div>`);
+  const delayed = o.milestones.find((m) => m.status === 'delayed');
+  if (delayed) banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>${r.esc(delayed.title)} delayed to ${r.date(delayed.newDue)}.</b> ${r.esc(delayed.reason)}</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1212', oq)}">Milestones</a></span></div>`);
+  $('edge-banners').innerHTML = banners.join('');
+
+  $('stages').innerHTML = stages.map((s, i) => `<li class="${i < at ? 'done' : ''}" ${i === at ? 'aria-current="step"' : ''}><span class="n">${i < at ? '✓' : i + 1}</span>${q.STAGE[s]}</li>`).join('');
+
+  /* ---------- overview ---------- */
+  const site = o.company ? r.site(o.company, o.site) : null;
+  $('tab-overview').innerHTML = `<div class="stack">
+    <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>
+      <tbody>${o.lines.map((line) => `<tr><td>${r.esc(line[1])}<span class="sub">HSN ${q.product(line[0]).hsn}</span></td><td class="num">${line[2]}</td><td class="num">${q.money(line[3])}</td><td class="num">${q.money(q.lineAmount(line))}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td colspan="3">Before GST</td><td class="num">${q.money(t.taxable)}</td></tr><tr><td colspan="3">IGST 18%</td><td class="num">${q.money(t.gst)}</td></tr>
+        <tr><td colspan="3"><b>Total</b></td><td class="num"><b>${q.money(t.total)}</b></td></tr></tfoot></table></div>
+    <div class="grid cols-2" style="gap:20px">
+      <dl class="dl stack"><dt>Confirmed</dt><dd>${r.date(o.confirmed)}</dd><dt>Source</dt><dd>${r.esc(o.source)}</dd></dl>
+      <dl class="dl stack"><dt>Deliver to</dt><dd>${site ? `${r.esc(site.name)}<br><span class="muted">${r.esc(site.address)}, ${site.pincode}</span>` : `${r.esc(who.sub)}<br><span class="muted">Site address on the purchase order</span>`}</dd>
+        <dt>Warranty</dt><dd>12 months from the installation date</dd></dl>
+    </div></div>`;
+
+  /* ---------- milestones ---------- */
+  $('ms-count').textContent = o.milestones.length || '';
+  $('tab-milestones').innerHTML = o.milestones.length ? `<div class="stack"><ul class="mini">${o.milestones.map((m) => `<li data-href="D1212${oq}">
+      <span class="ic-disc ${{ done: 'green', delayed: 'red', 'in-progress': 'blue' }[m.status] ?? ''}">${ic(m.status === 'done' ? 'check' : 'milestone')}</span>
+      <span class="grow"><b>${r.esc(m.title)}</b><small>${m.owner} · due ${r.date(m.newDue || m.due)}</small></span><span class="end">${q.milestoneTag(m.status)}</span></li>`).join('')}</ul>
+    <div><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1212', oq)}">Open milestones</a></div></div>`
+    : `<div class="state"><span class="disc">${ic('milestone')}</span><h3>No milestones</h3><p>Stages are enough for this order. Add milestones for longer jobs.</p>
+      <div class="btns"><a class="btn btn-secondary" href="${ZXA.href('D1212', oq)}">Add milestone</a></div></div>`;
+
+  /* ---------- payments ---------- */
+  $('tab-payments').innerHTML = `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Milestone</th><th class="num">Share</th><th class="num">Amount</th><th>Due</th><th>Status</th><th class="actions"></th></tr></thead>
+    <tbody>${o.payments.map(([label, pct, state, when, how]) => `<tr><td>${label}${how ? `<span class="sub">${r.esc(how)}</span>` : ''}</td><td class="num">${pct}%</td><td class="num">${q.money(t.total * pct / 100)}</td>
+      <td class="nowrap">${r.date(when)}</td><td>${q.paymentTag(state)}</td>
+      <td class="actions">${state === 'received' ? '<button class="btn btn-sm btn-ghost" type="button" data-toast="Receipt downloaded">Receipt</button>' : `<a class="btn btn-sm btn-secondary" href="${ZXA.href('D902', oq)}">Invoice</a>`}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><td colspan="2">Received</td><td class="num">${q.money(paid.amount)}</td><td colspan="3">${paid.pct}% of ${q.money(paid.total)}</td></tr></tfoot></table></div>`;
+  $('adv-ms').innerHTML = o.payments.filter((p) => p[2] !== 'received').map(([label, pct]) => `<option>${label}, ${pct}%</option>`).join('');
+  const due = o.payments.find((p) => p[2] !== 'received');
+  $('adv-amount').value = due ? (t.total * due[1] / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '';
+
+  /* ---------- documents ---------- */
+  const docs = [['file-text', o.quotation ? `${o.quotation}.pdf` : 'Purchase order.pdf', o.quotation ? 'Accepted quotation' : 'From the customer', o.confirmed],
+    ['file-pdf', 'Order confirmation.pdf', 'Sent to the customer', o.confirmed]];
+  if (at >= 1) docs.push(['file-check', 'Layout drawing, signed.pdf', 'Design approval', '2026-09-12']);
+  if (o.dispatch) docs.push(['truck', 'Dispatch documents.pdf', `${o.dispatch.transporter} · ${o.dispatch.docket}`, o.dispatch.date]);
+  if (o.install) docs.push(['clipboard-check', 'Commissioning report.pdf', `Signed by ${o.install.signedBy}`, o.install.commissioned]);
+  $('tab-documents').innerHTML = `<ul class="mini">${docs.map(([i, name, sub, when]) => `<li><span class="ic-disc">${ic(i)}</span><span class="grow"><b>${r.esc(name)}</b><small>${r.esc(sub)} · ${r.date(when)}</small></span>
+    <button class="btn btn-sm btn-ghost" type="button" data-toast="File downloaded">Download</button></li>`).join('')}</ul>
+    <div class="drop" style="margin-top:12px"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop a document here</b>PDF, JPG or PNG up to 10 MB</div>`;
+
+  /* ---------- machines ---------- */
+  $('tab-machines').innerHTML = o.machines.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Machine</th><th>Serial</th><th>Status</th><th class="actions"></th></tr></thead>
+    <tbody>${o.machines.map(([model, serial, status]) => `<tr><td>${r.esc(model)}</td><td class="mono">${serial}</td><td>${r.tag(status, status.startsWith('Installed') ? 'amber' : '')}</td>
+      <td class="actions">${status.startsWith('Installed') ? `<a class="btn btn-sm btn-primary" href="${ZXA.href('D1213', oq)}">Create in register</a>` : ''}</td></tr>`).join('')}</tbody></table></div>
+    <p class="muted" style="margin-top:10px">Machines join the register after commissioning; the installation date starts the warranty.</p>`
+    : `<div class="state"><span class="disc">${ic('factory')}</span><h3>No machines</h3><p>Moulds and services do not create machine records.</p></div>`;
+
+  $('tab-history').innerHTML = `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="nowrap">${r.date(o.stageSince)}</td><td>Rajesh Goyal</td><td>Stage: ${q.STAGE[stages[at - 1]]} → ${q.STAGE[o.stage]}, customer told</td></tr>
+    ${o.payments.filter((p) => p[2] === 'received').map(([label, pct, , when]) => `<tr><td class="nowrap">${r.date(when)}</td><td>Rajesh Goyal</td><td>Payment recorded: ${label}, ${pct}%</td></tr>`).join('')}
+    <tr><td class="nowrap">${r.date(o.confirmed)}</td><td>Rajesh Goyal</td><td>Order created, stage Confirmed</td></tr></tbody></table></div>`;
+
+  /* ---------- side cards ---------- */
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">${who.kind === 'Lead' ? 'Buyer' : 'Customer'}</h3><a class="card-link" href="${ZXA.href(who.page, who.query)}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${r.esc(who.contact.initials)}</span><span><b>${r.esc(who.contact.name)}</b><small>${r.esc(who.name)}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${who.contact.mobile.replace(/\s/g, '')}">${ic('phone')}${r.esc(who.contact.mobile)}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Progress</h3></div>
+      <div class="card-body stack-sm"><div class="row"><span class="progress grow"><span style="width:${Math.round((at + 1) / stages.length * 100)}%"></span></span>${at + 1} of 7</div>
+        <dl class="dl"><dt>Stage</dt><dd>${q.STAGE[o.stage]}<br><span class="muted">since ${r.date(o.stageSince)}</span></dd><dt>Expected</dt><dd>${r.date(o.expected)}<br><span class="${o.late ? 'red-text strong' : 'muted'}">${o.late ? `Late by ${o.late} days` : `${r.daysFromToday(o.expected)} days left`}</span></dd>
+          ${next ? `<dt>Next</dt><dd>${q.STAGE[next]}</dd>` : ''}</dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Payments</h3></div>
+      <div class="card-body stack-sm"><div class="row"><span class="progress green grow"><span style="width:${paid.pct}%"></span></span>${paid.pct}%</div>
+        <dl class="dl"><dt>Received</dt><dd>${q.money(paid.amount)}</dd><dt>Order total</dt><dd>${q.money(paid.total)}</dd>${due ? `<dt>Next due</dt><dd>${due[0]}, ${r.date(due[3])}</dd>` : ''}</dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Related</h3></div>
+      <ul class="mini">${o.quotation ? `<li data-href="D1203?q=${o.quotation}"><span class="ic-disc">${ic('file-text')}</span><span class="grow"><b class="mono">${o.quotation}</b><small>Quotation · Accepted</small></span></li>` : ''}
+        ${o.lead ? `<li data-href="D1103?l=${o.lead}"><span class="ic-disc">${ic('chart-line-up')}</span><span class="grow"><b class="mono">${o.lead}</b><small>Lead · Won</small></span></li>` : ''}
+        ${o.machines.map(([model, serial]) => `<li><span class="ic-disc">${ic('factory')}</span><span class="grow"><b class="mono">${serial}</b><small>${r.esc(model)}</small></span></li>`).join('')}</ul></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

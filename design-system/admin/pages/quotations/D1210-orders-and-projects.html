@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1210 Orders and projects</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1210">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Orders and projects</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1201"><svg class="ic"><use href="#ph-file-text"/></svg>From a quotation</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="active">In progress <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="late">Late <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="turnkey">Turnkey projects <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="done">Commissioned <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#orders"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Order, project, customer or product" aria-label="Search orders"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved as Due this quarter"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="orders">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Order</th><th class="sortable">Customer</th><th>Products</th><th class="sortable num">Value</th>
+            <th class="sortable">Stage</th><th class="sortable">Expected</th><th>Owner</th><th class="sortable">Payments received</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-milestone"/></svg></span>
+        <h3>No orders yet</h3><p>Accepted quotations become orders and projects here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D1201">Open quotations</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Order</th><th>Customer</th><th>Products</th><th>Value</th><th>Stage</th><th>Expected</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="orders" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Excel file downloaded">Export</button>
+    <button class="btn" type="button" data-toast="Stage update sent to customers">Send stage update</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D1211">Open order</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-action" href="#D1211">Open</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Stage</span><div class="row wrap" data-chips id="f-stage"></div></div>
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Machine order</button><button class="chip" type="button" aria-pressed="false">Mould order</button>
+        <button class="chip" type="button" aria-pressed="false">Turnkey project</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">Expected from</label><input class="input" id="f-from" type="date"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Late only</label>
+      <label class="check"><input type="checkbox"> Payment due only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show orders</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="orders"> Products</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="orders"> Owner</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="orders"> Payments received</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</a>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Machine orders and turnkey projects from confirmation to commissioning, with payments received.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter and use saved views.</li><li>Click a row for the quick view; click the number for the full order.</li><li>Select rows to export or send a stage update.</li></ul></div>
+  <div><h3>What happens next</h3><p>Order detail (D1211), Project milestones (D1212), Dispatch and installation (D1213).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Stages: Confirmed, Design, Manufacturing, Testing, Dispatched, Installed, Commissioned (section 11).</li><li>Late orders are red and pinned on top.</li><li>Payments follow 30, 40, 30 by default.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const stages = ZXA.data.stages;
+  const orders = [...ZXA.data.orders].sort((x, y) => y.late - x.late);
+  const stepOf = (o) => stages.indexOf(o.stage) + 1;
+  const NEXT_PAGE = { installed: ['Commission', 'D1213'], dispatched: ['Record installation', 'D1213'] };
+
+  const value = orders.reduce((s, o) => s + q.totals(o.lines).taxable, 0);
+  document.getElementById('head-sub').textContent = `${orders.length} in progress · ${q.money(value)} before GST · ${orders.filter((o) => o.late).length} late`;
+
+  document.querySelector('#orders tbody').innerHTML = orders.map((o) => {
+    const who = q.party(o);
+    const paid = q.received(o);
+    const v = q.totals(o.lines).taxable;
+    return `<tr data-drawer="quick" data-order="${o.number}" class="${o.late ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${o.number}"></label></td>
+      <td class="nowrap"><a class="rec" href="${ZXA.href('D1211', `?o=${o.number}`)}">${o.number}</a><span class="sub">${o.kind}</span></td>
+      <td><b class="clip">${r.esc(who.name)}</b><span class="sub">${who.kind === 'Lead' ? `New customer · ${r.esc(o.contactName)}` : r.esc(r.site(o.company, o.site).name)}</span></td>
+      <td><span class="clip">${r.esc(o.title)}</span><span class="sub">${r.esc(q.productsText(o.lines))}</span></td>
+      <td class="num" data-sort="${String(v).padStart(10, '0')}">${q.money(v)}</td>
+      <td data-sort="${stepOf(o)}">${q.stageTag(o.stage)}<span class="sub">Step ${stepOf(o)} of 7</span></td>
+      <td class="nowrap" data-sort="${o.expected}">${r.date(o.expected)}${o.late ? `<span class="sub"><span class="red-text strong">Late by ${o.late} days</span></span>` : `<span class="sub">${r.daysFromToday(o.expected)} days left</span>`}</td>
+      <td><span class="who">${r.avatar(ZXA.data.admin, 'sm')}<span>Rajesh</span></span></td>
+      <td class="nowrap" data-sort="${paid.pct}">${q.money(paid.amount)}<span class="sub">${paid.pct}% of ${q.money(paid.total).replace(/\.00$/, '')}</span></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { active: (o) => o.stage !== 'commissioned', late: (o) => o.late > 0, turnkey: (o) => o.kind === 'Turnkey project', done: (o) => o.stage === 'commissioned', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#orders tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](q.order(row.dataset.order)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 orders';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = orders.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('active');
+
+  document.getElementById('f-stage').innerHTML = stages.map((s) => `<button class="chip" type="button" aria-pressed="false">${q.STAGE[s]}</button>`).join('');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const o = q.order(event.detail.dataset.order);
+    const who = q.party(o);
+    const paid = q.received(o);
+    const t = q.totals(o.lines);
+    const [label, page] = NEXT_PAGE[o.stage] ?? (o.kind === 'Turnkey project' ? ['Milestones', 'D1212'] : ['Move stage', 'D1211']);
+    document.getElementById('quick-title').textContent = o.number;
+    document.getElementById('quick-sub').textContent = o.title;
+    document.getElementById('quick-open').href = ZXA.href('D1211', `?o=${o.number}`);
+    const action = document.getElementById('quick-action');
+    action.textContent = label;
+    action.href = ZXA.href(page, `?o=${o.number}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${q.stageTag(o.stage)}${q.lateTag(o)}${r.tag(o.kind, 'outline')}</div>
+      ${o.lateReason ? `<p class="red-text">${r.esc(o.lateReason)}</p>` : ''}
+      <dl class="dl">
+        <dt>Customer</dt><dd>${r.esc(who.name)}<br><span class="muted">${r.esc(who.contact.name)} · ${r.esc(who.contact.mobile)}</span></dd>
+        <dt>Source</dt><dd>${r.esc(o.source)}</dd>
+        <dt>Products</dt><dd>${o.lines.map(([, desc, qty]) => `${r.esc(desc)}${qty > 1 ? ` x ${qty}` : ''}`).join('<br>')}</dd>
+        <dt>Value</dt><dd>${q.money(t.taxable)}<br><span class="muted">${q.money(t.total)} with IGST 18%</span></dd>
+        <dt>Expected</dt><dd>${r.date(o.expected)}</dd>
+        <dt>Received</dt><dd>${q.money(paid.amount)} of ${q.money(paid.total)} (${paid.pct}%)</dd>
+      </dl>
+      ${o.milestones.length ? `<ul class="mini">${o.milestones.map((m) => `<li><span class="grow"><b>${r.esc(m.title)}</b><small>${m.owner}</small></span><span class="end">${q.milestoneTag(m.status)}</span></li>`).join('')}</ul>` : ''}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1213 Dispatch and installation</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1213">
+<main class="content">
+  <div data-when="ready created">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1210">Orders and projects</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-order" href="#D1211"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Dispatch and installation</span></nav>
+        <div class="record-head"><h1 id="number"></h1>
+          <span class="tags" data-when="ready" id="chips"></span>
+          <span class="tags" data-when="created"><span class="tag green">Commissioned</span></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner green" data-when="created"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b><span class="mono" data-serial></span> is in the machine register.</b> <span data-warranty-text></span> <span data-invite-text></span></span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D301">Open register</a><a class="btn btn-sm btn-secondary" href="#D206">Invitations</a></span></div>
+      <div class="banner red" data-when="ready" id="late-banner" hidden><svg class="ic"><use href="#ph-clock-countdown"/></svg><span class="grow" id="late-text"></span></div>
+    </div>
+
+    <div class="detail">
+      <form class="card" novalidate>
+        <div class="card-body">
+          <section class="form-section">
+            <h3>Dispatch</h3><p>From Faridabad to the customer's site.</p>
+            <div class="form-grid">
+              <div class="field"><label for="d-date">Dispatched on</label><input class="input" id="d-date" type="date"></div>
+              <div class="field"><label for="d-transporter">Transporter</label><input class="input" id="d-transporter"></div>
+              <div class="field"><label for="d-docket">LR or docket number</label><input class="input mono" id="d-docket"></div>
+              <div class="field"><label for="d-vehicle">Vehicle number</label><input class="input mono" id="d-vehicle"></div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3>Installation</h3><p>The installation date starts the 12 month warranty.</p>
+            <div class="form-grid">
+              <div class="field"><label for="i-date">Installation date</label><input class="input" id="i-date" type="date"><span class="hint" id="i-hint"></span></div>
+              <div class="field"><label for="i-engineer">Engineer</label><select class="select" id="i-engineer"></select></div>
+              <div class="field full"><label for="i-site">Site</label><input class="input" id="i-site" readonly></div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3>Commissioning report</h3><p>Complete every check before the machine joins the register.</p>
+            <div class="form-grid">
+              <div class="field"><label for="c-date">Commissioned on</label><input class="input" id="c-date" type="date"></div>
+              <div class="field"><label for="c-signed">Customer sign off by</label><input class="input" id="c-signed"></div>
+              <div class="field full"><label for="c-trial">Trial run</label><input class="input" id="c-trial"></div>
+              <div class="field full"><span class="label">Checks</span><div class="stack-sm" id="checks"></div></div>
+            </div>
+            <div class="file-row" style="margin-top:14px"><span class="thumb"><svg class="ic"><use href="#ph-file-pdf"/></svg></span>
+              <span class="grow"><b>Commissioning report, signed.pdf</b><br><small class="muted">Uploaded by Sandeep Yadav from the app</small></span><span class="tag green">Done</span></div>
+          </section>
+        </div>
+      </form>
+
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Machine to create</h3></div>
+          <div class="card-body stack-sm">
+            <div class="who"><span class="thumb"><svg class="ic"><use href="#ph-factory"/></svg></span><span><b id="m-model"></b><small class="mono" data-serial></small></span></div>
+            <dl class="dl"><dt>Customer</dt><dd id="m-company"></dd><dt>Site</dt><dd id="m-site"></dd><dt>Order</dt><dd class="mono" id="m-order"></dd></dl></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Warranty</h3></div>
+          <div class="card-body"><dl class="dl"><dt>Starts</dt><dd id="w-start"></dd><dt>Ends</dt><dd id="w-end"></dd><dt>Length</dt><dd>12 months</dd></dl></div></section>
+      </aside>
+    </div>
+
+    <div class="form-bar" data-when="ready">
+      <span class="grow" id="bar-hint"></span>
+      <button class="btn btn-secondary" type="button" data-busy data-toast="Saved">Save</button>
+      <button class="btn btn-primary" type="button" id="create-btn" data-open="create">Create machine record</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-title"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:120px"></span></div>
+    </div>
+  </div>
+</main>
+
+<!-- F9 step 5: the machine record and the app invitation -->
+<div class="overlay center" id="create" hidden>
+  <div class="modal" role="dialog" aria-labelledby="create-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-factory"/></svg></span>
+      <div class="grow"><h2 id="create-title"></h2><p>The order moves to Commissioned and the warranty starts.</p></div></div>
+    <div class="modal-body stack">
+      <dl class="dl" id="create-summary"></dl>
+      <label class="check"><input type="checkbox" id="invite" checked> <span id="invite-label"></span></label>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="edit-first" href="#D303">Edit in Add machine</a><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="create-go">Create machine</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready created loading error" data-mobile="../../../screens/customer/C201-machines.html">
+  <div><h3>What it is</h3><p>Dispatch, installation and the commissioning report of a machine order. Opens with <code>?o=ORD-2026-0214</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Record dispatch and installation details.</li><li>Complete the commissioning checks; untick one to see Create disabled.</li><li>Create the machine record and invite the customer (Created).</li></ul></div>
+  <div><h3>What happens next</h3><p>The machine appears in the register (D301) and in the customer's app; Edit in Add machine opens D303 prefilled.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The installation date starts the 12 month warranty unless the order says otherwise.</li><li>Change the date to see the warranty move.</li><li>Flow F9 step 5. A serial already in the register is blocked (EC-A36).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const o = q.order(new URLSearchParams(location.search).get('o') || 'ORD-2026-0214');
+  const who = q.party(o);
+  const site = r.site(o.company, o.site);
+  const [model, serial] = o.machines[0];
+  const dispatch = o.dispatch ?? { date: '', transporter: '', docket: '', vehicle: '' };
+  const install = o.install ?? { date: '', engineer: 'sandeep', commissioned: '', trial: '', signedBy: '' };
+
+  document.title = `Zixom Admin - ${o.number} dispatch and installation`;
+  $('crumb-order').textContent = o.number;
+  $('crumb-order').setAttribute('href', ZXA.href('D1211', `?o=${o.number}`));
+  $('number').textContent = o.number;
+  $('chips').innerHTML = `${q.stageTag(o.stage)}${q.lateTag(o)}`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${r.esc(who.name)}</span><span>${ic('factory')}${r.esc(model)}</span><span>${ic('map-pin')}${r.esc(site.name)}</span>`;
+  if (o.late) { $('late-banner').hidden = false; $('late-text').innerHTML = `<b>Commissioning was due ${r.date(o.expected)}.</b> ${r.esc(o.lateReason)}`; }
+
+  $('d-date').value = dispatch.date;
+  $('d-transporter').value = dispatch.transporter;
+  $('d-docket').value = dispatch.docket;
+  $('d-vehicle').value = dispatch.vehicle;
+  $('i-date').value = install.date;
+  $('i-engineer').innerHTML = ZX.data.engineers.map((e) => `<option value="${e.id}" ${e.id === install.engineer ? 'selected' : ''}>${e.name}, ${e.region}</option>`).join('');
+  $('i-site').value = `${site.name}, ${site.address}, ${site.pincode}`;
+  $('c-date').value = install.commissioned;
+  $('c-signed').value = install.signedBy;
+  $('c-trial').value = install.trial;
+  $('checks').innerHTML = ['Power, earthing and rotation checked', 'Safety guards and emergency stop tested', 'Trial run with the customer\'s material',
+    'Two operators trained', 'Manual and spare parts list handed over'].map((c) => `<label class="check"><input type="checkbox" data-check checked> ${c}</label>`).join('');
+
+  document.querySelectorAll('[data-serial]').forEach((el) => { el.textContent = serial; });
+  $('m-model').textContent = model;
+  $('m-company').textContent = who.name;
+  $('m-site').textContent = site.name;
+  $('m-order').textContent = o.number;
+  $('create-title').textContent = `Add ${serial} to the register?`;
+  $('invite-label').textContent = `Tell ${who.contact.name} it is in the app; invite people at ${site.name} who are not in the app yet`;
+  $('edit-first').setAttribute('href', ZXA.href('D303', `?serial=${serial}&order=${o.number}`));
+
+  /* warranty: 12 months from the installation date, ending the day before */
+  const warranty = () => {
+    const start = $('i-date').value;
+    if (!start) return null;
+    const end = new Date(`${start}T00:00:00`);
+    end.setFullYear(end.getFullYear() + 1);
+    end.setDate(end.getDate() - 1);
+    return [start, `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`];
+  };
+  const sync = () => {
+    const w = warranty();
+    $('w-start').textContent = w ? r.date(w[0]) : 'Set the installation date';
+    $('w-end').textContent = w ? r.date(w[1]) : '–';
+    $('i-hint').textContent = w ? `Warranty ${r.date(w[0])} to ${r.date(w[1])}` : 'Required';
+    document.querySelector('[data-warranty-text]').textContent = w ? `Warranty ${r.date(w[0])} to ${r.date(w[1])}.` : '';
+    const complete = [...document.querySelectorAll('[data-check]')].every((c) => c.checked) && w && $('c-date').value && $('c-signed').value.trim();
+    $('create-btn').disabled = !complete;
+    $('bar-hint').textContent = complete ? 'Commissioning complete. Ready to add to the register.' : 'Complete the commissioning checks to create the machine.';
+    $('create-summary').innerHTML = `<dt>Serial</dt><dd class="mono">${serial}</dd><dt>Model</dt><dd>${r.esc(model)}</dd><dt>Customer</dt><dd>${r.esc(who.name)}, ${r.esc(site.name)}</dd>
+      <dt>Installed</dt><dd>${w ? r.date(w[0]) : '–'}</dd><dt>Warranty</dt><dd>${w ? `${r.date(w[0])} to ${r.date(w[1])}` : '–'}</dd>`;
+  };
+  document.querySelector('form').addEventListener('input', sync);
+  document.querySelector('form').addEventListener('change', sync);
+  $('create-go').addEventListener('click', () => {
+    document.querySelector('[data-invite-text]').textContent = $('invite').checked ? `${who.contact.name} was told in the app.` : '';
+    ZXA.ui.closeOverlay($('create'));
+    ZXA.ui.setState('created');
+    ZXA.ui.toast(`${serial} added to the register`);
+  });
+  sync();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

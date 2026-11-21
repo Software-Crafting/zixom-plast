@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1204 Product list</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-quotations.css">
+</head>
+<body class="adm" data-page="D1204">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1201">Quotations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Products</span></nav>
+      <h1>Products</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-primary" type="button" data-open="edit" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add product</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Machine">Machines <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Mould">Moulds <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Plant">Plants <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Service">Services <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#products"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Model, family or specification" aria-label="Search products"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="products">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Product</th><th class="sortable">Kind</th><th>Specification</th><th class="sortable num">Base rate</th>
+            <th class="num">GST</th><th>Options</th><th>Brochure</th><th class="sortable num">Used in</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-factory"/></svg></span>
+        <h3>No products yet</h3><p>Machines, moulds and services you quote appear here.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="edit">Add product</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Product</th><th>Kind</th><th>Specification</th><th>Base rate</th><th>Used in</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="products" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Excel file downloaded">Export</button>
+    <button class="btn" type="button" data-open="archive">Archive</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close data-open="archive" id="quick-archive">Archive</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-open="edit">Edit</button></div>
+  </div>
+</div>
+
+<!-- add or edit -->
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit product</h2><p>Changes apply to new quotations. Sent quotations keep their prices.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="e-name">Name</label><input class="input" id="e-name" maxlength="80"></div>
+        <div class="field"><label for="e-code">Model code</label><input class="input mono" id="e-code" maxlength="12"></div>
+        <div class="field"><label for="e-family">Family</label><select class="select" id="e-family"></select></div>
+        <div class="field"><label for="e-kind">Kind</label><select class="select" id="e-kind"><option>Machine</option><option>Mould</option><option>Plant</option><option>Service</option></select></div>
+        <div class="field full"><label for="e-spec">Specification summary</label><textarea class="textarea" id="e-spec" maxlength="300"></textarea><span class="hint">Printed under the line in the quotation.</span></div>
+        <div class="field"><label for="e-rate">Base rate</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="e-rate" inputmode="decimal"></div><span class="hint">Before GST</span></div>
+        <div class="field"><label for="e-gst">GST rate</label><select class="select" id="e-gst"><option>0%</option><option>5%</option><option>12%</option><option selected>18%</option><option>28%</option></select></div>
+        <div class="field"><label for="e-hsn">HSN or SAC</label><input class="input mono" id="e-hsn" maxlength="8"><span class="hint">4 to 8 digits</span></div>
+      </div>
+      <div class="field"><span class="label">Options</span>
+        <div class="table-wrap no-top"><table class="table compact" id="e-options"><thead><tr><th>Option</th><th class="num">Rate</th><th class="actions"></th></tr></thead><tbody></tbody></table></div>
+        <div><button class="btn btn-sm btn-ghost" type="button" data-toast="Option row added"><svg class="ic"><use href="#ph-plus"/></svg>Add option</button></div></div>
+      <div class="field"><span class="label">Brochure</span><div id="e-brochure"></div>
+        <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop a PDF brochure here</b>PDF up to 10 MB. Attached to quotations automatically.</div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Saved">Save</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Family</span><div class="row wrap" data-chips id="f-family"></div></div>
+      <label class="check"><input type="checkbox"> Without a brochure only</label>
+      <label class="check"><input type="checkbox"> Not used in any quotation</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show products</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="archive-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="archive-title">Archive this product?</h2><p>It is hidden from new quotations. Quotations and orders that use it keep it.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep product</button><button class="btn btn-danger" type="button" data-close data-toast="Product archived">Archive</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="products"> Specification</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="products"> Options</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="products"> Brochure</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</a>
+  <a href="#D1521"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>The machine and product master quotations are built from: specification, options, base rate, GST and brochure.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter and switch views by kind.</li><li>Click a row for details; Add or Edit in a drawer.</li><li>Archive products you no longer sell.</li></ul></div>
+  <div><h3>What happens next</h3><p>Products appear in the picker of Create quotation (D1202). Spare parts live in the parts catalogue (D801).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Used by quotations: archive hides it from new ones only.</li><li>GST 0, 5, 12, 18 or 28 percent; HSN or SAC 4 to 8 digits.</li><li>Website store is Phase 2.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const products = ZXA.data.products;
+  const usedIn = (code) => ZXA.data.quotations.filter((x) => x.lines.some(([c]) => c === code)).length
+    + ZXA.data.orders.filter((o) => o.lines.some(([c]) => c === code)).length;
+  const families = [...new Set(products.map((p) => p.family))];
+  const active = products.filter((p) => p.status === 'active');
+  document.getElementById('head-sub').textContent = `${active.length} active · ${families.length} families · GST 18%`;
+
+  document.querySelector('#products tbody').innerHTML = products.map((p) => `<tr data-drawer="quick" data-code="${p.code}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.code}"></label></td>
+    <td><b class="clip">${r.esc(p.name)}</b><span class="sub mono">${p.code} · ${p.family}</span></td>
+    <td>${r.tag(p.kind, p.kind === 'Machine' ? 'blue' : '')}${p.status === 'archived' ? r.tag('Archived', 'outline') : ''}</td>
+    <td><span class="clip">${r.esc(p.spec)}</span></td>
+    <td class="num" data-sort="${String(p.rate).padStart(9, '0')}">${q.money(p.rate)}</td>
+    <td class="num">${p.gst}%</td>
+    <td>${p.options.length ? `${p.options.length} options` : '<span class="faint">None</span>'}</td>
+    <td>${p.brochure ? `<span class="row">${r.icon('file-pdf')}PDF</span>` : '<span class="faint">None</span>'}</td>
+    <td class="num">${usedIn(p.code)}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="Edit ${p.code}" data-open="edit" data-edit="${p.code}"><svg class="ic"><use href="#ph-pencil-simple"/></svg></button></td>
+  </tr>`).join('');
+
+  const VIEWS = { active: (p) => p.status === 'active', archived: (p) => p.status === 'archived' };
+  const matches = (key, p) => (VIEWS[key] ? VIEWS[key](p) : p.status === 'active' && p.kind === key);
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#products tbody tr')];
+    rows.forEach((row) => { row.hidden = !matches(key, q.product(row.dataset.code)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = products.filter((p) => matches(tab.dataset.view, p)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('active');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+  document.getElementById('f-family').innerHTML = families.map((f) => `<button class="chip" type="button" aria-pressed="false">${f}</button>`).join('');
+  document.getElementById('e-family').innerHTML = families.map((f) => `<option>${f}</option>`).join('');
+
+  /* the edit drawer fills from the product, or empties for a new one */
+  const fill = (p) => {
+    const $ = (id) => document.getElementById(id);
+    $('edit-title').textContent = p ? `Edit ${p.name}` : 'Add product';
+    $('e-name').value = p?.name ?? '';
+    $('e-code').value = p?.code ?? '';
+    $('e-family').value = p?.family ?? families[0];
+    $('e-kind').value = p?.kind ?? 'Machine';
+    $('e-spec').value = p?.spec ?? '';
+    $('e-rate').value = p ? p.rate.toLocaleString('en-IN') : '';
+    $('e-hsn').value = p?.hsn ?? '8477';
+    $('e-options').tBodies[0].innerHTML = (p?.options ?? []).map(([name, rate]) => `<tr><td><input class="input sm" value="${r.esc(name)}" aria-label="Option name"></td>
+      <td class="num"><input value="${rate.toLocaleString('en-IN')}" inputmode="decimal" aria-label="Option rate" class="input sm money-in"></td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="Remove option" data-toast="Option removed"><svg class="ic"><use href="#ph-trash"/></svg></button></td></tr>`).join('')
+      || '<tr><td colspan="3" class="faint">No options</td></tr>';
+    $('e-brochure').innerHTML = p?.brochure ? `<div class="file-row"><span class="thumb">${r.icon('file-pdf')}</span><span class="grow"><b>${p.brochure}</b><br><small class="muted">2.4 MB</small></span>
+      <button class="btn btn-sm btn-ghost" type="button" data-toast="Brochure removed">Remove</button></div>` : '';
+  };
+  let current = null;
+  document.addEventListener('click', (event) => {
+    const edit = event.target.closest('[data-edit]');
+    if (edit) fill(q.product(edit.dataset.edit));
+    if (event.target.closest('[data-new]')) fill(null);
+    if (event.target.closest('#quick [data-open="edit"]')) fill(current);
+    if (event.target.closest('#quick-archive')) document.getElementById('archive-title').textContent = `Archive ${current.name}?`;
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = q.product(event.detail.dataset.code);
+    current = p;
+    document.getElementById('quick-title').textContent = p.name;
+    document.getElementById('quick-sub').textContent = `${p.code} · ${p.family}`;
+    document.getElementById('quick-archive').hidden = p.status === 'archived';
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(p.kind, p.kind === 'Machine' ? 'blue' : '')}${r.tag(p.status === 'active' ? 'Active' : 'Archived', p.status === 'active' ? 'green' : 'outline')}</div>
+      <p>${r.esc(p.spec)}</p>
+      <dl class="dl"><dt>Base rate</dt><dd>${q.money(p.rate)}<br><span class="muted">${q.money(p.rate * (1 + p.gst / 100))} with GST ${p.gst}%</span></dd>
+        <dt>HSN or SAC</dt><dd class="mono">${p.hsn}</dd><dt>Brochure</dt><dd>${p.brochure || '<span class="faint">None</span>'}</dd>
+        <dt>Used in</dt><dd>${usedIn(p.code)} quotations and orders</dd></dl>
+      ${p.options.length ? `<div><h3 style="font-size:15px; margin-bottom:6px">Options</h3><ul class="mini">${p.options.map(([name, rate]) => `<li><span class="grow"><b>${r.esc(name)}</b></span><span class="end">${q.money(rate)}</span></li>`).join('')}</ul></div>` : ''}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

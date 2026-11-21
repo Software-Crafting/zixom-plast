@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1503 Scheduled reports</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1503" data-nav="D1501">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Scheduled reports</h1><p>4 schedules · 3 active · 1 failed last time</p></div>
+    <button class="btn btn-primary" type="button" data-open="add"><svg class="ic"><use href="#ph-plus"/></svg>Add schedule</button>
+  </div>
+
+  <div data-when="ready no-results">
+    <div class="banner red" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>Quotation pipeline was not sent on Fri 20 Nov.</b> sales@zixom.in: mailbox does not exist.</span>
+      <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-open="add">Edit recipients</button><button class="btn btn-sm btn-primary" type="button" data-busy data-toast="Sent to admin@zixom.in. sales@zixom.in failed again">Retry</button></span></div>
+
+    <section class="card list-card">
+      <div class="toolbar">
+        <label class="search" data-filter="#schedules"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Name, report or email" aria-label="Search schedules"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="schedules">
+          <thead><tr><th class="sortable">Schedule</th><th class="sortable">Repeats</th><th>Send to</th><th>Format</th><th class="sortable">Status</th><th class="sortable">Last sent</th><th>Next</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span>1 to 4 of 4</span></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:100%; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Schedule</th><th>Repeats</th><th>Send to</th><th>Status</th><th>Last sent</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-calendar-check"/></svg></span>
+      <h3>No scheduled reports yet</h3><p>Reports you schedule are emailed with your filters.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-open="add">Add schedule</button></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="add" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="add-title">
+    <div class="drawer-head"><div class="grow"><h2 id="add-title">Add schedule</h2><p>The report is sent with the filters of its saved view.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field full"><label for="a-name">Name</label><input class="input" id="a-name" value="Weekly AMC renewals"></div>
+      <div class="field full"><label for="a-report">Report</label><select class="select" id="a-report"></select></div>
+      <div class="field"><label for="a-every">Repeat</label><select class="select" id="a-every"><option>Every day</option><option selected>Every week</option><option>Every month</option></select></div>
+      <div class="field"><label for="a-day">Day</label><select class="select" id="a-day"><option>Monday</option><option>Friday</option></select></div>
+      <div class="field"><label for="a-time">Time</label><input class="input" id="a-time" type="time" value="09:00"><span class="hint">IST</span></div>
+      <div class="field"><label for="a-format">Format</label><select class="select" id="a-format"><option>PDF</option><option>Excel (.xlsx)</option></select></div>
+      <div class="field full"><label for="a-to">Send to</label><input class="input" id="a-to" type="email" multiple value="admin@zixom.in"><span class="hint">Separate addresses with commas</span></div>
+    </div></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Schedule saved">Save schedule</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">Active</button>
+        <button class="chip" type="button" aria-pressed="false">Paused</button><button class="chip" type="button" aria-pressed="false">Last send failed</button></div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
+  </div>
+</div>
+
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Report sent now"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Send now</button>
+  <button type="button" data-open="add"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <button type="button" data-pause><svg class="ic"><use href="#ph-pause"/></svg><span>Pause</span></button>
+  <hr><button class="danger" type="button" data-open="delete"><svg class="ic"><use href="#ph-trash"/></svg>Delete</button>
+</div>
+
+<div class="overlay center" id="delete" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="del-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="del-title">Delete this schedule?</h2><p id="del-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep schedule</button><button class="btn btn-danger" type="button" data-close data-toast="Schedule deleted">Delete schedule</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Reports emailed on a schedule.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a schedule for any report.</li><li>Pause, resume, send now, edit or delete from the row menu.</li><li>Retry a failed send.</li></ul></div>
+  <div><h3>What happens next</h3><p>The email carries the report as PDF or Excel. Reports (D1501), Report view (D1502).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed emails show a red banner and a Failed tag with the reason.</li><li>Paused schedules keep their settings.</li><li>Emails come from a Zixom address (EC-A27).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/reports.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const reports = ZXA.data.reportLibrary.flatMap((g) => g.reports);
+  const title = (key) => reports.find((x) => x.key === key).title;
+  document.querySelector('#schedules tbody').innerHTML = ZXA.data.schedules.map((s) => `<tr data-href="D1502?r=${s.report}" data-name="${s.name}" data-status="${s.status}">
+    <td><b>${s.name}</b><span class="sub">${title(s.report)}</span></td>
+    <td class="nowrap">${s.when}</td>
+    <td>${s.to.join('<br>')}</td>
+    <td>${s.format}</td>
+    <td>${s.status === 'paused' ? r.tag('Paused') : r.tag('Active', 'green')}</td>
+    <td class="nowrap" data-sort="${s.last}">${s.lastOk ? `<span class="sla ok">${r.icon('check-circle')}Sent</span>` : `<span class="sla breach">${r.icon('warning-circle')}Failed</span>`}
+      <span class="sub">${r.dayDate(s.last)}, ${r.time(s.last)}</span></td>
+    <td class="nowrap">${s.next}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`).join('');
+  document.getElementById('a-report').innerHTML = reports.map((x) => `<option>${x.title}</option>`).join('');
+  document.getElementById('sk-rows').innerHTML = '<tr><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td></tr>'.repeat(4);
+
+  /* the row menu acts on the row it was opened from */
+  let row = null;
+  document.addEventListener('click', (event) => {
+    const dots = event.target.closest('[data-menu="row-menu"]');
+    if (dots) {
+      row = dots.closest('tr');
+      document.getElementById('del-text').textContent = `${row.dataset.name} stops at once. Recipients are not told.`;
+      document.querySelector('[data-pause] span').textContent = row.dataset.status === 'paused' ? 'Resume' : 'Pause';
+    }
+    if (event.target.closest('[data-pause]') && row) {
+      const paused = row.dataset.status !== 'paused';
+      row.dataset.status = paused ? 'paused' : 'active';
+      row.children[4].innerHTML = paused ? r.tag('Paused') : r.tag('Active', 'green');
+      ZXA.ui.toast(paused ? `${row.dataset.name} paused` : `${row.dataset.name} resumed`);
+    }
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

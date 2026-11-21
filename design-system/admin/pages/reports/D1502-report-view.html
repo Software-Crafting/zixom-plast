@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1502 Report view</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1502">
+<main class="content">
+  <div data-when="ready loading background empty">
+    <div class="page-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1501">Reports</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <h1 id="title"></h1><p><span id="sub"></span> · Updated 12:00 PM</p>
+      </div>
+      <button class="btn btn-ghost" type="button" data-toast="View saved"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+      <button class="btn btn-secondary" type="button" data-open="schedule"><svg class="ic"><use href="#ph-calendar-check"/></svg>Schedule</button>
+      <button class="btn btn-primary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    </div>
+  </div>
+
+  <div data-when="background" style="margin-bottom:16px">
+    <div class="banner amber center"><svg class="ic"><use href="#ph-hourglass"/></svg>
+      <span class="grow"><b>This report is large and runs in the background.</b> You get a notification when it is ready. You can leave this page.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1520">Open exports</a></span></div>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="card">
+      <div class="toolbar">
+        <select class="select sm" aria-label="Date range" style="width:auto"><option>Last 30 days</option><option>Last 7 days</option><option>This month</option><option>This financial year</option><option>All time</option></select>
+        <select class="select sm" aria-label="Group by" id="group-by" style="width:auto" hidden></select>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+        <span class="grow"></span><span class="legend" id="legend"></span>
+      </div>
+      <div class="applied-row"><span class="chip applied">Region: <b>Ahmedabad, Pune</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+        <button class="btn-link btn" type="button" data-toast="Filters cleared">Clear all</button></div>
+      <div class="card-body" data-when="ready"><div class="chart tall"><canvas id="chart"></canvas></div></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-filter-x"/></svg></span>
+        <h3>No data for these filters</h3><p>Try a longer date range or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Filters cleared">Clear filters</button></div></div>
+    </section>
+
+    <section class="card list-card" style="margin-top:16px" data-when="ready">
+      <div class="toolbar">
+        <label class="search" data-filter="#rows"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search rows" aria-label="Search rows"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="rows"><thead></thead><tbody></tbody><tfoot></tfoot></table>
+        <div class="state" data-noresults hidden><h3>No matching results</h3><div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+    </section>
+  </div>
+
+  <div data-when="loading background">
+    <div class="card pad stack"><span class="sk" style="width:340px; max-width:100%; height:36px; border-radius:999px"></span><span class="sk sk-block" style="height:280px"></span></div>
+    <div class="card pad stack" style="margin-top:16px"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span><span class="sk sk-line"></span></div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D1501">Back to reports</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-25"></div>
+        <div class="field"><label for="f-to">To</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option>Ahmedabad, Pune</option><option>Ahmedabad</option><option>Pune</option></select></div>
+        <div class="field"><label for="f-customer">Customer</label><select class="select" id="f-customer"><option>All customers</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>All engineers</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+        <div class="field"><label for="f-series">Machine series</label><select class="select" id="f-series"><option>All series</option><option>AFM thermoforming</option><option>CFM cup forming</option><option>SVF vacuum forming</option><option>BSM blister sealing</option><option>PCR crushers</option></select></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="schedule" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="schedule-title">
+    <div class="drawer-head"><div class="grow"><h2 id="schedule-title">Schedule an email</h2><p>Sent with the filters on this page.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="s-every">Repeat</label><select class="select" id="s-every"><option>Every day</option><option selected>Every week</option><option>Every month</option></select></div>
+      <div class="field"><label for="s-time">Time</label><input class="input" id="s-time" type="time" value="08:00"><span class="hint">IST</span></div>
+      <div class="field"><label for="s-format">Format</label><select class="select" id="s-format"><option>PDF</option><option>Excel (.xlsx)</option></select></div>
+      <div class="field full"><label for="s-to">Send to</label><input class="input" id="s-to" type="email" multiple value="admin@zixom.in"></div>
+    </div></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Schedule saved">Save schedule</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>PDF</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty background not-found error">
+  <div><h3>What it is</h3><p>One report: chart, then a table with totals. Opens with <code>?r=tickets</code>; try <code>?r=payments</code> or <code>?r=quotations</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by date, region, customer, engineer and series.</li><li>Tickets: group by status, severity, engineer, region or age.</li><li>Click a row to open the matching records.</li><li>Export to Excel or PDF, save the view, schedule an email.</li></ul></div>
+  <div><h3>What happens next</h3><p>Drill down to the list (D401, D901, D1201, D1210 and others), Scheduled reports (D1503), Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Large reports run in the background and land in Exports (EC-A34).</li><li>The table is the chart's text alternative.</li><li>No data for the filters: Clear filters.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/reports.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const params = new URLSearchParams(location.search);
+  const key = params.get('r') || 'tickets';
+  const report = ZXA.data.reportLibrary.flatMap((g) => g.reports).find((x) => x.key === key);
+  if (!report) { document.body.dataset.state = 'not-found'; return; }
+
+  /* tickets: computed from the ticket list, grouped by the chosen field */
+  if (key === 'tickets') {
+    const AGE = (t) => { const d = -r.daysFromToday(t.created); return d < 1 ? 'Under 1 day' : d <= 3 ? '1 to 3 days' : d <= 7 ? '4 to 7 days' : 'Over 7 days'; };
+    const BY = {
+      status: ['Status', (t) => r.ticketLabel(t.status)], severity: ['Severity', (t) => ({ down: 'Machine down', production: 'Production affected', minor: 'Minor' }[t.severity] || 'Not set')],
+      engineer: ['Engineer', (t) => (t.engineer ? r.engineer(t.engineer).name : 'Unassigned')], region: ['Region', (t) => r.company(t.company).city], age: ['Age', AGE],
+    };
+    const by = BY[params.get('by')] ? params.get('by') : 'status';
+    const open = r.tickets.filter(r.isOpen);
+    const counts = {};
+    open.forEach((t) => { const label = BY[by][1](t); counts[label] = (counts[label] || 0) + 1; });
+    Object.assign(report, { chart: 'bar', unit: 'n', dim: BY[by][0], labels: Object.keys(counts), series: [{ label: 'Open tickets', data: Object.values(counts) }] });
+    const select = document.getElementById('group-by');
+    select.hidden = false;
+    select.innerHTML = Object.entries(BY).map(([k, [label]]) => `<option value="${k}" ${k === by ? 'selected' : ''}>By ${label.toLowerCase()}</option>`).join('');
+    select.addEventListener('change', () => ZXA.ui.go(`D1502?r=tickets&by=${select.value}`));
+  }
+
+  document.title = `Zixom Admin - ${report.title}`;
+  document.getElementById('crumb').textContent = report.title;
+  document.getElementById('title').textContent = report.title;
+  document.getElementById('sub').textContent = report.sub;
+
+  const fmt = (v) => ({ money: r.money(v), pct: `${v}%`, h: `${v} h` }[report.unit] ?? String(v));
+  const total = (data) => {
+    const sum = data.reduce((a, b) => a + b, 0);
+    return ['pct', 'h'].includes(report.unit) ? Math.round((sum / data.length) * 10) / 10 : sum;
+  };
+  const series = report.series.filter((s) => !s.target);
+  document.querySelector('#rows thead').innerHTML = `<tr><th class="sortable">${report.dim || 'Group'}</th>
+    ${series.map((s) => `<th class="sortable num">${s.label}</th>`).join('')}</tr>`;
+  document.querySelector('#rows tbody').innerHTML = report.labels.map((label, i) => `<tr data-href="${report.drill}">
+    <td><b>${label}</b></td>${series.map((s) => `<td class="num" data-sort="${s.data[i]}">${fmt(s.data[i])}</td>`).join('')}</tr>`).join('');
+  document.querySelector('#rows tfoot').innerHTML = `<tr><td>${['pct', 'h'].includes(report.unit) ? 'Average' : 'Total'}</td>
+    ${series.map((s) => `<td class="num">${fmt(total(s.data))}</td>`).join('')}</tr>`;
+
+  report.colors = ['slate', 'blue', 'sky', 'amber', 'green', 'red'];
+  ZXA.report = report;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script src="../../assets/vendor/chart.umd.js"></script>
+<script>
+(() => {
+  const report = ZXA.report;
+  if (!report) return;
+  const c = ZXA.colors;
+  const tones = report.colors.map((k) => c[k]);
+  const doughnut = report.chart === 'doughnut';
+  const datasets = report.series.map((s, i) => (s.target
+    ? { label: s.label, data: s.data, borderColor: c.red, borderDash: [5, 5], pointRadius: 0, borderWidth: 1.5 }
+    : { label: s.label, data: s.data, backgroundColor: doughnut ? tones : tones[i], borderColor: tones[i], borderRadius: doughnut ? 0 : 6,
+      maxBarThickness: report.chart === 'bar' && report.labels.length > 6 ? 16 : 32, tension: .35, pointRadius: 0, borderWidth: report.chart === 'line' ? 2 : 0 }));
+  const legend = doughnut ? report.labels.map((l, i) => [l, tones[i]]) : report.series.map((s, i) => [s.label, s.target ? c.red : tones[i]]);
+  document.getElementById('legend').innerHTML = legend.map(([l, col]) => `<span><i style="--c:${col}"></i>${l}</span>`).join('');
+  const money = report.unit === 'money';
+  /* long category names read better as horizontal bars */
+  const flip = report.chart === 'bar' && (report.labels.length > 6 || report.labels.some((l) => l.length > 12));
+  const valueTicks = { callback: (v) => (money ? ZXA.r.moneyShort(v) : v), ...(report.unit === 'n' ? { stepSize: 1 } : {}) };
+  ZXA.chart(document.getElementById('chart'), {
+    type: report.chart,
+    data: { labels: report.labels, datasets },
+    options: {
+      onClick: () => ZXA.ui.go(report.drill),
+      interaction: { mode: 'index', intersect: false },
+      ...(doughnut ? { cutout: '62%', scales: false } : flip
+        ? { indexAxis: 'y', scales: { x: { grid: { color: c.grid }, beginAtZero: true, ticks: valueTicks }, y: { grid: { display: false }, ticks: { autoSkip: false } } } }
+        : { scales: { x: { ticks: { maxTicksLimit: 10, maxRotation: 0 } }, y: { ticks: valueTicks } } }),
+      plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${money ? ZXA.r.money(ctx.raw) : ctx.raw}` } } },
+    },
+  });
+})();
+</script>
+</body>
+</html>

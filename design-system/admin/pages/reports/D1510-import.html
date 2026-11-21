@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1510 Import</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-reports.css">
+</head>
+<body class="adm" data-page="D1510">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Import</h1><p>Bring existing Excel data in. Up to 5 MB or 10,000 rows per file.</p></div>
+    <a class="btn btn-secondary" href="#D1511"><svg class="ic"><use href="#ph-history"/></svg>Import history</a>
+  </div>
+
+  <section class="card wizard" data-when="ready upload wrong-file map review importing done failed large">
+    <ol class="steps" id="steps"></ol>
+
+    <!-- 1 choose type -->
+    <div data-when="ready">
+      <div class="step-body stack">
+        <div><h2 style="font-size:16px">What are you importing?</h2><p class="muted" style="font-size:13px">Start from the template so the columns match.</p></div>
+        <div class="choices" style="grid-template-columns:repeat(4, minmax(0, 1fr))" id="types"></div>
+        <div class="row wrap"><button class="btn btn-secondary btn-sm" type="button" data-toast="zixom_machines_template.xlsx downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download machines template</button>
+          <span class="muted" style="font-size:13px">Machines need an existing company code (ZP-C-NNNN).</span></div>
+      </div>
+      <div class="card-foot"><a class="btn btn-ghost" href="#D1501">Cancel</a><button class="btn btn-primary" type="button" data-step="upload">Next</button></div>
+    </div>
+
+    <!-- 2 upload -->
+    <div data-when="upload wrong-file">
+      <div class="step-body stack">
+        <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop an XLSX or CSV here</b>Up to 5 MB or 10,000 rows
+          <button class="btn btn-secondary btn-sm" type="button" style="margin-top:6px">Choose file</button></div>
+        <div class="field" data-when="wrong-file"><span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>machines_list.pdf is not an XLSX or CSV file. Save it from Excel as .xlsx and upload again.</span></div>
+        <div class="file-row" data-when="upload"><span class="thumb"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span>
+          <span class="grow"><b>nova_chakan_machines.xlsx</b><small class="muted"> · 184 KB · 12 rows</small><span class="progress green"><span style="width:100%"></span></span></span>
+          <span class="tag green">Uploaded</span></div>
+        <div class="form-grid" data-when="upload">
+          <div class="field"><label for="u-sheet">Sheet</label><select class="select" id="u-sheet"><option>Machines</option><option>Notes</option></select></div>
+          <div class="field"><label for="u-header">Header row</label><select class="select" id="u-header"><option>Row 1</option><option selected>Row 2</option><option>Row 3</option></select>
+            <span class="hint">Row 1 looks like a title, so row 2 is used.</span></div>
+        </div>
+      </div>
+      <div class="card-foot"><button class="btn btn-ghost" type="button" data-step="ready">Back</button><button class="btn btn-primary" type="button" data-step="map">Next</button></div>
+    </div>
+
+    <!-- 3 map columns -->
+    <div data-when="map">
+      <div class="step-body stack">
+        <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>6 of 7 columns matched by name.</b> Unmapped columns are ignored.</span></div>
+        <div class="table-wrap no-top"><table class="table compact">
+          <thead><tr><th>Column in your file</th><th>Sample</th><th>Zixom field</th><th></th></tr></thead>
+          <tbody id="mapping"></tbody></table></div>
+      </div>
+      <div class="card-foot"><button class="btn btn-ghost" type="button" data-step="upload">Back</button><button class="btn btn-primary" type="button" data-step="review" data-busy>Validate</button></div>
+    </div>
+
+    <!-- 4 review -->
+    <div data-when="review">
+      <div class="step-body stack">
+        <div class="kpis" style="margin:0">
+          <div class="card kpi"><span class="label">Valid</span><span class="value green-text">7</span><span class="foot">ready to import</span></div>
+          <div class="card kpi"><span class="label">Warnings</span><span class="value amber-text">2</span><span class="foot">imported as cleaned</span></div>
+          <div class="card kpi"><span class="label">Match existing</span><span class="value">1</span><span class="foot">see duplicates below</span></div>
+          <div class="card kpi alert"><span class="label">Errors</span><span class="value">2</span><span class="foot">not imported</span></div>
+        </div>
+        <div class="table-wrap no-top"><table class="table compact">
+          <thead><tr><th class="num">Row</th><th>Serial</th><th>Result</th><th>Message</th></tr></thead>
+          <tbody id="review-rows"></tbody></table></div>
+        <div class="field"><span class="label">Rows that match an existing machine</span>
+          <div class="choices" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
+            <label class="choice"><input type="radio" name="dup" class="sr-only"><span><b>Skip</b><small>Keep the existing machine as it is</small></span></label>
+            <label class="choice"><input type="radio" name="dup" class="sr-only" checked><span><b>Update</b><small>Fill in the fields from the file</small></span></label>
+            <label class="choice" style="opacity:.55"><input type="radio" name="dup" class="sr-only" disabled><span><b>Create new</b><small>Not for machines: serials are unique (EC-A36)</small></span></label>
+          </div></div>
+        <label class="check"><input type="checkbox" checked> Dates are DD/MM/YYYY (03/04/2025 is 3 Apr 2025)</label>
+        <label class="switch"><input type="checkbox" disabled><span></span>Create missing companies, off in Settings</label>
+      </div>
+      <div class="card-foot"><button class="btn btn-ghost" type="button" data-step="map">Back</button><span class="grow"></span>
+        <button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows"><svg class="ic"><use href="#ph-download-simple"/></svg>Download error file</button>
+        <button class="btn btn-primary" type="button" data-step="importing">Import 10 rows</button></div>
+    </div>
+
+    <!-- 5 import -->
+    <div data-when="importing large">
+      <div class="step-body stack">
+        <div class="row"><b class="grow" data-when="importing">Importing 7 of 10 rows</b><b class="grow" data-when="large">Importing 1,770 of 9,840 rows in the background</b><span class="muted" id="pct"></span></div>
+        <div class="progress green"><span id="bar"></span></div>
+        <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>You can leave this page.</b> The import keeps running and you get a notification when it is done.</span></div>
+      </div>
+      <div class="card-foot"><a class="btn btn-secondary" href="#D1511">Import history</a><button class="btn btn-primary" type="button" data-step="done" data-when="importing">Show result</button></div>
+    </div>
+
+    <div data-when="done">
+      <div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>Import done</h3><p>9 machines created, 1 updated, 2 rows not imported. Undo is available for 24 hours.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows">Download error file</button><a class="btn btn-primary" href="#D1511">Open import history</a></div></div>
+    </div>
+
+    <div data-when="failed">
+      <div class="state"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+        <h3>Import failed</h3><p>The connection dropped after row 6. No rows were saved.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-step="upload">Upload again</button><button class="btn btn-primary" type="button" data-step="importing">Retry</button></div>
+        <p class="code mono">Request id 3c1e-77a0-90bd</p></div>
+    </div>
+  </section>
+</main>
+
+<aside class="proto" data-states="ready upload wrong-file map review importing done failed large loading error">
+  <div><h3>What it is</h3><p>Five step import wizard. Ready is step 1; each step is a demo state.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose a type and download its template.</li><li>Upload, pick the header row, map columns.</li><li>Review counts and row messages, choose duplicate handling, download the error file.</li><li>Import the valid rows.</li></ul></div>
+  <div><h3>What happens next</h3><p>Import history (D1511), where an import can be undone within 24 hours.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Wrong file type or empty file is refused (EC-A29).</li><li>Row errors with numbers; import valid rows only (EC-A31).</li><li>Duplicates: Skip, Update or Create new (EC-A32).</li><li>Large files run in the background (EC-A33).</li><li>Dates read as DD/MM/YYYY; +91 and spaces cleaned; duplicate serials flagged.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const TYPES = [['Customers', 'Companies and sites'], ['People', 'Customer contacts'], ['Machines', 'Serial, model, site, install date'], ['Spare parts', 'Catalogue and prices'],
+    ['Stock', 'Opening stock per store'], ['Leads', 'Open enquiries'], ['IndiaMART history', 'Past enquiries export']];
+  document.getElementById('types').innerHTML = TYPES.map(([name, sub]) => `<label class="choice"><input type="radio" name="type" class="sr-only" ${name === 'Machines' ? 'checked' : ''}>
+    <span><b>${name}</b><small>${sub}</small></span></label>`).join('');
+
+  const FIELDS = ['Serial number', 'Company code', 'Model', 'Site', 'Installation date', 'Site contact mobile', 'Do not import'];
+  const MAP = [['Serial No', 'ZP-CF-2240', 'Serial number'], ['Customer Code', 'ZP-C-0002', 'Company code'], ['Model', 'CFM-450 Cup Former', 'Model'],
+    ['Plant', 'Chakan unit', 'Site'], ['Install Date', '03/04/2025', 'Installation date'], ['Contact Mobile', '098220 43120', 'Site contact mobile'], ['Remarks', 'Old line', 'Do not import']];
+  document.getElementById('mapping').innerHTML = MAP.map(([col, sample, field]) => `<tr><td><b>${col}</b></td><td class="mono muted">${sample}</td>
+    <td><select class="select sm" aria-label="Field for ${col}">${FIELDS.map((f) => `<option ${f === field ? 'selected' : ''}>${f}</option>`).join('')}</select></td>
+    <td>${field === 'Do not import' ? r.tag('Ignored') : r.tag('Matched', 'green')}</td></tr>`).join('');
+
+  const REVIEW = [[4, 'ZP-CF-2241', ['Warning', 'amber'], 'Date 03/04/2025 read as 3 Apr 2025'],
+    [6, 'ZP-BS-2242', ['Warning', 'amber'], 'Mobile 098220 43120 cleaned to +91 98220 43120'],
+    [9, 'ZP-CF-2108', ['Matches existing', 'blue'], 'Machine ZP-CF-2108 exists at Nova Cups, Chakan'],
+    [11, 'ZP-BS-2240', ['Error', 'red'], 'Serial also in row 7 of this file'],
+    [12, 'ZP-TF-2245', ['Error', 'red'], 'Company code ZP-C-0007 does not exist']];
+  document.getElementById('review-rows').innerHTML = REVIEW.map(([row, serial, [label, tone], msg]) => `<tr><td class="num">${row}</td>
+    <td class="mono nowrap">${serial}</td><td class="nowrap">${r.tag(label, tone)}</td><td>${msg}</td></tr>`).join('');
+
+  /* stepper follows the demo state */
+  const STEP = { ready: 1, upload: 2, 'wrong-file': 2, map: 3, review: 4, importing: 5, done: 5, failed: 5, large: 5 };
+  const NAMES = ['Choose type', 'Upload', 'Map columns', 'Review', 'Import'];
+  const draw = () => {
+    const state = document.body.dataset.state;
+    const now = STEP[state] || 1;
+    const finished = state === 'done';
+    document.getElementById('steps').innerHTML = NAMES.map((name, i) => {
+      const n = i + 1;
+      const done = n < now || (finished && n === now);
+      return `<li class="${done ? 'done' : ''}" ${n === now && !finished ? 'aria-current="step"' : ''}><span class="n">${done ? '✓' : n}</span>${name}</li>`;
+    }).join('');
+    const pct = state === 'large' ? 18 : 70;
+    document.getElementById('bar').style.width = `${pct}%`;
+    document.getElementById('pct').textContent = `${pct}%`;
+  };
+  new MutationObserver(draw).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  document.addEventListener('click', (event) => {
+    const step = event.target.closest('[data-step]');
+    if (step) ZXA.ui.setState(step.dataset.step);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

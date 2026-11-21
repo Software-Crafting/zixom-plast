@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1205 Terms templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-quotations.css">
+</head>
+<body class="adm" data-page="D1205">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1201">Quotations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Terms templates</span></nav>
+      <h1>Terms templates</h1><p>Standard terms and payment terms applied in new quotations.</p></div>
+    <button class="btn btn-primary" type="button" data-open="edit" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add template</button>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Template types" data-when="ready">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Terms and conditions">Terms and conditions <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="Payment terms">Payment terms <span class="n"></span></button>
+      </div>
+      <div class="table-wrap" data-when="ready">
+        <table class="table" id="templates">
+          <thead><tr><th class="sortable">Template</th><th class="sortable">Type</th><th>Content</th><th class="sortable num">Used in</th><th class="sortable">Updated</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+        <h3>No templates yet</h3><p>Terms and payment terms you reuse in quotations appear here.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="edit">Add template</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="table-wrap"><table class="table"><thead><tr><th>Template</th><th>Type</th><th>Content</th><th>Used in</th><th>Updated</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit template</h2><p>Changes apply to new quotations. Sent quotations keep their terms.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="e-name">Name</label><input class="input" id="e-name" maxlength="60"></div>
+        <div class="field"><label for="e-type">Type</label><select class="select" id="e-type"><option>Terms and conditions</option><option>Payment terms</option></select></div>
+      </div>
+      <label class="switch"><input type="checkbox" id="e-default"><span></span>Default for new quotations</label>
+      <div class="field" id="e-text-field"><label for="e-text">Terms, one per line</label><textarea class="textarea" id="e-text" rows="8"></textarea><span class="hint">Bold, italic, bullets and links only.</span></div>
+      <div class="field" id="e-pay-field"><span class="label">Payment milestones</span>
+        <div class="table-wrap no-top"><table class="table compact" id="e-pay"><thead><tr><th>Milestone</th><th class="num">Percent</th><th>When</th></tr></thead><tbody></tbody></table></div>
+        <span class="hint" id="e-sum"></span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" id="e-save">Save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Reusable terms and conditions and payment terms for quotations.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a template to edit it in a drawer.</li><li>Add a template and mark one default per type.</li><li>Payment milestones must add up to 100%.</li></ul></div>
+  <div><h3>What happens next</h3><p>Templates are picked in Create quotation (D1202). Machine sale invoices follow the payment milestones (D902).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Default machine sale payment is 30, 40, 30 and editable (section 12 rules).</li><li>Editing a template does not change sent quotations.</li><li>Percent fields accept 0 to 100 with 2 decimals.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.termTemplates;
+  /* demo usage counts across the year's quotations */
+  const used = (t) => ZXA.data.quotations.filter((x) => x.terms === t.id || x.payment === t.id).length + (t.default ? 9 : 2);
+  const summary = (t) => (t.payment ? t.payment.map(([label, pct]) => `${pct}% ${label.toLowerCase()}`).join(', ') : t.text[0]);
+
+  document.querySelector('#templates tbody').innerHTML = list.map((t) => `<tr data-drawer="edit" data-id="${t.id}" data-type="${t.type}">
+    <td><b>${r.esc(t.name)}</b>${t.default ? ` ${r.tag('Default', 'green')}` : ''}</td>
+    <td>${t.type}</td><td><span class="clip">${r.esc(summary(t))}</span></td><td class="num">${used(t)}</td>
+    <td class="nowrap" data-sort="${t.updated}">${r.date(t.updated)}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="Edit ${r.esc(t.name)}" data-open="edit" data-edit="${t.id}"><svg class="ic"><use href="#ph-pencil-simple"/></svg></button></td></tr>`).join('');
+
+  const showView = (key) => document.querySelectorAll('#templates tbody tr').forEach((row) => { row.hidden = key !== 'all' && row.dataset.type !== key; });
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter((t) => tab.dataset.view === 'all' || t.type === tab.dataset.view).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  $('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  /* payment milestones must total 100 */
+  const checkSum = () => {
+    const inputs = [...$('e-pay').querySelectorAll('[data-pct]')];
+    const sum = inputs.reduce((s, i) => s + Number(i.value || 0), 0);
+    const ok = Math.abs(sum - 100) < 0.01;
+    $('e-sum').className = ok ? 'hint' : 'error';
+    $('e-sum').innerHTML = ok ? 'Adds up to 100%.' : `${r.icon('warning-circle')}Milestones add up to ${sum}%. They must add up to 100%.`;
+    inputs.forEach((i) => i.setAttribute('aria-invalid', String(!ok)));
+    return ok;
+  };
+  const fill = (t) => {
+    const type = t?.type ?? 'Terms and conditions';
+    $('edit-title').textContent = t ? `Edit ${t.name}` : 'Add template';
+    $('e-name').value = t?.name ?? '';
+    $('e-type').value = type;
+    $('e-default').checked = Boolean(t?.default);
+    $('e-text').value = t?.text?.join('\n') ?? '';
+    const pay = t?.payment ?? [['Advance', 30, 'With the order'], ['Before dispatch', 40, 'After factory test'], ['After commissioning', 30, 'Within 15 days']];
+    $('e-pay').tBodies[0].innerHTML = pay.map(([label, pct, when]) => `<tr><td><input class="input sm" value="${r.esc(label)}" aria-label="Milestone"></td>
+      <td class="num"><input class="input sm num-in" data-pct value="${pct}" inputmode="decimal" aria-label="Percent"></td>
+      <td><input class="input sm" value="${r.esc(when)}" aria-label="When"></td></tr>`).join('');
+    showFields();
+    checkSum();
+  };
+  const showFields = () => {
+    const payment = $('e-type').value === 'Payment terms';
+    $('e-text-field').hidden = payment;
+    $('e-pay-field').hidden = !payment;
+  };
+  $('e-type').addEventListener('change', showFields);
+  $('e-pay').addEventListener('input', checkSum);
+  $('e-save').addEventListener('click', () => {
+    if ($('e-type').value === 'Payment terms' && !checkSum()) return;
+    ZXA.ui.closeOverlay($('edit'));
+    ZXA.ui.toast('Saved');
+  });
+  $('edit').addEventListener('zxa:row', (event) => fill(q.template(event.detail.dataset.id)));
+  document.addEventListener('click', (event) => {
+    const edit = event.target.closest('[data-edit]');
+    if (edit) fill(q.template(edit.dataset.edit));
+    if (event.target.closest('[data-new]')) fill(null);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

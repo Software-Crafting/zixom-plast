@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1521 Excel export from lists</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1521" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Service tickets</h1><p>15 open · 4 unassigned · 1 machine down</p></div>
+    <button class="btn btn-secondary" type="button" data-open="export">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D402"><svg class="ic"><use href="#ph-plus"/></svg>New ticket</a>
+  </div>
+
+  <section class="card list-card" data-when="ready large">
+    <div class="toolbar">
+      <label class="search" data-filter="#tickets"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket, customer, machine or serial" aria-label="Search tickets"></label>
+      <button class="btn btn-secondary filter-btn" type="button"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">2</span></button>
+    </div>
+    <div class="applied-row"><span class="chip applied">Region: <b>Ahmedabad, Pune</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+      <span class="chip applied">Created: <b>Last 30 days</b><svg class="ic x"><use href="#ph-x"/></svg></span></div>
+    <div class="table-wrap">
+      <table class="table" id="tickets"><thead><tr><th>Ticket</th><th>Status</th><th>Customer and machine</th><th>Engineer</th><th>SLA</th></tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+</main>
+
+<div class="overlay center" id="export">
+  <div class="modal" role="dialog" aria-labelledby="ex-title">
+    <div class="modal-head"><span class="disc blue"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span>
+      <div class="grow"><h2 id="ex-title">Export service tickets</h2><p>The current view with its filters and sort.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><span class="label">Filters</span><div class="tags"><span class="tag outline">View: All open</span><span class="tag outline">Region: Ahmedabad, Pune</span><span class="tag outline">Created: Last 30 days</span></div></div>
+      <div class="field"><span class="label">Columns</span><div class="form-grid" id="cols" style="gap:8px 16px"></div></div>
+      <label class="check"><input type="checkbox" id="history"> Include the timeline, one row per event</label>
+      <div class="field"><span class="label">Format</span><div class="choices" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+        <label class="choice"><input type="radio" name="fmt" class="sr-only" checked><span><b>Excel (.xlsx)</b><small>Keeps dates and amounts</small></span></label>
+        <label class="choice"><input type="radio" name="fmt" class="sr-only"><span><b>CSV</b><small>Plain text, any tool</small></span></label></div></div>
+      <div class="banner grey" data-when="ready"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>15 rows.</b> The file downloads now.</span></div>
+      <div class="banner amber" data-when="large"><svg class="ic"><use href="#ph-hourglass"/></svg><span class="grow"><b>6,240 rows, over the 5,000 row limit.</b> It runs in the background and appears in Exports. You get a notification; the link is valid for 7 days.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-when="ready" data-toast="service_tickets.xlsx downloaded">Export</button>
+      <button class="btn btn-primary" type="button" data-when="large" data-go="D1520">Export in background</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready large loading error">
+  <div><h3>What it is</h3><p>The export dialog every list opens. Shown here on Service tickets.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick columns and the format (XLSX or CSV).</li><li>The current filters and sort are used.</li><li>Large: tick the timeline to see the background path.</li></ul></div>
+  <div><h3>What happens next</h3><p>Up to 5,000 rows download at once. More go to Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Over 5,000 rows runs in the background with a notification (EC-A34).</li><li>Links are valid for 7 days.</li><li>Every export is written to the activity log.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  document.querySelector('#tickets tbody').innerHTML = r.tickets.filter(r.isOpen).map((t) => {
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    return `<tr><td><span class="mono strong nowrap">${t.number}</span><span class="sub">${t.type}</span></td><td>${r.ticketTag(t.status)}</td>
+      <td><b class="clip">${r.company(t.company).name}</b><span class="sub">${r.machine(t.machine).model}</span></td>
+      <td>${e ? e.name : '<span class="red-text strong">Unassigned</span>'}</td><td>${r.sla(t.sla)}</td></tr>`;
+  }).join('');
+  document.getElementById('cols').innerHTML = ['Ticket', 'Status', 'Severity', 'Customer', 'Machine and serial', 'Coverage', 'Engineer', 'Window', 'SLA', 'Created']
+    .map((c, i) => `<label class="check"><input type="checkbox" ${i < 9 ? 'checked' : ''}> ${c}</label>`).join('');
+  /* the timeline option turns a small export into a large one */
+  document.getElementById('history').addEventListener('change', (event) => ZXA.ui.setState(event.target.checked ? 'large' : 'ready'));
+  new MutationObserver(() => { document.getElementById('history').checked = document.body.dataset.state === 'large'; })
+    .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-go]')) return;
+    ZXA.ui.toast('Export started. We will notify you when it is ready');
+    window.setTimeout(() => ZXA.ui.go('D1520'), 900);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

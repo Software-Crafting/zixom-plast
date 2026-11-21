@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1212 Project milestones</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1212">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1210">Orders and projects</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-order" href="#D1211"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Milestones</span></nav>
+      <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-secondary" type="button" data-open="share">Share with customer</button>
+      <button class="btn btn-primary" type="button" data-open="edit" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add milestone</button>
+    </div>
+  </div>
+
+  <div data-when="ready">
+    <section class="kpis" id="kpis" aria-label="Milestone summary"></section>
+    <div id="edge-banners" class="stack" style="margin-top:16px"></div>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="table-wrap no-top">
+        <table class="table" id="milestones">
+          <thead><tr><th class="num">#</th><th>Milestone</th><th>Owner</th><th>Due</th><th>Status</th><th>Photos</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-milestone"/></svg></span>
+      <h3>No milestones yet</h3><p>Add the steps of this project with dates and owners.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-open="edit" data-new>Add milestone</button></div></div></div>
+  </div>
+
+  <div data-when="loading">
+    <section class="kpis">
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span></div>
+      <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span></div>
+    </section>
+    <section class="card list-card" style="margin-top:16px"><div class="table-wrap no-top"><table class="table"><thead><tr><th>#</th><th>Milestone</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
+      <tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Edit milestone</h2><p id="edit-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field full"><label for="e-title">Milestone</label><input class="input" id="e-title" maxlength="80"></div>
+        <div class="field"><label for="e-owner">Owner</label><input class="input" id="e-owner" maxlength="60"><span class="hint">Team or person responsible</span></div>
+        <div class="field"><label for="e-due">Due date</label><input class="input" id="e-due" type="date"></div>
+        <div class="field"><label for="e-status">Status</label><select class="select" id="e-status"><option value="not-started">Not started</option><option value="in-progress">In progress</option><option value="done">Done</option><option value="delayed">Delayed</option></select></div>
+        <div class="field" id="e-new-field"><label for="e-new">New due date</label><input class="input" id="e-new" type="date"></div>
+        <div class="field full" id="e-reason-field"><label for="e-reason">Reason for the delay</label><textarea class="textarea" id="e-reason" maxlength="300"></textarea><span class="hint">Shown to the customer when shared.</span></div>
+        <div class="field full"><label for="e-note">Notes <span class="opt">optional</span></label><textarea class="textarea" id="e-note" maxlength="500"></textarea></div>
+      </div>
+      <div class="field"><span class="label">Photos</span><div class="gallery" id="e-photos"></div>
+        <div class="drop" style="margin-top:10px"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop photos here</b>JPG or PNG up to 10 MB each</div></div>
+      <label class="switch"><input type="checkbox" checked><span></span>Share this milestone with the customer</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" id="e-save">Save</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="share" hidden>
+  <div class="modal" role="dialog" aria-labelledby="share-title">
+    <div class="modal-head"><span class="disc blue"><svg class="ic"><use href="#ph-share-network"/></svg></span>
+      <div class="grow"><h2 id="share-title"></h2><p id="share-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="share-msg">Message</label><textarea class="textarea" id="share-msg">Here is the latest progress on your cup line. The factory test moves to 12 Dec; commissioning stays on 15 Jan.</textarea></div>
+      <label class="check"><input type="checkbox" checked> Include photos of shared milestones</label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Progress shared by email">Share</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Milestones of a turnkey project with dates, owners, notes and photos. Opens with <code>?o=PRJ-2026-001</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a milestone in a drawer; click a row to edit.</li><li>Mark a milestone done.</li><li>Share the progress with the customer by email.</li></ul></div>
+  <div><h3>What happens next</h3><p>Order detail (D1211). The last milestone leads to Dispatch and installation (D1213).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Statuses: Not started, In progress, Done, Delayed (section 12).</li><li>Delayed needs a new date and a reason; the reason shows in the list.</li><li>Mark done records today's date.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/data/quotations.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const q = ZXA.q;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const o = q.order(new URLSearchParams(location.search).get('o') || 'PRJ-2026-001');
+  const who = q.party(o);
+  const list = o.milestones;
+  if (!list.length) ZXA.initialState = 'empty';
+
+  document.title = `Zixom Admin - ${o.number} milestones`;
+  $('crumb-order').textContent = o.number;
+  $('crumb-order').setAttribute('href', ZXA.href('D1211', `?o=${o.number}`));
+  $('number').textContent = o.number;
+  $('chips').innerHTML = `${q.stageTag(o.stage)}${r.tag(o.kind, 'outline')}`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${r.esc(who.name)}</span><span>${ic('milestone')}${r.esc(o.title)}</span><span>${ic('calendar-blank')}Commissioning ${r.date(o.expected)}</span>`;
+  $('share-title').textContent = `Share progress with ${who.contact.name}?`;
+  $('share-text').textContent = `${who.contact.name} gets an email with ${list.length} milestones and their status.`;
+
+  const done = list.filter((m) => m.status === 'done').length;
+  const delayed = list.filter((m) => m.status === 'delayed');
+  const nextDue = list.find((m) => m.status !== 'done');
+  $('kpis').innerHTML = `
+    <div class="card kpi"><span class="label">Done</span><span class="value">${done} of ${list.length}</span><span class="foot"><span class="progress green grow"><span style="width:${done / list.length * 100}%"></span></span></span></div>
+    <div class="card kpi"><span class="label">Next due</span><span class="value">${nextDue ? r.date(nextDue.newDue || nextDue.due).replace(/ \d{4}$/, '') : '–'}</span><span class="foot">${nextDue ? r.esc(nextDue.title) : 'All done'}</span></div>
+    <div class="card kpi${delayed.length ? ' alert' : ''}"><span class="label">Delayed</span><span class="value">${delayed.length}</span><span class="foot">${delayed.length ? `${r.esc(delayed[0].title)}, 1 week` : 'On plan'}</span></div>
+    <div class="card kpi"><span class="label">Commissioning</span><span class="value">${r.date(o.expected).replace(/ \d{4}$/, '')}</span><span class="foot">${r.daysFromToday(o.expected)} days left</span></div>`;
+  $('edge-banners').innerHTML = delayed.map((m) => `<div class="banner amber">${ic('warning')}<span class="grow"><b>${r.esc(m.title)} moved from ${r.date(m.due)} to ${r.date(m.newDue)}.</b> ${r.esc(m.reason)}</span></div>`).join('');
+
+  $('milestones').tBodies[0].innerHTML = list.map((m, i) => `<tr data-drawer="edit" data-i="${i}">
+    <td class="num">${i + 1}</td>
+    <td><b class="clip">${r.esc(m.title)}</b><span class="sub ${m.status === 'delayed' ? 'red-text' : ''}">${r.esc(m.status === 'delayed' ? m.reason : m.note || 'No notes')}</span></td>
+    <td>${r.esc(m.owner)}</td>
+    <td class="nowrap">${m.newDue ? `${r.date(m.newDue)}<span class="sub"><s>${r.date(m.due)}</s></span>` : r.date(m.due)}${m.done ? `<span class="sub">Done ${r.date(m.done)}</span>` : ''}</td>
+    <td>${q.milestoneTag(m.status)}</td>
+    <td>${m.photos ? `<span class="row">${ic('image')}${m.photos}</span>` : '<span class="faint">None</span>'}</td>
+    <td class="actions nowrap">${m.status === 'done' ? '' : '<button class="btn btn-sm btn-secondary" type="button" data-toast="Marked done. Customer will see it when shared">Mark done</button>'}</td></tr>`).join('');
+  $('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  /* drawer: delayed needs a new date and a reason */
+  const syncStatus = () => {
+    const isDelayed = $('e-status').value === 'delayed';
+    $('e-new-field').hidden = !isDelayed;
+    $('e-reason-field').hidden = !isDelayed;
+  };
+  const fill = (m) => {
+    $('edit-title').textContent = m ? `Edit ${m.title}` : 'Add milestone';
+    $('edit-sub').textContent = `${o.number} · ${o.title}`;
+    $('e-title').value = m?.title ?? '';
+    $('e-owner').value = m?.owner ?? '';
+    $('e-due').value = m?.due ?? '';
+    $('e-status').value = m?.status ?? 'not-started';
+    $('e-new').value = m?.newDue ?? '';
+    $('e-reason').value = m?.reason ?? '';
+    $('e-reason').removeAttribute('aria-invalid');
+    $('e-note').value = m?.note ?? '';
+    $('e-photos').innerHTML = Array.from({ length: m?.photos ?? 0 }, (_, i) => `<div class="ph">${ic('image')}<small>Photo ${i + 1}</small></div>`).join('') || '<p class="muted">No photos yet.</p>';
+    syncStatus();
+  };
+  $('e-status').addEventListener('change', syncStatus);
+  $('e-save').addEventListener('click', () => {
+    const missing = $('e-status').value === 'delayed' && !$('e-reason').value.trim();
+    $('e-reason').setAttribute('aria-invalid', String(missing));
+    if (missing) { $('e-reason').focus(); return; }
+    ZXA.ui.closeOverlay($('edit'));
+    ZXA.ui.toast('Saved');
+  });
+  $('edit').addEventListener('zxa:row', (event) => fill(list[event.detail.dataset.i]));
+  document.addEventListener('click', (event) => { if (event.target.closest('[data-new]')) fill(null); });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
