@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D835 Returns and delivery problems</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D835" data-nav="D830">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Returns</span></nav>
+      <h1>Returns and delivery problems</h1><p id="summary"></p></div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">To decide <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#issues"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Order, customer or part" aria-label="Search returns"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="kind-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="issues">
+          <thead><tr><th class="sortable">Order</th><th class="sortable">Type</th><th>Customer</th><th>Item</th><th>Reason</th><th class="num">Photos</th><th class="sortable">Reported</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>No returns or delivery problems</h3><p>Requests from the app (C709, C710) appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-open="reject">Reject</button><button class="btn btn-ghost" type="button" data-toast="Photo request sent to the customer">Request photo</button>
+      <span class="grow"></span><a class="btn btn-secondary" id="q-refund" href="#D922">Refund</a><button class="btn btn-secondary" type="button" data-open="replace">Replace</button>
+      <button class="btn btn-primary" type="button" data-open="approve">Approve return</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="approve" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ap-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span><div class="grow"><h2 id="ap-title">Approve return</h2><p>The customer sees the pickup details in the app.</p></div></div>
+    <div class="modal-body stack"><div class="form-grid">
+      <div class="field"><label for="ap-date">Pickup on</label><input class="input" id="ap-date" type="date" value="2026-11-25" min="2026-11-24"></div>
+      <div class="field"><label for="ap-courier">Courier</label><select class="select" id="ap-courier"><option>Blue Dart</option><option>DTDC</option><option>Own vehicle</option></select></div>
+      <div class="field full"><label for="ap-addr">Pickup address</label><input class="input" id="ap-addr"></div></div>
+      <label class="check"><input type="checkbox" checked> Receive the part back into stock when it arrives</label></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Return approved. Pickup details sent">Approve return</button></div>
+  </div>
+</div>
+<div class="overlay center" id="replace" hidden>
+  <div class="modal" role="dialog" aria-labelledby="rp-title">
+    <div class="modal-head"><div class="grow"><h2 id="rp-title">Send a replacement</h2><p id="rp-text"></p></div></div>
+    <div class="modal-body stack"><div class="field"><label for="rp-part">Replacement part</label><select class="select" id="rp-part"></select></div>
+      <span class="hint" id="rp-hint"></span></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Replacement order created at no charge">Create replacement</button></div>
+  </div>
+</div>
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rj-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span><div class="grow"><h2 id="rj-title">Reject this request?</h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="rj-reason">Reason</label><textarea class="textarea" id="rj-reason" maxlength="300">The photos show the part was fitted and used. Damage after fitting is not covered.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request rejected. Customer told">Reject request</button></div>
+  </div>
+</div>
+<div class="menu" id="kind-menu" hidden>
+  <div class="label">Type</div><button type="button" data-toast="Showing returns">Return</button><button type="button" data-toast="Showing delivery problems">Delivery problem</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C710-delivery-problem.html">
+  <div><h3>What it is</h3><p>Returns and delivery problems customers report in the app after delivery.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a row to see the photos and decide.</li><li>Approve return with pickup, reject, replace, refund or ask for a photo.</li></ul></div>
+  <div><h3>What happens next</h3><p>Refund (D922); a replacement is a new no charge order (D831); the returned part is received into stock (D812).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reports are allowed for 7 days after delivery.</li><li>A discontinued part is replaced by its replacement (ZP-SP-005 to 006).</li><li>Refunds ask for the password and a reason.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const list = D.issues;
+  $('summary').textContent = `${list.filter((x) => x.status === 'new').length} to decide · reports allowed for 7 days after delivery`;
+  $('issues').tBodies[0].innerHTML = list.map((x, i) => {
+    const o = P.order(x.order);
+    return `<tr data-drawer="quick" data-i="${i}" data-status="${x.status}">
+      <td><a class="rec" href="#D831?o=${x.order}">${x.order}</a><span class="sub">${P.orderTag(o.status).replace(/<[^>]+>/g, '')}</span></td>
+      <td>${x.kind === 'Return' ? r.tag('Return', 'amber', 'rotate-ccw') : r.tag('Delivery problem', 'red', 'warning')}</td>
+      <td>${r.company(o.company).name}<span class="sub">${r.person(x.by).name}</span></td>
+      <td><span class="clip">${r.esc(P.part(x.item).name)} × ${x.qty}</span><span class="sub mono">${x.item}</span></td>
+      <td><span class="clip">${r.esc(x.reason)}</span></td><td class="num">${x.photos}</td>
+      <td class="nowrap" data-sort="${x.when}">${r.date(x.when)}<span class="sub">${r.ago(x.when)}</span></td>
+      <td>${r.tag('To decide', 'amber')}</td></tr>`;
+  }).join('') + '<tr data-none hidden><td colspan="8"><div class="state"><h3>Nothing in this view</h3><p>Decided returns and problems appear here.</p></div></td></tr>';
+  const VIEWS = { open: (s) => s === 'new', closed: (s) => s !== 'new', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#issues tbody tr[data-status]')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](row.dataset.status); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.querySelector('#issues tr[data-none]').hidden = shown > 0;
+    $('foot-count').textContent = `${shown} requests`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter((x) => VIEWS[tab.dataset.view](x.status)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  $('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.i];
+    const o = P.order(x.order);
+    const p = P.part(x.item);
+    const s = r.site(o.company, o.site);
+    const line = o.items.find(([n]) => n === x.item);
+    const lineTotal = Math.round(line[1] * line[2] * 1.18 * 100) / 100;
+    const swap = p.discontinued ? P.part(p.replacedBy) : p;
+    $('quick-title').textContent = x.order;
+    $('quick-sub').textContent = `${x.kind} · ${r.person(x.by).name}, ${r.company(o.company).name}`;
+    $('quick-body').innerHTML = `<div class="tags">${x.kind === 'Return' ? r.tag('Return', 'amber') : r.tag('Delivery problem', 'red')}${P.orderTag(o.status)}${x.query ? `<span class="tag outline mono">${x.query}</span>` : ''}</div>
+      <p><b>${r.esc(x.reason)}.</b> "${r.esc(x.text)}"</p>
+      <div class="gallery">${Array.from({ length: x.photos }, (_, i) => `<div class="ph">${r.icon('image')}<small>Photo ${i + 1}</small></div>`).join('')}</div>
+      <dl class="dl"><dt>Item</dt><dd>${r.esc(p.name)} × ${x.qty}<br><span class="mono muted">${p.number}</span> ${P.stockTag(p)}</dd>
+        <dt>Delivered</dt><dd>${r.date(o.delivered)} · ${o.courier} <span class="mono">${o.tracking}</span></dd>
+        <dt>Reported</dt><dd>${r.date(x.when)}, ${r.time(x.when)} · day ${Math.max(1, Math.round((new Date(x.when) - new Date(o.delivered)) / 86400000))} of 7</dd>
+        <dt>Paid for item</dt><dd>${r.money(lineTotal)} <span class="muted">with GST, ${o.method}</span></dd></dl>
+      ${p.discontinued ? `<div class="banner">${r.icon('info')}<span class="grow"><b>${p.number} is discontinued.</b> Replace with ${swap.number} ${r.esc(swap.name)} (${r.money(swap.price)}), or refund.</span></div>` : ''}`;
+    $('ap-addr').value = `${s.name}, ${s.address}, ${s.pincode}`;
+    $('rp-text').textContent = `A no charge order for ${x.order}. Stock is reserved now and issued when packed.`;
+    $('rp-part').innerHTML = `<option>${swap.number} · ${r.esc(swap.name)}</option>`;
+    $('rp-hint').textContent = `${P.available(swap)} available.${p.discontinued ? ` ${p.number} is discontinued; its replacement is offered.` : ''}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

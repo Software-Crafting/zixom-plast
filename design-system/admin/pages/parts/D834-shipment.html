@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D834 Shipment</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D834" data-nav="D830">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-order" href="#D831"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Shipment</span></nav>
+      <div class="record-head"><h1 id="title" class="name"></h1><span class="tags" id="chips"></span></div>
+      <div class="meta" id="meta"></div>
+    </div>
+  </div>
+
+  <div class="grid side-right" data-when="ready partial">
+    <form class="card pad" onsubmit="return false">
+      <div class="banner grey" style="margin-bottom:20px"><svg class="ic"><use href="#ph-info"/></svg><span class="grow">Book the courier outside Zixom Connect. Record the courier and tracking here.</span></div>
+      <section class="form-section">
+        <h3>Courier</h3>
+        <div class="form-grid">
+          <div class="field"><label for="f-courier">Courier *</label><select class="select" id="f-courier"><option>Blue Dart</option><option>DTDC</option><option>Delhivery</option><option>India Post</option><option>Own vehicle</option><option>Other</option></select></div>
+          <div class="field"><label for="f-track">Tracking number *</label><input class="input mono" id="f-track" placeholder="AWB number"></div>
+          <div class="field full"><label for="f-link">Tracking link</label><input class="input" id="f-link" type="url"><span class="hint">Filled from the courier. Customers open it from the app.</span></div>
+          <div class="field"><label for="f-date">Dispatch date</label><input class="input" id="f-date" type="date" max="2026-11-23"></div>
+          <div class="field"><label for="f-eta">Expected delivery</label><input class="input" id="f-eta" type="date" min="2026-11-23"></div>
+          <div class="field"><label for="f-boxes">Boxes</label><input class="input" id="f-boxes" type="number" min="1"></div>
+          <div class="field"><label for="f-weight">Weight</label><div class="input-wrap"><input class="input" id="f-weight" inputmode="decimal"><span class="suffix">kg</span></div></div>
+        </div>
+      </section>
+      <section class="form-section">
+        <h3>Items in this shipment</h3><p>Partial shipments are separate; the rest stays Packed.</p>
+        <label class="switch" style="margin-bottom:12px"><input type="checkbox" id="f-partial"><span></span>Partial shipment</label>
+        <div class="table-wrap no-top"><table class="table compact" id="items"><thead><tr><th>Part</th><th class="num">Ordered</th><th class="num">In this box</th></tr></thead><tbody></tbody></table></div>
+      </section>
+      <div class="form-bar">
+        <span class="grow">Customer will be notified by push and email with the tracking.</span>
+        <a class="btn btn-ghost" id="back" href="#D831">Cancel</a>
+        <button class="btn btn-secondary" type="button" data-busy data-toast="Saved">Save</button>
+        <button class="btn btn-primary" type="button" id="send" data-busy data-toast="Dispatched. Tracking sent to the customer">Send to customer</button>
+      </div>
+    </form>
+    <aside class="stack">
+      <section class="card side-card"><div class="card-head"><h3 class="grow">Ship to</h3></div><div class="card-body" id="ship"></div></section>
+      <section class="card side-card"><div class="card-head"><h3 class="grow">The customer sees</h3></div>
+        <div class="card-body" id="preview"></div></section>
+    </aside>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div><div class="card pad stack"><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready partial loading error" data-mobile="../../../screens/customer/C708-order-detail.html">
+  <div><h3>What it is</h3><p>Courier and tracking for a packed order. <code>?o=ORD-2026-0208</code> (packed) or <code>?o=ORD-2026-0209</code> to update tracking.</p></div>
+  <div><h3>What you can do</h3><ul><li>Record courier, tracking number and link, dates, boxes and weight.</li><li>Ship part of the order (Partial state).</li><li>Save, or send the details to the customer.</li></ul></div>
+  <div><h3>What happens next</h3><p>The order becomes Dispatched (D831); the customer sees tracking in the app (C708).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Courier booking is out of scope.</li><li>No tracking link: the app shows the number only.</li><li>Partial shipments are separate; the order is Dispatched when all are sent.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const $ = (id) => document.getElementById(id);
+  const o = P.order(new URLSearchParams(location.search).get('o') || 'ORD-2026-0208');
+  const c = r.company(o.company);
+  const s = r.site(o.company, o.site);
+  const oq = `?o=${o.number}`;
+  const updating = Boolean(o.courier);
+  const LINKS = { 'Blue Dart': 'https://www.bluedart.com/tracking?awb=', DTDC: 'https://www.dtdc.in/tracking?cn=', Delhivery: 'https://www.delhivery.com/track/package/', 'India Post': 'https://www.indiapost.gov.in/track?n=' };
+
+  $('crumb-order').textContent = o.number;
+  $('crumb-order').href = `#D831${oq}`;
+  $('back').href = `#D831${oq}`;
+  $('title').textContent = updating ? 'Update tracking' : 'Shipment';
+  $('chips').innerHTML = P.orderTag(o.status);
+  $('meta').innerHTML = `<span class="mono">${o.number}</span><span>${c.name}</span>${o.packed ? `<span>Packed ${r.date(o.packed)}</span>` : ''}`;
+  $('send').textContent = updating ? 'Send update to customer' : 'Send to customer';
+  $('f-courier').value = o.courier || 'Blue Dart';
+  $('f-track').value = o.tracking || '';
+  $('f-date').value = (o.dispatched || '2026-11-23').slice(0, 10);
+  $('f-eta').value = o.expected || '2026-11-26';
+  $('f-boxes').value = o.boxes || 1;
+  $('f-weight').value = o.weight || '';
+  $('ship').innerHTML = `<dl class="dl"><dt>Site</dt><dd>${s.name}, ${c.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd><dt>Contact</dt><dd>${s.contact.name}<br><span class="muted">${s.contact.phone}</span></dd></dl>`;
+
+  const update = () => {
+    const courier = $('f-courier').value;
+    const track = $('f-track').value.trim();
+    if (LINKS[courier] && track) $('f-link').value = `${LINKS[courier]}${track}`;
+    else if (!LINKS[courier]) $('f-link').value = '';
+    $('send').disabled = !track && courier !== 'Own vehicle';
+    $('preview').innerHTML = `<div class="stack-sm"><div class="tags">${r.tag($('f-partial').checked ? 'Partly dispatched' : 'Dispatched', 'blue')}</div>
+      <dl class="dl"><dt>Courier</dt><dd>${courier}</dd><dt>Tracking</dt><dd class="mono">${track || '<span class="faint">Not set</span>'}</dd>
+        <dt>Expected</dt><dd>${$('f-eta').value ? r.dayDate($('f-eta').value) : '–'}</dd></dl>
+      ${$('f-link').value ? '<span class="muted" style="font-size:13px">Track shipment button shown</span>' : '<span class="muted" style="font-size:13px">No tracking link: the app shows the number only</span>'}</div>`;
+  };
+  const items = () => {
+    const partial = document.body.dataset.state === 'partial' || $('f-partial').checked;
+    $('f-partial').checked = partial;
+    $('items').tBodies[0].innerHTML = o.items.map(([n, q], i) => `<tr><td><span class="mono">${n}</span><span class="sub">${r.esc(P.part(n).name)}</span></td><td class="num">${q}</td>
+      <td class="num"><input class="input qty" type="number" min="0" max="${q}" value="${partial && i === 0 ? Math.max(1, q - 2) : q}" aria-label="Quantity in this shipment"${partial ? '' : ' disabled'}></td></tr>`).join('');
+    update();
+  };
+  ['f-courier', 'f-track', 'f-eta'].forEach((id) => $(id).addEventListener('input', update));
+  $('f-partial').addEventListener('change', items);
+  items();
+  new MutationObserver(() => { $('f-partial').checked = false; items(); }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

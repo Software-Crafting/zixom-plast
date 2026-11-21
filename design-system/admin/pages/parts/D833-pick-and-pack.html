@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D833 Pick and pack</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D833" data-nav="D830">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-order" href="#D831"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Pick and pack</span></nav>
+      <div class="record-head"><h1 id="title" class="name">Pick and pack</h1><span class="tags" id="chips"></span></div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="action-bar"><button class="btn btn-secondary" type="button" data-toast="Pick list sent to the printer"><svg class="ic"><use href="#ph-printer"/></svg>Print pick list</button></div>
+  </div>
+
+  <div data-when="ready to-pack">
+    <div class="banner green" id="packed-banner" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg>
+      <span class="grow" id="packed-text"></span></div>
+
+    <div class="grid side-right">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Pick list</h2><p>One stock location: main store. Tick each line as you pick it.</p></div></div>
+          <div class="table-wrap no-top"><table class="table compact" id="pick">
+            <thead><tr><th class="cb"></th><th>Part</th><th class="num">Qty</th><th class="num">On hand</th><th>Note</th></tr></thead><tbody></tbody></table></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Packing checklist</h2></div></div>
+          <div class="card-body stack-sm" id="checklist"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Boxes</h2><p>Carried to the shipment.</p></div></div>
+          <div class="card-body"><div class="form-grid">
+            <div class="field"><label for="f-boxes">Number of boxes</label><input class="input" id="f-boxes" type="number" min="1" value="1"></div>
+            <div class="field"><label for="f-weight">Weight</label><div class="input-wrap"><input class="input" id="f-weight" inputmode="decimal"><span class="suffix">kg</span></div></div>
+          </div></div>
+        </section>
+      </div>
+      <aside class="stack">
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Ship to</h3></div><div class="card-body" id="ship"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Stock</h3></div>
+          <div class="card-body"><p class="muted" style="font-size:13px">Stock is issued when you mark the order packed. Each line becomes an Issue to order entry in the ledger.</p></div></section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note"></span>
+      <a class="btn btn-ghost" id="back" href="#D831">Back to order</a>
+      <span id="primary"></span>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div><div class="card pad stack"><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready to-pack loading error">
+  <div><h3>What it is</h3><p>Pick list and packing checklist for a paid order. <code>?o=ORD-2026-0208</code>; the To pack state shows it before packing.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tick lines and checklist items; Mark packed unlocks when all are done.</li><li>Enter boxes and weight; print the pick list.</li></ul></div>
+  <div><h3>What happens next</h3><p>The order becomes Packed; then add the shipment (D834).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Stock is issued when packed (ledger D811).</li><li>After packing the order can no longer be cancelled; a problem becomes a return (D835).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const $ = (id) => document.getElementById(id);
+  const o = P.order(new URLSearchParams(location.search).get('o') || 'ORD-2026-0208');
+  const c = r.company(o.company);
+  const s = r.site(o.company, o.site);
+  const oq = `?o=${o.number}`;
+  const CHECKS = ['Parts match the pick list and part numbers', 'Each part checked for damage', 'Bubble wrap for heater elements and gauges', 'Packing slip with the order number inside', 'Box sealed and labelled with the address'];
+
+  $('crumb-order').textContent = o.number;
+  $('crumb-order').href = `#D831${oq}`;
+  $('back').href = `#D831${oq}`;
+  $('meta').innerHTML = `<span class="mono">${o.number}</span><span>${c.name}</span><span>Paid ${o.paid ? `${r.date(o.paid)}, ${o.method}` : 'not yet'}</span>`;
+  $('ship').innerHTML = `<dl class="dl"><dt>Site</dt><dd>${s.name}, ${c.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd><dt>Contact</dt><dd>${s.contact.name}<br><span class="muted">${s.contact.phone}</span></dd></dl>`;
+
+  const render = () => {
+    /* the order is packed in the data; the To pack state shows it as it was before packing */
+    const packed = document.body.dataset.state !== 'to-pack' && Boolean(o.packed);
+    $('chips').innerHTML = packed ? P.orderTag(o.status) : P.orderTag('paid');
+    $('packed-banner').hidden = !packed;
+    $('packed-text').innerHTML = `<b>Packed ${r.dayDate(o.packed || '2026-11-23')}, ${r.time(o.packed || '2026-11-23T12:00')} by Rajesh Goyal.</b> Stock issued; ledger updated.`;
+    $('pick').tBodies[0].innerHTML = o.items.map(([n, q]) => {
+      const p = P.part(n);
+      return `<tr><td class="cb"><label class="check"><input type="checkbox" aria-label="Picked ${n}"${packed ? ' checked disabled' : ''}></label></td>
+        <td><span class="mono strong">${n}</span><span class="sub">${r.esc(p.name)}</span></td><td class="num strong">${q}</td>
+        <td class="num">${packed ? p.onHand : p.onHand + q}</td><td>${p.category === 'Heaters' ? 'Fragile' : '<span class="faint">–</span>'}</td></tr>`;
+    }).join('');
+    $('checklist').innerHTML = CHECKS.map((x) => `<label class="check"><input type="checkbox"${packed ? ' checked disabled' : ''}> ${x}</label>`).join('');
+    $('f-boxes').value = o.boxes || 1;
+    $('f-weight').value = packed ? o.weight : '';
+    $('f-boxes').disabled = packed;
+    $('f-weight').disabled = packed;
+    $('primary').innerHTML = packed ? `<a class="btn btn-primary" href="${ZXA.href('D834', oq)}">Add shipment</a>`
+      : '<button class="btn btn-primary" type="button" id="mark" data-busy data-toast="Packed. Stock issued and the customer told" disabled>Mark packed</button>';
+    update();
+  };
+  const update = () => {
+    const boxes = [...document.querySelectorAll('#pick tbody input, #checklist input')];
+    const done = boxes.filter((b) => b.checked).length;
+    $('bar-note').textContent = boxes.every((b) => b.disabled) ? 'Packed. Add the courier and tracking next.' : `${done} of ${boxes.length} ticked. Customer will be notified by push.`;
+    if ($('mark')) $('mark').disabled = done < boxes.length;
+  };
+  document.addEventListener('change', (event) => { if (event.target.closest('#pick, #checklist')) update(); });
+  render();
+  new MutationObserver(render).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D836 Order cancellations</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D836" data-nav="D830">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Cancellations</span></nav>
+      <h1>Order cancellations</h1><p>Cancel is only allowed before an order is packed. Paid orders are refunded.</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready">
+        <button role="tab" aria-selected="true" data-view="open">Refund pending <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="table-wrap" data-when="ready">
+        <table class="table" id="cancels">
+          <thead><tr><th>Order</th><th>Customer</th><th>Cancelled</th><th>Reason</th><th class="num">Paid</th><th>Refund</th><th class="actions" style="width:180px"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-foot" data-when="ready"><span id="foot-count"></span><span class="grow"></span><span class="faint">Stock is released when an order is cancelled</span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-x"/></svg></span>
+        <h3>No cancelled orders</h3><p>Orders cancelled in the app or by Admin appear here with the refund state.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+  </div>
+</main>
+
+<div class="overlay center" id="close" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cl-title">
+    <div class="modal-head"><div class="grow"><h2 id="cl-title">Close this cancellation?</h2><p>Only when the refund shows as processed. It moves to Closed.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Closed">Close</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C709-cancel-order.html">
+  <div><h3>What it is</h3><p>Cancelled orders and the state of their refund.</p></div>
+  <div><h3>What you can do</h3><ul><li>Refund a paid order that has no refund yet (D922).</li><li>Track a refund already started.</li><li>Close once the refund is processed.</li></ul></div>
+  <div><h3>What happens next</h3><p>Refunds (D923); the customer sees the refund timeline in the app (C708).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cancel is only allowed before packed; after that it is a return (D835).</li><li>Refund cannot be more than the amount paid (EC-A40).</li><li>Refunds ask for the password and a reason.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const list = D.orders.filter((o) => o.status === 'cancelled');
+  const isOpen = (o) => o.refund && o.refund.status !== 'processed';
+  document.querySelector('#cancels tbody').innerHTML = list.map((o) => `<tr data-href="D831?o=${o.number}" data-open-row="${isOpen(o)}">
+    <td><a class="rec" href="#D831?o=${o.number}">${o.number}</a><span class="sub">${o.items.map(([n, q]) => `${P.part(n).name} × ${q}`).join(', ')}</span></td>
+    <td>${r.company(o.company).name}<span class="sub">${r.person(o.by).name}</span></td>
+    <td class="nowrap">${r.date(o.cancelled)}<span class="sub">${o.cancelledBy}</span></td>
+    <td>${o.cancelReason}</td>
+    <td class="num">${r.money(P.orderTotal(o))}<span class="sub">${o.method}</span></td>
+    <td>${o.refund ? `${r.tag('Initiated', 'amber')}<span class="sub">Expected by ${r.date(o.refund.expected)}</span>` : r.tag('Not refunded', 'red')}</td>
+    <td class="actions"><span class="row" style="justify-content:flex-end; gap:4px">${o.refund
+      ? '<a class="btn btn-sm btn-secondary" href="#D923">Open refund</a><button class="btn btn-sm btn-ghost" type="button" data-open="close">Close</button>'
+      : '<a class="btn btn-sm btn-primary" href="#D922">Refund</a>'}</span></td></tr>`).join('')
+    + '<tr data-none hidden><td colspan="7"><div class="state"><h3>Nothing in this view</h3><p>Closed cancellations appear here after the refund is processed.</p></div></td></tr>';
+  const VIEWS = { open: isOpen, closed: (o) => !isOpen(o), all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#cancels tbody tr[data-href]')];
+    rows.forEach((row, i) => { row.hidden = !VIEWS[key](list[i]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.querySelector('#cancels tr[data-none]').hidden = shown > 0;
+    document.getElementById('foot-count').textContent = `${shown} orders`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

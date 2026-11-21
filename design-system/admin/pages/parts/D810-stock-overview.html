@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D810 Stock overview</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Stock</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-secondary" href="#D814">Adjust</a>
+    <a class="btn btn-secondary" href="#D813">Issue</a>
+    <a class="btn btn-primary" href="#D812"><svg class="ic"><use href="#ph-download-simple"/></svg>Receive stock</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="kpis" id="kpis" aria-label="Stock numbers" data-when="ready no-results"></section>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="below">Below minimum <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="reserved">Reserved <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="discontinued">Discontinued <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#stock"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Part number or name" aria-label="Search stock"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <a class="btn btn-ghost btn-sm" href="#D811"><svg class="ic"><use href="#ph-history"/></svg>Ledger</a>
+        <a class="btn btn-ghost btn-sm" href="#D815"><svg class="ic"><use href="#ph-list-checks"/></svg>Reorder list</a>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="stock">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Part</th><th class="sortable num">On hand</th><th class="sortable num">Reserved</th><th class="sortable num">Available</th>
+            <th class="sortable num">Minimum</th><th class="sortable">Status</th><th class="sortable">Last movement</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span><span class="faint">One stock location: Main store</span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-boxes"/></svg></span>
+        <h3>No stock yet</h3><p>Stock appears here after the first receipt.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D812">Receive stock</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="kpis"></section>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Part</th><th>On hand</th><th>Reserved</th><th>Available</th><th>Status</th><th>Last movement</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="stock" hidden>
+    <b data-count>0 selected</b>
+    <a class="btn" href="#D812">Receive</a>
+    <button class="btn" type="button" data-toast="Added to the reorder list">Add to reorder list</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p class="mono" id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D802">Open part</a><span class="grow"></span>
+      <a class="btn btn-secondary" id="quick-adjust" href="#D814">Adjust</a><a class="btn btn-primary" href="#D812">Receive</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">In stock</button><button class="chip" type="button" aria-pressed="false">Low stock</button>
+        <button class="chip" type="button" aria-pressed="false">Out of stock</button><button class="chip" type="button" aria-pressed="false">On request</button>
+        <button class="chip" type="button" aria-pressed="false">Discontinued</button></div></div>
+      <div class="field"><span class="label">Category</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Heaters</button><button class="chip" type="button" aria-pressed="false">Timers</button>
+        <button class="chip" type="button" aria-pressed="false">Industrial chains</button><button class="chip" type="button" aria-pressed="false">PID controllers</button>
+        <button class="chip" type="button" aria-pressed="false">Others</button></div></div>
+      <div class="field"><label for="f-move">No movement for</label><select class="select" id="f-move"><option>Any time</option><option>30 days</option><option>60 days</option><option>90 days</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show 20 parts</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D812"><svg class="ic"><use href="#ph-download-simple"/></svg>Receive</a>
+  <a href="#D813"><svg class="ic"><use href="#ph-upload-simple"/></svg>Issue</a>
+  <a href="#D814"><svg class="ic"><use href="#ph-arrow-up-down"/></svg>Adjust</a>
+  <a href="#D811"><svg class="ic"><use href="#ph-history"/></svg>Ledger</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Stock by part in the one stock location, with what is reserved and free.</p></div>
+  <div><h3>What you can do</h3><ul><li>Receive, issue, adjust; export.</li><li>Click a row for the quick view with recent movements.</li><li>Open the ledger or the reorder list.</li></ul></div>
+  <div><h3>What happens next</h3><p>Receive (D812), Issue (D813), Adjust (D814), Ledger (D811), Reorder list (D815).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Low rows have an amber bar, out rows a red bar.</li><li>Reserved comes from approved orders and requests; issued when packed or dispatched.</li><li>Value of stock uses the cost price.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const last = (p) => D.ledger.find((x) => x.part === p.number);
+  const value = D.parts.reduce((sum, p) => sum + p.onHand * p.cost, 0);
+  const below = D.parts.filter(P.belowMin);
+  const reserved = D.parts.reduce((sum, p) => sum + p.reserved, 0);
+  const week = D.ledger.filter((x) => x.when >= '2026-11-17').length;
+
+  document.getElementById('summary').textContent = `${D.parts.length} parts · ${D.location} · updated 12:00 PM`;
+  document.getElementById('kpis').innerHTML = `
+    <a class="card kpi alert" href="${ZXA.href('D815')}"><span class="label">Below minimum</span><span class="value">${below.length}</span><span class="foot">${below.filter((p) => P.available(p) <= 0).length} out of stock</span></a>
+    <div class="card kpi"><span class="label">Value of stock</span><span class="value">${r.moneyShort(value)}</span><span class="foot">At cost, ${D.parts.reduce((s, p) => s + p.onHand, 0)} units</span></div>
+    <div class="card kpi"><span class="label">Reserved</span><span class="value">${reserved}</span><span class="foot">For approved orders and requests</span></div>
+    <a class="card kpi" href="${ZXA.href('D811')}"><span class="label">Movements this week</span><span class="value">${week}</span><span class="foot">Since Tue 17 Nov</span></a>`;
+
+  document.querySelector('#stock tbody').innerHTML = D.parts.map((p) => {
+    const st = P.state(p);
+    const m = last(p);
+    return `<tr data-drawer="quick" data-part="${p.number}" class="${st === 'out' ? 'urgent' : st === 'low' ? 'low' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.number}"></label></td>
+      <td><a class="rec" href="#D802?p=${p.number}">${p.number}</a><span class="sub">${r.esc(p.name)}</span></td>
+      <td class="num">${p.onHand}</td><td class="num">${p.reserved || '<span class="faint">0</span>'}</td>
+      <td class="num strong ${P.available(p) <= 0 ? 'neg' : ''}">${P.available(p)}</td><td class="num">${p.min}</td>
+      <td data-sort="${st}">${P.stockTag(p)}</td>
+      <td class="nowrap" data-sort="${m?.when ?? '0'}">${m ? `${r.date(m.when)}<span class="sub">${P.TYPES[m.type][0]} ${m.qty > 0 ? '+' : ''}${m.qty}</span>` : '<span class="faint">Over 60 days</span>'}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, below: P.belowMin, reserved: (p) => p.reserved > 0, discontinued: (p) => p.discontinued };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#stock tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](P.part(row.dataset.part)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = D.parts.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.querySelector('[data-when="loading"] .kpis').innerHTML = '<div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>'.repeat(4);
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = P.part(event.detail.dataset.part);
+    const moves = D.ledger.filter((x) => x.part === p.number).slice(0, 5);
+    document.getElementById('quick-title').textContent = p.name;
+    document.getElementById('quick-sub').textContent = p.number;
+    document.getElementById('quick-open').href = ZXA.href('D802', `?p=${p.number}`);
+    document.getElementById('quick-adjust').href = ZXA.href('D814', `?p=${p.number}`);
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${P.stockTag(p)}${p.reserved ? r.tag(`${p.reserved} reserved`, 'blue') : ''}</div>
+      <div class="grid cols-3" style="gap:8px"><div class="kv"><span>On hand</span><b>${p.onHand}</b></div><div class="kv"><span>Reserved</span><b>${p.reserved}</b></div><div class="kv"><span>Available</span><b>${P.available(p)}</b></div></div>
+      <dl class="dl"><dt>Minimum</dt><dd>${p.min}</dd><dt>Reorder qty</dt><dd>${p.reorder}</dd><dt>Supplier</dt><dd>${P.supplier(p.supplier).name}, ${p.lead} days</dd><dt>Value</dt><dd>${r.money(p.onHand * p.cost)} at cost</dd></dl>
+      <div><h3 style="font-size:14px; margin-bottom:6px">Last movements</h3>
+      ${moves.length ? `<ul class="mini">${moves.map((x) => `<li><span class="grow"><b>${P.TYPES[x.type][0]} ${x.qty > 0 ? '+' : ''}${x.qty}</b><small>${r.date(x.when)} · ${r.esc(x.ref)}</small></span><span class="end">Balance ${x.balance}</span></li>`).join('')}</ul>`
+        : '<p class="faint">No movement in 60 days</p>'}</div>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

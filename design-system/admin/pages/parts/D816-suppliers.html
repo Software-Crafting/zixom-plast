@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D816 Suppliers</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D816" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Suppliers</span></nav>
+      <h1>Suppliers</h1><p>Used in receipts and the reorder list.</p></div>
+    <button class="btn btn-primary" type="button" data-open="edit" id="add"><svg class="ic"><use href="#ph-plus"/></svg>Add supplier</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#suppliers"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Name, contact, GSTIN or city" aria-label="Search suppliers"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="city-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="suppliers">
+          <thead><tr><th class="sortable">Supplier</th><th>Contact</th><th>GSTIN</th><th class="num">Parts</th><th class="sortable">Last receipt</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-warehouse"/></svg></span>
+        <h3>No suppliers yet</h3><p>Suppliers you add are used in receipts and reorders.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="edit">Add supplier</button></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+  </div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ed-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ed-title">Add supplier</h2><p id="ed-sub">Shown in receipts and the reorder list.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field full"><label for="ed-name">Name *</label><input class="input" id="ed-name"></div>
+        <div class="field"><label for="ed-contact">Contact person</label><input class="input" id="ed-contact"></div>
+        <div class="field"><label for="ed-phone">Phone</label><input class="input" id="ed-phone" inputmode="tel"></div>
+        <div class="field"><label for="ed-email">Email</label><input class="input" id="ed-email" type="email"></div>
+        <div class="field"><label for="ed-city">City</label><input class="input" id="ed-city"></div>
+        <div class="field full"><label for="ed-gstin">GSTIN</label><input class="input mono" id="ed-gstin" maxlength="15"><span class="hint">15 characters. Checked against the state code.</span></div>
+      </div>
+      <div id="ed-parts"></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" id="ed-archive" data-open="archive">Archive</button><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ar-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ar-title">Archive this supplier?</h2><p id="ar-text">Old receipts keep the name. It is no longer offered for new receipts.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Supplier archived">Archive</button></div>
+  </div>
+</div>
+<div class="menu" id="city-menu" hidden>
+  <div class="label">City</div><button type="button" data-toast="Showing Ahmedabad">Ahmedabad</button><button type="button" data-toast="Showing Pune">Pune</button>
+  <button type="button" data-toast="Showing Mumbai">Mumbai</button><button type="button" data-toast="Showing Rajkot">Rajkot</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Who Zixom buys parts from, with contact, GSTIN and the parts they supply.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a supplier in the drawer.</li><li>Archive a supplier no longer used.</li><li>Call the contact.</li></ul></div>
+  <div><h3>What happens next</h3><p>Suppliers are chosen in receipts (D812), parts (D803) and the reorder list (D815).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A supplier with parts keeps them after archiving; reassign in the part.</li><li>Archived suppliers stay on old receipts.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const partsOf = (s) => D.parts.filter((p) => p.supplier === s.id);
+  const lastReceipt = (s) => D.ledger.find((x) => x.type === 'receipt' && x.note.startsWith(s.name));
+
+  document.querySelector('#suppliers tbody').innerHTML = D.suppliers.map((s) => {
+    const last = lastReceipt(s);
+    return `<tr data-status="${s.status}" data-id="${s.id}" data-drawer="edit">
+      <td><b>${s.name}</b><span class="sub">${s.city}</span></td>
+      <td>${s.contact}<span class="sub"><a href="tel:${s.phone.replace(/\s/g, '')}">${s.phone}</a></span></td>
+      <td class="mono nowrap">${s.gstin}</td><td class="num">${partsOf(s).length}</td>
+      <td class="nowrap" data-sort="${last?.when ?? '0'}">${last ? `${r.date(last.when)}<span class="sub mono">${last.ref}</span>` : '<span class="faint">None in 60 days</span>'}</td>
+      <td>${s.status === 'active' ? r.tag('Active', 'green') : r.tag('Archived')}</td>
+      <td class="actions"><span class="btn btn-sm btn-ghost">Edit</span></td></tr>`;
+  }).join('');
+
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#suppliers tbody tr')];
+    rows.forEach((row) => { row.hidden = row.dataset.status !== key; });
+    $('foot-count').textContent = `${rows.filter((row) => !row.hidden).length} suppliers`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = D.suppliers.filter((s) => s.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('active');
+
+  const fill = (s) => {
+    $('ed-title').textContent = s ? `Edit ${s.name}` : 'Add supplier';
+    ['name', 'contact', 'phone', 'email', 'city', 'gstin'].forEach((k) => { $(`ed-${k}`).value = s ? s[k] : ''; });
+    $('ed-archive').hidden = !s || s.status === 'archived';
+    $('ed-parts').innerHTML = s && partsOf(s).length ? `<span class="label" style="display:block; margin-bottom:6px; font-size:13px; font-weight:600">Parts from this supplier</span>
+      <div class="tags">${partsOf(s).map((p) => `<span class="tag outline mono">${p.number}</span>`).join('')}</div>` : '';
+    if (s) $('ar-text').textContent = `${partsOf(s).length} parts name ${s.name}. Old receipts keep the name; reassign the parts in each part.`;
+  };
+  $('add').addEventListener('click', () => fill(null));
+  $('edit').addEventListener('zxa:row', (event) => fill(D.suppliers.find((s) => s.id === event.detail.dataset.id)));
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

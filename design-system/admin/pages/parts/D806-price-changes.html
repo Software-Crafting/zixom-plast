@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D806 Price changes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D806" data-nav="D801">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Price changes</span></nav>
+      <h1>Price changes</h1><p>Change many prices at once, now or from a date.</p></div>
+  </div>
+
+  <div data-when="ready">
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>New change</h2><p>Prices before GST. On request and discontinued parts are skipped.</p></div></div>
+        <div class="card-body stack">
+          <div class="form-grid">
+            <div class="field"><label for="c-scope">Parts</label><select class="select" id="c-scope"></select></div>
+            <div class="field"><label for="c-type">Change</label><select class="select" id="c-type"><option value="up">Increase by percent</option><option value="down">Decrease by percent</option><option value="add">Add a fixed amount</option></select></div>
+            <div class="field"><label for="c-value">Value</label><div class="input-wrap"><input class="input" id="c-value" inputmode="decimal" value="5"><span class="suffix" id="c-unit">%</span></div></div>
+            <div class="field"><label for="c-round">Round to</label><select class="select" id="c-round"><option value="10">Nearest ₹10</option><option value="1">Nearest ₹1</option><option value="50">Nearest ₹50</option></select></div>
+            <div class="field"><label for="c-when">Effective</label><select class="select" id="c-when"><option value="now">Now</option><option value="date" selected>From a date</option></select></div>
+            <div class="field"><label for="c-date">Date</label><input class="input" id="c-date" type="date" value="2026-12-01" min="2026-11-23"></div>
+          </div>
+          <div class="banner amber"><svg class="ic"><use href="#ph-shopping-cart"/></svg><span class="grow"><b>3 carts in the app hold the old price.</b> Customers see the new price before they pay.</span></div>
+        </div>
+        <div class="card-head" style="border-top:1px solid var(--line)"><div class="grow"><h2>Preview</h2><p id="preview-sub"></p></div></div>
+        <div class="table-wrap no-top">
+          <table class="table compact" id="preview"><thead><tr><th>Part</th><th class="num">Now</th><th class="num">New</th><th class="num">Difference</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="form-bar" style="margin-top:0">
+          <span class="grow">Customers are not notified. The app shows the new price on the effective date.</span>
+          <button class="btn btn-primary" type="button" id="apply" data-busy data-toast="Price change scheduled for 1 Dec 2026">Schedule change</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Scheduled and past</h2></div></div>
+        <ul class="mini" id="history"></ul>
+      </section>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="cancel-change" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cc-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cc-title">Cancel Heaters, plus 5 percent?</h2><p>Prices stay as they are on 1 Dec 2026.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep change</button><button class="btn btn-danger" type="button" data-close data-toast="Scheduled change cancelled">Cancel change</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>A bulk price change with a preview and an effective date.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick parts by category, choose percent or amount, rounding and date.</li><li>Apply now or schedule; cancel a scheduled change.</li></ul></div>
+  <div><h3>What happens next</h3><p>The catalogue (D801) and the app show the new prices from the date.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Carts with the old price show an update in the app (EC-44 in the app).</li><li>Quotes already sent keep their price until they expire.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const priced = D.parts.filter((p) => p.price !== null && !p.discontinued);
+  $('c-scope').innerHTML = `<option value="Heaters">Heaters (${priced.filter((p) => p.category === 'Heaters').length})</option>
+    ${D.categories.filter((c) => c.status === 'active' && c.name !== 'Heaters').map((c) => `<option value="${c.name}">${c.name} (${priced.filter((p) => p.category === c.name).length})</option>`).join('')}
+    <option value="all">All priced parts (${priced.length})</option>`;
+
+  const render = () => {
+    const scope = $('c-scope').value;
+    const value = Number($('c-value').value.replace(/,/g, '')) || 0;
+    const type = $('c-type').value;
+    const round = Number($('c-round').value);
+    const list = priced.filter((p) => scope === 'all' || p.category === scope);
+    const newPrice = (p) => {
+      const raw = type === 'add' ? p.price + value : p.price * (1 + (type === 'up' ? value : -value) / 100);
+      return Math.max(0, Math.round(raw / round) * round);
+    };
+    $('c-unit').textContent = type === 'add' ? '₹' : '%';
+    $('preview').tBodies[0].innerHTML = list.map((p) => {
+      const diff = newPrice(p) - p.price;
+      return `<tr><td><span class="mono">${p.number}</span><span class="sub">${r.esc(p.name)}</span></td><td class="num">${r.money(p.price)}</td><td class="num strong">${r.money(newPrice(p))}</td>
+        <td class="num ${diff < 0 ? 'neg' : 'pos'}">${diff > 0 ? '+' : ''}${r.money(diff)}</td></tr>`;
+    }).join('') || '<tr><td colspan="4" class="muted">No priced parts in this category</td></tr>';
+    const now = $('c-when').value === 'now';
+    $('c-date').disabled = now;
+    $('preview-sub').textContent = `${list.length} parts · ${now ? 'from now' : `from ${r.date($('c-date').value)}`}`;
+    $('apply').textContent = now ? 'Apply now' : 'Schedule change';
+    $('apply').dataset.toast = now ? `${list.length} prices changed` : `Price change scheduled for ${r.date($('c-date').value)}`;
+  };
+  ['c-scope', 'c-type', 'c-value', 'c-round', 'c-when', 'c-date'].forEach((id) => $(id).addEventListener('input', render));
+  render();
+
+  $('history').innerHTML = D.priceChanges.map((c) => `<li><span class="ic-disc ${c.status === 'scheduled' ? 'blue' : 'green'}">${r.icon(c.status === 'scheduled' ? 'calendar-blank' : 'check')}</span>
+    <span class="grow"><b>${c.title}</b><small>${c.parts.length} part${c.parts.length > 1 ? 's' : ''} · ${c.status === 'scheduled' ? 'from' : 'on'} ${r.date(c.effective)} · ${c.by}</small></span>
+    ${c.status === 'scheduled' ? '<button class="btn btn-sm btn-ghost" type="button" data-open="cancel-change">Cancel</button>' : r.tag('Applied', 'green')}</li>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

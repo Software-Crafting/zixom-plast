@@ -1,0 +1,21 @@
+/* Parts module layout the shared classes do not cover. */
+
+/* low stock rows: an amber bar like the red .urgent bar, drawn without a shadow */
+.table tr.low td:first-child{background-image:linear-gradient(var(--amber), var(--amber)); background-size:3px 100%; background-repeat:no-repeat}
+
+/* compatibility matrix and editable line tables */
+.table th.c, .table td.c{text-align:center}
+.table td .input, .table td .select{min-height:34px; height:34px; font-size:var(--fs-13)}
+.table td .input.qty{width:76px; text-align:right}
+.table td .input.rate{width:120px; text-align:right}
+.table .neg{color:var(--red)}
+.table .pos{color:var(--green)}
+
+/* totals list in side cards and the quote builder */
+.totals{display:flex; flex-direction:column; gap:8px; font-size:var(--fs-14)}
+.totals div{display:flex; justify-content:space-between; gap:12px}
+.totals .grand{padding-top:10px; border-top:1px solid var(--line); font-weight:700; color:var(--text-strong); font-size:var(--fs-16)}
+
+/* part name as the record title (record-head h1 is mono for record numbers) */
+.record-head h1.name{font-family:var(--font-display); font-weight:400; font-size:var(--fs-28); letter-spacing:0}
+@media (max-width:640px){.record-head h1.name{font-size:var(--fs-22)}}

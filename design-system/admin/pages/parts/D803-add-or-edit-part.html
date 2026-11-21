@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D803 Add or edit part</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D803" data-nav="D801">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+      <div class="record-head"><h1 id="title" class="name"></h1></div>
+      <div class="meta"><span id="sub"></span></div>
+    </div>
+  </div>
+
+  <form class="card pad" data-when="ready duplicate" onsubmit="return false">
+    <div class="banner red" data-when="duplicate" style="margin-bottom:20px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>1 field needs attention.</b> <a href="#f-number">Part number</a></span></div>
+
+    <section class="form-section">
+      <h3>Basics</h3><p>What customers see in the app.</p>
+      <div class="form-grid">
+        <div class="field"><label for="f-number">Part number *</label><input class="input mono" id="f-number" required>
+          <span class="hint" data-when="ready">Unique, ZP-SP-NNN.</span>
+          <span class="error" data-when="duplicate"><svg class="ic"><use href="#ph-warning-circle"/></svg>ZP-SP-008 is already used by Thermocouple, J type. <a href="#D802?p=ZP-SP-008">Open it</a></span></div>
+        <div class="field"><label for="f-name">Name *</label><input class="input" id="f-name" required maxlength="80"></div>
+        <div class="field"><label for="f-cat">Category *</label><select class="select" id="f-cat"></select></div>
+        <div class="field"><label for="f-unit">Unit</label><select class="select" id="f-unit"><option>Piece</option><option>Set</option><option>Kit</option><option>Litre</option><option>Metre</option></select></div>
+        <div class="field full"><label for="f-desc">Description</label><textarea class="textarea" id="f-desc" maxlength="300"></textarea><span class="hint">Up to 300 characters.</span></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Specifications</h3><p>Shown as a list on the part page in the app.</p>
+      <div class="stack-sm" id="specs"></div>
+      <button class="btn btn-sm btn-ghost" type="button" id="add-spec" style="margin-top:10px"><svg class="ic"><use href="#ph-plus"/></svg>Add specification</button>
+    </section>
+
+    <section class="form-section">
+      <h3>Images</h3><p>Up to 5. JPG or PNG, 10 MB each.</p>
+      <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop images here or browse</b>The first image is the cover</div>
+    </section>
+
+    <section class="form-section">
+      <h3>Price and tax</h3><p>Price before GST. No price means customers ask for a quote.</p>
+      <div class="form-grid three">
+        <div class="field"><label for="f-price">Price</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="f-price" inputmode="decimal"></div>
+          <label class="check" style="margin-top:6px"><input type="checkbox" id="f-request"> On request</label></div>
+        <div class="field"><label for="f-gst">GST rate</label><select class="select" id="f-gst"><option>18%</option><option>12%</option><option>28%</option><option>5%</option></select></div>
+        <div class="field"><label for="f-hsn">HSN</label><input class="input mono" id="f-hsn" inputmode="numeric" maxlength="8"></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Stock</h3><p>Low stock shows at or below the minimum and the part joins the reorder list.</p>
+      <div class="form-grid three">
+        <div class="field"><label for="f-min">Minimum stock</label><input class="input" id="f-min" type="number" min="0"></div>
+        <div class="field"><label for="f-reorder">Reorder quantity</label><input class="input" id="f-reorder" type="number" min="0"></div>
+        <div class="field"><label for="f-lead">Lead time, days</label><input class="input" id="f-lead" type="number" min="0"></div>
+        <div class="field"><label for="f-supplier">Supplier</label><select class="select" id="f-supplier"></select></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Compatible models</h3><p>Drives Fits these machines in the app.</p>
+      <div class="row wrap" id="models"></div>
+    </section>
+
+    <section class="form-section">
+      <h3>Visibility</h3>
+      <label class="switch"><input type="checkbox" id="f-visible" checked><span></span>Visible in the app</label>
+    </section>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note">Customers see changes in the app at once.</span>
+      <a class="btn btn-ghost" href="#D801">Cancel</a>
+      <button class="btn btn-secondary" type="button" id="save-another" data-busy data-toast="Saved. Add the next part">Save and add another</button>
+      <button class="btn btn-primary" type="button" id="save" data-busy data-toast="Saved">Save</button>
+    </div>
+  </form>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-title" style="width:200px"></span><span class="sk sk-line"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready duplicate loading error">
+  <div><h3>What it is</h3><p>The form for a new part, or an existing one with <code>?p=ZP-SP-001</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Set number, name, category, specs, images, price or On request, GST, stock levels, supplier and models.</li><li>Save, or save and add another.</li></ul></div>
+  <div><h3>What happens next</h3><p>Part detail (D802). The app shows the part at once when visible.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Duplicate number is blocked (Duplicate state).</li><li>Empty price means On request.</li><li>Leaving with changes asks first (D1808).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const editing = P.part(new URLSearchParams(location.search).get('p') || '');
+  const next = `ZP-SP-${String(D.parts.length + 1).padStart(3, '0')}`;
+  const p = editing || { number: next, name: '', category: 'Heaters', unit: 'Piece', description: '', specs: [['', '']], price: '', gst: 18, hsn: '',
+    min: 2, reorder: 4, lead: 7, supplier: 'thermal', fits: [], visible: true };
+
+  $('crumb').textContent = editing ? p.number : 'Add part';
+  $('title').textContent = editing ? `Edit ${p.name}` : 'Add part';
+  $('sub').innerHTML = editing ? `<span class="mono">${p.number}</span> · ${P.stockTag(p)}` : `Next free number ${next}`;
+  if (editing) { $('save-another').remove(); $('f-number').readOnly = true; }
+
+  $('f-cat').innerHTML = D.categories.filter((c) => c.status === 'active').map((c) => `<option${c.name === p.category ? ' selected' : ''}>${c.name}</option>`).join('');
+  $('f-supplier').innerHTML = D.suppliers.filter((s) => s.status === 'active').map((s) => `<option value="${s.id}"${s.id === p.supplier ? ' selected' : ''}>${s.name}</option>`).join('');
+  $('f-number').value = p.number;
+  $('f-name').value = p.name;
+  $('f-unit').value = p.unit;
+  $('f-desc').value = p.description;
+  $('f-price').value = p.price === null ? '' : (p.price ? Number(p.price).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '');
+  $('f-request').checked = p.price === null;
+  $('f-price').disabled = p.price === null;
+  $('f-hsn').value = p.hsn;
+  $('f-min').value = p.min;
+  $('f-reorder').value = p.reorder;
+  $('f-lead').value = p.lead;
+  $('f-visible').checked = p.visible;
+
+  const specRow = ([k, v]) => `<div class="row" data-spec><input class="input" aria-label="Specification" placeholder="For example Power" value="${r.esc(k)}" style="flex:1">
+    <input class="input" aria-label="Value" placeholder="650 W" value="${r.esc(v)}" style="flex:1">
+    <button class="icon-btn sm" type="button" aria-label="Remove specification" data-remove-spec><svg class="ic"><use href="#ph-trash"/></svg></button></div>`;
+  $('specs').innerHTML = (p.specs.length ? p.specs : [['', '']]).map(specRow).join('');
+  $('add-spec').addEventListener('click', () => $('specs').insertAdjacentHTML('beforeend', specRow(['', ''])));
+  $('specs').addEventListener('click', (event) => { if (event.target.closest('[data-remove-spec]')) event.target.closest('[data-spec]').remove(); });
+
+  $('models').innerHTML = D.models.map(([model, series]) => `<label class="check"><input type="checkbox"${p.fits.includes(series) ? ' checked' : ''}> ${model}</label>`).join('');
+  $('f-request').addEventListener('change', (event) => { $('f-price').disabled = event.target.checked; if (event.target.checked) $('f-price').value = ''; });
+
+  /* duplicate state: the number field shows the error and gets focus */
+  const markDuplicate = () => {
+    const dup = document.body.dataset.state === 'duplicate';
+    $('f-number').setAttribute('aria-invalid', String(dup));
+    $('f-number').value = dup ? 'ZP-SP-008' : p.number;
+  };
+  new MutationObserver(markDuplicate).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

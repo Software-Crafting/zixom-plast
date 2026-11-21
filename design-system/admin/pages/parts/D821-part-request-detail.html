@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D821 Part request detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D821" data-nav="D820">
+<main class="content">
+  <div data-when="ready duplicate unmatched">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D820">Part requests</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number" class="mono"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner amber" data-when="duplicate"><svg class="ic"><use href="#ph-copy"/></svg>
+        <span class="grow"><b>Possible duplicate.</b> SPR-2026-0031 already asks for this part on the same ticket.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D821?r=SPR-2026-0031">Open SPR-2026-0031</a><button class="btn btn-sm btn-ghost" type="button" data-toast="Merged into SPR-2026-0031">Merge</button></span></div>
+      <div class="banner amber" data-when="unmatched"><svg class="ic"><use href="#ph-file-search"/></svg>
+        <span class="grow"><b>Part not in the catalogue.</b> Sandeep typed "12B chain 5 mtr with lock". Match it to a part or add a new one (EC-A45).</span>
+        <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Matched to ZP-SP-003">Match to ZP-SP-003</button><a class="btn btn-sm btn-ghost" href="#D803">Add part</a></span></div>
+      <div id="edge-banners" class="stack"></div>
+    </div>
+
+    <div class="detail">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Parts</h2><p id="parts-sub"></p></div></div>
+          <div class="table-wrap no-top"><table class="table" id="lines"><thead><tr><th>Part</th><th class="num">Qty</th><th class="num">Available</th><th class="num">Reserved</th><th class="num">Price</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Delivery</h2><p>The engineer sees this in the app (E502).</p></div></div>
+          <div class="card-body stack" id="delivery"></div>
+        </section>
+
+        <section class="card">
+          <div class="tabs" role="tablist" aria-label="Request sections" style="padding:0 12px">
+            <button role="tab" aria-selected="true" aria-controls="tab-timeline">Timeline</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-messages">Messages</button>
+          </div>
+          <div class="card-body" style="padding-top:20px">
+            <div id="tab-timeline" role="tabpanel"></div>
+            <div id="tab-messages" role="tabpanel" hidden></div>
+          </div>
+        </section>
+      </div>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:90px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:90px"></span></div></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:120px"></span></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D820">Go to part requests</a></div></div></div>
+  </div>
+</main>
+
+<!-- on order: no stock now; the engineer sees the date -->
+<div class="overlay center" id="on-order" hidden>
+  <div class="modal" role="dialog" aria-labelledby="oo-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-clock"/></svg></span>
+      <div class="grow"><h2 id="oo-title">Mark on order</h2><p id="oo-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="oo-date">Expected on</label><input class="input" id="oo-date" type="date" min="2026-11-24"></div>
+      <label class="check" id="oo-hold-row"><input type="checkbox" id="oo-hold" checked> <span id="oo-hold-label"></span></label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close id="oo-go">Mark on order</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rj-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="rj-title"></h2><p id="rj-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="rj-reason">Reason</label><select class="select" id="rj-reason"><option>Part discontinued, use the replacement</option><option>Customer has the part on site</option><option>Not needed for this job</option><option>Duplicate request</option><option>Other</option></select></div>
+      <div class="field"><label for="rj-note">Message to the engineer <span class="opt">optional</span></label><textarea class="textarea" id="rj-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request rejected. Engineer told">Reject request</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="partly" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pa-title">
+    <div class="modal-head"><div class="grow"><h2 id="pa-title">Approve partly</h2><p>Choose what to approve now. The rest stays open.</p></div></div>
+    <div class="modal-body stack" id="pa-body"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Partly approved and reserved. Engineer told">Approve selected</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="dispatch" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="dp-title">
+    <div class="drawer-head"><div class="grow"><h2 id="dp-title">Mark dispatched</h2><p>Record the courier only. Booking happens outside Zixom Connect.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="dp-courier">Courier</label><select class="select" id="dp-courier"><option>Blue Dart</option><option>DTDC</option><option>Delhivery</option><option>India Post</option><option>Own vehicle</option><option>Other</option></select></div>
+        <div class="field"><label for="dp-track">Tracking number</label><input class="input mono" id="dp-track"></div>
+        <div class="field"><label for="dp-date">Dispatched on</label><input class="input" id="dp-date" type="date" value="2026-11-23"></div>
+        <div class="field"><label for="dp-eta">Expected on</label><input class="input" id="dp-eta" type="date" value="2026-11-25"></div>
+      </div>
+      <p class="muted" style="font-size:13px">Engineer will be notified in the app.</p>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Marked dispatched. Engineer told">Mark dispatched</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-tab="tab-messages"><svg class="ic"><use href="#ph-chat-text"/></svg>Message the engineer</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+</div>
+
+<aside class="proto" data-states="ready duplicate unmatched loading not-found error" data-mobile="../../../screens/engineer/E502-parts-requests.html">
+  <div><h3>What it is</h3><p>One part request from an engineer. Opens with <code>?r=SPR-2026-0031</code>; try 0030 (approved), 0028 (dispatched), 0029 (delivered), 0026 (rejected).</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show.</li><li>Approve and reserve, approve partly, mark on order, reject with a reason.</li><li>Issue (D813), mark dispatched with courier, mark delivered.</li></ul></div>
+  <div><h3>What happens next</h3><p>The engineer sees each change in the app (E502). Issue stock (D813), Ticket (D403), Hold (D407).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Needed for this visit and not available: banner, ticket can go On hold.</li><li>Duplicate request links to the existing one (Duplicate state).</li><li>Part not in the catalogue: match or add (EC-A45, Unmatched state).</li><li>Warranty: price zero. Chargeable without a price: enter one; the customer approves.</li><li>Read only after delivered.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const x = P.request(new URLSearchParams(location.search).get('r') || 'SPR-2026-0031');
+  if (!x) { document.body.dataset.state = 'not-found'; return; }
+  const t = r.ticket(x.ticket);
+  const e = r.engineer(x.engineer);
+  const c = r.company(x.company);
+  const s = r.site(x.company, x.site);
+  const m = r.machine(t.machine);
+  const p = P.part(x.part);
+  const enough = P.available(p) >= x.qty;
+  const tq = `?t=${t.number}`;
+  const rq = `?r=${x.number}`;
+  const ro = D.reorder[p.number];
+  const readOnly = ['delivered', 'rejected'].includes(x.status);
+
+  document.title = `Zixom Admin - ${x.number}`;
+  $('crumb').textContent = x.number;
+  $('number').textContent = x.number;
+  $('chips').innerHTML = `${P.sprTag(x.status)}${P.urgencyTag(x)}${r.coverageTag(x.coverage)}`;
+  $('meta').innerHTML = `<span>${ic('wrench')}<a class="mono" href="#D403${tq}">${t.number}</a></span><span>${ic('user')}${e.name}, engineer</span>
+    <span>${ic('clock')}Raised ${r.date(x.when)}, ${r.time(x.when)} · ${r.ago(x.when)}</span>`;
+
+  /* actions allowed for the status (D821 and section 11). The first is the primary action */
+  const A = {
+    approve: `<button class="btn btn-primary" type="button" data-toast="Approved and reserved. Engineer told">Approve and reserve</button>`,
+    partly: `<button class="btn btn-secondary" type="button" data-open="partly">Approve partly</button>`,
+    onorder: `<button class="btn btn-primary" type="button" data-open="on-order">Mark on order</button>`,
+    reject: `<button class="btn btn-secondary" type="button" data-open="reject">Reject</button>`,
+    issue: `<a class="btn btn-primary" href="#D813${rq}">Issue</a>`,
+    receive: `<a class="btn btn-primary" href="#D812">Receive stock</a>`,
+    date: `<button class="btn btn-secondary" type="button" data-open="on-order">Change date</button>`,
+    dispatch: `<button class="btn btn-primary" type="button" data-open="dispatch">Mark dispatched</button>`,
+    delivered: `<button class="btn btn-${x.status === 'dispatched' || x.deliverTo === 'Engineer' ? 'primary' : 'secondary'}" type="button" data-toast="Marked delivered. Engineer told">Mark delivered</button>`,
+    tracking: `<button class="btn btn-secondary" type="button" data-open="dispatch">Update tracking</button>`,
+    ticket: `<a class="btn btn-secondary" href="#D403${tq}">Open ticket</a>`,
+  };
+  const BY_STATUS = {
+    'submitted': enough ? ['reject', 'partly', 'approve'] : ['reject', 'onorder'], 'approved': ['reject', 'issue'], 'partly': ['reject', 'issue'],
+    'on-order': ['reject', 'date', 'receive'], 'issued': x.deliverTo === 'Engineer' ? ['delivered'] : ['delivered', 'dispatch'],
+    'dispatched': ['tracking', 'delivered'], 'delivered': ['ticket'], 'rejected': ['ticket'],
+  };
+  $('actions').innerHTML = `${BY_STATUS[x.status].map((k) => A[k]).join('')}<button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+
+  /* edge banners */
+  const banners = [];
+  if (x.status === 'submitted' && !enough && x.urgency === 'This visit') {
+    banners.push(`<div class="banner red">${ic('siren')}<span class="grow"><b>Needed for this visit and out of stock.</b> ${e.name} and you were alerted at ${r.time(x.when)}. ${ro?.status === 'ordered' ? `${ro.qty} on order from ${P.supplier(p.supplier).name}, expected ${r.date(ro.expected)}.` : ''}</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D407${tq}">Put ticket on hold</a></span></div>`);
+  }
+  if (x.number === 'SPR-2026-0031') banners.push(`<div class="banner">${ic('chat-text')}<span class="grow"><b>Customer replied at 10:50:</b> "Spare chain is in the store room." Fit theirs and replace it later, or reject this request.</span>
+    <span class="btns"><a class="btn btn-sm btn-ghost" href="#D403${tq}">Open ticket</a></span></div>`);
+  if (x.priceNote) banners.push(`<div class="banner green">${ic('check-circle')}<span class="grow"><b>Price approved.</b> ${x.priceNote}.</span></div>`);
+  if (readOnly) banners.push(`<div class="banner grey">${ic('lock-simple')}<span class="grow"><b>${x.status === 'delivered' ? `Delivered ${r.date(x.delivered || x.when)}.` : 'Rejected.'}</b> This request is read only.${x.reason ? ` Reason: ${r.esc(x.reason)}` : ''}</span></div>`);
+  $('edge-banners').innerHTML = banners.join('');
+
+  /* parts table */
+  const LINE = { submitted: enough ? ['Available', 'green'] : ['Out of stock', 'red'], approved: ['Reserved', 'blue'], partly: ['Partly reserved', 'amber'],
+    'on-order': ['On order', 'amber'], issued: ['Issued', 'blue'], dispatched: ['Dispatched', 'blue'], delivered: ['Delivered', 'green'], rejected: ['Rejected', ''] };
+  $('parts-sub').textContent = x.coverage === 'warranty' ? 'Warranty ticket: parts at no charge.' : x.coverage === 'amc' ? 'AMC covers labour only. Parts are billed after the visit.' : 'Chargeable job.';
+  $('lines').tBodies[0].innerHTML = x.lines.map(([n, qty, rate]) => {
+    const part = P.part(n);
+    return `<tr><td><a class="rec" href="#D802?p=${n}">${n}</a><span class="sub">${r.esc(part.name)}</span></td><td class="num">${qty}</td>
+      <td class="num ${P.available(part) < qty && x.status === 'submitted' ? 'neg strong' : ''}">${P.available(part)}</td><td class="num">${part.reserved}</td>
+      <td class="num">${rate === null ? '<span class="amber-text">Enter a price</span>' : `${r.money(rate * qty)}${x.coverage === 'warranty' ? '<span class="sub">Warranty</span>' : ''}`}</td>
+      <td>${r.tag(...LINE[x.status])}</td></tr>`;
+  }).join('');
+
+  /* delivery */
+  const WHERE = { Site: [`${s.name}, ${c.name}`, `${s.address}, ${s.pincode}`, `${s.contact.name} · ${s.contact.phone}`],
+    Engineer: [`Hand to ${e.name}`, 'Collect from the main store', e.phone], Courier: [`Courier to ${s.name}`, `${s.address}, ${s.pincode}`, `${s.contact.name} · ${s.contact.phone}`] };
+  const [where1, where2, where3] = WHERE[x.deliverTo];
+  $('delivery').innerHTML = `<div class="choices" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
+      ${[['Site', 'Site'], ['Engineer', 'Engineer'], ['Courier', 'Courier to customer']].map(([k, label]) => `<label class="choice"><input type="radio" name="deliver" class="sr-only"${k === x.deliverTo ? ' checked' : ''}${readOnly ? ' disabled' : ''}><span><b>${label}</b></span></label>`).join('')}</div>
+    <dl class="dl"><dt>Deliver to</dt><dd>${where1}<br><span class="muted">${where2}</span></dd><dt>Contact</dt><dd>${where3}</dd>
+      ${x.courier ? `<dt>Courier</dt><dd>${x.courier} · <span class="mono">${x.tracking}</span></dd>` : ''}
+      ${s.access && x.deliverTo !== 'Engineer' ? `<dt>Access</dt><dd>${s.access}</dd>` : ''}</dl>`;
+
+  /* timeline */
+  const events = [['package', 'blue', `Requested by ${e.name}`, `${p.name} × ${x.qty} · ${x.urgency.toLowerCase()} · deliver to ${x.deliverTo.toLowerCase()}`, x.when]];
+  if (x.number === 'SPR-2026-0031') {
+    events.push(['siren', 'red', 'Alert: needed for this visit, out of stock', 'Sent to you and the engineer', '2026-11-23T10:16']);
+    events.push(['chat-text', '', 'Customer replied on the ticket', '"Spare chain is in the store room"', '2026-11-23T10:50']);
+  }
+  if (x.approved) events.push(['check', 'green', 'Approved and reserved', 'Rajesh Goyal', x.approved]);
+  if (x.issued) events.push(['upload-simple', 'blue', 'Issued from the main store', 'Ledger updated', x.issued]);
+  if (x.dispatched) events.push(['truck', 'blue', `Dispatched with ${x.courier}`, `Tracking ${x.tracking}`, x.dispatched]);
+  if (x.delivered) events.push(['check-circle', 'green', 'Delivered', `Received at ${s.name}`, x.delivered]);
+  if (x.rejected) events.push(['x', 'red', 'Rejected', x.reason, x.rejected]);
+  $('tab-timeline').innerHTML = `<ol class="timeline">${events.reverse().map(([i, tone, title, sub, when]) => `<li><span class="node ${tone}">${ic(i)}</span><div><b>${title}</b><p>${r.esc(sub)}</p></div><small>${r.dayDate(when)}, ${r.time(when)}</small></li>`).join('')}</ol>`;
+
+  $('tab-messages').innerHTML = `<div class="card" style="box-shadow:inset 0 0 0 1px var(--line)">
+    <div class="thread"><span class="day-sep">${r.dayDate(x.when)}</span>
+      <div class="msg">${r.esc(x.note || 'Please send this part.')}<small>${e.name} · ${r.time(x.when)}</small></div>
+      ${x.number === 'SPR-2026-0031' ? '<div class="msg me">Checking with the supplier. Customer says they have a spare chain in the store room, can you use it today?<small>You · 10:58</small></div>' : ''}
+    </div>
+    ${readOnly ? '' : `<div class="composer"><textarea class="textarea" placeholder="Write to ${e.name.split(' ')[0]}" aria-label="Message"></textarea><button class="btn btn-primary" type="button" data-toast="Message sent">Send</button></div>`}</div>`;
+
+  /* side cards */
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Ticket</h3><a class="card-link" href="#D403${tq}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="thumb">${ic('factory')}</span><span><b class="mono">${t.number}</b><small>${m.model} · ${c.name}</small></span></div>
+        <div class="tags">${r.ticketTag(t.status)}${t.severity ? r.severityTag(t.severity) : ''}${r.coverageTag(t.coverage)}</div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Requested by</h3><a class="card-link" href="#D702">Open</a></div>
+      <div class="card-body stack-sm"><div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${e.region}</small></span></div>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${e.phone.replace(/\s/g, '')}">${ic('phone')}Call</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Note and photos</h3></div>
+      <div class="card-body stack-sm"><p>${r.esc(x.note || 'No note')}</p>
+        ${x.photos ? `<div class="gallery">${Array.from({ length: x.photos }, (_, i) => `<div class="ph">${ic('image')}<small>Photo ${i + 1}</small></div>`).join('')}</div>` : ''}</div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Stock for ${p.number}</h3><a class="card-link" href="#D802?p=${p.number}">Part</a></div>
+      <div class="card-body"><dl class="dl"><dt>Status</dt><dd>${P.stockTag(p)}</dd><dt>Available</dt><dd>${P.available(p)} of ${p.onHand} on hand</dd>
+        ${ro?.status === 'ordered' ? `<dt>On order</dt><dd>${ro.qty}, expected ${r.date(ro.expected)}</dd>` : ''}<dt>Supplier</dt><dd>${P.supplier(p.supplier).name}</dd></dl></div></section>`;
+
+  /* modals */
+  $('oo-text').textContent = `${e.name} sees On order with the date in the app.`;
+  $('oo-date').value = ro?.expected || '2026-11-30';
+  $('oo-hold-label').textContent = `Put ${t.number} on hold, waiting for parts`;
+  $('oo-go').dataset.toast = `On order. ${t.number} on hold, engineer told`;
+  $('rj-title').textContent = `Reject ${x.number}?`;
+  $('rj-text').textContent = `${e.name} sees your reason in the app.`;
+  $('pa-body').innerHTML = x.lines.map(([n, qty]) => `<div class="row"><label class="check grow"><input type="checkbox" checked> ${r.esc(P.part(n).name)}</label>
+    <input class="input" type="number" min="1" max="${qty}" value="${Math.max(1, qty - 1)}" aria-label="Quantity to approve" style="width:90px"><span class="muted">of ${qty}</span></div>`).join('');
+  $('dp-track').value = x.tracking || '';
+  if (x.courier) $('dp-courier').value = x.courier;
+
+  document.addEventListener('click', (event) => {
+    const jump = event.target.closest('[data-tab]');
+    if (jump) document.querySelector(`[aria-controls="${jump.dataset.tab}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

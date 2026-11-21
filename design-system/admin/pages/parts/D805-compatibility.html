@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D805 Compatibility</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D805" data-nav="D801">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Compatibility</span></nav>
+      <h1>Compatibility</h1><p>Which parts fit which models. Drives Fits these machines in the app.</p></div>
+    <a class="btn btn-secondary" href="#D807"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+    <button class="btn btn-primary" type="button" id="save" data-busy data-toast="Saved. The app shows the new fit" disabled>Save changes</button>
+  </div>
+
+  <div data-when="ready no-results">
+    <section class="card list-card">
+      <div class="toolbar">
+        <label class="search" data-filter="#matrix"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Part number or name" aria-label="Search parts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="cat-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Category</button>
+        <span class="grow"></span><span class="muted" id="changes" style="font-size:13px"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="table compact" id="matrix">
+          <thead><tr id="head"></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span id="foot"></span><span class="grow"></span><span class="faint">Machines in the field per model in the header</span></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+  </div>
+</main>
+
+<div class="menu" id="cat-menu" hidden>
+  <div class="label">Category</div>
+  <button type="button" data-cat="">All categories</button>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error">
+  <div><h3>What it is</h3><p>A matrix of parts against machine models.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tick or untick a cell, then save.</li><li>Filter by category, search a part.</li><li>Import a matrix from Excel (D807).</li></ul></div>
+  <div><h3>What happens next</h3><p>The app shows Fits these machines on the part page and filters parts for a customer's machine (C702).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unsaved ticks ask before leaving (D1808).</li><li>Discontinued parts stay listed so old machines still find the replacement.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const field = (model) => r.machines.filter((m) => m.model.startsWith(model)).length;
+  document.getElementById('head').innerHTML = `<th>Part</th>${D.models.map(([model]) => `<th class="c nowrap">${model}<span class="sub" style="font-weight:400">${field(model)} in field</span></th>`).join('')}`;
+  document.querySelector('#matrix tbody').innerHTML = D.parts.map((p) => `<tr data-cat="${p.category}">
+    <td><a class="rec" href="#D802?p=${p.number}">${p.number}</a><span class="sub">${r.esc(p.name)}${p.discontinued ? ' · Discontinued' : ''}</span></td>
+    ${D.models.map(([model, series]) => `<td class="c"><label class="check" style="justify-content:center"><input type="checkbox" aria-label="${p.number} fits ${model}"${p.fits.includes(series) ? ' checked' : ''}></label></td>`).join('')}</tr>`).join('');
+  document.getElementById('foot').textContent = `${D.parts.length} parts · ${D.models.length} models`;
+
+  let changed = 0;
+  document.getElementById('matrix').addEventListener('change', () => {
+    changed += 1;
+    document.getElementById('changes').textContent = `${changed} unsaved change${changed > 1 ? 's' : ''}`;
+    document.getElementById('save').disabled = false;
+  });
+  document.getElementById('save').addEventListener('click', () => { changed = 0; document.getElementById('changes').textContent = ''; document.getElementById('save').disabled = true; });
+
+  const menu = document.getElementById('cat-menu');
+  menu.insertAdjacentHTML('beforeend', D.categories.filter((c) => c.status === 'active').map((c) => `<button type="button" data-cat="${c.name}">${c.name}</button>`).join(''));
+  menu.addEventListener('click', (event) => {
+    const pick = event.target.closest('[data-cat]');
+    if (!pick) return;
+    document.querySelectorAll('#matrix tbody tr').forEach((row) => { row.hidden = Boolean(pick.dataset.cat) && row.dataset.cat !== pick.dataset.cat; });
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

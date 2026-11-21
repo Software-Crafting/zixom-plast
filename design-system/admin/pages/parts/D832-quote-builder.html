@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D832 Quote builder</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D832" data-nav="D830">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-order" href="#D831"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Quote</span></nav>
+      <div class="record-head"><h1 id="title"></h1><span class="tags" id="chips"></span></div>
+      <div class="meta" id="meta"></div>
+    </div>
+  </div>
+
+  <div data-when="ready expired">
+    <div class="banner amber" data-when="expired" style="margin-bottom:16px"><svg class="ic"><use href="#ph-clock"/></svg>
+      <span class="grow"><b>The last quote expired on 26 Nov 2026.</b> The customer can no longer approve it. Send a revised quote.</span></div>
+    <div class="banner" id="revise-banner" hidden style="margin-bottom:16px"><svg class="ic"><use href="#ph-info"/></svg><span class="grow" id="revise-text"></span></div>
+
+    <div class="grid side-right">
+      <form class="card" onsubmit="return false">
+        <div class="card-head"><div class="grow"><h2>Lines</h2><p>Prices before GST. Discount per line in percent.</p></div></div>
+        <div class="table-wrap no-top"><table class="table compact" id="lines">
+          <thead><tr><th>Part</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Discount %</th><th class="num">Amount</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <div class="card-body stack">
+          <button class="btn btn-sm btn-ghost" type="button" id="add-line" style="align-self:flex-start"><svg class="ic"><use href="#ph-plus"/></svg>Add part</button>
+          <div class="form-grid">
+            <div class="field"><label for="f-delivery">Delivery charge</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="f-delivery" inputmode="decimal" value="400"></div></div>
+            <div class="field"><label for="f-valid">Valid until</label><input class="input" id="f-valid" type="date" value="2026-11-30" min="2026-11-24"><span class="hint">The quote expires after this date.</span></div>
+            <div class="field"><label for="f-dispatch">Dispatch in</label><select class="select" id="f-dispatch"><option>2 to 4 days after payment</option><option>1 week after payment</option><option>When stock arrives</option></select></div>
+            <div class="field"><label for="f-gst">GST</label><input class="input" id="f-gst" value="18%, CGST 9% and SGST 9% (Gujarat)" readonly></div>
+            <div class="field full"><label for="f-note">Note to the customer <span class="opt">optional</span></label><textarea class="textarea" id="f-note" maxlength="300"></textarea><span class="hint">Customer will be notified by push and email.</span></div>
+          </div>
+        </div>
+        <div class="form-bar" style="margin-top:0">
+          <span class="grow"><span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 11:58 AM</span></span>
+          <a class="btn btn-ghost" id="cancel" href="#D831">Cancel</a>
+          <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button>
+          <button class="btn btn-primary" type="button" id="send" data-busy data-toast="Quote sent. The customer approves it in the app">Send quote</button>
+        </div>
+      </form>
+
+      <aside class="stack">
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Total</h3></div>
+          <div class="card-body"><div class="totals" id="totals"></div></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="#D202">Open</a></div>
+          <div class="card-body stack-sm" id="customer"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">What happens next</h3></div>
+          <ul class="mini">
+            <li><span class="ic-disc">1</span><span class="grow"><b>Customer approves in the app</b><small>Order detail, C708</small></span></li>
+            <li><span class="ic-disc">2</span><span class="grow"><b>Invoice and payment</b><small>Stock is reserved on approval</small></span></li>
+            <li><span class="ic-disc">3</span><span class="grow"><b>Pick, pack and dispatch</b><small>D833, D834</small></span></li></ul></section>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready expired loading error" data-mobile="../../../screens/customer/C708-order-detail.html">
+  <div><h3>What it is</h3><p>A quote for a price on request item or a new order. <code>?o=ORD-2026-0205</code>; <code>?o=ORD-2026-0206</code> revises a sent quote.</p></div>
+  <div><h3>What you can do</h3><ul><li>Set rate, discount, delivery charge, validity and a note; totals update.</li><li>Add parts, save a draft, send.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer approves in the app (C708), then pays. The order moves to Quoted, then Approved (D831).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Quotes expire after the validity date (Expired state).</li><li>A revision replaces the old quote; the customer sees the new one.</li><li>Drafts autosave every 10 seconds.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const o = P.order(new URLSearchParams(location.search).get('o') || 'ORD-2026-0205');
+  const c = r.company(o.company);
+  const who = r.person(o.by);
+  const revising = o.status === 'quoted';
+  /* price on request: suggest the last price Zixom quoted for the part */
+  const LAST_QUOTED = { 'ZP-SP-004': 3950 };
+
+  $('crumb-order').textContent = o.number;
+  $('crumb-order').href = `#D831?o=${o.number}`;
+  $('cancel').href = `#D831?o=${o.number}`;
+  $('title').textContent = revising ? `Revise quote, ${o.number}` : `Quote ${o.number}`;
+  $('title').classList.add('name');
+  $('chips').innerHTML = `${P.orderTag(o.status)}${revising ? r.tag('Revision 2', 'outline') : ''}`;
+  $('meta').innerHTML = `<span>${c.name} · ${who.name}</span><span>Requested ${r.date(o.created)}, ${r.time(o.created)}</span>`;
+  if (revising) {
+    $('revise-banner').hidden = false;
+    $('revise-text').innerHTML = `<b>Revision 2.</b> Sent ${r.date(o.quoted)} for ${r.money(P.orderTotal(o))}, valid to ${r.date(o.validUntil)}. Sending this replaces it in the app.`;
+    $('send').textContent = 'Send revised quote';
+    $('f-delivery').value = o.delivery;
+    $('f-note').value = o.quoteNote || '';
+    $('f-dispatch').value = 'When stock arrives';
+  } else {
+    $('f-note').value = o.note ? 'Two controllers in stock. Dispatch in 2 to 4 days after payment.' : '';
+  }
+
+  const options = (selected) => D.parts.filter((p) => !p.discontinued).map((p) => `<option value="${p.number}"${p.number === selected ? ' selected' : ''}>${p.number} · ${r.esc(p.name)}</option>`).join('');
+  const line = (number, qty, rate, discount = 0) => `<tr><td><select class="select" aria-label="Part" style="min-width:220px">${options(number)}</select><span class="sub" data-stock></span></td>
+    <td class="num"><input class="input qty" type="number" min="1" value="${qty}" aria-label="Quantity"></td>
+    <td class="num"><input class="input rate" inputmode="decimal" value="${rate ?? ''}" aria-label="Rate" placeholder="Enter"></td>
+    <td class="num"><input class="input qty" inputmode="decimal" value="${discount}" aria-label="Discount percent"></td>
+    <td class="num strong" data-amount></td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="Remove line" data-remove>${r.icon('trash')}</button></td></tr>`;
+  const body = $('lines').tBodies[0];
+  body.innerHTML = o.items.map(([n, q, rate]) => line(n, q, rate ?? LAST_QUOTED[n])).join('');
+
+  const update = () => {
+    let subtotal = 0;
+    let missing = false;
+    [...body.rows].forEach((row) => {
+      const p = P.part(row.querySelector('select').value);
+      const [qtyIn, , discIn] = row.querySelectorAll('input');
+      const rateIn = row.querySelector('.rate');
+      const qty = Number(qtyIn.value) || 0;
+      const rate = Number(rateIn.value.replace(/,/g, ''));
+      const disc = Math.min(100, Math.max(0, Number(discIn.value) || 0));
+      missing = missing || !rateIn.value;
+      rateIn.setAttribute('aria-invalid', String(!rateIn.value));
+      const amount = Math.round(qty * rate * (1 - disc / 100) * 100) / 100 || 0;
+      subtotal += amount;
+      row.querySelector('[data-amount]').textContent = rateIn.value ? r.money(amount) : '–';
+      row.querySelector('[data-stock]').innerHTML = `${P.available(p)} available${p.price === null && LAST_QUOTED[p.number] ? ` · last quoted ${r.money(LAST_QUOTED[p.number])}` : ''}`;
+    });
+    const delivery = Number($('f-delivery').value.replace(/,/g, '')) || 0;
+    const taxable = subtotal + delivery;
+    const half = Math.round(taxable * 0.09 * 100) / 100;
+    $('totals').innerHTML = `<div><span>Parts</span><b>${r.money(subtotal)}</b></div><div><span>Delivery</span><b>${r.money(delivery)}</b></div>
+      <div><span>CGST 9%</span><b>${r.money(half)}</b></div><div><span>SGST 9%</span><b>${r.money(half)}</b></div>
+      <div class="grand"><span>Total</span><span>${r.money(taxable + half * 2)}</span></div>
+      <div><span class="muted">Valid until</span><span class="muted">${$('f-valid').value ? r.date($('f-valid').value) : 'Not set'}</span></div>`;
+    $('send').disabled = missing;
+  };
+  body.addEventListener('input', update);
+  ['f-delivery', 'f-valid'].forEach((id) => $(id).addEventListener('input', update));
+  body.addEventListener('click', (event) => { if (event.target.closest('[data-remove]') && body.rows.length > 1) { event.target.closest('tr').remove(); update(); } });
+  $('add-line').addEventListener('click', () => { body.insertAdjacentHTML('beforeend', line('ZP-SP-016', 1, P.part('ZP-SP-016').price)); update(); });
+  update();
+
+  const s = r.site(o.company, o.site);
+  $('customer').innerHTML = `<div class="who"><span class="avatar blue">${who.initials}</span><span><b>${who.name}</b><small>${c.name}</small></span></div>
+    <dl class="dl"><dt>GSTIN</dt><dd class="mono">${c.gstin}</dd><dt>Ship to</dt><dd>${s.name}<br><span class="muted">${s.pincode}</span></dd>
+      ${o.machine ? `<dt>Machine</dt><dd>${r.machine(o.machine).model}</dd>` : ''}</dl>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

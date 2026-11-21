@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D831 Order detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D831" data-nav="D830">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D830">Customer orders</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Order sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-items">Items</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-delivery">Delivery</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-payment">Payment</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-timeline">Timeline</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-messages">Messages</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-items" role="tabpanel"></div>
+          <div id="tab-delivery" role="tabpanel" hidden></div>
+          <div id="tab-payment" role="tabpanel" hidden></div>
+          <div id="tab-timeline" role="tabpanel" hidden></div>
+          <div id="tab-messages" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D830">Go to orders</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer asked to cancel</option><option>Part not available</option><option>Payment not received</option><option>Other</option></select></div>
+      <div class="field"><label for="cancel-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="cancel-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep order</button><button class="btn btn-danger" type="button" data-close data-toast="Order cancelled. Customer told, stock released">Cancel order</button></div>
+  </div>
+</div>
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rj-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="rj-title"></h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="rj-reason">Reason</label><textarea class="textarea" id="rj-reason" maxlength="300">This controller is not sold separately for the CFM-450. Our engineer will check the zone at the next AMC visit.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-danger" type="button" data-close data-toast="Request rejected. Customer told">Reject request</button></div>
+  </div>
+</div>
+<div class="overlay center" id="withdraw" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="wd-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="wd-title">Withdraw the quote?</h2><p>The customer can no longer approve it. The request goes back to Submitted.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep quote</button><button class="btn btn-danger" type="button" data-close data-toast="Quote withdrawn. Customer told">Withdraw quote</button></div>
+  </div>
+</div>
+<div class="overlay center" id="delivered" hidden>
+  <div class="modal" role="dialog" aria-labelledby="dl-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="dl-title">Mark delivered?</h2><p>The customer is told and can report a problem for 7 days.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="dl-date">Delivered on</label><input class="input" id="dl-date" type="date" value="2026-11-23" max="2026-11-23"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked delivered. Customer told">Mark delivered</button></div>
+  </div>
+</div>
+<div class="overlay center" id="offline" hidden>
+  <div class="modal" role="dialog" aria-labelledby="op-title">
+    <div class="modal-head"><div class="grow"><h2 id="op-title">Record offline payment</h2><p>For a bank transfer or cheque the customer paid outside the app.</p></div></div>
+    <div class="modal-body stack"><div class="form-grid">
+      <div class="field"><label for="op-amount">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="op-amount"></div></div>
+      <div class="field"><label for="op-date">Received on</label><input class="input" id="op-date" type="date" value="2026-11-23"></div>
+      <div class="field"><label for="op-method">Method</label><select class="select" id="op-method"><option>Bank transfer</option><option>Cheque</option><option>Cash</option></select></div>
+      <div class="field"><label for="op-ref">UTR or cheque number</label><input class="input mono" id="op-ref"></div></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Payment recorded. Order is Paid">Record payment</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Customer view opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview in the app</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+  <hr><button class="danger" type="button" data-open="cancel" id="menu-cancel"><svg class="ic"><use href="#ph-x"/></svg>Cancel order</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error" data-mobile="../../../screens/customer/C708-order-detail.html">
+  <div><h3>What it is</h3><p>One spare part order. Opens with <code>?o=ORD-2026-0209</code>; 0205 to 0212 cover every status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions allowed for the status show (section 11).</li><li>Tabs: items, delivery, payment, timeline, messages.</li><li>Cancel before packing; refund if paid.</li></ul></div>
+  <div><h3>What happens next</h3><p>Quote (D832), Pick and pack (D833), Shipment (D834), Returns (D835), Create invoice (D902), Refund (D922).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Stock is reserved on approval and issued when packed.</li><li>Cancel is only allowed before packed; cancelling releases stock.</li><li>Payment failed keeps Pending payment.</li><li>Delivered orders can report a problem for 7 days.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const o = P.order(new URLSearchParams(location.search).get('o') || 'ORD-2026-0209');
+  if (!o) { document.body.dataset.state = 'not-found'; return; }
+  const c = r.company(o.company);
+  const s = r.site(o.company, o.site);
+  const who = r.person(o.by);
+  const oq = `?o=${o.number}`;
+  const total = P.orderTotal(o);
+  const lines = P.orderLines(o);
+  const tot = total === null ? null : r.totals(lines);
+  const inv = o.invoice ? ZX.data.invoices.find((i) => i.number === o.invoice) : null;
+  const issue = D.issues.find((x) => x.order === o.number);
+  const afterPack = ['packed', 'dispatched', 'delivered', 'return'].includes(o.status);
+
+  document.title = `Zixom Admin - ${o.number}`;
+  $('crumb').textContent = o.number;
+  $('number').textContent = o.number;
+  $('chips').innerHTML = `${P.orderTag(o.status)}${P.payTag(o)}${o.request ? r.tag('Quote request', 'outline') : ''}`;
+  $('meta').innerHTML = `<span>${ic('buildings')}${c.name}</span><span>${ic('clock')}Placed ${r.date(o.created)}, ${r.time(o.created)} in the app</span>
+    <span>${ic('package')}${((n) => `${n} unit${n === 1 ? '' : 's'}`)(o.items.reduce((sum, [, q]) => sum + q, 0))}${total !== null ? ` · ${r.money(total)}` : ''}</span>`;
+
+  /* actions allowed for the status (section 11). The first is the primary action */
+  const A = {
+    quote: `<a class="btn btn-primary" href="#D832${oq}">Quote</a>`, revise: `<a class="btn btn-primary" href="#D832${oq}">Revise quote</a>`,
+    approve: `<button class="btn btn-secondary" type="button" data-toast="Approved. Stock reserved">Approve</button>`,
+    reject: `<button class="btn btn-secondary" type="button" data-open="reject">Reject</button>`,
+    withdraw: `<button class="btn btn-secondary" type="button" data-open="withdraw">Withdraw</button>`,
+    remindQuote: `<button class="btn btn-secondary" type="button" data-toast="Reminder sent to ${who.name}">Send reminder</button>`,
+    remind: `<button class="btn btn-primary" type="button" data-toast="Payment reminder sent to ${who.name}">Send reminder</button>`,
+    offline: `<button class="btn btn-secondary" type="button" data-open="offline">Record offline payment</button>`,
+    pack: `<a class="btn btn-primary" href="#D833${oq}">Pick and pack</a>`, dispatch: `<a class="btn btn-primary" href="#D834${oq}">Dispatch</a>`,
+    print: `<a class="btn btn-secondary" href="#D833${oq}">Pick list</a>`,
+    delivered: `<button class="btn btn-primary" type="button" data-open="delivered">Mark delivered</button>`,
+    tracking: `<a class="btn btn-secondary" href="#D834${oq}">Update tracking</a>`,
+    invoice: `<a class="btn btn-primary" href="#D902">Create invoice</a>`, close: `<button class="btn btn-secondary" type="button" data-toast="Order closed">Close</button>`,
+    problem: `<a class="btn btn-secondary" href="#D835">Delivery problem</a>`,
+    refund: `<a class="btn btn-secondary" href="#D923">Open refund</a>`,
+    decide: `<a class="btn btn-primary" href="#D835">Approve return</a>`, replace: `<a class="btn btn-secondary" href="#D835">Replace</a>`,
+    refundReturn: `<a class="btn btn-secondary" href="#D922">Refund</a>`, rejectReturn: `<a class="btn btn-secondary" href="#D835">Reject</a>`,
+  };
+  const BY_STATUS = {
+    submitted: o.items.some(([, , rate]) => rate === null) ? ['quote', 'reject'] : ['quote', 'approve', 'reject'], quoted: ['revise', 'remindQuote', 'withdraw'],
+    approved: ['remind', 'offline'], pending: ['remind', 'offline'], paid: ['pack'], packed: ['dispatch', 'print'], dispatched: ['delivered', 'tracking'],
+    delivered: [...(inv ? [] : ['invoice']), 'close', ...(o.problem ? ['problem'] : [])],
+    cancelled: ['refund'], return: ['decide', 'replace', 'refundReturn', 'rejectReturn'],
+  };
+  const keys = BY_STATUS[o.status];
+  const primary = keys.find((k) => A[k].includes('btn-primary'));
+  $('actions').innerHTML = `${keys.filter((k) => k !== primary).map((k) => A[k]).join('')}${primary ? A[primary] : ''}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  if (afterPack || o.status === 'cancelled') {
+    $('menu-cancel').disabled = true;
+    $('menu-cancel').insertAdjacentHTML('beforeend', `<small class="faint" style="margin-left:auto">${o.status === 'cancelled' ? 'Cancelled' : 'Only before packed'}</small>`);
+  }
+  $('cancel-title').textContent = `Cancel ${o.number}?`;
+  $('cancel-text').textContent = `${who.name} at ${c.name} will be told. Reserved stock is released${o.pay === 'paid' ? ` and ${r.money(total)} is refunded` : ''}. This cannot be undone.`;
+  $('rj-title').textContent = `Reject ${o.number}?`;
+  if (total !== null) $('op-amount').value = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+  /* edge banners */
+  const banners = [];
+  if (o.status === 'quoted') banners.push(`<div class="banner">${ic('clock')}<span class="grow"><b>Waiting for the customer.</b> Quote sent ${r.date(o.quoted)}, valid to ${r.date(o.validUntil)}. ${r.esc(o.quoteNote || '')}</span></div>`);
+  if (o.pay === 'failed') banners.push(`<div class="banner red">${ic('warning-circle')}<span class="grow"><b>Payment failed.</b> ${o.payNote}. The order stays Pending payment.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D914">Failed payments</a></span></div>`);
+  if (o.status === 'packed') banners.push(`<div class="banner">${ic('package')}<span class="grow"><b>Packed ${r.dayDate(o.packed)}, ${r.time(o.packed)}.</b> Stock issued. Add the courier and tracking to dispatch.</span></div>`);
+  if (issue) banners.push(`<div class="banner ${issue.kind === 'Return' ? 'amber' : 'red'}">${ic(issue.kind === 'Return' ? 'rotate-ccw' : 'warning')}<span class="grow"><b>${issue.kind}: ${r.esc(issue.reason)}.</b> Reported ${r.ago(issue.when)} by ${r.person(issue.by).name}. "${r.esc(issue.text)}"</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D835">Open</a></span></div>`);
+  if (o.status === 'cancelled') banners.push(`<div class="banner grey">${ic('x')}<span class="grow"><b>Cancelled ${r.date(o.cancelled)} by ${o.cancelledBy}.</b> ${o.cancelReason}. Refund of ${r.money(o.refund.amount)} ${o.refund.status}, expected by ${r.date(o.refund.expected)}.</span></div>`);
+  $('edge-banners').innerHTML = banners.join('');
+
+  /* ---------- items ---------- */
+  $('tab-items').innerHTML = `<div class="table-wrap no-top"><table class="table compact">
+    <thead><tr><th>Part</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th><th>Stock</th></tr></thead><tbody>
+    ${o.items.map(([n, q, rate]) => { const p = P.part(n); return `<tr><td><a class="rec" href="#D802?p=${n}">${n}</a><span class="sub">${r.esc(p.name)}</span></td><td class="num">${q}</td>
+      <td class="num">${rate === null ? '<span class="muted">On request</span>' : r.money(rate)}</td><td class="num">${rate === null ? '–' : r.money(rate * q)}</td>
+      <td>${afterPack ? r.tag('Issued', 'blue') : o.status === 'cancelled' ? r.tag('Released') : `${P.stockTag(p)}<span class="sub">${P.available(p)} available${['approved', 'pending', 'paid'].includes(o.status) ? `, ${q} reserved` : ''}</span>`}</td></tr>`; }).join('')}
+    ${o.delivery ? `<tr><td>Delivery</td><td class="num">1</td><td class="num">${r.money(o.delivery)}</td><td class="num">${r.money(o.delivery)}</td><td></td></tr>` : ''}
+    </tbody>${tot ? `<tfoot><tr><td colspan="3">Subtotal</td><td class="num">${r.money(tot.subtotal)}</td><td></td></tr><tr><td colspan="3">GST 18%</td><td class="num">${r.money(tot.gst)}</td><td></td></tr>
+      <tr><td colspan="3">Total</td><td class="num">${r.money(tot.total)}</td><td></td></tr></tfoot>` : ''}</table></div>
+    ${o.note ? `<p style="margin-top:14px"><span class="muted">Customer note:</span> ${r.esc(o.note)}</p>` : ''}
+    ${total === null ? `<div class="banner amber" style="margin-top:14px">${ic('currency-inr')}<span class="grow"><b>Price on request.</b> Send a quote; the customer approves it in the app before paying.</span><span class="btns"><a class="btn btn-sm btn-primary" href="#D832${oq}">Quote</a></span></div>` : ''}`;
+
+  /* ---------- delivery ---------- */
+  const trackUrl = o.courier === 'Blue Dart' ? `https://www.bluedart.com/tracking?awb=${o.tracking}` : '';
+  $('tab-delivery').innerHTML = `<div class="grid cols-2" style="gap:20px">
+    <dl class="dl stack"><dt>Ship to</dt><dd>${s.name}, ${c.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd><dt>Contact</dt><dd>${s.contact.name} · ${s.contact.phone}</dd></dl>
+    ${o.courier ? `<dl class="dl stack"><dt>Courier</dt><dd>${o.courier}</dd><dt>Tracking</dt><dd><span class="mono">${o.tracking}</span> <button class="btn btn-sm btn-ghost" type="button" data-toast="Tracking number copied">${ic('copy')}Copy</button></dd>
+      <dt>Link</dt><dd>${trackUrl ? `<a href="${trackUrl}" target="_blank" rel="noopener">${ic('external-link')} bluedart.com</a>` : '<span class="faint">None</span>'}</dd>
+      <dt>Dispatched</dt><dd>${r.date(o.dispatched)}, ${r.time(o.dispatched)}</dd><dt>${o.delivered ? 'Delivered' : 'Expected'}</dt><dd>${r.date(o.delivered || o.expected)}</dd>
+      <dt>Boxes</dt><dd>${o.boxes}, ${o.weight} kg</dd></dl>`
+      : `<div class="state"><span class="disc">${ic('truck')}</span><h3>Not dispatched yet</h3><p>${o.status === 'packed' ? 'Packed and ready. Add the courier and tracking.' : 'Courier and tracking appear here after dispatch.'}</p>
+        ${o.status === 'packed' ? `<div class="btns"><a class="btn btn-primary" href="#D834${oq}">Add shipment</a></div>` : ''}</div>`}</div>`;
+
+  /* ---------- payment ---------- */
+  $('tab-payment').innerHTML = `<dl class="dl stack">
+    <dt>Status</dt><dd>${P.payTag(o)}</dd>
+    ${total !== null ? `<dt>Amount</dt><dd>${r.money(total)} <span class="muted">with GST</span></dd>` : '<dt>Amount</dt><dd class="muted">After the quote</dd>'}
+    ${o.method ? `<dt>Method</dt><dd>${o.method}, Razorpay</dd><dt>Paid on</dt><dd>${r.date(o.paid)}, ${r.time(o.paid)}</dd>` : ''}
+    ${o.payNote ? `<dt>Last attempt</dt><dd class="red-text">${o.payNote}</dd>` : ''}
+    ${inv ? `<dt>Invoice</dt><dd><a class="mono" href="#D903">${inv.number}</a> ${r.invoiceTag(inv.status)}<br><span class="muted">Due ${r.date(inv.due)}</span></dd>` : `<dt>Invoice</dt><dd class="muted">${o.status === 'delivered' ? 'Not created yet' : 'Created after delivery'}</dd>`}
+    ${o.refund ? `<dt>Refund</dt><dd>${r.money(o.refund.amount)} ${r.tag('Initiated', 'amber')}<br><span class="muted">Started ${r.date(o.refund.started)}, expected by ${r.date(o.refund.expected)}</span></dd>` : ''}</dl>`;
+
+  /* ---------- timeline ---------- */
+  const events = [[o.request ? 'chat-text' : 'shopping-cart', 'blue', o.request ? 'Quote requested in the app' : 'Order placed in the app', who.name, o.created]];
+  if (o.quoted) events.push(['currency-inr', 'blue', 'Quote sent', `Valid to ${r.date(o.validUntil || '2026-11-21')}`, o.quoted]);
+  if (o.approved) events.push(['check', 'green', 'Customer approved the quote', `Invoice ${o.invoice} issued, stock reserved`, o.approved]);
+  if (o.pay === 'failed') events.push(['warning-circle', 'red', 'Payment failed', o.payNote, '2026-11-22T18:44']);
+  if (o.paid) events.push(['credit-card', 'green', 'Paid', o.method, o.paid]);
+  if (o.packed) events.push(['package', 'blue', 'Packed', 'Stock issued from the main store', o.packed]);
+  if (o.dispatched) events.push(['truck', 'blue', `Dispatched with ${o.courier}`, `Tracking ${o.tracking}`, o.dispatched]);
+  if (o.delivered) events.push(['check-circle', 'green', 'Delivered', s.name, o.delivered]);
+  if (o.returned) events.push(['rotate-ccw', 'amber', 'Return requested', 'Damaged part: dial glass cracked', o.returned]);
+  if (issue && issue.kind !== 'Return') events.push(['warning', 'red', 'Delivery problem reported', issue.reason, issue.when]);
+  if (o.cancelled) events.push(['x', '', 'Cancelled', `${o.cancelledBy}. ${o.cancelReason}`, o.cancelled]);
+  if (o.refund) events.push(['hand-coins', 'amber', 'Refund initiated', r.money(o.refund.amount), `${o.refund.started}T10:35`]);
+  $('tab-timeline').innerHTML = `<ol class="timeline">${events.sort((a, b) => b[4].localeCompare(a[4])).map(([i, tone, title, sub, when]) => `<li><span class="node ${tone}">${ic(i)}</span><div><b>${title}</b><p>${r.esc(sub)}</p></div><small>${r.dayDate(when)}, ${r.time(when)}</small></li>`).join('')}</ol>`;
+
+  $('tab-messages').innerHTML = `<div class="card" style="box-shadow:inset 0 0 0 1px var(--line)">
+    <div class="thread"><span class="day-sep">${r.dayDate(o.created)}</span>
+      <div class="msg">${o.request ? 'Please quote the best price and delivery time.' : 'Please deliver to the store at the gate.'}<small>${who.name} · ${r.time(o.created)}</small></div>
+      <div class="msg note">Internal: ${o.status === 'packed' ? 'Waited for the 18 Nov heater receipt.' : 'Customer is a priority account.'}<small>You · only Admins see this</small></div></div>
+    <div class="composer"><textarea class="textarea" placeholder="Write to the customer" aria-label="Message"></textarea>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox"><span></span>Internal</label>
+      <button class="btn btn-primary" type="button" data-toast="Message sent">Send</button></div></div>`;
+
+  /* ---------- side cards ---------- */
+  $('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="#D202">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${who.initials}</span><span><b>${who.name}</b><small>${who.designation}, ${c.name}</small></span></div>
+        <dl class="dl"><dt>Company</dt><dd>${c.code}</dd><dt>GSTIN</dt><dd class="mono">${c.gstin}</dd></dl>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${who.mobile.replace(/\s/g, '')}">${ic('phone')}${who.mobile}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Address</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Ship to</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd><dt>Bill to</dt><dd>${c.name}<br><span class="muted">Same as shipping</span></dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Related</h3></div>
+      <ul class="mini">
+        ${inv ? `<li data-href="D903"><span class="ic-disc">${ic('receipt')}</span><span class="grow"><b class="mono">${inv.number}</b><small>Invoice · ${r.money(inv.amount)}</small></span></li>` : ''}
+        ${issue?.query ? `<li data-href="D1002"><span class="ic-disc red">${ic('chat-circle-dots')}</span><span class="grow"><b class="mono">${issue.query}</b><small>Support case</small></span></li>` : ''}
+        ${o.machine ? `<li data-href="D302"><span class="ic-disc">${ic('factory')}</span><span class="grow"><b>${r.machine(o.machine).model}</b><small class="mono">${o.machine}</small></span></li>` : ''}
+        ${o.refund ? `<li data-href="D923"><span class="ic-disc amber">${ic('hand-coins')}</span><span class="grow"><b>Refund ${r.money(o.refund.amount)}</b><small>Initiated ${r.date(o.refund.started)}</small></span></li>` : ''}
+        ${!inv && !issue?.query && !o.machine && !o.refund ? '<li><span class="muted">Nothing linked</span></li>' : ''}</ul></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

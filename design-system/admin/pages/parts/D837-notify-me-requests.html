@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D837 Notify me requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D837" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Notify me</span></nav>
+      <h1>Notify me requests</h1><p>Customers waiting for a part to come back. Sent automatically when stock moves above zero.</p></div>
+  </div>
+
+  <div data-when="ready empty">
+    <div class="grid cols-2" id="by-part" data-when="ready"></div>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready">
+        <button role="tab" aria-selected="true" data-view="waiting">Waiting <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="sent">Sent <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="table-wrap" data-when="ready">
+        <table class="table" id="notify">
+          <thead><tr><th class="sortable">Customer</th><th class="sortable">Part</th><th>Stock</th><th class="sortable">Asked</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-foot" data-when="ready"><span id="foot-count"></span><span class="grow"></span><span class="faint">Push and email, once per request</span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-bell"/></svg></span>
+        <h3>No one is waiting</h3><p>Customers who tap Notify me on an out of stock part appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid cols-2"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="notify-all" hidden>
+  <div class="modal" role="dialog" aria-labelledby="na-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-bell-ring"/></svg></span><div class="grow"><h2 id="na-title"></h2><p id="na-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close id="na-go">Notify all</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/customer/C703-part-detail.html">
+  <div><h3>What it is</h3><p>Who tapped Notify me on an out of stock part in the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>See who waits for each part and since when.</li><li>Notify all once stock is added, if it was not sent automatically.</li><li>Open the part or the reorder list.</li></ul></div>
+  <div><h3>What happens next</h3><p>A receipt (D812) that lifts stock above zero sends the notice by push and email.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Sent automatically when stock moves above zero.</li><li>Notify all is off while the part is still out of stock.</li><li>A discontinued part moves its requests to the replacement.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const list = [...D.notify].sort((a, b) => b.asked.localeCompare(a.asked));
+  const waitingParts = [...new Set(list.filter((n) => n.status === 'waiting').map((n) => n.part))];
+
+  document.getElementById('by-part').innerHTML = waitingParts.map((number) => {
+    const p = P.part(number);
+    const ro = D.reorder[number];
+    const people = list.filter((n) => n.part === number && n.status === 'waiting');
+    const inStock = P.available(p) > 0;
+    return `<section class="card"><div class="card-head"><div class="grow"><h2>${r.esc(p.name)}</h2><p><span class="mono">${p.number}</span> · ${people.length} waiting</p></div>${P.stockTag(p)}</div>
+      <ul class="mini">${people.map((n) => `<li><span class="avatar sm blue">${r.person(n.person).initials}</span><span class="grow"><b>${r.person(n.person).name}</b><small>${r.company(n.company).name} · asked ${r.ago(n.asked)}</small></span></li>`).join('')}</ul>
+      <div class="card-foot row"><span class="grow muted" style="font-size:13px">${ro?.status === 'ordered' ? `On order, expected ${r.date(ro.expected)}` : 'Not ordered yet'}</span>
+        <a class="btn btn-sm btn-ghost" href="#D802?p=${p.number}">Part</a>
+        <button class="btn btn-sm btn-secondary" type="button" data-notify="${p.number}"${inStock ? '' : ' disabled title="Out of stock. Sent automatically when stock arrives"'}>Notify all</button></div></section>`;
+  }).join('');
+
+  document.querySelector('#notify tbody').innerHTML = list.map((n) => {
+    const p = P.part(n.part);
+    const who = r.person(n.person);
+    return `<tr data-status="${n.status}" data-href="D802?p=${p.number}">
+      <td><span class="who"><span class="avatar sm blue">${who.initials}</span><span>${who.name}<span class="sub">${r.company(n.company).name}</span></span></span></td>
+      <td><a class="rec" href="#D802?p=${p.number}">${p.number}</a><span class="sub">${r.esc(p.name)}</span></td>
+      <td>${P.stockTag(p)}</td>
+      <td class="nowrap" data-sort="${n.asked}">${r.date(n.asked)}<span class="sub">${r.ago(n.asked)}</span></td>
+      <td>${n.status === 'sent' ? `${r.tag('Sent', 'green')}<span class="sub">${r.date(n.sent)}, ${r.time(n.sent)}, automatic</span>` : r.tag('Waiting', 'amber')}</td></tr>`;
+  }).join('');
+
+  const VIEWS = { waiting: (s) => s === 'waiting', sent: (s) => s === 'sent', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#notify tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](row.dataset.status); });
+    document.getElementById('foot-count').textContent = `${rows.filter((row) => !row.hidden).length} requests`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter((n) => VIEWS[tab.dataset.view](n.status)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('waiting');
+
+  document.addEventListener('click', (event) => {
+    const b = event.target.closest('[data-notify]');
+    if (!b) return;
+    const p = P.part(b.dataset.notify);
+    const n = list.filter((x) => x.part === p.number && x.status === 'waiting').length;
+    document.getElementById('na-title').textContent = `Notify ${n} customers?`;
+    document.getElementById('na-text').textContent = `They get a push and email that ${p.name} is back in stock.`;
+    document.getElementById('na-go').dataset.toast = `${n} customers notified`;
+    ZXA.ui.openOverlay('notify-all');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

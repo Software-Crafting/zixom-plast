@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D804 Categories</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D804" data-nav="D801">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Categories</span></nav>
+      <h1>Categories</h1><p>The order here is the order of the filters in the app.</p></div>
+    <button class="btn btn-primary" type="button" data-open="edit"><svg class="ic"><use href="#ph-plus"/></svg>Add category</button>
+  </div>
+
+  <div data-when="ready">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Views">
+        <button role="tab" aria-selected="true" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="cats">
+          <thead><tr><th style="width:44px"></th><th class="num" style="width:60px">Order</th><th>Category</th><th class="num">Parts</th><th class="num">Shown in app</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-foot"><span>Drag a row to change the order</span></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+  </div>
+</main>
+
+<div class="overlay center" id="edit" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ed-title">
+    <div class="modal-head"><div class="grow"><h2 id="ed-title">Add category</h2><p>Shows as a filter in the app parts catalogue.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ed-name">Name</label><input class="input" id="ed-name" maxlength="40" placeholder="For example Sensors" autofocus></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="archive" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ar-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-archive"/></svg></span>
+      <div class="grow"><h2 id="ar-title">Archive this category?</h2><p id="ar-text"></p></div></div>
+    <div class="modal-body" id="ar-body"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Category archived" id="ar-go">Archive</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>Part categories and the order the app shows them in.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add, rename, reorder by drag, archive.</li><li>Open the parts in a category.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app filters update at once. Parts catalogue (D801).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A category with parts cannot be archived; move the parts first.</li><li>Archived categories are hidden in the app filters.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const D = ZXA.data.parts;
+  const inCat = (c) => D.parts.filter((p) => p.category === c.name);
+  document.querySelector('#cats tbody').innerHTML = D.categories.map((c) => `<tr data-cat="${c.name}" data-status="${c.status}" draggable="${c.status === 'active'}">
+    <td><span class="faint" aria-hidden="true">${r.icon('grip')}</span></td><td class="num">${c.status === 'active' ? c.order : '–'}</td>
+    <td><b>${c.name}</b></td><td class="num">${inCat(c).length}</td><td class="num">${inCat(c).filter((p) => p.visible && !p.discontinued).length}</td>
+    <td>${c.status === 'active' ? r.tag('Active', 'green') : r.tag('Archived')}</td>
+    <td class="actions"><span class="row" style="justify-content:flex-end; gap:4px">
+      ${c.status === 'active' ? `<button class="btn btn-sm btn-ghost" type="button" data-rename="${c.name}">Rename</button><button class="btn btn-sm btn-ghost" type="button" data-archive="${c.name}">Archive</button>`
+        : `<button class="btn btn-sm btn-ghost" type="button" data-toast="Category restored">Restore</button>`}</span></td></tr>`).join('');
+
+  const showView = (key) => document.querySelectorAll('#cats tbody tr').forEach((row) => { row.hidden = row.dataset.status !== key; });
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = D.categories.filter((c) => c.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('active');
+
+  document.addEventListener('click', (event) => {
+    const rename = event.target.closest('[data-rename]');
+    if (rename) {
+      document.getElementById('ed-title').textContent = `Rename ${rename.dataset.rename}`;
+      document.getElementById('ed-name').value = rename.dataset.rename;
+      ZXA.ui.openOverlay('edit');
+    }
+    const archive = event.target.closest('[data-archive]');
+    if (archive) {
+      const n = D.parts.filter((p) => p.category === archive.dataset.archive).length;
+      document.getElementById('ar-title').textContent = `Archive ${archive.dataset.archive}?`;
+      document.getElementById('ar-text').textContent = n ? `${n} parts use it. Move them to another category first.` : 'It is hidden from the app filters.';
+      document.getElementById('ar-body').innerHTML = n ? `<div class="field"><label for="ar-move">Move ${n} parts to</label><select class="select" id="ar-move">${D.categories.filter((c) => c.status === 'active' && c.name !== archive.dataset.archive).map((c) => `<option>${c.name}</option>`).join('')}</select></div>` : '';
+      document.getElementById('ar-go').textContent = n ? 'Move parts and archive' : 'Archive';
+      ZXA.ui.openOverlay('archive');
+    }
+  });
+
+  /* drag to reorder: the order column follows */
+  const body = document.querySelector('#cats tbody');
+  let dragged = null;
+  body.addEventListener('dragstart', (event) => { dragged = event.target.closest('tr'); });
+  body.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    const over = event.target.closest('tr');
+    if (over && dragged && over !== dragged && over.dataset.status === 'active') over.before(dragged);
+  });
+  body.addEventListener('drop', () => {
+    [...body.querySelectorAll('tr[data-status="active"]')].forEach((row, i) => { row.children[1].textContent = i + 1; });
+    ZXA.ui.toast('Order saved. The app filters follow');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

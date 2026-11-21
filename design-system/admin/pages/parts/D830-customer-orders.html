@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D830 Customer orders</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D830">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Customer orders</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-secondary" href="#D835">Returns</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="action">Needs action <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="quote">To quote <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="payment">Waiting for payment <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="ship">To pack or ship <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="transit">In transit <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="returns">Returns <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#orders"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Order, customer or part" aria-label="Search orders"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="orders">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Order</th><th class="sortable">Customer</th><th>Items</th><th class="sortable num">Total</th>
+            <th class="sortable">Status</th><th class="sortable">Payment</th><th class="sortable">Date</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-shopping-cart"/></svg></span>
+        <h3>No orders yet</h3><p>Orders and quote requests from the app appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:60%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="orders" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Excel file downloaded">Export</button>
+    <button class="btn" type="button" data-toast="Payment reminders sent where payment is due">Send payment reminder</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D831">Open order</a><span class="grow"></span><span id="quick-action"></span></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips id="f-status"></div></div>
+      <div class="field"><span class="label">Payment</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Quote first</button><button class="chip" type="button" aria-pressed="false">Unpaid</button>
+        <button class="chip" type="button" aria-pressed="false">Payment failed</button><button class="chip" type="button" aria-pressed="false">Paid</button>
+        <button class="chip" type="button" aria-pressed="false">Refund initiated</button></div></div>
+      <div class="form-grid">
+        <div class="field full"><label for="f-company">Customer</label><select class="select" id="f-company"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="orders"> Items</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="orders"> Payment</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="orders"> Date</label>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D831"><svg class="ic"><use href="#ph-external-link"/></svg>Open order</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C707-orders.html">
+  <div><h3>What it is</h3><p>Spare part orders and quote requests customers place in the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the order.</li><li>Select rows to export or remind about payment.</li></ul></div>
+  <div><h3>What happens next</h3><p>Order detail (D831), Quote builder (D832), Pick and pack (D833), Shipment (D834), Returns (D835).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Statuses and actions follow section 11.</li><li>Price on request orders show no total until quoted.</li><li>Exports over 5,000 rows run in the background.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const orders = [...D.orders].sort((a, b) => b.number.localeCompare(a.number));
+  const NEXT = { submitted: ['Quote', 'D832'], quoted: null, pending: ['Send reminder', 'toast:Payment reminder sent'], approved: ['Send reminder', 'toast:Payment reminder sent'],
+    paid: ['Pick and pack', 'D833'], packed: ['Dispatch', 'D834'], dispatched: ['Mark delivered', 'toast:Marked delivered. Customer told'], delivered: ['Create invoice', 'D902'],
+    cancelled: null, return: ['Decide return', 'D835'] };
+  const VIEWS = { action: (o) => ['submitted', 'pending', 'paid', 'packed', 'return'].includes(o.status) || o.problem, quote: (o) => ['submitted', 'quoted'].includes(o.status),
+    payment: (o) => ['approved', 'pending'].includes(o.status), ship: (o) => ['paid', 'packed'].includes(o.status), transit: (o) => o.status === 'dispatched',
+    returns: (o) => o.status === 'return' || o.problem, all: () => true };
+  const itemText = (o) => o.items.map(([n, q]) => `${P.part(n).name} × ${q}`).join(', ');
+  document.getElementById('summary').textContent = `${orders.length} orders this month · ${orders.filter(VIEWS.action).length} need action`;
+  document.getElementById('f-status').innerHTML = Object.values(P.ORDER_STATUS).map(([label]) => `<button class="chip" type="button" aria-pressed="false">${label}</button>`).join('');
+
+  document.querySelector('#orders tbody').innerHTML = orders.map((o) => {
+    const total = P.orderTotal(o);
+    const who = r.person(o.by);
+    return `<tr data-drawer="quick" data-order="${o.number}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${o.number}"></label></td>
+      <td><a class="rec" href="#D831?o=${o.number}">${o.number}</a><span class="sub">${o.request ? 'Quote request' : 'Order'}</span></td>
+      <td><b class="clip">${r.company(o.company).name}</b><span class="sub">${who.name} · ${r.site(o.company, o.site).name}</span></td>
+      <td><span class="clip">${r.esc(itemText(o))}</span><span class="sub">${o.items.reduce((s, [, q]) => s + q, 0)} units</span></td>
+      <td class="num" data-sort="${String(total ?? 0).padStart(8, '0')}">${total === null ? '<span class="muted">To quote</span>' : r.money(total)}</td>
+      <td data-sort="${o.status}">${P.orderTag(o.status)}${o.problem ? `<span class="sub red-text">Delivery problem</span>` : ''}</td>
+      <td data-sort="${o.pay}">${P.payTag(o)}</td>
+      <td class="nowrap" data-sort="${o.created}">${r.date(o.created)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#orders tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](P.order(row.dataset.order)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = orders.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('action');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const o = P.order(event.detail.dataset.order);
+    const s = r.site(o.company, o.site);
+    const total = P.orderTotal(o);
+    const next = NEXT[o.status];
+    document.getElementById('quick-title').textContent = o.number;
+    document.getElementById('quick-sub').textContent = `${r.company(o.company).name} · placed ${r.date(o.created)}`;
+    document.getElementById('quick-open').href = ZXA.href('D831', `?o=${o.number}`);
+    document.getElementById('quick-action').innerHTML = !next ? '' : next[1].startsWith('toast:')
+      ? `<button class="btn btn-primary" type="button" data-close data-toast="${next[1].slice(6)}">${next[0]}</button>`
+      : `<a class="btn btn-primary" href="${ZXA.isBuilt(next[1]) ? ZXA.href(next[1], `?o=${o.number}`) : `${ZXA.root}index.html#${next[1]}`}">${next[0]}</a>`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${P.orderTag(o.status)}${P.payTag(o)}</div>
+      <table class="table compact"><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Rate</th></tr></thead><tbody>
+        ${o.items.map(([n, q, rate]) => `<tr><td>${r.esc(P.part(n).name)}<span class="sub mono">${n}</span></td><td class="num">${q}</td><td class="num">${rate === null ? 'On request' : r.money(rate)}</td></tr>`).join('')}
+        ${o.delivery ? `<tr><td>Delivery</td><td class="num">1</td><td class="num">${r.money(o.delivery)}</td></tr>` : ''}</tbody>
+        ${total !== null ? `<tfoot><tr><td colspan="2">Total with GST 18%</td><td class="num">${r.money(total)}</td></tr></tfoot>` : ''}</table>
+      <dl class="dl"><dt>Ship to</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd>
+        <dt>Placed by</dt><dd>${r.person(o.by).name}<br><span class="muted">${r.person(o.by).mobile}</span></dd>
+        ${o.courier ? `<dt>Courier</dt><dd>${o.courier} · <span class="mono">${o.tracking}</span></dd>` : ''}
+        ${o.validUntil ? `<dt>Quote valid</dt><dd>to ${r.date(o.validUntil)}</dd>` : ''}
+        ${o.payNote ? `<dt>Last payment</dt><dd class="red-text">${o.payNote}</dd>` : ''}</dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

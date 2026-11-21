@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D801 Parts catalogue</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D801">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Parts catalogue</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-secondary" href="#D807"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+    <a class="btn btn-primary" href="#D803"><svg class="ic"><use href="#ph-plus"/></svg>Add part</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="in">In stock <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="low">Low and out <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="request">On request <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="discontinued">Discontinued <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="hidden">Hidden in app <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#parts"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Part number, name or model" aria-label="Search parts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <a class="btn btn-ghost btn-sm" href="#D804"><svg class="ic"><use href="#ph-list"/></svg>Categories</a>
+        <a class="btn btn-ghost btn-sm" href="#D805"><svg class="ic"><use href="#ph-git-compare"/></svg>Compatibility</a>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="parts">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Part</th><th class="sortable">Category</th><th>Fits</th><th class="sortable num">Price</th>
+            <th class="num">GST</th><th class="sortable">Stock</th><th>In app</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-cube"/></svg></span>
+        <h3>No parts yet</h3><p>Parts you add or import appear here and in the app.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D807">Import parts</a><a class="btn btn-primary" href="#D803">Add part</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:60%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Part</th><th>Category</th><th>Fits</th><th>Price</th><th>Stock</th><th>In app</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="parts" hidden>
+    <b data-count>0 selected</b>
+    <a class="btn" href="#D806">Change price</a>
+    <button class="btn" type="button" data-toast="Shown in the app">Show in app</button>
+    <button class="btn" type="button" data-open="bulk-hide">Hide in app</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p class="mono" id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D802">Open part</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-edit" href="#D803">Edit</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Category</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Heaters</button><button class="chip" type="button" aria-pressed="false">Timers</button>
+        <button class="chip" type="button" aria-pressed="false">Industrial chains</button><button class="chip" type="button" aria-pressed="false">PID controllers</button>
+        <button class="chip" type="button" aria-pressed="false">Others</button></div></div>
+      <div class="field"><span class="label">Stock</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">In stock</button><button class="chip" type="button" aria-pressed="false">Low stock</button>
+        <button class="chip" type="button" aria-pressed="false">Out of stock</button><button class="chip" type="button" aria-pressed="false">On request</button>
+        <button class="chip" type="button" aria-pressed="false">Discontinued</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-model">Fits model</label><select class="select" id="f-model"><option>Any</option><option>AFM-760</option><option>AFM-1000</option><option>CFM-450</option><option>SVF-600</option><option>PCR-300</option><option>BSM-300</option></select></div>
+        <div class="field"><label for="f-supplier">Supplier</label><select class="select" id="f-supplier"><option>Any</option></select></div>
+      </div>
+      <label class="check"><input type="checkbox"> Hidden in the app only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show 20 parts</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-hide" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="bh-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-eye-slash"/></svg></span>
+      <div class="grow"><h2 id="bh-title">Hide selected parts in the app?</h2><p>Customers can no longer find or order them. Open orders keep them.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Hidden in the app">Hide in app</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="2" data-table="parts"> Category</label>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="parts"> Fits</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="parts"> GST</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="parts"> In app</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D802"><svg class="ic"><use href="#ph-external-link"/></svg>Open part</a>
+  <a href="#D803"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</a>
+  <a href="#D814"><svg class="ic"><use href="#ph-arrow-up-down"/></svg>Adjust stock</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><a class="danger" href="#D808"><svg class="ic"><use href="#ph-ban"/></svg>Discontinue</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C701-parts.html">
+  <div><h3>What it is</h3><p>Every spare part the app sells, with price, GST and stock.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the part.</li><li>Select rows to change price, show or hide in the app.</li></ul></div>
+  <div><h3>What happens next</h3><p>Part detail (D802), Add part (D803), Import (D807), Price changes (D806).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Stock chip: In stock above minimum, Low at or below minimum, Out at zero.</li><li>No price shows On request; marked parts show Discontinued.</li><li>Hidden parts stay on open orders.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const { parts, suppliers } = ZXA.data.parts;
+  const fits = (p) => p.fits.join(', ');
+
+  document.getElementById('summary').textContent = `${parts.length} parts · ${parts.filter(P.belowMin).length} at or below minimum · ${parts.filter((p) => !p.visible).length} hidden in the app`;
+  document.getElementById('f-supplier').insertAdjacentHTML('beforeend', suppliers.filter((s) => s.status === 'active').map((s) => `<option>${s.name}</option>`).join(''));
+
+  document.querySelector('#parts tbody').innerHTML = parts.map((p) => {
+    const st = P.state(p);
+    return `<tr data-drawer="quick" data-part="${p.number}" class="${st === 'out' ? 'urgent' : st === 'low' ? 'low' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.number}"></label></td>
+      <td><a class="rec" href="${ZXA.href('D802', `?p=${p.number}`)}">${p.number}</a><span class="sub">${r.esc(p.name)}</span></td>
+      <td>${p.category}</td>
+      <td class="nowrap">${fits(p)}</td>
+      <td class="num" data-sort="${String(p.price ?? 0).padStart(6, '0')}">${P.price(p)}</td>
+      <td class="num">${p.gst}%</td>
+      <td data-sort="${st}">${P.stockTag(p)}<span class="sub">${p.discontinued ? `Replaced by ${p.replacedBy}` : `${P.available(p)} available`}</span></td>
+      <td>${p.visible ? r.tag('Shown', 'green') : r.tag('Hidden')}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, in: (p) => P.state(p) === 'in', low: (p) => ['low', 'out'].includes(P.state(p)), request: (p) => P.state(p) === 'request',
+    discontinued: (p) => p.discontinued, hidden: (p) => !p.visible };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#parts tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](P.part(row.dataset.part)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = parts.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = P.part(event.detail.dataset.part);
+    const s = P.supplier(p.supplier);
+    document.getElementById('quick-title').textContent = p.name;
+    document.getElementById('quick-sub').textContent = p.number;
+    document.getElementById('quick-open').href = ZXA.href('D802', `?p=${p.number}`);
+    document.getElementById('quick-edit').href = ZXA.isBuilt('D803') ? ZXA.href('D803', `?p=${p.number}`) : `${ZXA.root}index.html#D803`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${P.stockTag(p)}${r.tag(p.category, 'outline')}${p.visible ? r.tag('Shown in app', 'green') : r.tag('Hidden in app')}</div>
+      ${p.description ? `<p>${r.esc(p.description)}</p>` : ''}
+      <dl class="dl">
+        <dt>Price</dt><dd>${P.price(p)} <span class="muted">+ GST ${p.gst}%</span></dd>
+        <dt>Stock</dt><dd>${p.onHand} on hand · ${p.reserved} reserved · ${P.available(p)} available<br><span class="muted">Minimum ${p.min}, reorder ${p.reorder}</span></dd>
+        <dt>Fits</dt><dd>${fits(p)}</dd>
+        <dt>Supplier</dt><dd>${s.name}<br><span class="muted">Lead time ${p.lead} days</span></dd>
+        <dt>HSN</dt><dd class="mono">${p.hsn}</dd>
+        ${p.discontinued ? `<dt>Replaced by</dt><dd><a href="${ZXA.href('D802', `?p=${p.replacedBy}`)}" class="mono">${p.replacedBy}</a></dd>` : ''}
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

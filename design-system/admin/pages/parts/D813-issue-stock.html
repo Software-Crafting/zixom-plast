@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D813 Issue stock</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D813" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Issue stock</span></nav>
+      <h1>Issue stock</h1><p>Take parts out of the store for a ticket, an order or an engineer.</p></div>
+  </div>
+
+  <form class="card pad" data-when="ready negative" onsubmit="return false">
+    <div class="banner red" data-when="negative" style="margin-bottom:20px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+      <span class="grow"><b>Stock would go below zero.</b> ZP-SP-003 has 0 available. Confirm Allow negative stock with a reason, or remove the line.</span></div>
+
+    <section class="form-section">
+      <h3>Issue to</h3>
+      <div class="choices" id="to" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
+        <label class="choice"><input type="radio" name="to" value="ticket" class="sr-only"><span><b>Ticket</b><small>Parts fitted on a visit</small></span></label>
+        <label class="choice"><input type="radio" name="to" value="order" class="sr-only"><span><b>Order</b><small>Usually done by packing</small></span></label>
+        <label class="choice"><input type="radio" name="to" value="engineer" class="sr-only"><span><b>Engineer</b><small>For a request or a kit</small></span></label>
+      </div>
+      <div class="form-grid" style="margin-top:16px">
+        <div class="field"><label for="f-ref" id="f-ref-label">Reference</label><select class="select" id="f-ref"></select></div>
+        <div class="field"><label for="f-date">Date</label><input class="input" id="f-date" type="date" value="2026-11-23" max="2026-11-23"></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Lines</h3>
+      <div class="table-wrap no-top"><table class="table compact" id="lines">
+        <thead><tr><th>Part</th><th class="num">Available</th><th class="num">Qty</th><th class="num">After</th><th class="actions"></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <button class="btn btn-sm btn-ghost" type="button" id="add-line" style="margin-top:10px"><svg class="ic"><use href="#ph-plus"/></svg>Add line</button>
+      <div class="stack-sm" data-when="negative" style="margin-top:16px">
+        <label class="check"><input type="checkbox" id="allow"> Allow negative stock</label>
+        <div class="field"><label for="f-why">Reason *</label><input class="input" id="f-why" value="Customer's spare chain fitted; replace their stock when ours arrives"><span class="hint">The part is flagged until a receipt brings it back to zero or more.</span></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="field"><label for="f-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="f-note" maxlength="300"></textarea></div>
+    </section>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note"></span>
+      <a class="btn btn-ghost" href="#D810">Cancel</a>
+      <button class="btn btn-primary" type="button" id="issue" data-busy data-toast="Stock issued. Ledger updated">Issue</button>
+    </div>
+  </form>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready negative loading error">
+  <div><h3>What it is</h3><p>Take parts out of stock. <code>?r=SPR-2026-0030</code> fills it from a part request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose ticket, order or engineer, then the reference.</li><li>Add lines; available and after update.</li><li>Issue.</li></ul></div>
+  <div><h3>What happens next</h3><p>The ledger (D811) gets one issue per line; the request (D821) moves to Issued.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Negative stock is blocked unless Allow negative stock is ticked with a reason; the part is flagged (EC-A44, Negative state).</li><li>Orders are normally issued by Pick and pack (D833).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const req = P.request(new URLSearchParams(location.search).get('r') || 'SPR-2026-0030');
+
+  const REFS = {
+    ticket: ['Ticket', r.tickets.filter(r.isOpen).map((t) => [t.number, `${t.number} · ${r.company(t.company).name}, ${r.machine(t.machine).model}`])],
+    order: ['Order', D.orders.filter((o) => ['approved', 'paid'].includes(o.status) || o.status === 'pending').map((o) => [o.number, `${o.number} · ${r.company(o.company).name}`])],
+    engineer: ['Engineer and request', [...D.requests.filter((x) => ['approved', 'partly'].includes(x.status)).map((x) => [x.number, `${r.engineer(x.engineer).name} · ${x.number} for ${x.ticket}`]),
+      ...ZX.data.engineers.map((e) => [e.id, `${e.name} · breakdown kit`])]],
+  };
+  const setTo = (to, selected) => {
+    document.querySelector(`#to input[value="${to}"]`).checked = true;
+    $('f-ref-label').textContent = REFS[to][0];
+    $('f-ref').innerHTML = REFS[to][1].map(([v, label]) => `<option value="${v}"${v === selected ? ' selected' : ''}>${label}</option>`).join('');
+  };
+  $('to').addEventListener('change', (event) => setTo(event.target.value));
+
+  const options = (selected) => D.parts.map((p) => `<option value="${p.number}"${p.number === selected ? ' selected' : ''}>${p.number} · ${r.esc(p.name)}</option>`).join('');
+  const line = (number, qty) => `<tr><td><select class="select" aria-label="Part" style="min-width:220px">${options(number)}</select></td><td class="num" data-avail></td>
+    <td class="num"><input class="input qty" type="number" min="1" value="${qty}" aria-label="Quantity"></td><td class="num strong" data-after></td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="Remove line" data-remove>${r.icon('trash')}</button></td></tr>`;
+  const body = $('lines').tBodies[0];
+
+  const update = () => {
+    let negative = false;
+    [...body.rows].forEach((row) => {
+      const p = P.part(row.querySelector('select').value);
+      const qty = Number(row.querySelector('.qty').value) || 0;
+      /* stock reserved for this request can be issued to it */
+      const free = P.available(p) + (req && req.part === p.number && req.status === 'approved' ? req.qty : 0);
+      row.querySelector('[data-avail]').innerHTML = `${free}${req && req.part === p.number && req.status === 'approved' ? `<span class="sub">incl. ${req.qty} reserved for ${req.number}</span>` : ''}`;
+      row.querySelector('[data-after]').textContent = free - qty;
+      row.querySelector('[data-after]').classList.toggle('neg', free - qty < 0);
+      row.querySelector('.qty').setAttribute('aria-invalid', String(free - qty < 0));
+      negative = negative || free - qty < 0;
+    });
+    $('bar-note').textContent = negative ? 'Blocked until Allow negative stock is ticked with a reason.' : `${body.rows.length} line${body.rows.length > 1 ? 's' : ''}. The engineer sees the update in the app.`;
+    $('issue').disabled = negative && !$('allow').checked;
+  };
+  body.addEventListener('input', update);
+  $('allow').addEventListener('change', update);
+  body.addEventListener('click', (event) => { if (event.target.closest('[data-remove]') && body.rows.length > 1) { event.target.closest('tr').remove(); update(); } });
+  $('add-line').addEventListener('click', () => { body.insertAdjacentHTML('beforeend', line('ZP-SP-016', 1)); update(); });
+
+  const fill = () => {
+    if (document.body.dataset.state === 'negative') {
+      setTo('ticket', 'TKT-2026-0126');
+      body.innerHTML = line('ZP-SP-003', 1);
+    } else {
+      setTo('engineer', req?.number);
+      body.innerHTML = line(req?.part || 'ZP-SP-004', req?.qty || 1);
+    }
+    update();
+  };
+  fill();
+  new MutationObserver(fill).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

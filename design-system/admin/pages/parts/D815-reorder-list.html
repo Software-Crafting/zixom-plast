@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D815 Reorder list</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D815" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reorder list</span></nav>
+      <h1>Reorder list</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready">
+        <button role="tab" aria-selected="true" data-view="open">To order <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="ordered">Ordered <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="table-wrap" data-when="ready">
+        <table class="table" id="reorder">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th>Part</th><th class="num">Available</th><th class="num">Minimum</th><th class="num">Suggested</th><th>Supplier</th><th>Status</th><th class="actions" style="width:220px"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-foot" data-when="ready"><span id="foot-count"></span><span class="grow"></span><span class="faint">Suggested brings available to minimum plus the reorder quantity</span></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>Nothing to reorder</h3><p>Parts at or below their minimum appear here.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D810">Open stock</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+  </div>
+
+  <div class="bulk-bar" data-for="reorder" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="ordered">Mark ordered</button>
+    <button class="btn" type="button" data-toast="Hidden for 7 days">Dismiss for 7 days</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay center" id="ordered" hidden>
+  <div class="modal" role="dialog" aria-labelledby="or-title">
+    <div class="modal-head"><div class="grow"><h2 id="or-title">Mark ordered</h2><p id="or-sub">The app shows On order with the expected date.</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="or-qty">Quantity</label><input class="input" id="or-qty" type="number" min="1" value="10"></div>
+        <div class="field"><label for="or-date">Expected on</label><input class="input" id="or-date" type="date" value="2026-11-28" min="2026-11-24"></div>
+      </div>
+      <div class="field"><label for="or-ref">Supplier reference <span class="opt">optional</span></label><input class="input mono" id="or-ref" placeholder="Their order or quote number"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked ordered. The app shows On order">Mark ordered</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Parts at or below their minimum, with a suggested quantity and supplier.</p></div>
+  <div><h3>What you can do</h3><ul><li>Mark ordered with an expected date.</li><li>Dismiss for 7 days.</li><li>Export to send to suppliers.</li></ul></div>
+  <div><h3>What happens next</h3><p>A receipt (D812) above the minimum clears the part from the list.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The count shows as the Low stock parts card on the dashboard (D101).</li><li>Purchase orders to suppliers are out of scope; record the order only.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const list = D.parts.filter(P.belowMin);
+  const suggested = (p) => Math.max(p.reorder, p.min + p.reorder - P.available(p));
+  document.getElementById('summary').textContent = `${list.length} parts at or below minimum · ${list.filter((p) => D.reorder[p.number]?.status === 'ordered').length} on order`;
+
+  document.querySelector('#reorder tbody').innerHTML = list.map((p) => {
+    const ro = D.reorder[p.number] || { status: 'open' };
+    const s = P.supplier(p.supplier);
+    return `<tr data-status="${ro.status}" class="${P.state(p) === 'out' ? 'urgent' : 'low'}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.number}"></label></td>
+      <td><a class="rec" href="#D802?p=${p.number}">${p.number}</a><span class="sub">${r.esc(p.name)}</span></td>
+      <td class="num strong ${P.available(p) <= 0 ? 'neg' : ''}">${P.available(p)}</td><td class="num">${p.min}</td>
+      <td class="num">${ro.qty ?? suggested(p)}</td>
+      <td>${s.name}<span class="sub">${p.lead} days · ${s.phone}</span></td>
+      <td>${ro.status === 'ordered' ? `${r.tag('Ordered', 'blue')}<span class="sub">Expected ${r.date(ro.expected)}</span>` : r.tag(P.state(p) === 'out' ? 'Out of stock' : 'Needs order', P.state(p) === 'out' ? 'red' : 'amber')}</td>
+      <td class="actions"><span class="row" style="justify-content:flex-end; gap:4px">${ro.status === 'ordered'
+        ? `<a class="btn btn-sm btn-secondary" href="#D812">Receive</a>`
+        : `<button class="btn btn-sm btn-secondary" type="button" data-open="ordered" data-part="${p.number}">Mark ordered</button><button class="btn btn-sm btn-ghost" type="button" data-toast="${p.number} hidden for 7 days">Dismiss</button>`}</span></td></tr>`;
+  }).join('');
+
+  const VIEWS = { open: (s) => s === 'open', ordered: (s) => s === 'ordered', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#reorder tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](row.dataset.status); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter((p) => VIEWS[tab.dataset.view]((D.reorder[p.number] || { status: 'open' }).status)).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  document.addEventListener('click', (event) => {
+    const b = event.target.closest('[data-open="ordered"][data-part]');
+    if (!b) return;
+    const p = P.part(b.dataset.part);
+    document.getElementById('or-title').textContent = `Mark ${p.number} ordered`;
+    document.getElementById('or-sub').textContent = `${P.supplier(p.supplier).name}, lead time ${p.lead} days. The app shows On order with the date.`;
+    document.getElementById('or-qty').value = suggested(p);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

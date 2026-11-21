@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D802 Part detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D802">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb" class="mono"></span></nav>
+        <div class="record-head"><h1 id="name" class="name"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Part sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-fits">Compatibility</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-ledger">Stock ledger</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-orders">Orders and requests</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-prices">Prices</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-fits" role="tabpanel" hidden></div>
+          <div id="tab-ledger" role="tabpanel" hidden></div>
+          <div id="tab-orders" role="tabpanel" hidden></div>
+          <div id="tab-prices" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px; max-width:100%"></span><span class="sk sk-line" style="width:420px; max-width:100%"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D801">Go to parts</a></div></div></div>
+  </div>
+</main>
+
+<!-- discontinue and replace (D808): names the part and what customers will see -->
+<div class="overlay center" id="discontinue" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="dc-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-ban"/></svg></span>
+      <div class="grow"><h2 id="dc-title"></h2><p>Customers see No longer made and the replacement in the app. Open carts and Notify me requests move to the replacement.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="dc-part">Replacement part</label><select class="select" id="dc-part"></select><span class="hint">Shown as Replaced by on the part page in the app (C703).</span></div>
+      <div class="field"><span class="label">Stock left</span>
+        <label class="check"><input type="radio" name="dc-stock" checked> <span id="dc-sell"></span></label>
+        <label class="check"><input type="radio" name="dc-stock"> Stop selling now</label></div>
+      <div class="field"><label for="dc-note">Reason <span class="opt">optional</span></label><input class="input" id="dc-note" value="Supplier stopped making it"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep part</button><button class="btn btn-danger" type="button" data-close data-toast="Part discontinued. Replacement shown in the app">Discontinue</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <a href="#D812"><svg class="ic"><use href="#ph-download-simple"/></svg>Receive stock</a>
+  <a href="#D813"><svg class="ic"><use href="#ph-upload-simple"/></svg>Issue stock</a>
+  <button type="button" data-toast="Customer view opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview in the app</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Hidden in the app"><svg class="ic"><use href="#ph-eye-slash"/></svg>Hide in app</button>
+  <hr><button class="danger" type="button" data-open="discontinue" id="menu-discontinue"><svg class="ic"><use href="#ph-ban"/></svg>Discontinue and replace</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error" data-mobile="../../../screens/customer/C703-part-detail.html">
+  <div><h3>What it is</h3><p>One part: catalogue details, fit, stock and where it went. Opens with <code>?p=ZP-SP-001</code>; try 003 (out), 004 (on request), 005 (discontinued).</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit the part or adjust stock.</li><li>Receive, issue, hide in the app, discontinue with a replacement.</li><li>See every movement, order and request for this part.</li></ul></div>
+  <div><h3>What happens next</h3><p>Edit (D803), Adjust stock (D814), Discontinue and replace (D808), Stock ledger (D811).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Discontinued parts show the replacement in the app (C703).</li><li>Reserved stock comes from approved orders and requests.</li><li>Ledger entries cannot be edited; corrections are new entries.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const ic = r.icon;
+  const number = new URLSearchParams(location.search).get('p') || document.body.dataset.part || 'ZP-SP-001';
+  const p = P.part(number);
+  if (!p) { document.body.dataset.state = 'not-found'; return; }
+  const s = P.supplier(p.supplier);
+  const pq = `?p=${p.number}`;
+  const st = P.state(p);
+
+  document.title = `Zixom Admin - ${p.number}`;
+  document.getElementById('crumb').textContent = p.number;
+  document.getElementById('name').textContent = p.name;
+  document.getElementById('chips').innerHTML = `${P.stockTag(p)}${r.tag(p.category, 'outline')}${p.visible ? r.tag('Shown in app', 'green') : r.tag('Hidden in app')}`;
+  document.getElementById('meta').innerHTML = `<span class="mono">${ic('cube')}${p.number}</span><span>${ic('tag')}HSN ${p.hsn} · GST ${p.gst}%</span><span>${ic('package')}Sold per ${p.unit.toLowerCase()}</span>`;
+  document.getElementById('actions').innerHTML = `<a class="btn btn-secondary" href="#D814${pq}">Adjust stock</a><a class="btn btn-primary" href="#D803${pq}">Edit part</a>
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+
+  /* edge banners */
+  const banners = [];
+  if (p.discontinued) banners.push(`<div class="banner grey">${ic('ban')}<span class="grow"><b>Discontinued.</b> The app shows Replaced by ${p.replacedBy} (${r.esc(P.part(p.replacedBy).name)}).</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D802?p=${p.replacedBy}">Open ${p.replacedBy}</a></span></div>`);
+  if (st === 'out') banners.push(`<div class="banner red">${ic('warning-circle')}<span class="grow"><b>Out of stock.</b> ${D.reorder[p.number]?.status === 'ordered' ? `On order, expected ${r.date(D.reorder[p.number].expected)}.` : 'Not ordered yet.'} ${D.notify.filter((n) => n.part === p.number && n.status === 'waiting').length} customers wait for Notify me.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D815">Reorder list</a></span></div>`);
+  if (st === 'low') banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>At or below minimum.</b> ${P.available(p)} available, minimum ${p.min}.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D812">Receive stock</a></span></div>`);
+  document.getElementById('edge-banners').innerHTML = banners.join('');
+  if (p.discontinued) document.getElementById('menu-discontinue').remove();
+
+  /* ---------- overview ---------- */
+  document.getElementById('tab-overview').innerHTML = `<div class="stack">
+    <div class="gallery">${['Front', 'Side', 'Label'].map((x) => `<div class="ph">${ic('image')}<small>${x}</small></div>`).join('')}</div>
+    <div><h3 style="font-size:16px">Description</h3><p style="margin-top:6px">${p.description ? r.esc(p.description) : '<span class="faint">No description yet</span>'}</p></div>
+    <div class="grid cols-2" style="gap:20px">
+      <div><h3 style="font-size:16px; margin-bottom:8px">Specifications</h3>
+        ${p.specs.length ? `<dl class="dl">${p.specs.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>` : '<p class="faint">None added</p>'}</div>
+      <div><h3 style="font-size:16px; margin-bottom:8px">Price and tax</h3>
+        <dl class="dl"><dt>Price</dt><dd>${P.price(p)}</dd><dt>GST</dt><dd>${p.gst}%</dd><dt>HSN</dt><dd class="mono">${p.hsn}</dd><dt>Unit</dt><dd>${p.unit}</dd>
+          <dt>Cost</dt><dd>${r.money(p.cost)} <span class="muted">Admin only</span></dd></dl></div>
+    </div></div>`;
+
+  /* ---------- compatibility: models, and machines in the field with that model ---------- */
+  document.getElementById('tab-fits').innerHTML = `<div class="stack"><div class="row"><p class="muted grow">Drives Fits these machines in the app.</p><a class="btn btn-sm btn-secondary" href="#D805">Edit in matrix</a></div>
+    <div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Model</th><th>Series</th><th>Fits</th><th class="num">Machines</th></tr></thead><tbody>
+    ${D.models.map(([model, series]) => {
+      const n = r.machines.filter((m) => m.model.startsWith(model)).length;
+      return `<tr><td>${model}</td><td>${series}</td><td>${p.fits.includes(series) ? r.tag('Fits', 'green', 'check') : '<span class="faint">No</span>'}</td><td class="num">${n}</td></tr>`;
+    }).join('')}</tbody></table></div></div>`;
+
+  /* ---------- stock ledger ---------- */
+  const refLink = (ref) => {
+    if (ref.startsWith('TKT-')) return `<a class="rec" href="#D403?t=${ref}">${ref}</a>`;
+    if (ref.startsWith('ORD-')) return `<a class="rec" href="#D831?o=${ref}">${ref}</a>`;
+    if (ref.startsWith('SPR-')) return `<a class="rec" href="#D821?r=${ref}">${ref}</a>`;
+    return r.esc(ref);
+  };
+  const moves = D.ledger.filter((x) => x.part === p.number);
+  document.getElementById('tab-ledger').innerHTML = moves.length ? `<div class="stack"><div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Date</th><th>Type</th><th class="num">Qty</th><th class="num">Balance</th><th>Reference</th></tr></thead><tbody>
+    ${moves.map((x) => `<tr><td class="nowrap">${r.date(x.when)}, ${r.time(x.when)}</td><td>${P.typeTag(x.type)}</td><td class="num ${x.qty < 0 ? 'neg' : 'pos'}">${x.qty > 0 ? '+' : ''}${x.qty}</td><td class="num">${x.balance}</td><td>${refLink(x.ref)}</td></tr>`).join('')}
+    </tbody></table></div><div><a class="btn btn-sm btn-ghost" href="#D811${pq}">Open full ledger</a></div></div>`
+    : `<div class="state"><span class="disc">${ic('history')}</span><h3>No movements in 60 days</h3><p>Receipts, issues and adjustments appear here.</p></div>`;
+
+  /* ---------- orders and requests that include this part ---------- */
+  const rows = [
+    ...D.orders.filter((o) => o.items.some(([n]) => n === p.number)).map((o) => [o.number, 'D831', `?o=${o.number}`, r.company(o.company).name, o.items.find(([n]) => n === p.number)[1], P.orderTag(o.status), o.created]),
+    ...D.requests.filter((x) => x.part === p.number).map((x) => [x.number, 'D821', `?r=${x.number}`, `${r.engineer(x.engineer).name} · ${x.ticket}`, x.qty, P.sprTag(x.status), x.when]),
+  ].sort((a, b) => b[6].localeCompare(a[6]));
+  document.getElementById('tab-orders').innerHTML = rows.length ? `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Record</th><th>For</th><th class="num">Qty</th><th>Status</th><th>Date</th></tr></thead><tbody>
+    ${rows.map(([num, id, q, who, qty, status, when]) => `<tr data-href="${id}${q}"><td><a class="rec" href="#${id}${q}">${num}</a></td><td>${who}</td><td class="num">${qty}</td><td>${status}</td><td class="nowrap">${r.date(when)}</td></tr>`).join('')}
+    </tbody></table></div>`
+    : `<div class="state"><span class="disc">${ic('shopping-cart')}</span><h3>No orders or requests</h3><p>Customer orders and engineer requests for this part appear here.</p></div>`;
+
+  /* ---------- prices ---------- */
+  const changes = D.priceChanges.filter((c) => c.parts.includes(p.number));
+  const priceAt = (c) => (c.to ? [c.from, c.to] : [Math.round(p.price / (c.status === 'applied' ? 1 + c.percent / 100 : 1)), Math.round(p.price * (c.status === 'applied' ? 1 : 1 + c.percent / 100))]);
+  document.getElementById('tab-prices').innerHTML = p.price === null ? `<div class="state"><span class="disc">${ic('currency-inr')}</span><h3>Price on request</h3><p>Customers ask for a quote in the app. Quote from the order (D832).</p></div>`
+    : `<div class="table-wrap no-top"><table class="table compact"><thead><tr><th>Effective</th><th>Change</th><th class="num">Old</th><th class="num">New</th><th>Status</th></tr></thead><tbody>
+      ${changes.map((c) => { const [from, to] = priceAt(c); return `<tr><td class="nowrap">${r.date(c.effective)}</td><td>${c.title}</td><td class="num">${r.money(from)}</td><td class="num">${r.money(to)}</td><td>${c.status === 'scheduled' ? r.tag('Scheduled', 'blue') : r.tag('Applied', 'green')}</td></tr>`; }).join('')}
+      <tr><td class="nowrap">12 Jan 2026</td><td>Added to the catalogue</td><td class="num">–</td><td class="num">${r.money(changes.some((c) => c.status === 'applied') ? priceAt(changes.find((c) => c.status === 'applied'))[0] : p.price)}</td><td>${r.tag('Applied', 'green')}</td></tr>
+      </tbody></table></div><div style="margin-top:12px"><a class="btn btn-sm btn-ghost" href="#D806">Price changes</a></div>`;
+
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${p.discontinued ? `<tr><td class="nowrap">12 Oct, 11:20</td><td>Rajesh Goyal</td><td>Status: Active → Discontinued, replaced by ${p.replacedBy}</td></tr>` : ''}
+    <tr><td class="nowrap">4 Nov, 10:15</td><td>Rajesh Goyal</td><td>Minimum stock: ${Math.max(p.min - 1, 0)} → ${p.min}</td></tr>
+    <tr><td class="nowrap">12 Jan, 15:40</td><td>Rajesh Goyal</td><td>Part created</td></tr></tbody></table>`;
+
+  /* ---------- side cards ---------- */
+  const waiting = D.notify.filter((n) => n.part === p.number && n.status === 'waiting');
+  const pct = Math.min(100, Math.round((P.available(p) / Math.max(p.min * 2, 1)) * 100));
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Stock</h3><a class="card-link" href="#D810">Overview</a></div>
+      <div class="card-body stack-sm">
+        <div class="grid cols-3" style="gap:8px"><div class="kv"><span>On hand</span><b>${p.onHand}</b></div><div class="kv"><span>Reserved</span><b>${p.reserved}</b></div><div class="kv"><span>Available</span><b>${P.available(p)}</b></div></div>
+        <div class="progress ${st === 'out' ? 'red' : st === 'low' ? 'amber' : 'green'}"><span style="width:${pct}%"></span></div>
+        <dl class="dl"><dt>Minimum</dt><dd>${p.min}</dd><dt>Reorder qty</dt><dd>${p.reorder}</dd><dt>Location</dt><dd>${D.location}</dd></dl>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="#D812">Receive</a><a class="btn btn-sm btn-secondary" href="#D813">Issue</a><a class="btn btn-sm btn-ghost" href="#D814${pq}">Adjust</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Supplier</h3><a class="card-link" href="#D816">Suppliers</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="thumb">${ic('warehouse')}</span><span><b>${s.name}</b><small>${s.city} · lead time ${p.lead} days</small></span></div>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${s.phone.replace(/\s/g, '')}">${ic('phone')}${s.contact}</a></div></div></section>
+    ${waiting.length ? `<section class="card side-card"><div class="card-head"><h3 class="grow">Notify me</h3><a class="card-link" href="#D837">All</a></div>
+      <ul class="mini">${waiting.map((n) => `<li><span class="avatar sm">${r.person(n.person).initials}</span><span class="grow"><b>${r.person(n.person).name}</b><small>${r.company(n.company).name} · asked ${r.date(n.asked)}</small></span></li>`).join('')}</ul></section>` : ''}
+    ${p.discontinued ? `<section class="card side-card"><div class="card-head"><h3 class="grow">Replacement</h3></div>
+      <ul class="mini"><li data-href="D802?p=${p.replacedBy}"><span class="ic-disc green">${ic('cube')}</span><span class="grow"><b>${r.esc(P.part(p.replacedBy).name)}</b><small class="mono">${p.replacedBy}</small></span>${P.stockTag(P.part(p.replacedBy))}</li></ul></section>` : ''}`;
+
+  /* discontinue modal (D808) */
+  document.getElementById('dc-title').textContent = `Discontinue ${p.number}?`;
+  document.getElementById('dc-sell').textContent = `Sell the remaining ${p.onHand}, then stop`;
+  document.getElementById('dc-part').innerHTML = D.parts.filter((x) => x.number !== p.number && !x.discontinued && x.category === p.category)
+    .map((x) => `<option${x.number === document.body.dataset.replacement ? ' selected' : ''}>${x.number} · ${r.esc(x.name)}</option>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

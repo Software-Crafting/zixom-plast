@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D807 Import parts</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D807" data-nav="D801">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D801">Parts catalogue</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Import parts</span></nav>
+      <h1>Import parts</h1><p>Add or update parts from an Excel or CSV file.</p></div>
+    <button class="btn btn-secondary" type="button" data-toast="Template downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Template</button>
+  </div>
+
+  <section class="card pad" style="margin-bottom:16px" data-when="ready upload large done">
+    <ol class="steps" id="steps">
+      <li data-step="1"><span class="n">1</span>Upload</li><li data-step="2"><span class="n">2</span>Map columns</li>
+      <li data-step="3"><span class="n">3</span>Check</li><li data-step="4"><span class="n">4</span>Import</li>
+    </ol>
+  </section>
+
+  <!-- step 1: upload -->
+  <section class="card pad stack" data-when="upload">
+    <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop an XLSX or CSV here or browse</b>Up to 5 MB or 10,000 rows. Larger files run in the background.</div>
+    <div class="row"><span class="grow muted">Columns: part number, name, category, price, GST, HSN, unit, minimum, reorder, lead time, supplier, models, visible.</span></div>
+  </section>
+
+  <!-- step 3: check, the default view -->
+  <div data-when="ready">
+    <section class="card" style="margin-bottom:16px">
+      <div class="card-head"><div class="grow"><h2>parts-nov-2026.xlsx</h2><p>48 rows · columns mapped 13 of 13 · <button class="btn btn-link" type="button" data-toast="Column mapping opened">Change mapping</button></p></div></div>
+      <div class="card-body"><div class="kpis">
+        <div class="card kpi"><span class="label">Ready to import</span><span class="value">42</span><span class="foot">38 new, 4 updates</span></div>
+        <div class="card kpi alert"><span class="label">Rows with errors</span><span class="value">3</span><span class="foot">Skipped unless fixed</span></div>
+        <div class="card kpi"><span class="label">Match existing parts</span><span class="value">3</span><span class="foot">Choose what to do</span></div>
+        <div class="card kpi"><span class="label">Empty rows</span><span class="value">0</span><span class="foot">Ignored</span></div>
+      </div></div>
+    </section>
+
+    <div class="grid cols-2">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Rows with errors</h2><p>Fix in the file and upload again, or import the valid rows only.</p></div>
+          <button class="btn btn-sm btn-secondary" type="button" data-toast="Error rows downloaded">Download</button></div>
+        <div class="table-wrap no-top"><table class="table compact"><thead><tr><th class="num">Row</th><th>Part</th><th>Problem</th></tr></thead><tbody>
+          <tr><td class="num">12</td><td class="mono">ZP-SP-033</td><td>Price is not a number: <span class="mono">Rs 1,200/-</span></td></tr>
+          <tr><td class="num">27</td><td class="mono">ZP-SP-048</td><td>Category Sensors is archived</td></tr>
+          <tr><td class="num">31</td><td class="faint">empty</td><td>Part number is missing</td></tr>
+        </tbody></table></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Match existing parts</h2><p>Same part number as a part in the catalogue.</p></div></div>
+        <div class="table-wrap no-top"><table class="table compact" id="dupes"><thead><tr><th class="num">Row</th><th>Part</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+      </section>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow">3 error rows are skipped. Stock levels are not changed by an import.</span>
+      <button class="btn btn-ghost" type="button" data-toast="Choose a new file">Upload again</button>
+      <button class="btn btn-primary" type="button" data-busy data-toast="42 parts imported">Import 42 rows</button>
+    </div>
+  </div>
+
+  <!-- large file: runs in the background -->
+  <section class="card" data-when="large"><div class="state page"><span class="disc blue"><svg class="ic"><use href="#ph-hourglass"/></svg></span>
+    <h3>Importing 12,480 rows in the background</h3><p>You can leave this page. A notification arrives when it is done.</p>
+    <div class="row" style="width:min(360px, 100%); margin-top:10px"><span class="progress grow"><span style="width:38%"></span></span><span class="muted">38%</span></div>
+    <div class="btns"><a class="btn btn-secondary" href="#D801">Back to parts</a></div></div></section>
+
+  <!-- done -->
+  <section class="card" data-when="done"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+    <h3>42 parts imported</h3><p>38 added, 4 updated, 3 rows skipped with errors.</p>
+    <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Skipped rows downloaded">Download skipped rows</button><a class="btn btn-primary" href="#D801">Open catalogue</a></div></div></section>
+
+  <div data-when="loading">
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready upload large done loading error">
+  <div><h3>What it is</h3><p>Excel or CSV import for the catalogue, with a check before anything changes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Upload, map columns, check errors and matches, import.</li><li>For each match: Skip, Update or Create new.</li></ul></div>
+  <div><h3>What happens next</h3><p>Parts appear in the catalogue (D801) and in the app when visible.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Bad rows listed with row number and reason; import the valid rows only (EC-A31).</li><li>Rows matching existing parts: Skip, Update, Create new (EC-A32).</li><li>Over 10,000 rows runs in the background (EC-A33).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const DUPES = [[8, 'ZP-SP-008', 'Update'], [19, 'ZP-SP-016', 'Skip'], [40, 'ZP-SP-019', 'Update']];
+  document.querySelector('#dupes tbody').innerHTML = DUPES.map(([row, n, pick]) => `<tr><td class="num">${row}</td><td><span class="mono">${n}</span><span class="sub">${r.esc(P.part(n).name)}</span></td>
+    <td><select class="select" aria-label="Action for row ${row}" style="min-width:140px">${['Skip', 'Update', 'Create new'].map((x) => `<option${x === pick ? ' selected' : ''}>${x}</option>`).join('')}</select></td></tr>`).join('');
+
+  /* stepper follows the demo state */
+  const STEP = { upload: 1, ready: 3, large: 4, done: 4 };
+  const markSteps = () => {
+    const at = STEP[document.body.dataset.state] || 3;
+    document.querySelectorAll('#steps li').forEach((li) => {
+      const n = Number(li.dataset.step);
+      li.classList.toggle('done', n < at || (n === 4 && document.body.dataset.state === 'done'));
+      if (n === at && document.body.dataset.state !== 'done') li.setAttribute('aria-current', 'step');
+      else li.removeAttribute('aria-current');
+      li.querySelector('.n').textContent = li.classList.contains('done') ? '✓' : n;
+    });
+  };
+  new MutationObserver(markSteps).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

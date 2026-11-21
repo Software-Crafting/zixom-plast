@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D811 Stock ledger</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D811" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Ledger</span></nav>
+      <h1>Stock ledger</h1><p>Every movement in the last 60 days. Entries cannot be edited; corrections are new entries.</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="receipt">Receipts <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="issue">Issues <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="return">Returns <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="adjust">Adjustments <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#ledger"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Part, reference or note" aria-label="Search ledger"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+      </div>
+      <div class="applied-row" id="applied" data-when="ready no-results">
+        <span class="chip applied">Date: <b>25 Sep to 23 Nov</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="ledger">
+          <thead><tr><th class="sortable">Date</th><th class="sortable">Part</th><th class="sortable">Type</th><th class="num">Qty</th><th class="num">Balance</th><th>Reference</th><th>Note</th><th>By</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager" id="pager"></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-history"/></svg></span>
+        <h3>No movements yet</h3><p>Receipts, issues and adjustments will appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D812">Receive stock</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Part</th><th>Type</th><th>Qty</th><th>Balance</th><th>Reference</th></tr></thead>
+      <tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Receipt</button><button class="chip" type="button" aria-pressed="false">Issue to ticket</button>
+        <button class="chip" type="button" aria-pressed="false">Issue to order</button><button class="chip" type="button" aria-pressed="false">Issue to engineer</button>
+        <button class="chip" type="button" aria-pressed="false">Return</button><button class="chip" type="button" aria-pressed="false">Adjustment</button></div></div>
+      <div class="form-grid">
+        <div class="field full"><label for="f-part">Part</label><select class="select" id="f-part"><option value="">Any</option></select></div>
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-09-25"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>All stock movements with the balance after each. <code>?p=ZP-SP-001</code> shows one part.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by type, part and date; search references.</li><li>Open the ticket, order or request behind an entry.</li><li>Export to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>A wrong entry is corrected with an adjustment (D814).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Entries cannot be edited or deleted.</li><li>Stock issued for an order is written when it is packed.</li><li>Exports over 5,000 rows run in the background (D1520).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const PAGE = 25;
+  const only = P.part(new URLSearchParams(location.search).get('p') || '');
+  const entries = D.ledger.filter((x) => !only || x.part === only.number);
+  const refLink = (ref) => {
+    if (ref.startsWith('TKT-')) return `<a class="rec" href="#D403?t=${ref}">${ref}</a>`;
+    if (ref.startsWith('ORD-')) return `<a class="rec" href="#D831?o=${ref}">${ref}</a>`;
+    if (ref.startsWith('SPR-')) return `<a class="rec" href="#D821?r=${ref}">${ref}</a>`;
+    return /\d/.test(ref) ? `<span class="mono">${r.esc(ref)}</span>` : r.esc(ref);
+  };
+  if (only) document.getElementById('applied').insertAdjacentHTML('afterbegin', `<span class="chip applied">Part: <b>${only.number}</b><svg class="ic x"><use href="#ph-x"/></svg></span>`);
+  document.getElementById('f-part').insertAdjacentHTML('beforeend', D.parts.map((p) => `<option${p === only ? ' selected' : ''}>${p.number} · ${r.esc(p.name)}</option>`).join(''));
+
+  document.querySelector('#ledger tbody').innerHTML = entries.map((x, i) => `<tr data-type="${x.type}" data-i="${i}">
+    <td class="nowrap" data-sort="${x.when}">${r.date(x.when)}<span class="sub">${r.time(x.when)}</span></td>
+    <td><a class="rec" href="#D802?p=${x.part}">${x.part}</a><span class="sub">${r.esc(P.part(x.part).name)}</span></td>
+    <td>${P.typeTag(x.type)}</td>
+    <td class="num strong ${x.qty < 0 ? 'neg' : 'pos'}">${x.qty > 0 ? '+' : ''}${x.qty}</td><td class="num">${x.balance}</td>
+    <td>${refLink(x.ref)}</td><td><span class="clip">${r.esc(x.note)}</span></td><td class="nowrap">${x.by}</td></tr>`).join('');
+
+  /* 25 rows a page; saved views filter by type */
+  const VIEWS = { all: () => true, receipt: (t) => t === 'receipt', issue: (t) => ['ticket', 'order', 'engineer'].includes(t), return: (t) => t === 'return', adjust: (t) => t === 'adjust' };
+  let view = 'all';
+  const show = (page) => {
+    const rows = [...document.querySelectorAll('#ledger tbody tr')];
+    const inView = rows.filter((row) => VIEWS[view](row.dataset.type));
+    const pages = Math.max(1, Math.ceil(inView.length / PAGE));
+    rows.forEach((row) => { row.hidden = true; });
+    inView.slice((page - 1) * PAGE, page * PAGE).forEach((row) => { row.hidden = false; });
+    const from = inView.length ? (page - 1) * PAGE + 1 : 0;
+    document.getElementById('foot-count').textContent = `${from} to ${Math.min(page * PAGE, inView.length)} of ${inView.length}`;
+    document.getElementById('pager').innerHTML = `<button type="button" aria-label="Previous page" data-page="${page - 1}"${page === 1 ? ' disabled' : ''}>${r.icon('caret-left')}</button>
+      ${Array.from({ length: pages }, (_, i) => `<button type="button" data-page="${i + 1}"${i + 1 === page ? ' aria-current="page"' : ''}>${i + 1}</button>`).join('')}
+      <button type="button" aria-label="Next page" data-page="${page + 1}"${page === pages ? ' disabled' : ''}>${r.icon('caret-right')}</button>`;
+  };
+  document.getElementById('pager').addEventListener('click', (event) => { const b = event.target.closest('[data-page]'); if (b) show(Number(b.dataset.page)); });
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = entries.filter((x) => VIEWS[tab.dataset.view](x.type)).length;
+    tab.addEventListener('click', () => { view = tab.dataset.view; show(1); });
+  });
+  show(1);
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

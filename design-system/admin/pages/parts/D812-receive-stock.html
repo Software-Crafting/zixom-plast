@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D812 Receive stock</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D812" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Receive stock</span></nav>
+      <h1>Receive stock</h1><p>Record parts that arrived from a supplier.</p></div>
+  </div>
+
+  <div class="grid side-right" data-when="ready duplicate">
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section">
+        <h3>Supplier document</h3>
+        <div class="form-grid">
+          <div class="field"><label for="f-supplier">Supplier *</label><select class="select" id="f-supplier"></select></div>
+          <div class="field"><label for="f-doc">Invoice or challan number *</label><input class="input mono" id="f-doc" value="VC/2627/1188">
+            <span class="error" data-when="duplicate"><svg class="ic"><use href="#ph-warning-circle"/></svg>VC/2627/1102 was received on 4 Nov 2026. Check it is not the same delivery.</span></div>
+          <div class="field"><label for="f-date">Received on</label><input class="input" id="f-date" type="date" value="2026-11-23" max="2026-11-23"></div>
+          <div class="field"><label for="f-by">Received by</label><input class="input" id="f-by" value="Rajesh Goyal"></div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h3>Lines</h3><p>Cost before GST, per unit.</p>
+        <div class="table-wrap no-top"><table class="table compact" id="lines">
+          <thead><tr><th>Part</th><th class="num">Now</th><th class="num">Qty</th><th class="num">Cost</th><th class="num">Amount</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+        <button class="btn btn-sm btn-ghost" type="button" id="add-line" style="margin-top:10px"><svg class="ic"><use href="#ph-plus"/></svg>Add line</button>
+      </section>
+
+      <section class="form-section">
+        <h3>Attachments</h3>
+        <div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-file-pdf"/></svg></span><span class="grow"><b>VC-2627-1188.pdf</b><small class="muted">Supplier invoice · 412 KB · Done</small></span>
+          <button class="icon-btn sm" type="button" aria-label="Remove file"><svg class="ic"><use href="#ph-trash"/></svg></button></div>
+        <div class="drop" style="margin-top:10px"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Add the invoice or challan</b>PDF, JPG or PNG, 10 MB each</div>
+        <div class="field" style="margin-top:16px"><label for="f-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="f-note" maxlength="300"></textarea></div>
+      </section>
+
+      <div class="form-bar">
+        <span class="grow">The ledger gets one receipt per line. Entries cannot be edited later.</span>
+        <a class="btn btn-ghost" href="#D810">Cancel</a>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Receipt saved. Reorder alert cleared for ZP-SP-002">Save receipt</button>
+      </div>
+    </form>
+
+    <aside class="stack">
+      <section class="card side-card"><div class="card-head"><h3 class="grow">Summary</h3></div>
+        <div class="card-body"><div class="totals" id="summary"></div></div></section>
+      <section class="card side-card"><div class="card-head"><h3 class="grow">After saving</h3></div>
+        <ul class="mini" id="after"></ul></section>
+    </aside>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready duplicate loading error">
+  <div><h3>What it is</h3><p>A goods receipt: supplier, document number, date, lines with cost, attachments.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or remove lines; quantities and totals update.</li><li>Attach the supplier invoice or challan.</li><li>Save the receipt.</li></ul></div>
+  <div><h3>What happens next</h3><p>Stock rises, the ledger (D811) gets receipts, reorder alerts clear, Notify me goes out for parts back above zero (D837).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A document number already received warns (Duplicate state).</li><li>Purchase orders to suppliers are out of scope.</li><li>One stock location.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  $('f-supplier').innerHTML = D.suppliers.filter((s) => s.status === 'active').map((s) => `<option value="${s.id}"${s.id === 'volta' ? ' selected' : ''}>${s.name}</option>`).join('');
+
+  const options = (selected) => D.parts.filter((p) => !p.discontinued).map((p) => `<option value="${p.number}"${p.number === selected ? ' selected' : ''}>${p.number} · ${r.esc(p.name)}</option>`).join('');
+  const line = (number, qty, cost) => `<tr><td><select class="select" aria-label="Part" style="min-width:220px">${options(number)}</select></td>
+    <td class="num" data-now></td><td class="num"><input class="input qty" type="number" min="1" value="${qty}" aria-label="Quantity"></td>
+    <td class="num"><input class="input rate" inputmode="decimal" value="${cost}" aria-label="Cost per unit"></td><td class="num strong" data-amount></td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="Remove line" data-remove>${r.icon('trash')}</button></td></tr>`;
+  const body = $('lines').tBodies[0];
+  body.innerHTML = line('ZP-SP-002', 10, 720) + line('ZP-SP-014', 5, 1450);
+
+  const update = () => {
+    let units = 0;
+    let total = 0;
+    const after = [];
+    [...body.rows].forEach((row) => {
+      const p = P.part(row.querySelector('select').value);
+      const qty = Number(row.querySelector('.qty').value) || 0;
+      const cost = Number(row.querySelector('.rate').value.replace(/,/g, '')) || 0;
+      row.querySelector('[data-now]').textContent = p.onHand;
+      row.querySelector('[data-amount]').textContent = r.money(qty * cost);
+      units += qty;
+      total += qty * cost;
+      const afterAvail = P.available(p) + qty;
+      if (P.belowMin(p) && afterAvail > p.min) after.push(`<li><span class="ic-disc green">${r.icon('check')}</span><span class="grow"><b>${p.number} leaves the reorder list</b><small>${P.available(p)} → ${afterAvail}, minimum ${p.min}</small></span></li>`);
+      const waiting = D.notify.filter((n) => n.part === p.number && n.status === 'waiting').length;
+      if (waiting && P.available(p) <= 0 && qty > 0) after.push(`<li><span class="ic-disc blue">${r.icon('bell-ring')}</span><span class="grow"><b>Notify me sent to ${waiting} customers</b><small>${p.number} back in stock</small></span></li>`);
+    });
+    const gst = Math.round(total * 0.18 * 100) / 100;
+    $('summary').innerHTML = `<div><span>Lines</span><b>${body.rows.length}</b></div><div><span>Units</span><b>${units}</b></div>
+      <div><span>Cost before GST</span><b>${r.money(total)}</b></div><div><span>GST 18%</span><b>${r.money(gst)}</b></div><div class="grand"><span>Total</span><span>${r.money(total + gst)}</span></div>`;
+    $('after').innerHTML = after.join('') || `<li><span class="ic-disc">${r.icon('boxes')}</span><span class="grow"><b>Stock rises by ${units} units</b><small>No reorder alerts change</small></span></li>`;
+  };
+  body.addEventListener('input', update);
+  body.addEventListener('click', (event) => { if (event.target.closest('[data-remove]') && body.rows.length > 1) { event.target.closest('tr').remove(); update(); } });
+  $('add-line').addEventListener('click', () => { body.insertAdjacentHTML('beforeend', line('ZP-SP-003', 4, 4100)); update(); });
+  update();
+
+  new MutationObserver(() => {
+    const dup = document.body.dataset.state === 'duplicate';
+    $('f-doc').value = dup ? 'VC/2627/1102' : 'VC/2627/1188';
+    $('f-doc').setAttribute('aria-invalid', String(dup));
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

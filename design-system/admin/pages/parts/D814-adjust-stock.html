@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D814 Adjust stock</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D814" data-nav="D810">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D810">Stock</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Adjust stock</span></nav>
+      <h1>Adjust stock</h1><p>Correct the count after a check, damage or a return to the supplier.</p></div>
+  </div>
+
+  <div class="grid side-right" data-when="ready large">
+    <form class="card pad" onsubmit="return false">
+      <section class="form-section">
+        <div class="form-grid">
+          <div class="field full"><label for="f-part">Part *</label><select class="select" id="f-part"></select></div>
+          <div class="field"><label for="f-system">On hand in the system</label><input class="input" id="f-system" readonly></div>
+          <div class="field"><label for="f-count">Counted *</label><input class="input" id="f-count" type="number" min="0"></div>
+        </div>
+      </section>
+      <section class="form-section">
+        <h3>Reason *</h3>
+        <div class="choices" id="reason" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+          <label class="choice"><input type="radio" name="reason" class="sr-only"><span><b>Damage</b><small>Broken or unusable in the store</small></span></label>
+          <label class="choice"><input type="radio" name="reason" class="sr-only" checked><span><b>Count correction</b><small>The physical count differs</small></span></label>
+          <label class="choice"><input type="radio" name="reason" class="sr-only"><span><b>Return to supplier</b><small>Faulty batch sent back</small></span></label>
+          <label class="choice"><input type="radio" name="reason" class="sr-only"><span><b>Other</b><small>Explain in the note</small></span></label>
+        </div>
+        <div class="field" style="margin-top:16px"><label for="f-note">Note *</label><textarea class="textarea" id="f-note" maxlength="300">Monthly count, 23 Nov.</textarea></div>
+      </section>
+      <div class="form-bar">
+        <span class="grow">Saved as a new ledger entry. It cannot be edited later.</span>
+        <a class="btn btn-ghost" href="#D810">Cancel</a>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Adjustment saved">Save adjustment</button>
+      </div>
+    </form>
+
+    <aside class="stack">
+      <section class="card side-card"><div class="card-head"><h3 class="grow">Difference</h3></div>
+        <div class="card-body stack-sm" id="diff"></div></section>
+      <section class="card side-card"><div class="card-head"><h3 class="grow">Recent movements</h3><a class="card-link" id="ledger-link" href="#D811">Ledger</a></div>
+        <ul class="mini" id="recent"></ul></section>
+    </aside>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-block"></span></div><div class="card pad stack"><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready large loading error">
+  <div><h3>What it is</h3><p>A stock adjustment with a reason. <code>?p=ZP-SP-016</code> picks the part.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the counted quantity; the difference updates.</li><li>Choose a reason and add a note.</li><li>Save.</li></ul></div>
+  <div><h3>What happens next</h3><p>The ledger (D811) gets an Adjustment entry; the stock chip updates.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Over 10 units or 10 percent is flagged as large (Large state).</li><li>Reason is required.</li><li>Going below minimum adds the part to the reorder list (D815).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const $ = (id) => document.getElementById(id);
+  const start = P.part(new URLSearchParams(location.search).get('p') || '') || P.part('ZP-SP-016');
+  $('f-part').innerHTML = D.parts.map((p) => `<option value="${p.number}"${p === start ? ' selected' : ''}>${p.number} · ${r.esc(p.name)}</option>`).join('');
+
+  const update = () => {
+    const p = P.part($('f-part').value);
+    const count = Number($('f-count').value);
+    const diff = count - p.onHand;
+    const large = Math.abs(diff) > 10 || (p.onHand && Math.abs(diff) / p.onHand > 0.1);
+    const after = count - p.reserved;
+    $('f-system').value = `${p.onHand} ${p.unit.toLowerCase()}${p.onHand === 1 ? '' : 's'}`;
+    $('diff').innerHTML = `<div class="kv"><span>Change</span><b class="${diff < 0 ? 'neg red-text' : ''}" style="font-size:28px; font-weight:400; font-family:var(--font-display)">${diff > 0 ? '+' : ''}${diff}</b></div>
+      <dl class="dl"><dt>On hand after</dt><dd>${count}</dd><dt>Available after</dt><dd>${after}</dd><dt>Value</dt><dd>${r.money(diff * p.cost)} at cost</dd></dl>
+      ${large ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Large adjustment.</b> Over 10 units or 10 percent. It is flagged in the ledger and the activity log.</span></div>` : ''}
+      ${!p.discontinued && after <= p.min && P.available(p) > p.min ? `<div class="banner amber">${r.icon('list-checks')}<span class="grow">Goes to the reorder list. Minimum ${p.min}.</span></div>` : ''}`;
+    $('ledger-link').href = ZXA.href('D811', `?p=${p.number}`);
+    const moves = D.ledger.filter((x) => x.part === p.number).slice(0, 4);
+    $('recent').innerHTML = moves.map((x) => `<li><span class="grow"><b>${P.TYPES[x.type][0]} ${x.qty > 0 ? '+' : ''}${x.qty}</b><small>${r.date(x.when)} · ${r.esc(x.ref)}</small></span><span class="end">Balance ${x.balance}</span></li>`).join('')
+      || '<li><span class="muted">No movement in 60 days</span></li>';
+  };
+  const fill = () => {
+    const p = P.part($('f-part').value);
+    $('f-count').value = document.body.dataset.state === 'large' ? Math.max(0, p.onHand - 15) : Math.max(0, p.onHand - 2);
+    update();
+  };
+  $('f-part').addEventListener('change', fill);
+  $('f-count').addEventListener('input', update);
+  fill();
+  new MutationObserver(fill).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

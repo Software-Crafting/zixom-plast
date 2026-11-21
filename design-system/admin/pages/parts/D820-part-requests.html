@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D820 Part requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-parts.css">
+</head>
+<body class="adm" data-page="D820">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Part requests</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="visit">This visit <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="engineers">From engineers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="customers">Customer quotes <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#requests"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Request, ticket, part or person" aria-label="Search requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="requests">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Request</th><th class="sortable">Requester</th><th>Ticket</th><th>Parts</th><th class="sortable">Urgency</th>
+            <th>Deliver to</th><th class="sortable">Status</th><th class="sortable">Raised</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-package"/></svg></span>
+        <h3>No part requests yet</h3><p>Requests from engineers and customer quote requests appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Request</th><th>Requester</th><th>Parts</th><th>Urgency</th><th>Status</th></tr></thead>
+      <tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+
+  <div class="bulk-bar" data-for="requests" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-result">Approve</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D821">Open request</a><span class="grow"></span>
+      <span id="quick-action"></span></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Submitted</button><button class="chip" type="button" aria-pressed="false">Approved</button>
+        <button class="chip" type="button" aria-pressed="false">On order</button><button class="chip" type="button" aria-pressed="false">Issued</button>
+        <button class="chip" type="button" aria-pressed="false">Dispatched</button><button class="chip" type="button" aria-pressed="false">Delivered</button>
+        <button class="chip" type="button" aria-pressed="false">Rejected</button></div></div>
+      <div class="field"><span class="label">Urgency</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">This visit</button><button class="chip" type="button" aria-pressed="false">Next visit</button></div></div>
+      <div class="field"><span class="label">Deliver to</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Site</button><button class="chip" type="button" aria-pressed="false">Engineer</button>
+        <button class="chip" type="button" aria-pressed="false">Courier</button></div></div>
+      <div class="field"><label for="f-eng">Requester</label><select class="select" id="f-eng"><option>Anyone</option><option>Sandeep Yadav</option><option>Anita Verma</option><option>Customers</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">Approve selected requests</h2>
+      <p>Requests with enough stock are approved and reserved. Out of stock lines are skipped and listed.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Approved where stock allows. 1 skipped: out of stock">Approve</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/engineer/E502-parts-requests.html">
+  <div><h3>What it is</h3><p>Parts asked for by engineers from a job, and customer quote requests from the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views.</li><li>Click a row for the quick view; click the number for the full request.</li><li>Select rows to approve in bulk.</li></ul></div>
+  <div><h3>What happens next</h3><p>Request detail (D821); customer quote requests open the order (D831, D832).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Needed for this visit turns red when over 2 hours old.</li><li>Bulk approve skips out of stock lines (EC-A64).</li><li>Warranty tickets get parts at zero.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/parts.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const P = ZXA.parts;
+  const D = ZXA.data.parts;
+  const OPEN = ['submitted', 'approved', 'partly', 'on-order', 'issued', 'dispatched'];
+  /* one list: engineer requests plus customer quote requests (orders still waiting for a quote or approval) */
+  const rows = [
+    ...D.requests.map((x) => ({ kind: 'engineer', number: x.number, status: x.status, tag: P.sprTag(x.status), when: x.when, x })),
+    ...D.orders.filter((o) => o.request && ['submitted', 'quoted'].includes(o.status)).map((o) => ({ kind: 'customer', number: o.number, status: o.status, tag: P.orderTag(o.status), when: o.created, o })),
+  ].sort((a, b) => b.when.localeCompare(a.when));
+  const isOpen = (row) => (row.kind === 'customer' ? true : OPEN.includes(row.status));
+  const visitOverdue = rows.filter((row) => row.kind === 'engineer' && row.x.urgency === 'This visit' && ['submitted', 'approved', 'on-order'].includes(row.status));
+  document.getElementById('summary').textContent = `${rows.filter(isOpen).length} open · ${visitOverdue.length} needed for this visit`;
+
+  document.querySelector('#requests tbody').innerHTML = rows.map((row, i) => {
+    if (row.kind === 'engineer') {
+      const { x } = row;
+      const p = P.part(x.part);
+      const e = r.engineer(x.engineer);
+      return `<tr data-drawer="quick" data-i="${i}" class="${x.urgency === 'This visit' && x.status === 'submitted' ? 'urgent' : ''}">
+        <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+        <td><a class="rec" href="#D821?r=${x.number}">${x.number}</a><span class="sub">Engineer</span></td>
+        <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+        <td><a class="rec" href="#D403?t=${x.ticket}">${x.ticket}</a><span class="sub">${r.company(x.company).name.split(' ')[0]} · ${r.coverageTag(x.coverage).replace(/<[^>]+>/g, '')}</span></td>
+        <td><span class="clip">${r.esc(p.name)} × ${x.qty}</span><span class="sub">${P.stockTag(p).replace(/<[^>]+>/g, '')}, ${P.available(p)} available</span></td>
+        <td data-sort="${x.urgency === 'This visit' ? 0 : 1}">${P.urgencyTag(x)}</td>
+        <td>${x.deliverTo}</td><td data-sort="${x.status}">${row.tag}</td>
+        <td class="nowrap" data-sort="${x.when}">${r.ago(x.when)}</td></tr>`;
+    }
+    const { o } = row;
+    const p = P.part(o.items[0][0]);
+    const who = r.person(o.by);
+    return `<tr data-drawer="quick" data-i="${i}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${o.number}"></label></td>
+      <td><a class="rec" href="#D831?o=${o.number}">${o.number}</a><span class="sub">Customer quote</span></td>
+      <td><span class="who"><span class="avatar sm blue">${who.initials}</span><span>${who.name.split(' ')[0]}</span></span></td>
+      <td><span class="faint">–</span></td>
+      <td><span class="clip">${r.esc(p.name)} × ${o.items[0][1]}</span><span class="sub">${r.company(o.company).name}</span></td>
+      <td data-sort="2">${r.tag('Quote', 'outline')}</td><td>Courier</td><td data-sort="${o.status}">${row.tag}</td>
+      <td class="nowrap" data-sort="${o.created}">${r.ago(o.created)}</td></tr>`;
+  }).join('');
+
+  const VIEWS = { open: isOpen, visit: (row) => visitOverdue.includes(row), engineers: (row) => row.kind === 'engineer', customers: (row) => row.kind === 'customer',
+    closed: (row) => !isOpen(row), all: () => true };
+  const showView = (key) => {
+    const trs = [...document.querySelectorAll('#requests tbody tr')];
+    trs.forEach((tr) => { tr.hidden = !VIEWS[key](rows[tr.dataset.i]); });
+    const shown = trs.filter((tr) => !tr.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = rows.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const row = rows[event.detail.dataset.i];
+    const $ = (id) => document.getElementById(id);
+    $('quick-title').textContent = row.number;
+    if (row.kind === 'engineer') {
+      const { x } = row;
+      const p = P.part(x.part);
+      $('quick-sub').textContent = `${r.engineer(x.engineer).name} · raised ${r.ago(x.when)}`;
+      $('quick-open').href = ZXA.href('D821', `?r=${x.number}`);
+      $('quick-open').textContent = 'Open request';
+      $('quick-action').innerHTML = x.status === 'submitted' ? (P.available(p) >= x.qty
+        ? '<button class="btn btn-primary" type="button" data-close data-toast="Approved and reserved. Engineer told">Approve and reserve</button>'
+        : `<a class="btn btn-primary" href="${ZXA.href('D821', `?r=${x.number}`)}">Mark on order</a>`) : '';
+      $('quick-body').innerHTML = `<div class="tags">${P.sprTag(x.status)}${P.urgencyTag(x)}${r.coverageTag(x.coverage)}</div>
+        ${x.note ? `<p>${r.esc(x.note)}</p>` : ''}
+        <dl class="dl"><dt>Part</dt><dd>${r.esc(p.name)} × ${x.qty}<br><span class="mono muted">${p.number}</span></dd>
+          <dt>Stock</dt><dd>${P.stockTag(p)} ${P.available(p)} available</dd>
+          <dt>Price</dt><dd>${x.coverage === 'warranty' ? `${r.money(0)} <span class="muted">warranty</span>` : (x.lines[0][2] === null ? '<span class="amber-text">Needs a price</span>' : r.money(x.lines[0][2] * x.qty))}</dd>
+          <dt>Ticket</dt><dd><a class="mono" href="${ZXA.href('D403', `?t=${x.ticket}`)}">${x.ticket}</a><br><span class="muted">${r.company(x.company).name}</span></dd>
+          <dt>Deliver to</dt><dd>${x.deliverTo}</dd>
+          ${x.reason ? `<dt>Reason</dt><dd>${r.esc(x.reason)}</dd>` : ''}</dl>`;
+    } else {
+      const { o } = row;
+      $('quick-sub').textContent = `${r.person(o.by).name} · ${r.company(o.company).name}`;
+      $('quick-open').href = ZXA.href('D831', `?o=${o.number}`);
+      $('quick-open').textContent = 'Open order';
+      $('quick-action').innerHTML = o.status === 'submitted' ? `<a class="btn btn-primary" href="${ZXA.isBuilt('D832') ? ZXA.href('D832', `?o=${o.number}`) : `${ZXA.root}index.html#D832`}">Quote</a>` : '';
+      $('quick-body').innerHTML = `<div class="tags">${P.orderTag(o.status)}</div>
+        <dl class="dl">${o.items.map(([n, qty]) => `<dt>Part</dt><dd>${r.esc(P.part(n).name)} × ${qty}<br><span class="mono muted">${n}</span></dd>`).join('')}
+          <dt>Price</dt><dd>${P.orderTotal(o) === null ? 'On request' : `${r.money(P.orderTotal(o))} with GST`}</dd>
+          ${o.validUntil ? `<dt>Quote valid</dt><dd>to ${r.date(o.validUntil)}</dd>` : ''}
+          <dt>Raised</dt><dd>${r.date(o.created)}, ${r.time(o.created)}</dd></dl>`;
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
