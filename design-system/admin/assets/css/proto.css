@@ -1,0 +1,44 @@
+/* Prototype chrome, never build this: the floating Prototype button and its panel
+   (demo state switch, sticky notes, link to the matching mobile screen). Spec section 17, demo switches. */
+
+.proto-fab{position:fixed; z-index:75; right:20px; bottom:20px; display:flex; align-items:center; gap:8px; height:40px; padding:0 16px 0 12px;
+  border:0; border-radius:var(--r-pill); background:#FDF5CC; color:var(--slate-900); box-shadow:inset 0 0 0 1px #E8D98C, var(--shadow-lift);
+  font:400 var(--fs-14) var(--font-display); cursor:pointer; transition:transform .45s var(--ease)}
+.proto-fab:active{transform:scale(.95)}
+.proto-fab .state-now{padding:2px 8px; border-radius:var(--r-pill); background:var(--slate-800); color:#fff; font:600 var(--fs-11) var(--font-body)}
+.proto-panel{position:fixed; z-index:76; right:20px; bottom:72px; width:340px; max-height:calc(100vh - 96px); display:flex; flex-direction:column;
+  border-radius:20px; background:#FFFDF2; box-shadow:inset 0 0 0 1px #EFE3A6, 0 24px 48px -20px rgba(18,24,31,.4);
+  transform-origin:bottom right; animation:menu-in .42s var(--ease) both; overflow:hidden}
+.proto-panel.closing{animation:menu-out .18s var(--ease-exit) both}
+.proto-panel header{display:flex; align-items:center; gap:8px; padding:14px 14px 10px 18px}
+.proto-panel header b{flex:1; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
+.proto-panel header small{display:block; font:500 var(--fs-12) var(--font-mono); color:var(--slate-500)}
+.proto-panel .body{overflow-y:auto; padding:0 14px 16px; display:flex; flex-direction:column; gap:14px}
+.proto-panel h4{margin:0 0 6px 4px; font:600 var(--fs-11) var(--font-body); letter-spacing:.06em; text-transform:uppercase; color:var(--slate-500)}
+.proto-states{display:flex; flex-wrap:wrap; gap:6px}
+.proto-states button{height:28px; padding:0 11px; border:0; border-radius:var(--r-pill); background:#fff; box-shadow:inset 0 0 0 1px var(--line-strong);
+  color:var(--slate-700); font:600 var(--fs-12) var(--font-body); cursor:pointer; transition:transform .45s var(--ease)}
+.proto-states button:active{transform:scale(.94)}
+.proto-states button[aria-pressed="true"]{background:var(--slate-800); box-shadow:none; color:#fff}
+.proto-mobile{display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; background:#fff; box-shadow:inset 0 0 0 1px var(--line);
+  font-size:var(--fs-13); color:var(--slate-900)}
+.proto-mobile .ic{color:var(--slate-500)}
+.proto-mobile:hover{text-decoration:none; box-shadow:inset 0 0 0 1px var(--line-strong)}
+/* sticky notes, same look as the mobile plate notes */
+.proto-notes{display:flex; flex-direction:column; gap:12px}
+.proto-notes > div{--note:#DCEEF7; --note-head:#C6E2F0; --note-fold:#B4D3E2; position:relative; background:var(--note); padding:0 0 22px;
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 22px 100%, 0 calc(100% - 22px))}
+.proto-notes > div:nth-child(4n+2){--note:#E4F0DA; --note-head:#D3E6C5; --note-fold:#BED6AE}
+.proto-notes > div:nth-child(4n+3){--note:#FDF5CC; --note-head:#F8EBA8; --note-fold:#E8D98C}
+.proto-notes > div:nth-child(4n+4){--note:#F8DCDC; --note-head:#F1C8C8; --note-fold:#E2B2B2}
+.proto-notes > div::after{content:""; position:absolute; left:0; bottom:0; width:22px; height:22px;
+  background:linear-gradient(to bottom left, var(--note-fold) 50%, transparent 50%)}
+.proto-notes h3{margin:0 0 8px; padding:9px 14px; background:var(--note-head); font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.proto-notes p, .proto-notes ul{margin:0 14px}
+.proto-notes p, .proto-notes li{font-size:var(--fs-13); line-height:1.5; color:var(--slate-800)}
+.proto-notes ul{padding-left:16px}
+.proto-notes li + li{margin-top:3px}
+.proto-notes code{font-family:var(--font-mono); font-size:12px}
+/* the source notes stay in the page for the panel to read */
+aside.proto{display:none}
+@media print{.proto-fab, .proto-panel, .side, .top{display:none !important}}

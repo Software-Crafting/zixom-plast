@@ -1,0 +1,10 @@
+/* Zixom Plast admin dashboard. The one stylesheet a page links.
+   Tokens and fonts come from the mobile design system, read only. Everything else is desktop. */
+@import url("../../../assets/css/tokens.css");
+@import url("shell.css");
+@import url("ui.css");
+@import url("forms.css");
+@import url("data.css");
+@import url("overlays.css");
+@import url("pages.css");
+@import url("proto.css");

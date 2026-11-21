@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - Components</title>
+<link rel="icon" href="../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="assets/css/admin.css">
+<style>
+  .doc{max-width:1200px; margin:0 auto; padding:40px 24px 120px}
+  .doc > header{margin-bottom:24px}
+  .doc h1{font-size:var(--fs-28)}
+  .doc section.block{margin-top:36px}
+  .doc section.block > h2{font-size:var(--fs-18); margin-bottom:4px}
+  .doc section.block > p{margin-bottom:14px; font-size:var(--fs-13); color:var(--text-muted)}
+  .doc code{font-family:var(--font-mono); font-size:12px; color:var(--slate-700); background:var(--slate-100); padding:1px 6px; border-radius:6px}
+  .doc .demo{padding:20px; border-radius:var(--r-lg); background:rgba(255,255,255,.5); box-shadow:inset 0 0 0 1px var(--line)}
+</style>
+</head>
+<body>
+<div class="doc">
+  <header><h1>Admin components</h1><p class="muted">Every block the admin pages use, rendered live. Tokens and fonts come from the mobile design system. <a href="index.html">Screen map</a></p></header>
+
+  <section class="block"><h2>Buttons</h2><p>One primary per view. <code>.btn-primary</code> <code>.btn-secondary</code> <code>.btn-soft</code> <code>.btn-ghost</code> <code>.btn-danger</code> <code>.btn-link</code>, sizes <code>.btn-sm</code> <code>.btn-lg</code>, <code>data-busy</code> for a spinner.</p>
+    <div class="demo btns">
+      <button class="btn btn-primary" type="button"><svg class="ic"><use href="#ph-plus"/></svg>New ticket</button>
+      <button class="btn btn-secondary" type="button">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      <button class="btn btn-soft" type="button">Soft</button><button class="btn btn-ghost" type="button">Ghost</button>
+      <button class="btn btn-danger" type="button">Cancel ticket</button><button class="btn btn-danger-soft" type="button">Reject</button>
+      <button class="btn btn-accent" type="button">Accent</button><button class="btn btn-primary" type="button" data-busy>Busy on click</button>
+      <button class="btn btn-secondary btn-sm" type="button">Small pill</button><button class="btn btn-link" type="button">Link button</button>
+      <button class="btn btn-primary" type="button" disabled>Disabled</button>
+      <button class="icon-btn" type="button" aria-label="More"><svg class="ic"><use href="#ph-dots-three"/></svg></button>
+      <button class="icon-btn white" type="button" aria-label="More"><svg class="ic"><use href="#ph-dots-three"/></svg></button>
+      <button class="icon-btn" type="button" aria-label="Notifications"><svg class="ic"><use href="#ph-bell"/></svg><span class="badge">4</span></button>
+    </div></section>
+
+  <section class="block"><h2>Status tags</h2><p>Always text. <code>.tag</code> with <code>.green .amber .red .blue .outline</code>. Ticket statuses come from <code>ZXA.r.ticketTag(status)</code> with Admin wording (spec section 11).</p>
+    <div class="demo stack-sm"><div class="tags" id="ticket-tags"></div>
+      <div class="tags"><span class="tag red"><svg class="ic"><use href="#ph-siren"/></svg>Machine down</span><span class="tag amber">Production affected</span><span class="tag">Minor</span>
+        <span class="tag green">Warranty</span><span class="tag blue">AMC</span><span class="tag outline">Chargeable</span><span class="tag solid-red">Urgent</span><span class="tag green dot">Healthy</span></div>
+      <div class="row"><span class="sla ok"><svg class="ic"><use href="#ph-check-circle"/></svg>Met</span><span class="sla risk"><svg class="ic"><use href="#ph-clock-countdown"/></svg>2 h 10 min left</span>
+        <span class="sla breach"><svg class="ic"><use href="#ph-warning-circle"/></svg>Breached by 5 h</span><span class="trend up">▲ 12%</span><span class="dot"></span><span class="dot amber"></span><span class="dot red"></span></div></div></section>
+
+  <section class="block"><h2>Chips</h2><p>Filters: <code>.chip</code> with <code>aria-pressed</code>; applied filters <code>.chip.applied</code> with an <code>.x</code> to remove.</p>
+    <div class="demo row wrap" data-single><button class="chip" type="button" aria-pressed="true">All</button><button class="chip" type="button" aria-pressed="false">Open <span class="n">15</span></button>
+      <button class="chip" type="button" aria-pressed="false">Closed</button><span class="chip applied">Region: <b>Pune</b><svg class="ic x"><use href="#ph-x"/></svg></span></div></section>
+
+  <section class="block"><h2>Search with filter button</h2><p>A filter button always sits on the same row. <code>.search[data-filter="#list"]</code> filters after 2 characters and a 300 ms pause, shows a spinner then a clear button.</p>
+    <div class="demo stack"><div class="search-row"><label class="search" data-filter="#demo-list"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Try 'nova'" aria-label="Search"></label>
+      <button class="btn btn-secondary filter-btn" type="button"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">2</span></button></div>
+      <ul class="mini card" id="demo-list"><li data-search-item>Shree Packaging Industries</li><li data-search-item>Nova Cups Pvt Ltd</li></ul></div></section>
+
+  <section class="block"><h2>Fields</h2><p><code>.field</code> wraps a label, <code>.input</code> <code>.select</code> <code>.textarea</code>, a <code>.hint</code> or <code>.error</code>. <code>.form-grid</code> lays out two columns.</p>
+    <div class="demo form-grid">
+      <div class="field"><label for="c1">Company name</label><input class="input" id="c1" value="Shree Packaging Industries"></div>
+      <div class="field"><label for="c2">GSTIN</label><input class="input mono" id="c2" value="24AAAAA0000A1Z" aria-invalid="true"><span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>GSTIN has 15 characters</span></div>
+      <div class="field"><label for="c3">Region</label><select class="select" id="c3"><option>Ahmedabad</option><option>Pune</option></select></div>
+      <div class="field"><label for="c4">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="c4" value="8,968.00"></div><span class="hint">Includes GST 18%</span></div>
+      <div class="field full"><label for="c5">Note to customer <span class="opt">optional</span></label><textarea class="textarea" id="c5"></textarea></div>
+      <div class="row wrap full"><label class="check"><input type="checkbox" checked> Send push</label><label class="check"><input type="radio" name="r" checked> Full</label><label class="check"><input type="radio" name="r"> Parts only</label>
+        <label class="switch"><input type="checkbox" checked><span></span>Maintenance mode</label></div>
+      <div class="choices full" style="grid-template-columns:repeat(3,1fr)"><label class="choice"><input type="radio" name="c" class="sr-only" checked><span><b>Approve</b><small>Create a no charge ticket</small></span></label>
+        <label class="choice"><input type="radio" name="c" class="sr-only"><span><b>Request information</b><small>Up to 5 questions</small></span></label>
+        <label class="choice"><input type="radio" name="c" class="sr-only"><span><b>Reject</b><small>With a reason</small></span></label></div>
+      <div class="drop full"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop an XLSX or CSV here</b>Up to 5 MB or 10,000 rows</div>
+      <div class="otp full"><input value="4" aria-label="Digit 1"><input value="8" aria-label="Digit 2"><input value="1" aria-label="Digit 3"><input aria-label="Digit 4"><input aria-label="Digit 5"><input aria-label="Digit 6"></div>
+    </div></section>
+
+  <section class="block"><h2>Tabs and segment</h2><p><code>.tabs[role=tablist]</code> with <code>aria-controls</code> panels; <code>.segment</code> for a small toggle, the thumb glides.</p>
+    <div class="demo stack"><div class="tabs" role="tablist"><button role="tab" aria-selected="true" aria-controls="p1">Overview</button><button role="tab" aria-selected="false" aria-controls="p2">Timeline <span class="n">6</span></button></div>
+      <div id="p1" role="tabpanel">Overview panel</div><div id="p2" role="tabpanel" hidden>Timeline panel</div>
+      <div class="segment" role="tablist"><button role="tab" aria-selected="true">Table</button><button role="tab" aria-selected="false">Board</button></div></div></section>
+
+  <section class="block"><h2>KPI cards and charts</h2><p><code>.kpis > a.card.kpi</code>; charts through <code>ZXA.chart(canvas, config)</code> (Chart.js with the tokens).</p>
+    <div class="kpis"><a class="card kpi" href="#"><span class="label">Open tickets</span><span class="value">15</span><span class="foot"><span class="trend up bad">▲ 2</span>vs yesterday</span></a>
+      <a class="card kpi alert" href="#"><span class="label">Machine down</span><span class="value">1</span><span class="foot">Nova Cups, 40 min</span></a>
+      <a class="card kpi" href="#"><span class="label">Collected this month</span><span class="value">₹3.32 L</span><span class="foot"><span class="trend up">▲ 12%</span>vs October</span></a>
+      <div class="card"><div class="card-body"><div class="chart" style="height:90px"><canvas id="demo-chart"></canvas></div></div></div></div></section>
+
+  <section class="block"><h2>Data table</h2><p><code>.card.list-card</code> with <code>.views</code>, <code>.toolbar</code>, <code>.applied-row</code>, <code>.table-wrap > .table</code>, <code>.table-foot</code>. Sortable headers, row checkboxes show <code>.bulk-bar[data-for]</code>, <code>tr[data-drawer]</code> opens a quick view, <code>tr[data-href]</code> opens a page.</p>
+    <section class="card list-card">
+      <div class="toolbar"><label class="search" data-filter="#demo-table"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search" aria-label="Search"></label>
+        <button class="btn btn-secondary filter-btn" type="button"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button><span class="grow"></span>
+        <button class="icon-btn" type="button" data-menu="demo-cols" aria-label="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button></div>
+      <div class="table-wrap"><table class="table" id="demo-table"><thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+        <th class="sortable">Invoice</th><th class="sortable">Customer</th><th>Status</th><th class="sortable num">Amount</th></tr></thead><tbody id="demo-rows"></tbody></table>
+        <div class="state" data-noresults hidden><h3>No matching results</h3><div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div></div>
+      <div class="table-foot"><span>1 to 4 of 12</span><span class="grow"></span><div class="pager"><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button">3</button></div></div>
+    </section>
+    <div class="bulk-bar" data-for="demo-table" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Reminders sent">Send reminder</button><button class="btn" type="button">Export</button>
+      <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="menu" id="demo-cols" hidden><div class="label">Columns</div><label class="check"><input type="checkbox" checked data-col="2" data-table="demo-table"> Customer</label></div></section>
+
+  <section class="block"><h2>Overlays</h2><p>Drawer 480 (<code>.drawer</code>) or 720 (<code>.drawer.wide</code>), modal 480 (<code>.modal</code>), menu and popover (<code>data-menu</code>), toast (<code>data-toast</code>). Spring in, faster out.</p>
+    <div class="demo btns"><button class="btn btn-secondary" type="button" data-open="demo-drawer">Open drawer</button><button class="btn btn-secondary" type="button" data-open="demo-modal">Open destructive modal</button>
+      <button class="btn btn-secondary" type="button" data-menu="demo-menu">Open menu<svg class="ic caret"><use href="#ph-caret-down"/></svg></button><button class="btn btn-secondary" type="button" data-toast="Saved">Show toast</button></div></section>
+
+  <section class="block"><h2>Banners and states</h2><p><code>.banner</code> stays until fixed; <code>.state</code> for empty, no results, error (with request id), not found.</p>
+    <div class="stack"><div class="banner red center"><svg class="ic"><use href="#ph-siren"/></svg><span class="grow"><b>Machine down, not assigned for 40 min.</b> Response target 4 hours.</span><span class="btns"><button class="btn btn-sm btn-primary" type="button">Assign now</button></span></div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Machine not verified.</b> Coverage is unknown.</span></div>
+      <div class="banner dark center"><svg class="ic"><use href="#ph-wifi-slash"/></svg><span class="grow"><b>You are offline.</b> Changes will not be saved.</span></div>
+      <div class="sos-bar"><svg class="ic"><use href="#ph-siren"/></svg>SOS from Sandeep Yadav at 11:52 AM<button class="btn btn-sm btn-secondary" type="button">Open</button></div>
+      <div class="grid cols-3"><div class="card"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>Nothing needs you right now</h3></div></div>
+        <div class="card"><div class="state"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span><h3>Something went wrong</h3><p>We could not load this.</p><p class="code mono">Request id 7f3a-91c2</p></div></div>
+        <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+      <div class="inline-error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not load collections<button class="btn btn-sm btn-secondary" type="button">Retry</button></div></div></section>
+
+  <section class="block"><h2>Record detail parts</h2><p><code>.detail</code> is 2/3 + 1/3 with sticky side cards; <code>.dl</code> description list, <code>.timeline</code>, <code>.mini</code> rows, <code>.who</code> person, <code>.steps</code>, <code>.diff</code>.</p>
+    <div class="detail"><div class="card pad stack">
+        <ol class="timeline"><li><span class="node green"><svg class="ic"><use href="#ph-map-pin"/></svg></span><div><b>Checked in at site</b><p>120 m from the pin</p></div><small>09:32</small></li>
+          <li><span class="node"><svg class="ic"><use href="#ph-sticky-note"/></svg></span><div><b>Internal note</b><div class="internal">Only Admins see this.</div></div><small>08:05</small></li></ol>
+        <ol class="steps"><li class="done"><span class="n">✓</span>Choose type</li><li aria-current="step"><span class="n">2</span>Upload</li><li><span class="n">3</span>Map columns</li></ol>
+        <div class="diff"><span class="old">Labour 2 h</span><span class="new">Labour 2.5 h</span></div>
+        <div class="row"><span class="progress green grow"><span style="width:60%"></span></span>60%</div></div>
+      <aside><section class="card side-card"><div class="card-head"><h3 class="grow">Engineer</h3><a class="card-link" href="#">Open</a></div>
+        <div class="card-body stack-sm"><div class="who"><span class="avatar lg">SY</span><span><b>Sandeep Yadav</b><small>ZP-SE-014 · Ahmedabad</small></span></div>
+        <dl class="dl"><dt>Status</dt><dd>On site</dd><dt>Last seen</dt><dd>2 min ago</dd></dl></div></section></aside></div></section>
+
+  <section class="block"><h2>Board and schedule</h2><p><code>.kanban > .lane</code> for stages; <code>.board-grid</code> with <code>.job</code> blocks (<code>.green .amber .red .leave</code>) for the schedule.</p>
+    <div class="kanban" style="grid-auto-columns:240px"><div class="lane"><div class="lane-head">New<span class="n">2</span></div><div class="card"><b class="mono">LD-2026-0049</b><p class="muted">Vacuum forming machine · Pune</p></div></div>
+      <div class="lane"><div class="lane-head">Contacted<span class="n">1</span></div><div class="card"><b class="mono">LD-2026-0046</b><p class="muted">Blister sealing · Rajkot</p></div></div></div>
+    <div class="card" style="margin-top:16px; overflow:hidden"><div class="board"><div class="board-grid" style="--cols:4; min-width:0">
+      <div class="h">Engineer</div><div class="h">9 AM</div><div class="h today">12 PM</div><div class="h">3 PM</div><div class="h">6 PM</div>
+      <div class="who-cell"><span class="avatar sm">SY</span>Sandeep</div><div class="lane-cells" style="--cols:4"><div class="job red" style="grid-column:1"><b>TKT-2026-0126</b><span>Shree, Vatva</span></div>
+        <div class="job" style="grid-column:2"><b>TKT-2026-0125</b><span>Shree, Sanand</span></div><div class="job leave" style="grid-column:4"><b>Leave</b><span>Half day</span></div></div></div></div></div></section>
+</div>
+
+<div class="overlay right" id="demo-drawer" hidden><div class="drawer" role="dialog" aria-label="Drawer"><div class="drawer-head"><div class="grow"><h2>Quick view</h2><p>Row click opens this.</p></div>
+  <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div><div class="drawer-body">Content</div>
+  <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close>Save</button></div></div></div>
+<div class="overlay center" id="demo-modal" hidden><div class="modal" role="alertdialog" aria-label="Cancel"><div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+  <div class="grow"><h2>Cancel TKT-2026-0123?</h2><p>Shree Packaging and Sandeep Yadav will be told. This cannot be undone.</p></div></div>
+  <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep ticket</button><button class="btn btn-danger" type="button" data-close>Cancel ticket</button></div></div></div>
+<div class="menu" id="demo-menu" hidden><a href="#"><svg class="ic"><use href="#ph-external-link"/></svg>Open</a><button type="button"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button><hr><button class="danger" type="button"><svg class="ic"><use href="#ph-trash"/></svg>Delete</button></div>
+
+<script src="assets/icons.js"></script>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/render.js"></script>
+<script src="assets/js/admin-screens.js"></script>
+<script src="assets/js/admin-data.js"></script>
+<script src="assets/js/admin-render.js"></script>
+<script>
+  document.getElementById('ticket-tags').innerHTML = Object.keys(ZXA.r.TICKET).map(ZXA.r.ticketTag).join('');
+  document.getElementById('demo-rows').innerHTML = ZX.data.invoices.slice(0, 4).map((i) => `<tr data-drawer="demo-drawer"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select"></label></td>
+    <td><a class="rec" href="#">${i.number}</a></td><td>Shree Packaging Industries</td><td>${ZX.render.invoiceTag(i.status)}</td><td class="num">${ZX.render.money(i.amount)}</td></tr>`).join('');
+</script>
+<script src="assets/js/admin-ui.js"></script>
+<script src="assets/vendor/chart.umd.js"></script>
+<script>
+  ZXA.chart(document.getElementById('demo-chart'), { type: 'line', data: { labels: ZXA.data.series.days, datasets: [{ data: ZXA.data.series.raised, borderColor: ZXA.colors.blue, tension: .4, pointRadius: 0, borderWidth: 2 }] },
+    options: { scales: false } });
+</script>
+</body>
+</html>

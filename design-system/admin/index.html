@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - Screen map</title>
+<link rel="icon" href="../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="assets/css/admin.css">
+<style>
+  .map{max-width:1200px; margin:0 auto; padding:40px 24px 80px}
+  .map header{display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:28px}
+  .map header img{width:96px; border-radius:12px; background:#fff; padding:6px; box-shadow:inset 0 0 0 1px var(--line)}
+  .map header .grow{flex:1; min-width:260px}
+  .map h1{font-size:var(--fs-28)}
+  .map .module{margin-top:28px}
+  .map .module h2{display:flex; align-items:center; gap:10px; font-size:var(--fs-18); margin-bottom:10px}
+  .map .module h2 small{font:500 var(--fs-12) var(--font-body); color:var(--text-muted)}
+  .map .pages{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:8px}
+  .map .pg{display:flex; align-items:center; gap:10px; min-height:44px; padding:8px 12px; border-radius:12px; background:#fff;
+    box-shadow:inset 0 0 0 1px var(--line); color:var(--text-strong); text-decoration:none; font-size:var(--fs-13)}
+  .map a.pg:hover{box-shadow:inset 0 0 0 1px var(--line-strong), var(--shadow-soft); text-decoration:none}
+  .map .pg .mono{width:52px; flex-shrink:0; color:var(--blue)}
+  .map .pg.planned{background:transparent; color:var(--text-muted)}
+  .map .pg.planned .mono{color:var(--text-faint)}
+  .map .pg:target{box-shadow:inset 0 0 0 2px var(--blue)}
+  .map .phase2 .pg{opacity:.55}
+</style>
+</head>
+<body>
+<div class="map">
+  <header>
+    <img src="../assets/brand/zixom-logo.png" alt="Zixom Plast">
+    <div class="grow">
+      <h1>Admin dashboard prototype</h1>
+      <p class="muted" id="summary"></p>
+    </div>
+    <div class="btns">
+      <a class="btn btn-secondary" href="components.html">Components</a>
+      <a class="btn btn-secondary" href="../index.html">Mobile screens</a>
+      <a class="btn btn-primary" id="start" href="#">Open dashboard</a>
+    </div>
+  </header>
+  <div class="search-row"><label class="search" data-filter="#modules"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+    <input type="search" placeholder="Find a page by ID or name" aria-label="Find a page"></label></div>
+  <div id="modules"></div>
+  <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+    <h3>No matching pages</h3><p>Try an ID such as D403.</p><div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+</div>
+<script src="assets/icons.js"></script>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/render.js"></script>
+<script src="assets/js/admin-screens.js"></script>
+<script src="assets/js/admin-data.js"></script>
+<script src="assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const phase1 = ZXA.modules.filter((m) => m.phase !== 2).flatMap((m) => m.pages);
+  const built = phase1.filter(([id]) => ZXA.isBuilt(id)).length;
+  document.getElementById('summary').textContent = `${built} of ${phase1.length} Phase 1 pages built · spec SCT-SP-ADM-ZP Draft 1 · demo today Mon 23 Nov 2026`;
+  document.getElementById('start').href = ZXA.href('D101');
+  document.getElementById('modules').innerHTML = ZXA.modules.map((m) => {
+    const done = m.pages.filter(([id]) => ZXA.isBuilt(id)).length;
+    return `<section class="module ${m.phase === 2 ? 'phase2' : ''}" data-search-item>
+      <h2>${m.title}<small>${m.phase === 2 ? 'Phase 2, not built' : `${done} of ${m.pages.length}`}</small></h2>
+      <div class="pages">${m.pages.map(([id, name]) => (ZXA.isBuilt(id)
+        ? `<a class="pg" id="${id}" href="${ZXA.href(id)}"><span class="mono">${id}</span>${name}</a>`
+        : `<span class="pg planned" id="${id}"><span class="mono">${id}</span>${name}</span>`)).join('')}</div></section>`;
+  }).join('');
+  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'center' });
+})();
+</script>
+<script src="assets/js/admin-ui.js"></script>
+</body>
+</html>

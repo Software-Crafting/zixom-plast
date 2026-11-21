@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D403 Ticket detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D403">
+<main class="content">
+  <div data-when="ready archived">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D401">Service tickets</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="banner grey" data-when="archived" style="margin-bottom:16px"><svg class="ic"><use href="#ph-archive"/></svg>
+      <span class="grow"><b>Archived.</b> This ticket is read only.</span></div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Ticket sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-timeline">Timeline</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-report">Report</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-estimate">Estimate</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-parts">Parts</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-messages">Messages <span class="n">2</span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-media">Media</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-invoice">Invoice</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-timeline" role="tabpanel" hidden></div>
+          <div id="tab-report" role="tabpanel" hidden></div>
+          <div id="tab-estimate" role="tabpanel" hidden></div>
+          <div id="tab-parts" role="tabpanel" hidden></div>
+          <div id="tab-messages" role="tabpanel" hidden></div>
+          <div id="tab-media" role="tabpanel" hidden></div>
+          <div id="tab-invoice" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D101">Go to dashboard</a></div></div></div>
+  </div>
+</main>
+
+<!-- cancel: destructive, names the record and the consequence (spec section 18) -->
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title">Cancel this ticket?</h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Customer asked to cancel</option><option>Duplicate request</option><option>Raised by mistake</option><option>Other</option></select></div>
+      <div class="field"><label for="cancel-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="cancel-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep ticket</button><button class="btn btn-danger" type="button" data-close data-toast="Ticket cancelled. Customer and engineer told">Cancel ticket</button></div>
+  </div>
+</div>
+
+<!-- request information -->
+<div class="overlay right" id="request-info" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ri-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ri-title">Request information</h2><p>The customer sees this in the app and can reply with photos.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="ri-q">What do you need?</label><textarea class="textarea" id="ri-q" autofocus>Please send a photo of the HMI error screen and a short video of the chain drive running.</textarea><span class="hint">Response time pauses until the customer replies.</span></div>
+      <div class="field"><label for="ri-due">Reply by</label><input class="input" id="ri-due" type="date" value="2026-11-30"></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Request sent to the customer">Send request</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-toast="Customer view opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview as customer</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+  <button type="button" data-toast="Coverage override opened"><svg class="ic"><use href="#ph-shield-check"/></svg>Override coverage</button>
+  <hr><button class="danger" type="button" data-open="cancel"><svg class="ic"><use href="#ph-x"/></svg>Cancel ticket</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found archived live error" data-mobile="../../../screens/customer/C508-request-detail.html">
+  <div><h3>What it is</h3><p>One service request from start to finish. Opens with <code>?t=TKT-2026-0126</code>; any ticket number works.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions allowed for the status show in the action bar (section 11).</li><li>Tabs: overview, timeline, report, estimate, parts, messages with internal notes, media, invoice, history.</li><li>Call the customer or engineer from the side cards.</li></ul></div>
+  <div><h3>What happens next</h3><p>Assign (D404), Reschedule (D405), Cancel (D406), Hold (D407), Estimate (D408), Report review (D413), Close (D414), Invoice (D902).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Live: changes from the app flash the block and show a toast (Live state).</li><li>Machine pending verification shows a banner; coverage unknown.</li><li>Engineer silent 30 minutes in travel: amber chip.</li><li>Another Admin saved: stale banner. Archived: read only.</li><li>An action from an old page is refused (EC-A14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const d = ZX.data;
+  const number = new URLSearchParams(location.search).get('t') || 'TKT-2026-0126';
+  const t = r.ticket(number);
+  if (!t) { document.body.dataset.state = 'not-found'; return; }
+  const m = r.machine(t.machine);
+  const c = r.company(t.company);
+  const s = r.site(t.company, t.site);
+  const e = t.engineer ? r.engineer(t.engineer) : null;
+  const p = r.person(t.by);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const ic = r.icon;
+  const tq = `?t=${t.number}`;
+
+  document.title = `Zixom Admin - ${t.number}`;
+  document.getElementById('crumb').textContent = t.number;
+  document.getElementById('number').textContent = t.number;
+  document.getElementById('chips').innerHTML = `${r.ticketTag(t.status)}${t.severity ? r.severityTag(t.severity) : ''}${r.coverageTag(t.coverage)}${r.priorityTag(t.priority)}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('wrench')}${t.type}</span><span>${ic('clock')}Raised ${r.date(t.created)}, ${r.time(t.created)} · ${t.source}</span>
+    <span>${r.sla(t.sla)}</span>`;
+
+  /* actions allowed for the status (spec D403 and section 11). The first is the primary action */
+  const A = {
+    assign: ['Assign engineer', link('D404', tq)], reassign: ['Reassign', link('D404', tq)], info: ['Request information', '#request-info'],
+    estimate: ['Send estimate', link('D408', tq)], cancel: ['Cancel', '#cancel'], reject: ['Reject', 'toast:Reject opened'],
+    remind: ['Send reminder', 'toast:Reminder sent'], withdraw: ['Withdraw estimate', 'toast:Estimate withdrawn'], revise: ['Revise estimate', link('D408', tq)],
+    anyway: ['Assign anyway', link('D404', tq)], reschedule: ['Reschedule', link('D405', tq)], call: ['Call engineer', `tel:${e?.phone.replace(/\s/g, '')}`],
+    failed: ['Mark visit failed', link('D419', tq)], hold: ['Hold', link('D407', tq)], escalate: ['Escalate', link('D417', tq)],
+    extra: ['Estimate for extra work', link('D408', tq)], message: ['Message', 'tab:tab-messages'], resume: ['Resume', link('D407', tq)],
+    review: ['Review report', link('D413', tq)], close: ['Close ticket', link('D414', tq)], reopen: ['Reopen', 'toast:Ticket reopened'],
+    invoice: ['Create invoice', link('D902', tq)], download: ['Download report', 'toast:Report PDF downloaded'], fee: ['Charge visit fee', link('D419', tq)],
+    duplicate: ['Duplicate as new', link('D402', tq)],
+  };
+  const BY_STATUS = {
+    'submitted': ['assign', 'info', 'estimate', 'reject', 'cancel'], 'awaiting-info': ['assign', 'remind', 'cancel'],
+    'estimate': ['anyway', 'revise', 'withdraw'], 'assigned': ['reassign', 'reschedule', 'cancel'], 'scheduled': ['reassign', 'reschedule', 'cancel'],
+    'on-the-way': ['call', 'reschedule', 'failed'], 'in-progress': ['message', 'hold', 'escalate', 'extra'], 'on-hold': ['resume', 'reschedule', 'cancel'],
+    'completed': ['review', 'close', 'reopen', 'remind'], 'closed': ['invoice', 'reopen', 'download'], 'visit-failed': ['reschedule', 'fee', 'close'],
+    'cancelled': ['duplicate'], 'rejected': ['duplicate'], 'reopened': ['assign'],
+  };
+  const button = (key, primary) => {
+    const [label, target] = A[key];
+    const cls = primary ? 'btn btn-primary' : 'btn btn-secondary';
+    if (target.startsWith('#')) return `<button class="${cls}" type="button" data-open="${target.slice(1)}">${label}</button>`;
+    if (target.startsWith('toast:')) return `<button class="${cls}" type="button" data-toast="${target.slice(6)}">${label}</button>`;
+    if (target.startsWith('tab:')) return `<button class="${cls}" type="button" data-tab="${target.slice(4)}">${label}</button>`;
+    return `<a class="${cls}" href="${target}">${label}</a>`;
+  };
+  const keys = BY_STATUS[t.status].filter((k) => k !== 'cancel');
+  document.getElementById('actions').innerHTML = `${keys.slice(1).map((k) => button(k, false)).join('')}${button(keys[0], true)}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.getElementById('cancel-text').textContent = `${c.name}${e ? ` and ${e.name}` : ''} will be told. This cannot be undone.`;
+
+  /* edge case banners */
+  const banners = [];
+  if (m.status === 'pending') banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>Machine not verified.</b> Coverage is unknown until the machine is verified.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D302')}">Verify machine</a></span></div>`);
+  if (t.severity === 'down' && !e) banners.push(`<div class="banner red">${ic('siren')}<span class="grow"><b>Machine down, not assigned for ${r.ago(t.created).replace(' ago', '')}.</b> Response target 4 hours.</span><span class="btns"><a class="btn btn-sm btn-primary" href="${link('D404', tq)}">Assign now</a></span></div>`);
+  document.getElementById('edge-banners').innerHTML = banners.join('');
+
+  /* ---------- overview ---------- */
+  document.getElementById('tab-overview').innerHTML = `
+    <div class="stack">
+      <div><h3 style="font-size:16px">Request</h3><p style="margin-top:6px; color:var(--text-strong)">${t.summary}</p>
+        ${t.number === 'TKT-2026-0126' ? '<p style="margin-top:6px">Error code <span class="mono">E-17</span> on the HMI. Chain drive trips 2 to 3 minutes after start. Production stopped on Line 2.</p>' : ''}</div>
+      <div class="gallery">${['HMI error screen', 'Chain drive', 'Video, 0:24'].map((x, i) => `<div class="ph">${ic(i === 2 ? 'video-camera' : 'image')}<small>${x}</small></div>`).join('')}</div>
+      <div class="grid cols-2" style="gap:20px">
+        <dl class="dl stack"><dt>Requested slots</dt><dd>${t.window ? `${r.dayDate(t.window.date)}, ${t.window.slot}` : 'Mon 23 Nov, 9 AM to 12 PM<br>Mon 23 Nov, 12 to 3 PM'}</dd>
+          <dt>Site</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd></dl>
+        <dl class="dl stack"><dt>Site contact</dt><dd>${s.contact.name} · <a href="tel:${s.contact.phone.replace(/\s/g, '')}">${s.contact.phone}</a></dd>
+          <dt>Access notes</dt><dd>${s.access || '<span class="faint">None</span>'}</dd></dl>
+      </div>
+    </div>`;
+
+  /* ---------- timeline ---------- */
+  const events = [
+    ['siren', 'red', 'Request raised in the app', `${p.name} · Machine down`, t.created],
+    ['user', 'blue', 'Engineer assigned, direct', `${e?.name ?? '-'} · reason: machine down`, '2026-11-23T07:58'],
+    ['navigation-arrow', 'blue', 'On the way', 'ETA 25 min', '2026-11-23T08:55'],
+    ['map-pin', 'green', 'Checked in at site', '120 m from the pin', '2026-11-23T09:32'],
+    ['package', 'amber', 'Part requested', 'SPR-2026-0031 · Industrial chain set, 12B', '2026-11-23T10:15'],
+    ['chat-text', '', 'Customer replied', '"Spare chain is in the store room"', '2026-11-23T10:50'],
+  ];
+  document.getElementById('tab-timeline').innerHTML = `<ol class="timeline">${events.reverse().map(([i, tone, title, sub, when]) => `
+    <li><span class="node ${tone}">${ic(i)}</span><div><b>${title}</b><p>${sub}</p></div><small>${r.dayDate(when)}, ${r.time(when)}</small></li>`).join('')}
+    <li><span class="node">${ic('sticky-note')}</span><div><b>Internal note</b><div class="internal">Customer is a priority account. Keep Mr Mehta updated by phone.</div></div><small>Mon 23 Nov, 08:05</small></li></ol>`;
+
+  /* ---------- report ---------- */
+  const report = d.reports.find((x) => x.ticket === t.number);
+  document.getElementById('tab-report').innerHTML = report ? `
+    <div class="stack">
+      <div class="row"><span class="mono strong">${report.number}</span>${r.tag('Waiting for review', 'amber')}<span class="grow"></span><a class="btn btn-sm btn-primary" href="${link('D413', tq)}">Review report</a></div>
+      <dl class="dl"><dt>Found</dt><dd>${report.findings}</dd><dt>Work done</dt><dd>${report.work}</dd><dt>Time on site</dt><dd>${report.timeOnSite}</dd>
+        <dt>Machine after visit</dt><dd>${report.status}</dd><dt>Signed by</dt><dd>${report.signedBy}, ${r.dayDate(report.signedAt)} ${r.time(report.signedAt)}</dd></dl>
+    </div>` : `<div class="state"><span class="disc">${ic('clipboard-text')}</span><h3>No report yet</h3><p>The engineer's report appears here once the visit starts.</p></div>`;
+
+  /* ---------- estimate ---------- */
+  const est = d.estimates.find((x) => x.ticket === t.number);
+  const lineRows = (lines) => lines.map(([desc, q, rate]) => `<tr><td>${desc}</td><td class="num">${q}</td><td class="num">${r.money(rate)}</td><td class="num">${r.money(q * rate)}</td></tr>`).join('');
+  document.getElementById('tab-estimate').innerHTML = est ? (() => {
+    const tot = r.totals(est.lines);
+    return `<div class="stack"><div class="row"><span class="mono strong">${est.number}</span>${r.tag('Shared, waiting for customer', 'amber')}<span class="grow"></span>
+      <span class="muted">Valid until ${r.date(est.validUntil)}</span></div>
+      <table class="table compact"><thead><tr><th>Line</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>
+      <tbody>${lineRows(est.lines)}</tbody><tfoot><tr><td colspan="3">Total with GST 18%</td><td class="num">${r.money(tot.total)}</td></tr></tfoot></table></div>`;
+  })() : `<div class="state"><span class="disc">${ic('currency-inr')}</span><h3>No estimate</h3><p>Send one when the job is chargeable or needs extra work.</p>
+    <div class="btns"><a class="btn btn-secondary" href="${link('D408', tq)}">Create estimate</a></div></div>`;
+
+  /* ---------- parts ---------- */
+  const parts = d.engineerDay.partsRequests.filter((x) => x.ticket === t.number);
+  document.getElementById('tab-parts').innerHTML = parts.length ? `<table class="table compact"><thead><tr><th>Request</th><th>Part</th><th class="num">Qty</th><th>Urgency</th><th>Status</th></tr></thead><tbody>
+    ${parts.map((x) => { const part = d.parts.find((y) => y.number === x.part); return `<tr data-href="D821"><td><span class="mono">${x.number}</span></td><td>${part.name}<span class="sub">${part.number} · ${r.stockTag(part.stock)}</span></td>
+      <td class="num">${x.qty}</td><td>${x.urgency}</td><td>${r.tag(x.status, x.status === 'Delivered' ? 'green' : 'amber')}</td></tr>`; }).join('')}</tbody></table>`
+    : `<div class="state"><span class="disc">${ic('package')}</span><h3>No parts</h3><p>Planned and used parts appear here.</p></div>`;
+
+  /* ---------- messages ---------- */
+  document.getElementById('tab-messages').innerHTML = `<div class="card" style="box-shadow:inset 0 0 0 1px var(--line)">
+    <div class="thread"><span class="day-sep">Today</span>
+      <div class="msg">Is the engineer reaching before 10? Line 2 is fully stopped.<small>${p.name} · 08:20</small></div>
+      <div class="msg me">Sandeep is on the way, ETA 25 minutes.<small>You · 08:56</small></div>
+      <div class="msg note">Internal: chain set out of stock in Ahmedabad. Check Pune.<small>You · 10:20 · only Admins see this</small></div>
+      <div class="msg">Spare chain is in the store room.<small>${p.name} · 10:50</small></div></div>
+    <div class="composer"><textarea class="textarea" placeholder="Write to the customer" aria-label="Message"></textarea>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox"><span></span>Internal</label>
+      <button class="btn btn-primary" type="button" data-toast="Message sent">Send</button></div></div>`;
+
+  document.getElementById('tab-media').innerHTML = `<div class="gallery">${['HMI error', 'Chain drive', 'Video, 0:24', 'Before: sprocket', 'After: new chain', 'Nameplate']
+    .map((x, i) => `<div class="ph">${ic(i === 2 ? 'video-camera' : 'image')}<small>${x}</small></div>`).join('')}</div>`;
+
+  const inv = d.invoices.find((x) => x.for === t.number);
+  document.getElementById('tab-invoice').innerHTML = inv ? `<div class="row"><span class="mono strong">${inv.number}</span>${r.invoiceTag(inv.status)}<span class="grow"></span><b>${r.money(inv.amount)}</b>
+      <a class="btn btn-sm btn-secondary" href="${link('D903')}">Open</a></div>`
+    : `<div class="state"><span class="disc">${ic('receipt')}</span><h3>No invoice</h3><p>${t.coverage === 'warranty' ? 'Warranty job: no charge unless parts are outside cover.' : 'Create one after the ticket is closed.'}</p></div>`;
+
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="nowrap">23 Nov, 07:58</td><td>Rajesh Goyal</td><td>Engineer: none → Sandeep Yadav</td></tr>
+    <tr><td class="nowrap">23 Nov, 07:52</td><td>Rajesh Goyal</td><td>Priority: High → Urgent</td></tr>
+    <tr><td class="nowrap">23 Nov, 07:45</td><td>System</td><td>Coverage set: Warranty (ends 5 Dec 2026)</td></tr></tbody></table>`;
+
+  /* ---------- side cards ---------- */
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="${link('D202')}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${p.initials}</span><span><b>${p.name}</b><small>${p.designation}, ${c.name}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}${p.mobile}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Machine</h3><a class="card-link" href="${link('D302')}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="thumb">${ic('factory')}</span><span><b>${m.model}</b><small class="mono">${m.serial}</small></span></div>
+      <div class="tags">${m.status === 'pending' ? r.tag('Pending verification') : (m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0 ? r.tag(`Warranty to ${r.date(m.warrantyEnd)}`, r.daysFromToday(m.warrantyEnd) <= 30 ? 'amber' : 'green') : r.tag('Out of warranty'))}
+        ${m.amc ? r.tag(m.amc, 'blue') : ''}</div></div></section>
+    <section class="card side-card" id="engineer-card"><div class="card-head"><h3 class="grow">Engineer</h3>${e ? `<a class="card-link" href="${link('D702')}">Open</a>` : ''}</div>
+      <div class="card-body stack-sm">${e ? `<div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${ic('star')} ${e.rating}</small></span></div>
+        <div class="tags">${r.tag(r.ticketLabel(t.status), 'blue')}<span class="tag outline">Last seen 2 min ago</span></div>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${e.phone.replace(/\s/g, '')}">${ic('phone')}Call</a><a class="btn btn-sm btn-ghost" href="${link('D411')}">${ic('map-pin')}Map</a></div>`
+        : `<p class="muted">Not assigned yet.</p><a class="btn btn-sm btn-primary" href="${link('D404', tq)}">Assign engineer</a>`}</div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Schedule</h3></div>
+      <div class="card-body"><dl class="dl"><dt>Window</dt><dd>${t.window ? `${r.dayDate(t.window.date)}, ${t.window.slot}` : 'Not set'}</dd>
+        <dt>Offer</dt><dd>${t.status === 'assigned' ? '<span class="amber-text strong">18 min left to accept</span>' : '<span class="faint">None open</span>'}</dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Related</h3></div>
+      <ul class="mini">${parts.map((x) => `<li data-href="D821"><span class="ic-disc">${ic('package')}</span><span class="grow"><b class="mono">${x.number}</b><small>Part request</small></span></li>`).join('')}
+        ${inv ? `<li data-href="D903"><span class="ic-disc">${ic('receipt')}</span><span class="grow"><b class="mono">${inv.number}</b><small>Invoice</small></span></li>` : ''}
+        ${m.amc ? `<li data-href="D602"><span class="ic-disc">${ic('seal-check')}</span><span class="grow"><b class="mono">${m.amc}</b><small>AMC contract</small></span></li>` : ''}
+        ${!parts.length && !inv && !m.amc ? '<li><span class="muted">Nothing linked</span></li>' : ''}</ul></section>`;
+
+  document.addEventListener('click', (event) => {
+    const jump = event.target.closest('[data-tab]');
+    if (jump) document.querySelector(`[aria-controls="${jump.dataset.tab}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* Live state: the engineer changes something in the app; the block flashes and a toast says what changed */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  const live = button.dataset.protoState === 'live';
+  if (live) {
+    ZXA.ui.setState('ready');
+    const card = document.getElementById('engineer-card');
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
+    ZXA.ui.toast('Sandeep added 4 photos', 'info');
+  }
+  document.querySelectorAll('#actions .btn, #actions .icon-btn').forEach((b) => b.toggleAttribute('aria-disabled', button.dataset.protoState === 'archived'));
+});
+</script>
+</body>
+</html>

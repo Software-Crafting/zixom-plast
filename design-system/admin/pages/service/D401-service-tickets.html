@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D401 Service tickets</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Service tickets</h1><p>15 open · 4 unassigned · 1 machine down</p></div>
+    <div class="segment" role="tablist" aria-label="Layout">
+      <button role="tab" aria-selected="true" aria-controls="view-table">Table</button>
+      <button role="tab" aria-selected="false" aria-controls="view-board">Board</button>
+    </div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D402"><svg class="ic"><use href="#ph-plus"/></svg>New ticket</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <!-- table -->
+    <section class="card list-card" id="view-table" role="tabpanel">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">All open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="unassigned">Unassigned <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="risk">SLA at risk <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="customer">Awaiting customer <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="review">To review <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#tickets"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Ticket, customer, machine or serial" aria-label="Search tickets"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">2</span></button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved as My tickets"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="applied-row" data-when="ready no-results">
+        <span class="chip applied">Region: <b>Ahmedabad, Pune</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+        <span class="chip applied">Created: <b>Last 30 days</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+        <button class="btn-link btn" type="button" data-toast="Filters cleared">Clear all</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="tickets">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Ticket</th><th class="sortable">Status</th><th class="sortable">Severity</th>
+            <th class="sortable">Customer and machine</th><th>Coverage</th><th class="sortable">Engineer</th>
+            <th class="sortable">Window</th><th class="sortable">SLA</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span>1 to 15 of 15</span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-wrench"/></svg></span>
+        <h3>No tickets yet</h3><p>Service requests from the app and tickets you create appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D402">New ticket</a></div></div>
+    </section>
+
+    <!-- board: columns by status; moves follow the allowed status changes -->
+    <section id="view-board" role="tabpanel" hidden>
+      <div class="kanban" id="board"></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Ticket</th><th>Status</th><th>Severity</th><th>Customer and machine</th><th>Engineer</th><th>SLA</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <!-- bulk actions -->
+  <div class="bulk-bar" data-for="tickets" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-assign">Assign</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="btn" type="button" data-open="bulk-result">Change priority</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view drawer: a row click opens it, the ticket number opens the full page -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D403">Open ticket</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" id="quick-action">Assign</button></div>
+  </div>
+</div>
+
+<!-- filters drawer -->
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Submitted</button><button class="chip" type="button" aria-pressed="false">Awaiting information</button>
+        <button class="chip" type="button" aria-pressed="false">Assigned</button><button class="chip" type="button" aria-pressed="false">Scheduled</button>
+        <button class="chip" type="button" aria-pressed="false">In progress</button><button class="chip" type="button" aria-pressed="false">On hold</button>
+        <button class="chip" type="button" aria-pressed="false">Pending sign off</button><button class="chip" type="button" aria-pressed="false">Visit failed</button></div></div>
+      <div class="field"><span class="label">Severity</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Machine down</button><button class="chip" type="button" aria-pressed="false">Production affected</button>
+        <button class="chip" type="button" aria-pressed="false">Minor</button></div></div>
+      <div class="field"><span class="label">Coverage</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Warranty</button><button class="chip" type="button" aria-pressed="false">AMC</button>
+        <button class="chip" type="button" aria-pressed="false">Chargeable</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option><option>Unassigned</option></select></div>
+        <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option>Ahmedabad, Pune</option><option>Ahmedabad</option><option>Pune</option></select></div>
+        <div class="field"><label for="f-from">Created from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox"> SLA at risk or breached only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show 15 tickets</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="tickets"> Severity</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="tickets"> Coverage</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="tickets"> Engineer</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="tickets"> Window</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+  <hr><button type="button" data-toast="Print view opened"><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D403"><svg class="ic"><use href="#ph-external-link"/></svg>Open ticket</a>
+  <button type="button" data-open="bulk-assign"><svg class="ic"><use href="#ph-user-plus"/></svg>Assign</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><button class="danger" type="button" data-toast="Opens Cancel ticket"><svg class="ic"><use href="#ph-x"/></svg>Cancel ticket</button>
+</div>
+
+<div class="overlay center" id="bulk-assign" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ba-title">
+    <div class="modal-head"><div class="grow"><h2 id="ba-title">Assign selected tickets</h2><p>Each engineer gets 30 minutes to accept.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="ba-eng">Engineer</label><select class="select" id="ba-eng"><option>Sandeep Yadav, Ahmedabad</option><option>Anita Verma, Pune</option></select></div>
+      <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">TKT-2026-0133 is in Pune. Sandeep works in Ahmedabad.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-open="bulk-result">Assign</button></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>TKT-2026-0131 is cancelled and cannot change.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C501-support.html">
+  <div><h3>What it is</h3><p>Every service request from the app, phone or email. Table or board.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the full ticket.</li><li>Select rows to assign or export in bulk.</li><li>Board: drag a card to an allowed next status.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403), Assign engineer (D404), New ticket (D402), Bulk result (D1809).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unassigned machine down tickets are pinned at the top in red.</li><li>25 rows by default (25, 50, 100). Export over 5,000 rows runs in the background.</li><li>Bulk with some failures shows done and failed counts (EC-A64).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  /* unassigned machine down first, then newest */
+  const pinned = (t) => t.severity === 'down' && !t.engineer;
+  const tickets = [...r.tickets].sort((x, y) => Number(pinned(y)) - Number(pinned(x)));
+  const ageOf = (t) => {
+    const hours = Math.round((new Date(ZX.data.now) - new Date(t.created)) / 3600000);
+    return hours < 24 ? `${Math.max(1, hours)} h` : `${Math.round(hours / 24)} d`;
+  };
+  const windowOf = (t) => (t.window ? `${r.dayDate(t.window.date)}<span class="sub">${t.window.slot}</span>` : '<span class="faint">Not set</span>');
+
+  document.querySelector('#tickets tbody').innerHTML = tickets.map((t) => {
+    const m = r.machine(t.machine);
+    const c = r.company(t.company);
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    return `<tr data-drawer="quick" data-ticket="${t.number}" class="${pinned(t) ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${t.number}"></label></td>
+      <td><a class="rec" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a><span class="sub">${t.type} · ${ageOf(t)}</span></td>
+      <td>${r.ticketTag(t.status)}</td>
+      <td data-sort="${{ down: 0, production: 1, minor: 2 }[t.severity] ?? 3}">${r.severityTag(t.severity, true)}</td>
+      <td><b class="clip">${c.name}</b><span class="sub">${m.model} · ${t.summary}</span></td>
+      <td>${r.coverageTag(t.coverage)}</td>
+      <td>${e ? `<span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span>` : '<span class="red-text strong">Unassigned</span>'}</td>
+      <td class="nowrap" data-sort="${t.window?.date ?? '9'}">${windowOf(t)}</td>
+      <td>${r.sla(t.sla)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  /* saved views */
+  const VIEWS = {
+    open: r.isOpen, unassigned: (t) => r.isOpen(t) && !t.engineer, risk: (t) => ['risk', 'breach'].includes(t.sla[1]) && r.isOpen(t),
+    customer: (t) => ['awaiting-info', 'estimate'].includes(t.status), review: (t) => t.status === 'completed',
+    closed: (t) => ['closed', 'cancelled', 'rejected'].includes(t.status), all: () => true,
+  };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#tickets tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](r.ticket(row.dataset.ticket)); });
+    const shown = rows.filter((row) => !row.hidden && !row.classList.contains('search-miss')).length;
+    document.querySelector('.table-foot span').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = tickets.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* quick view */
+  const quick = document.getElementById('quick');
+  quick.addEventListener('zxa:row', (event) => {
+    const t = r.ticket(event.detail.dataset.ticket);
+    const m = r.machine(t.machine);
+    const c = r.company(t.company);
+    const s = r.site(t.company, t.site);
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    const p = r.person(t.by);
+    document.getElementById('quick-title').textContent = t.number;
+    document.getElementById('quick-sub').textContent = `${t.type} · raised ${r.ago(t.created)}`;
+    document.getElementById('quick-open').href = ZXA.href('D403', `?t=${t.number}`);
+    document.getElementById('quick-action').textContent = e ? 'Reassign' : 'Assign';
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.ticketTag(t.status)}${t.severity ? r.severityTag(t.severity) : ''}${r.coverageTag(t.coverage)}${r.priorityTag(t.priority)}</div>
+      <p>${t.summary}</p>
+      <dl class="dl">
+        <dt>SLA</dt><dd>${r.sla(t.sla)}</dd>
+        <dt>Customer</dt><dd>${c.name}<br><span class="muted">${s.name}, ${s.pincode}</span></dd>
+        <dt>Raised by</dt><dd>${p.name}<br><span class="muted">${p.mobile}</span></dd>
+        <dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd>
+        <dt>Engineer</dt><dd>${e ? `${e.name}<br><span class="muted">${e.phone}</span>` : '<span class="red-text">Unassigned</span>'}</dd>
+        <dt>Window</dt><dd>${t.window ? `${r.dayDate(t.window.date)}, ${t.window.slot}` : 'Not set'}</dd>
+        <dt>Source</dt><dd>${t.source}</dd>
+      </dl>`;
+  });
+
+  /* board */
+  const LANES = ['submitted', 'awaiting-info', 'estimate', 'assigned', 'scheduled', 'on-the-way', 'in-progress', 'on-hold', 'completed', 'closed'];
+  document.getElementById('board').innerHTML = LANES.map((status) => {
+    const cards = tickets.filter((t) => t.status === status);
+    return `<div class="lane"><div class="lane-head">${r.ticketLabel(status)}<span class="n">${cards.length}</span></div>
+      ${cards.map((t) => `<div class="card" data-href="D403?t=${t.number}">
+        <div class="row"><span class="mono strong nowrap">${t.number}</span><span class="grow"></span>${t.severity === 'down' ? r.severityTag('down', true) : ''}</div>
+        <p class="muted" style="margin-top:4px; font-size:13px">${r.company(t.company).name}</p>
+        <p style="margin-top:6px; font-size:13px; color:var(--text-strong)">${r.machine(t.machine).model}</p>
+        <div class="row" style="margin-top:10px">${r.coverageTag(t.coverage)}<span class="grow"></span>
+          ${t.engineer ? r.avatar(r.engineer(t.engineer), 'sm') : '<span class="tag red">Unassigned</span>'}</div></div>`).join('')}</div>`;
+  }).join('');
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
