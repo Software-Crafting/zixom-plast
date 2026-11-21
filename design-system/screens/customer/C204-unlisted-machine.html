@@ -200,14 +200,18 @@
       <div class="alert" role="alertdialog" aria-labelledby="partial-t">
         <h3 id="partial-t">Send without the invoice?</h3><p>It did not upload. You can add it later.</p>
         <div class="actions"><button class="btn btn-primary" type="button" data-close onclick="document.querySelector('[data-state=submitting]').click()">Send without it</button>
-          <button class="btn btn-text" type="button" style="width:100%" data-close>Retry upload</button></div>
+          <button class="btn btn-secondary" type="button" data-close>Retry upload</button></div>
       </div>
     </div>
   </div>
 </div>
 
-<p class="plate-note">For a serial Zixom cannot find. Submit adds the machine to the list as Pending verification. A
-rejected request shows the reason and opens the form again; a failed upload can be retried or left out.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Reports a second hand or older machine Zixom cannot find, for verification.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter model, serial, year, site and contact</li><li>Add a nameplate photo and an optional invoice</li><li>Retry or remove a failed upload</li><li>Resubmit after a rejection</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Submit adds the machine to C201 as Pending verification</li><li>Zixom notifies when it is linked or rejected</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Too large or wrong type (EC-29, EC-30)</li><li>Upload fails: retry or send without it (EC-31)</li><li>Offline keeps the form (EC-03)</li><li>Spec: C2, C204</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

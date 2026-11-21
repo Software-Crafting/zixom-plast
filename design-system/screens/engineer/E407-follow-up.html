@@ -46,7 +46,7 @@
             <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
               <div><b>You are offline</b>Saved here and sent when you are online.</div></div>
             <div class="banner red" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-              <div><b>A follow up is already open</b><span id="dup-text"></span> <a href="E202-job-detail.html" id="dup-link">View job</a></div></div>
+              <div><b>A follow up is already open</b><span id="dup-text"></span><a class="btn btn-secondary btn-sm" style="margin-top:10px" href="E202-job-detail.html" id="dup-link">View job</a></div></div>
             <div class="error-summary" role="alert" data-when="invalid"><b>Fix 1 thing to send</b><ul><li><a href="#reason">Say why the visit is needed</a></li></ul></div>
             <div class="mline" id="mline"></div>
           </div>
@@ -89,7 +89,7 @@
         <button class="btn btn-primary" type="button" data-open="sent" data-when="ready">Send for scheduling</button>
         <button class="btn btn-primary" type="button" disabled data-when="invalid duplicate">Send for scheduling</button>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Sending</button>
-        <a class="btn btn-primary" href="E401-report.html" data-when="offline" data-toast="Saved. Sends when you are online">Save follow up</a>
+        <a class="btn btn-primary" href="E401-report.html" data-when="offline" data-toast="Saved. Waiting to sync">Save follow up</a>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -105,8 +105,12 @@
   </div>
 </div>
 
-<p class="plate-note">Creates a follow up ticket for the same machine and customer from the report. A second open follow up
-for the same machine is blocked.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Asks Zixom for a follow up visit on the same machine and customer, from the visit report.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason and describe it (required).</li><li>Suggest a date and time slot.</li><li>List the parts the visit needs.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send creates a follow up ticket for Zixom to schedule; the customer is notified.</li><li>Back to report returns to <a href="E401-report.html">E401</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A second open follow up for the machine is blocked, with a link to it.</li><li>Offline: saved with Waiting to sync and sent later.</li><li>Spec: section E4, E407</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

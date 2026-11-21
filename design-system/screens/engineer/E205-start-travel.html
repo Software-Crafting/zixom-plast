@@ -28,7 +28,7 @@
   <button type="button" data-state="ready" aria-pressed="true" data-open="travel">ready</button>
   <button type="button" data-state="noloc" aria-pressed="false" data-open="travel">location denied</button>
   <button type="button" data-state="another" aria-pressed="false" data-open="travel">another job on the way</button>
-  <button type="button" data-state="ready" aria-pressed="false" data-open="not-today">visit not today</button>
+  <button type="button" data-state="ready" aria-pressed="false" id="not-today-switch">visit not today</button>
   <button type="button" data-state="started" aria-pressed="false" data-open="travel">started, undo</button>
   <button type="button" data-state="offline" aria-pressed="false" data-open="travel">offline</button>
 </div>
@@ -94,8 +94,12 @@
   </div>
 </div>
 
-<p class="plate-note">Tells the customer the engineer is on the way, with an ETA when location is on. A mistaken tap can
-be undone for 2 minutes; the safety checklist comes later, at the site.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A sheet that tells the customer the engineer is on the way, with an ETA when location is on.</p></div>
+  <div><h3>What you can do</h3><ul><li>Start travel, open the route in Maps, or cancel.</li><li>Undo a mistaken start for 2 minutes.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Status becomes On the way; the customer gets a push with the ETA.</li><li>On arrival: Check in (<a href="E206-check-in.html">E206</a>). The safety checklist comes at the site.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Location denied: travel starts without live ETA (<a href="E1013-location-off.html">E1013</a>).</li><li>Already on the way to another job: warning. Visit not today: asks to confirm.</li><li>Offline: saved with Waiting to sync. Spec: section 10 and module E2, E205.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -124,7 +128,7 @@ be undone for 2 minutes; the safety checklist comes later, at the site.</p>
   const maps = `https://maps.google.com/?daddr=${encodeURIComponent(`${site.address} ${site.pincode}`)}`;
   const onTheWay = day.today.find((j) => j.status === 'on-the-way' && j.ticket !== t.number);
   const later = data.tickets.find((x) => x.number === LATER_VISIT);
-
+  
   $('title').textContent = t.number;
   ['back', 'cancel'].forEach((id) => { $(id).href = `E202-job-detail.html${q}`; });
   $('open-job').href = `E202-job-detail.html${q}&status=on-the-way`;
@@ -137,7 +141,13 @@ be undone for 2 minutes; the safety checklist comes later, at the site.</p>
   $('eta').textContent = eta ? `About ${eta} min` : 'Travel time unknown';
   $('eta-sub').textContent = `${job ? `${job.distanceKm} km · ` : ''}${visit}`;
   $('another-text').innerHTML = onTheWay ? `<b>You are already on the way to ${onTheWay.ticket}</b>Starting this one pauses its ETA.` : '';
-  $('nt-title').textContent = `This visit is on ${R.dayDate(later.window.date)}`;
+  /* a visit that is not today asks first (spec E205); the plate button opens such a job */
+  if (!job) {
+    $('nt-title').textContent = `This visit is on ${R.dayDate(t.window.date)}`;
+    delete $('travel').dataset.initial;
+    $('not-today').dataset.initial = '';
+  }
+  $('not-today-switch').addEventListener('click', () => { location.search = `?ticket=${later.number}`; });
 
   /* Start: status becomes On the way, with Undo for 2 minutes */
   let undoLeft = UNDO_SECONDS;

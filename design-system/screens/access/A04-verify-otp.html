@@ -11,7 +11,7 @@
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .otp:disabled, .otp[aria-busy="true"] input{opacity:.5}
 .resend{display:flex; align-items:center; justify-content:space-between; margin-top:14px; font-size:var(--fs-14)}
-.resend .btn-text{padding:0}
+.sent-to{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .verifying{display:flex; align-items:center; gap:10px; margin-top:14px; font-size:var(--fs-14); color:var(--text-muted)}
 .verifying i{width:18px; height:18px; border-radius:50%; border:2.5px solid var(--slate-200); border-top-color:var(--slate-800); animation:spin .8s linear infinite}
 </style>
@@ -24,6 +24,7 @@
   <button type="button" data-state="verifying" aria-pressed="false">verifying</button>
   <button type="button" data-state="wrong" aria-pressed="false">wrong code</button>
   <button type="button" data-state="expired" aria-pressed="false">expired</button>
+  <button type="button" data-state="used" aria-pressed="false">code already used</button>
   <button type="button" data-state="limit" aria-pressed="false">resend limit</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
 </div>
@@ -43,11 +44,11 @@
       </div>
       <div class="scroll with-footer">
         <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your code is kept.</div>
-        <p class="lede">Code sent to <b style="color:var(--slate-900)">+91 98xxxxxx10</b>.
-          <a class="link accent" href="A03-sign-in.html" style="font-size:inherit">Change number</a></p>
+        <div class="sent-to"><p class="lede">Code sent to <b style="color:var(--slate-900)">+91 98xxxxxx10</b></p>
+          <a class="btn btn-soft btn-sm" href="A03-sign-in.html">Change number</a></div>
 
         <div class="field" style="margin-top:24px">
-          <div class="otp" id="otp" data-when="ready verifying expired limit offline" aria-label="6 digit code">
+          <div class="otp" id="otp" data-when="ready verifying expired limit offline used" aria-label="6 digit code">
             <input inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Digit 1" value="4">
             <input inputmode="numeric" maxlength="1" aria-label="Digit 2" value="8">
             <input inputmode="numeric" maxlength="1" aria-label="Digit 3" value="2">
@@ -61,6 +62,7 @@
           </div>
           <span class="error-text" data-when="wrong"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Wrong code. Check the code and try again. 4 tries left.</span>
           <span class="error-text" data-when="expired"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-clock"/></svg>This code has expired. Send a new one.</span>
+          <span class="error-text" data-when="used"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This code was already used. Send a new one.</span>
         </div>
 
         <div class="verifying" data-when="verifying"><i></i>Checking the code</div>
@@ -69,20 +71,20 @@
           <span style="color:var(--text-muted)">Didn't get it?</span>
           <span id="timer" style="color:var(--text-muted)">Resend code in 0:30</span>
         </div>
-        <div class="resend" data-when="expired">
+        <div class="resend" data-when="expired used">
           <span style="color:var(--text-muted)">Codes last 5 minutes</span>
-          <button class="btn btn-text" type="button" data-toast="New code sent">Resend code</button>
+          <button class="btn btn-soft btn-sm" type="button" data-toast="New code sent">Resend code</button>
         </div>
-
         <div class="banner amber" style="margin-top:16px" data-when="limit">
           <svg class="ic" aria-hidden="true"><use href="#ph-chat-text"/></svg>
-          <div><b>Still no code?</b>SMS can take a few minutes. You have used all 3 resends.
-            Call support on <a href="tel:+919991910097">+91 99919 10097</a>.</div>
+          <div><b>Still no code?</b>SMS can take a few minutes. All 3 resends used.</div>
         </div>
+        <a class="btn btn-secondary btn-sm" style="margin-top:10px" href="tel:+919991910097" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call +91 99919 10097</a>
       </div>
 
       <div class="footer-bar">
-        <a class="btn btn-primary" href="#" id="verify" data-when="ready wrong expired limit">Verify</a>
+        <a class="btn btn-primary" href="#" id="verify" data-when="ready wrong limit">Verify</a>
+        <button class="btn btn-primary" type="button" disabled data-when="expired used">Verify</button>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="verifying">Verify</button>
         <button class="btn btn-primary" type="button" disabled data-when="offline">Verify</button>
       </div>
@@ -91,10 +93,12 @@
   </div>
 </div>
 
-<p class="plate-note">Six boxes with iOS one time code autofill and paste. Verify enables at six digits and also runs by
-itself on the sixth. Resend unlocks after 30 seconds, up to 3 times. Five wrong tries lock the number for 15 minutes in
-<a href="../system/S11-too-many-attempts.html">S11</a>. A wrong phone date opens <a href="../system/S16-wrong-date.html">S16</a>.
-Type the last three digits to see it continue.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Six digit code check after sign in, sign up or a number change.</p></div>
+  <div><h3>What you can do</h3><ul><li>Type or paste the code (iOS autofill); Verify runs on the sixth digit</li><li>Resend after 30 seconds, up to 3 times</li><li>Change number</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Customer: Home, or A06/A07 for a new sign up</li><li>Engineer: <a href="A17-engineer-first-sign-in.html">A17</a> first time, else Today</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>5 wrong tries lock 15 minutes <a href="../system/S11-too-many-attempts.html">S11</a></li><li>Code already used, expired, SMS delayed (call support)</li><li>Spec: section 10, A04 · EC-13, EC-14, EC-34</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -78,8 +78,12 @@ a.progress-card{display:block; color:inherit; text-decoration:none}
   </div>
 </div>
 
-<p class="plate-note">The working screen of a visit. The timer runs from the saved check in time, so it is right after
-an app restart. Every action is saved on the phone first and works offline.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The working screen during a visit, with a running timer from the saved check in time.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add photos, notes and voice notes; request a part; put on hold.</li><li>Call the customer, open machine history and hazard notes.</li><li>Log extra work the customer asks for (<a href="E221-extra-work.html">E221</a>).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Open report: the visit report (<a href="E401-report.html">E401</a>).</li><li>Complete: final checks (<a href="E210-complete-job.html">E210</a>).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>App killed or phone restarted: back here with the right time.</li><li>Battery under 15%: save the report. Storage low: <a href="E1014-low-storage.html">E1014</a>.</li><li>Offline: everything is saved on the phone. Spec: section 10 and module E2, E207.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -130,9 +134,11 @@ an app restart. Every action is saved on the phone first and works offline.</p>
     tile(`E208-hold.html${q}`, 'pause', 'Hold'), tile(`tel:${site.contact.phone.replace(/\s/g, '')}`, 'phone', 'Call customer'),
     tile(`E301-machine-history.html?serial=${m.serial}`, 'clock', 'Machine history'), tile(`E905-hazards.html?serial=${m.serial}`, 'warning', 'Hazard notes'),
   ].join('');
-  $('sync-row').innerHTML = sync.length ? `<a class="list-item" href="E102-sync-queue.html"><span class="disc">${R.icon('cloud-arrow-up')}</span>
+  const syncRow = sync.length ? `<a class="list-item" href="E102-sync-queue.html"><span class="disc">${R.icon('cloud-arrow-up')}</span>
     <b>${sync.length} changes saved on this phone</b><span class="sub">Waiting to sync</span><span class="end">${R.icon('caret-right')}</span></a>` : '';
-  if (!sync.length) $('sync-row').remove();
+  /* customer asks for extra work: E221 (spec E207 edge case) */
+  $('sync-row').innerHTML = `<a class="list-item" href="E221-extra-work.html${q}"><span class="disc">${R.icon('plus')}</span>
+    <b>Customer asks for extra work</b><span class="end">${R.icon('caret-right')}</span></a>${syncRow}`;
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

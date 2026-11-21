@@ -15,6 +15,8 @@
 .picked div{display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line-strong); font-size:var(--fs-14); color:var(--slate-900)}
 .picked i{width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:var(--slate-800); color:#fff; font:600 var(--fs-12) var(--font-body); font-style:normal}
 .reasons{flex-wrap:wrap; overflow:visible; margin:0; padding:0}
+.section-head:has(.btn){align-items:center}
+.section-head .btn{color:var(--slate-900); font-weight:400}
 </style>
 </head>
 <body class="plate">
@@ -59,7 +61,7 @@
 
           <div data-when="ready sending pending offline">
             <div class="section-head" style="margin:0 2px 10px"><h2 data-when="ready sending offline">New preferred slots</h2><h2 data-when="pending">You asked for</h2>
-              <a href="C1510-slot-picker.html" data-when="ready offline">Change</a></div>
+              <a class="btn btn-soft btn-sm" href="C1510-slot-picker.html" data-when="ready offline">Change</a></div>
             <div class="picked" id="picked"></div>
           </div>
 

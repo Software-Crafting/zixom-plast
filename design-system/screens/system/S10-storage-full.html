@@ -30,7 +30,7 @@
           <p data-when="ready">Free about 150 MB to save photos and documents.</p>
           <p data-when="engineer">Free about 200 MB to start a visit report.</p>
         </div>
-        <div class="banner red" data-when="engineer">
+        <div class="banner" data-when="engineer">
           <svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>
           <div><b>3 unsynced items are safe</b></div>
         </div>
@@ -58,7 +58,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown when a save fails for lack of space (EC-33); closes once space returns. Engineers cannot start a report under 200 MB (E1014) and unsynced work is never offered for deletion.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A save failed because the phone is full.</p></div>
+  <div><h3>What you can do</h3><ul><li>Clear downloaded documents (engineer: offline manuals)</li><li>Open storage settings</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Closes by itself once space returns</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Engineer: cannot start a report under 200 MB (E1014); unsynced work is never offered for deletion</li><li>Spec: section 7, S10 · EC-33</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

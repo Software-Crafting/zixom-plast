@@ -129,8 +129,12 @@
   </div>
 </div>
 
-<p class="plate-note">Scans the QR or barcode on a machine nameplate or a part and checks it against the job. Tap the frame to
-simulate a match; a code from another machine warns first. Camera denied goes to <a href="../system/S07-permission.html">S07</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Camera scan of the QR code or barcode on a machine nameplate or a part.</p></div>
+  <div><h3>What you can do</h3><ul><li>Scan a QR code or a barcode (tap the frame to simulate).</li><li>Turn on the torch.</li><li>Enter the serial or part number manually.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A match with the job continues to the work or parts screen.</li><li>Offline it checks against jobs saved on the phone.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Code from another machine: warning with Cancel and Continue.</li><li>Not recognised: Try again or Enter manually.</li><li>Camera denied: <a href="../system/S07-permission.html">S07</a>. Spec: section E10, E1005.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

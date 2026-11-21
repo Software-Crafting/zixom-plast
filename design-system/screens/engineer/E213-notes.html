@@ -20,7 +20,7 @@
 .note .foot{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px}
 .note .failed{display:inline-flex; align-items:center; gap:4px; font-size:var(--fs-12); font-weight:600; color:var(--red)}
 .note .failed .ic{width:14px; height:14px}
-.note .link-btn{border:0; background:none; padding:0; font:600 var(--fs-12) var(--font-body); color:var(--blue); cursor:pointer}
+.note .foot .btn-sm{min-height:34px; margin-left:auto; padding:0 14px; font-size:var(--fs-13)}
 .footer-bar.compose{padding-top:10px; background:var(--surface-bottom); border-top:1px solid var(--line)}
 .composer{display:flex; flex-direction:column; gap:8px}
 .kind-hint{display:flex; align-items:center; gap:6px; margin:0 6px; font-size:var(--fs-12); color:var(--text-muted)}
@@ -126,8 +126,12 @@
   </div>
 </div>
 
-<p class="plate-note">Two kinds of note, always labelled: Internal (Zixom only) and Shared with customer, with the kind picked
-before sending. A failed send keeps the draft; offline notes wait to sync.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The note thread on one job. Two kinds, always labelled: Internal (Zixom only) and Shared with customer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the kind before sending; the hint says who will see it.</li><li>Type or use voice to text.</li><li>Attach a photo or file.</li><li>Retry a note that failed.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Shared notes reach the customer on their request (<a href="../customer/C508-request-detail.html">C508</a>); internal ones only Zixom.</li><li>Offline: notes save on the phone with Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed send keeps the draft in the box.</li><li>Spec: E2, E213.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -178,7 +182,7 @@ before sending. A failed send keeps the draft; offline notes wait to sync.</p>
       <p>${R.esc(n.text)}</p>
       <div class="foot">${KIND[n.kind]}${n.photo ? R.tag('1 photo', 'outline', 'image') : ''}
         ${n.sync ? R.tag('Waiting to sync', 'amber', 'cloud-arrow-up') : ''}
-        ${n.failed ? `<span class="failed">${R.icon('warning-circle')}Not sent. Draft kept</span><button class="link-btn" type="button" data-busy>Retry</button>` : ''}</div>
+        ${n.failed ? `<span class="failed">${R.icon('warning-circle')}Not sent. Draft kept</span><button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button>` : ''}</div>
     </article>`;
   };
   $('notes').innerHTML = NOTES.map((n) => note(n)).join('') + note(FAILED_NOTE, 'failed');

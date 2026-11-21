@@ -9,8 +9,8 @@
 <style>
 .visit{text-decoration:none; color:inherit; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:center}
 .visit .thumb{grid-row:1 / span 2}
-.visit b{font-size:var(--fs-14); color:var(--slate-900)}
-.visit .card-sub{margin:0}
+.visit b{align-self:end; font-size:var(--fs-14); color:var(--slate-900)}
+.visit .card-sub{align-self:start; margin:0}
 .visit .row-flex{grid-column:1 / -1; justify-content:space-between; margin-top:10px; font-size:var(--fs-13); color:var(--text-muted)}
 .sheet-state{padding:4px 0 0}
 .state .disc.amber{background:var(--amber-50); color:var(--amber)}
@@ -71,8 +71,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown once a day while the phone is in low power mode, over Today. Everything stays saved on the phone;
-only background sync slows down.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Notice over Today that background sync may be delayed while the phone is in low power mode.</p></div>
+  <div><h3>What you can do</h3><ul><li>See how many items are Waiting to sync and open the sync queue.</li><li>Open the phone's settings.</li><li>Dismiss for today.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Everything stays saved on the phone; only background sync slows.</li><li>The waiting row opens <a href="E102-sync-queue.html">E102 Sync queue</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Shown once per day while low power mode is on.</li><li>Offline: items send when back online.</li><li>Spec: section E10, E1015.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

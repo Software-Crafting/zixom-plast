@@ -11,6 +11,9 @@
 .jobrow b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
 .jobrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .chips.wrap{flex-wrap:wrap; overflow:visible}
+/* ponytail: 7 days fit the width, so no sideways scroll */
+.dates{display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin:0; padding:0; overflow:visible}
+.dates .date{width:auto}
 .sent{display:grid; grid-template-columns:auto 1fr; column-gap:12px; padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
 .sent .disc{grid-row:1 / span 2; width:42px; height:42px; display:grid; place-items:center; border-radius:50%; background:var(--amber-50); color:var(--amber)}
 .sent b{font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
@@ -75,8 +78,12 @@
   </div>
 </div>
 
-<p class="plate-note">Ask the customer for another visit time. Past windows are disabled; the job keeps its time until
-the customer agrees, and a decline comes back as a notification.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer asks the customer for a different visit day and time window.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a day and a time window; past windows and Sundays are disabled.</li><li>Choose a reason and add an optional message.</li><li>Send to customer.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The job keeps its current time until the customer agrees.</li><li>Accept or decline reaches the engineer as a notification; a decline asks for another time.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Missing window or reason: error summary.</li><li>Offline: saved and sent later with Waiting to sync.</li><li>Spec: section 10 and module E2, E204.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -120,7 +127,7 @@ the customer agrees, and a decline comes back as a notification.</p>
   const paintSlots = (date) => {
     $('slots').innerHTML = SLOTS.map(([label, endHour], i) => {
       const past = date === data.today && endHour <= nowHour + 1;
-      return `<button class="slot" type="button" ${past ? 'disabled' : `aria-pressed="${date === PROPOSED.date && i === PROPOSED.slotIndex && screen.dataset.state !== 'errors'}"`}>${label}</button>`;
+      return `<button class="slot" type="button" ${past ? 'disabled' : `aria-pressed="${date === PROPOSED.date && i === PROPOSED.slotIndex && !['errors', 'declined'].includes(screen.dataset.state)}"`}>${label}</button>`;
     }).join('');
   };
   paintSlots(PROPOSED.date);

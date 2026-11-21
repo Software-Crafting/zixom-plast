@@ -14,7 +14,7 @@
 .who{text-align:center; margin-top:12px}
 .who b{display:block; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
 .who span{font-size:var(--fs-13); color:var(--text-muted)}
-.notify{display:grid; grid-template-columns:auto 1fr; gap:12px; padding:16px; border-radius:var(--r-lg); background:var(--field)}
+.notify{display:grid; grid-template-columns:auto 1fr; align-items:center; gap:12px; padding:16px; box-shadow:inset 0 0 0 1px var(--line); border-radius:var(--r-lg); background:var(--field)}
 .notify .disc{width:44px; height:44px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff; color:var(--slate-800)}
 .notify b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .notify p{margin:4px 0 0; font-size:var(--fs-13); line-height:1.5; color:var(--text)}
@@ -57,27 +57,31 @@
         <div class="who">
           <b>Rakesh Mehta</b>
           <span>Shree Packaging Industries</span>
-          <p class="error-text" style="justify-content:center" data-when="photofail"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Photo did not upload. Retry, or continue without it.</p>
+          <p class="error-text" style="justify-content:center" data-when="photofail"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Photo did not upload.</p>
+          <div class="row-flex" style="justify-content:center; margin-top:8px" data-when="photofail">
+            <button class="btn btn-soft btn-sm" type="button" data-busy>Retry</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-toast="Photo removed">Remove</button>
+          </div>
         </div>
 
         <div class="field" style="margin-top:24px">
           <label for="designation">Your designation</label>
           <input class="input" id="designation" value="Plant head" placeholder="For example, Maintenance supervisor">
-          <span class="hint">Helps the engineer know who they are talking to.</span>
+          <span class="hint">Optional</span>
         </div>
 
         <div class="notify" style="margin-top:18px" data-when="ready prompt photofail">
           <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
-          <div><b>Get service updates</b><p>We tell you when an engineer is assigned, on the way, and when a payment is due.</p></div>
-          <button class="btn btn-secondary btn-sm" type="button" style="width:100%" data-open="ios">Allow notifications</button>
+          <div><b>Get service updates</b><p>Engineer visits and payments due.</p></div>
+          <button class="btn btn-secondary" type="button" data-open="ios">Allow notifications</button>
         </div>
         <div class="banner green" style="margin-top:18px" data-when="allowed">
           <svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg>
-          <div><b>Notifications are on</b>Change what you get any time in Settings.</div>
+          <div><b>Notifications are on</b>Change them in Settings.</div>
         </div>
         <div class="banner grey" style="margin-top:18px" data-when="denied">
           <svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
-          <div><b>Notifications are off</b>You will still get emails for payments and safety alerts. Turn them on later in Settings.</div>
+          <div><b>Notifications are off</b>You still get emails. Turn them on in Settings.</div>
         </div>
       </div>
 
@@ -103,9 +107,12 @@
   </div>
 </div>
 
-<p class="plate-note">Last step before Home. Designation and photo are optional. The app explains notifications first and
-asks the OS only when the person taps Allow. Denied is fine: the app continues and reminds them in Settings. The grey
-system prompt is drawn by iOS, not by the app.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Last step before Home for a new customer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a photo and designation (both optional)</li><li>Allow notifications; the OS prompt shows only after Allow</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save and continue opens Home</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Photo upload failed: Retry or Remove</li><li>Notifications denied: continue, reminder in Settings</li><li>Spec: section 7, A10 · EC-27</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -11,7 +11,7 @@
 .setting b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .setting span.sub{font-size:var(--fs-12); color:var(--text-muted)}
 .list-title{margin:6px 4px 0}
-.files-head .btn{min-height:0; padding:0}
+.files-head .btn{min-height:34px; padding:0 14px; font-size:var(--fs-13)}
 </style>
 </head>
 <body class="plate">
@@ -37,7 +37,7 @@
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Uploads start when you are back.</div>
           <div class="banner amber" data-when="mobile">
             <svg class="ic" aria-hidden="true"><use href="#ph-pause"/></svg>
-            <div><b>Paused on mobile data</b><a href="../system/S15-mobile-data.html">Upload now</a></div>
+            <div><b>Paused on mobile data</b>Photos wait for Wi-Fi. <a href="../system/S15-mobile-data.html">Upload now</a></div>
           </div>
 
           <label class="setting" data-when="ready mobile offline"><span><b>Pause on mobile data</b><span class="sub">Photos and videos wait for Wi-Fi</span></span>
@@ -77,8 +77,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every photo and video waiting to upload, per job, with pause, resume, retry and remove. Uploads continue in the background;
-removing one from a submitted report asks first.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every photo and video waiting to upload, grouped by job, with size, progress and state.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pause, Resume, Retry or Remove a file</li><li>Retry all failed files</li><li>Pause uploads on mobile data</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Uploads continue in the background where the phone allows</li><li>A failed photo does not block its report</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Removing a file from a submitted report asks first</li><li>Mobile data: <a href="../system/S15-mobile-data.html">S15</a></li><li>Spec: section 8, E1008 · EC-37</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -104,7 +108,7 @@ removing one from a submitted report asks first.</p>
     uploading: (u) => [`Uploading ${u.progress}% · ${u.size}`, btn('data-file="pause"', 'pause', 'Pause')],
     queued: (u) => [`Waiting · ${u.size}`, ''],
     paused: (u) => [`Paused at ${u.progress || 0}% · Wi-Fi only`, btn('data-file="resume"', 'play', 'Resume')],
-    failed: () => [`${R.icon('warning-circle')}Upload failed. Tap to retry`, btn('data-file="retry"', 'rotate-ccw', 'Retry')],
+    failed: () => [`${R.icon('warning-circle')}Upload failed`, btn('data-file="retry"', 'rotate-ccw', 'Retry')],
     done: (u) => [`${R.icon('check-circle')}Uploaded · ${u.size}`, ''],
   };
   const file = (u, status = u.status) => {
@@ -123,7 +127,7 @@ removing one from a submitted report asks first.</p>
     const done = UPLOADS.filter((u) => statusFor(u) === 'done').length;
     const failed = UPLOADS.filter((u) => statusFor(u) === 'failed').length;
     const head = `<div class="files-head"><span><b>${done} of ${UPLOADS.length} uploaded</b>${failed ? ` · ${failed} failed` : ''}</span>
-      ${failed ? '<button class="btn btn-text" type="button" data-busy>Retry all</button>' : ''}</div>`;
+      ${failed ? '<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry all</button>' : ''}</div>`;
     const tickets = [...new Set(UPLOADS.map((u) => u.ticket))];
     return head + tickets.map((n) => jobTitle(n) + UPLOADS.filter((u) => u.ticket === n).map((u) => file(u, statusFor(u))).join('')).join('');
   };

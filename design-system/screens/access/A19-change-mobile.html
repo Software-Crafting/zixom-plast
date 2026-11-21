@@ -47,12 +47,11 @@
         <div data-when="otpnew otpold">
           <div class="wizard" data-when="otpnew"><div class="meta"><b>Step 2 of 3</b><span>Verify the new number</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span></div></div>
           <div class="wizard" data-when="otpold"><div class="meta"><b>Step 3 of 3</b><span>Confirm with the old number</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span></div></div>
-          <h2 class="large-title" style="font-size:var(--fs-22)">Enter the code</h2>
-          <p class="lede" data-when="otpnew">Sent to +91 99250 44718.</p>
-          <p class="lede" data-when="otpold">Sent to your current number, +91 98250 11410.</p>
+          <p class="lede" style="margin-top:0" data-when="otpnew">Code sent to +91 99250 44718.</p>
+          <p class="lede" style="margin-top:0" data-when="otpold">Code sent to your current number, +91 98250 11410.</p>
           <div class="otp" style="margin-top:20px"><input maxlength="1" inputmode="numeric" value="3" aria-label="Digit 1"><input maxlength="1" inputmode="numeric" value="9" aria-label="Digit 2"><input maxlength="1" inputmode="numeric" aria-label="Digit 3"><input maxlength="1" inputmode="numeric" aria-label="Digit 4"><input maxlength="1" inputmode="numeric" aria-label="Digit 5"><input maxlength="1" inputmode="numeric" aria-label="Digit 6"></div>
           <span class="hint">Resend code in 0:21</span>
-          <button class="btn btn-text" type="button" style="margin-top:10px; padding:0" data-when="otpold" onclick="document.querySelector('[data-state=pending]').click()">I no longer have my old number</button>
+          <button class="btn btn-secondary btn-sm" type="button" style="margin-top:16px" data-when="otpold" onclick="document.querySelector('[data-state=pending]').click()">I no longer have my old number</button>
         </div>
 
         <div data-when="done">
@@ -100,7 +99,12 @@
   </div>
 </div>
 
-<p class="plate-note">From Profile: new number, OTP to the new number, OTP to the old one (EC-68). Without the old number Zixom checks by hand; once every 30 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Change the mobile number from Profile.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the new number</li><li>Verify codes sent to the new and the old number</li><li>Say the old number is lost</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Done: sign in with the new number from now on</li><li>Old number lost: Zixom checks by hand, status pending</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>New number already registered</li><li>Once every 30 days; OTP states as <a href="A04-verify-otp.html">A04</a></li><li>Spec: section 7, A19 · EC-68</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

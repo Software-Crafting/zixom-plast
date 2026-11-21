@@ -29,7 +29,7 @@
       <div class="scroll">
         <div class="stack">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved copies open.</div>
-          <div class="inline-retry" data-when="unavailable">Couldn't open Warranty policy.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="unavailable">Couldn't open Warranty policy.<button class="btn btn-soft btn-sm" type="button" data-busy>Retry</button></div>
           <div class="list" id="docs" data-when="ready unavailable offline"></div>
           <p class="hint" style="text-align:center; margin-top:0" data-when="ready unavailable offline" id="accepted"></p>
 
@@ -47,8 +47,12 @@
   </div>
 </div>
 
-<p class="plate-note">The four policies, each opening in the document viewer. A policy that fails to load shows Retry; a
-changed policy is accepted again at sign in.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The four Zixom policies, with the date each was last updated.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open Terms of use, Privacy, Warranty or Refund and cancellation policy</li><li>Retry a policy that failed to open</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Each policy opens in the <a href="C902-document-viewer.html">document viewer</a></li><li>A changed policy is accepted again at sign in</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Document unavailable shows Retry</li><li>Offline opens saved copies</li><li>Spec: C11, C1109</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

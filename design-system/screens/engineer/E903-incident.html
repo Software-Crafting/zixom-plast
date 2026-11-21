@@ -26,6 +26,7 @@
   <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
   <button type="button" data-state="submitted" aria-pressed="false">submitted</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="queued" aria-pressed="false">sent offline</button>
 </div>
 
 <div class="device">
@@ -108,22 +109,31 @@
           <h3>Report sent</h3>
           <p><span class="mono">INC-2026-0007</span>. Your manager has it. It cannot be edited now.</p>
         </div>
+        <div class="state sent" data-when="queued">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Waiting to sync</h3>
+          <p>Saved on the phone. It sends when you are online and cannot be edited now.</p>
+        </div>
       </div>
 
       <div class="footer-bar">
         <button class="btn btn-primary" type="button" data-when="ready injury uploading" onclick="document.querySelector('[data-state=submitting]').click()">Submit report</button>
         <button class="btn btn-primary" type="button" data-when="errors">Submit report</button>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit report</button>
-        <button class="btn btn-primary" type="button" data-when="offline" data-toast="Saved. Sends when online">Submit report</button>
-        <a class="btn btn-primary" href="E202-job-detail.html" id="done" data-when="submitted">Back to job</a>
+        <button class="btn btn-primary" type="button" data-when="offline" onclick="document.querySelector('[data-state=queued]').click()">Submit report</button>
+        <a class="btn btn-primary" href="E202-job-detail.html" id="done" data-when="submitted queued">Back to job</a>
       </div>
     </div>
     <span class="home-indicator"></span>
   </div>
 </div>
 
-<p class="plate-note">Injury, near miss, damage or unsafe condition, with photos. Injury Yes shows the emergency numbers and
-tells the manager at once. Works offline; after submit it cannot be edited.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer reports an injury, near miss, damage or unsafe condition on site.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose what happened, when and where, and describe it.</li><li>Say whether anyone was injured and what was done at once.</li><li>Add up to 5 photos, then submit.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The service manager gets the report with an INC number; it cannot be edited after submit.</li><li>Injury Yes shows Call 112 and Call manager and tells the manager immediately.</li><li>Offline it is saved on the phone, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Missing fields list in an error summary on submit.</li><li>Failed photo upload keeps Retry and Remove.</li><li>Spec: section E9, E903.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

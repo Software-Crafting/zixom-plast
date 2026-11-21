@@ -29,8 +29,7 @@
       </div>
       <div class="scroll">
         <div class="wizard"><div class="meta"><b>Step 3 of 5</b><span>Evidence</span></div><div class="bars"><span class="done"></span><span class="done"></span><span class="now"></span><span></span><span></span></div></div>
-        <h2 class="large-title" style="font-size:var(--fs-22)">Photos of the fault</h2>
-        <p class="lede">1 photo or video, plus the nameplate.</p>
+        <p class="lede">Photos of the fault: 1 photo or video, plus the nameplate.</p>
         <div class="uploads" style="margin-top:16px">
           <button class="upload add" type="button" data-open="perm" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
         </div>
@@ -75,7 +74,12 @@
   </div>
 </div>
 
-<p class="plate-note">Sheet after a person denies a permission (EC-23 to EC-28), shown here over the claim evidence step. Permissions are asked on first use.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Sheet after a person denied a permission.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open Settings</li><li>Not now</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Returns to the task; it keeps working without the permission where it can</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Camera, photos, location, microphone, notifications</li><li>Blocked by device admin: choose from library</li><li>Spec: section 7, S07 · EC-23 to EC-28</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

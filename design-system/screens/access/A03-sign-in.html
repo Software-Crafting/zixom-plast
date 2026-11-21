@@ -16,7 +16,8 @@
 <div class="plate-label"><b>A03 Sign in</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">idle</button>
-  <button type="button" data-state="invalid" aria-pressed="false">invalid number</button>
+  <button type="button" data-state="invalid" aria-pressed="false">too short</button>
+  <button type="button" data-state="badstart" aria-pressed="false">starts below 6</button>
   <button type="button" data-state="sending" aria-pressed="false">sending</button>
   <button type="button" data-state="unknown" aria-pressed="false" data-open="not-found">not registered</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
@@ -48,12 +49,18 @@
             <input class="input" id="mobile-bad" type="tel" inputmode="numeric" value="98250 114" aria-invalid="true" aria-describedby="mobile-err"></div>
           <span class="error-text" id="mobile-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a 10 digit mobile number</span>
         </div>
+        <div class="field has-error" style="margin-top:22px" data-when="badstart">
+          <label for="mobile-start">Mobile number</label>
+          <div class="input-group"><span class="prefix">+91</span>
+            <input class="input" id="mobile-start" type="tel" inputmode="numeric" value="48250 11410" aria-invalid="true" aria-describedby="start-err"></div>
+          <span class="error-text" id="start-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter a valid mobile number</span>
+        </div>
       </div>
 
       <div class="footer-bar">
         <a class="btn btn-primary" href="A04-verify-otp.html" id="send" data-when="ready unknown">Send OTP</a>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Sending...</button>
-        <button class="btn btn-primary" type="button" disabled data-when="invalid offline">Send OTP</button>
+        <button class="btn btn-primary" type="button" disabled data-when="invalid badstart offline">Send OTP</button>
         <p class="alt">New to Zixom Connect? <a href="A05-sign-up.html">Sign up</a></p>
         <p class="alt" style="margin-top:6px"><button class="btn btn-text" type="button" data-open="support">Need help? Contact support</button></p>
       </div>
@@ -88,10 +95,12 @@
   </div>
 </div>
 
-<p class="plate-note">One sign in for both roles; the account decides where it goes. Number checks: 10 digits starting
-6 to 9, pasted +91 and spaces are cleaned. Too many requests opens <a href="../system/S11-too-many-attempts.html">S11</a>,
-a number on two accounts opens <a href="A20-number-on-two-accounts.html">A20</a>, a suspended account opens
-<a href="A16-account-suspended.html">A16</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One sign in for customers and engineers, by mobile number and OTP.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter a 10 digit number starting 6 to 9</li><li>Send OTP, or switch to Sign up</li><li>Contact support (Call or Email)</li></ul></div>
+  <div><h3>What happens next</h3><ul><li><a href="A04-verify-otp.html">A04</a> with the code; the account decides customer or engineer home</li><li>Unknown number: sheet with Sign up</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Too many requests <a href="../system/S11-too-many-attempts.html">S11</a>, number on two accounts <a href="A20-number-on-two-accounts.html">A20</a>, suspended <a href="A16-account-suspended.html">A16</a></li><li>Wrong phone date <a href="../system/S16-wrong-date.html">S16</a></li><li>Spec: section 10, A03 · EC-08, EC-15, EC-16</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

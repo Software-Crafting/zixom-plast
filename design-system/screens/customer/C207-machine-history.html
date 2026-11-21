@@ -63,7 +63,7 @@
           <div style="margin-top:14px" id="older">
             <button class="btn btn-secondary" type="button" data-when="ready" onclick="document.querySelector('[data-state=more]').click()">Load older</button>
             <button class="btn btn-secondary" type="button" aria-busy="true" data-when="more">Load older</button>
-            <div class="inline-retry" data-when="moreerror">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+            <div class="inline-retry" data-when="moreerror">Couldn't load older entries.<button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button></div>
           </div>
         </div>
 
@@ -102,8 +102,12 @@
   </div>
 </div>
 
-<p class="plate-note">Everything that happened to one machine, newest first, grouped by month. Filter by type and date
-range. Older entries load in pages of 20 with an inline retry. An entry removed by Zixom shows a not found sheet.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Everything that happened to one machine, newest first, grouped by month.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by type and date range</li><li>Open an entry</li><li>Load older entries</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>An entry opens <a href="C208-history-entry.html">C208</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Older page fails: inline Try again</li><li>Entry removed: not found sheet (EC-20)</li><li>New machine: No history yet</li><li>Spec: C2, C207</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

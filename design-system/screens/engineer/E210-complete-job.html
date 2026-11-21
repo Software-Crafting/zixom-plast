@@ -47,7 +47,7 @@
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes sync later.</div>
           <div class="banner" data-when="elsewhere"><svg class="ic" aria-hidden="true"><use href="#ph-device-mobile"/></svg>
             <div><b>Already completed on another device</b><button class="link-btn" type="button" data-busy>Refresh</button></div></div>
-          <div class="banner amber" data-when="estimate"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg>
+          <div class="banner amber" data-when="estimate"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
             <div><b>Extra work is waiting for approval</b><a class="hold" href="E208-hold.html">Put on hold</a> until the customer answers.</div></div>
           <div class="banner red" data-when="safety"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg>
             <div><b>Safety checklist not done</b><a class="safety" href="E901-safety-checklist.html">Complete it</a> before you finish.</div></div>
@@ -100,8 +100,12 @@
   </div>
 </div>
 
-<p class="plate-note">Last step after the report. Each check links to its fix; Mark as completed unlocks when all 6 are done.
-Offline, the job shows Completed, waiting to sync and stays in the <a href="E102-sync-queue.html">sync queue</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's last check before closing a visit. Six checks must all pass.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a red check to fix it (report, photos, parts, machine status, signature, time log).</li><li>Mark as completed once all 6 pass.</li><li>Put on hold while extra work waits for approval.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The job moves to Completed, pending sign off, and the report goes to the customer.</li><li>The timer stops; Back to Today opens <a href="E101-today.html">E101</a>.</li><li>Offline: Completed, waiting to sync, kept in the <a href="E102-sync-queue.html">sync queue</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Customer not on site: sign with OTP on <a href="E403-signature.html">E403</a>.</li><li>Safety checklist missing: blocked until <a href="E901-safety-checklist.html">E901</a> is done.</li><li>Already completed on another device: message and Refresh.</li><li>Spec: E2, E210.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

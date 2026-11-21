@@ -22,6 +22,7 @@
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true" data-open="status">ready, decommission blocked</button>
   <button type="button" data-state="idle" aria-pressed="false" data-open="status">idle with reason</button>
+  <button type="button" data-state="noreason" aria-pressed="false" data-open="status">reason missing</button>
   <button type="button" data-state="decommission" aria-pressed="false" data-open="status">no open requests</button>
   <button type="button" data-state="confirm" aria-pressed="false" data-open="confirm">confirm decommission</button>
   <button type="button" data-state="saving" aria-pressed="false" data-open="status">saving</button>
@@ -53,12 +54,19 @@
         <div class="offline-strip" style="margin:0 0 10px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved when you are back online.</div>
         <div class="body">
           <div role="radiogroup" aria-label="Status" id="choices"></div>
+          <a class="btn btn-soft btn-sm" id="open-requests" href="C502-requests.html" data-when="ready offline" style="margin-top:10px"></a>
           <div class="field reason" data-when="idle decommission">
             <label for="reason">Reason<span class="req">*</span></label>
             <input class="input" id="reason">
           </div>
+          <div class="field reason has-error" data-when="noreason">
+            <label for="reason-bad">Reason<span class="req">*</span></label>
+            <input class="input" id="reason-bad" aria-invalid="true" aria-describedby="reason-err">
+            <span class="error-text" id="reason-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a reason for Idle</span>
+          </div>
         </div>
         <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-when="ready idle offline" data-close data-toast="Status updated">Save</button>
+        <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-when="noreason" disabled>Save</button>
         <button class="btn btn-danger" type="button" style="margin-top:16px; width:100%" data-when="decommission" data-open="confirm">Decommission</button>
         <button class="btn btn-primary" type="button" style="margin-top:16px; width:100%" data-when="saving" aria-busy="true">Save</button>
       </div>
@@ -73,8 +81,12 @@
   </div>
 </div>
 
-<p class="plate-note">Bottom sheet from More on <a href="C202-machine-detail.html">C202</a>. Idle and Decommissioned need a
-reason; Decommissioned asks to confirm and is blocked while the machine has open requests.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Bottom sheet from More on Machine detail to set the machine status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick Running, Idle, Under repair or Decommissioned.</li><li>Give a reason for Idle or Decommissioned.</li><li>Open the requests that block decommissioning.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save updates the status chip on <a href="C202-machine-detail.html">C202</a> and the machines list.</li><li>Decommissioned asks to confirm, then service actions turn off.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open requests block Decommissioned.</li><li>Missing reason: inline error, Save off.</li><li>Offline: saved and sent when back online (EC-03).</li><li>Spec: section C14, C1411</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -101,10 +113,12 @@ reason; Decommissioned asks to confirm and is blocked while the machine has open
   const site = data.companies.find((c) => c.id === m.company).sites.find((s) => s.id === m.site);
   $('facts').innerHTML = `<div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>${m.installed ? `<div><dt>Installed on</dt><dd>${R.date(m.installed)}</dd></div>` : ''}
     ${m.runningHours ? `<div><dt>Running hours</dt><dd>${m.runningHours.toLocaleString('en-IN')} h</dd></div>` : ''}`;
+  $('open-requests').textContent = `View ${open.length} open ${open.length === 1 ? 'request' : 'requests'}`;
+  if (!open.length) $('open-requests').remove();
   $('confirm-t').textContent = `Decommission ${name}?`;
 
   const render = (state) => {
-    const selected = { idle: 'idle', decommission: 'decommissioned', confirm: 'decommissioned' }[state] || m.status;
+    const selected = { idle: 'idle', noreason: 'idle', decommission: 'decommissioned', confirm: 'decommissioned' }[state] || m.status;
     const blocked = open.length && !['decommission', 'confirm'].includes(state);
     $('choices').innerHTML = OPTIONS.map(([key, label, iconName, hint]) => {
       const off = key === 'decommissioned' && blocked;

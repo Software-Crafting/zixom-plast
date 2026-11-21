@@ -23,6 +23,7 @@
   <button type="button" data-state="errors" aria-pressed="false">errors on submit</button>
   <button type="button" data-state="notfound" aria-pressed="false">serial not found</button>
   <button type="button" data-state="other" aria-pressed="false">serial on another account</button>
+  <button type="button" data-state="photofail" aria-pressed="false">photo failed</button>
   <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
 </div>
 
@@ -34,7 +35,7 @@
         <a class="icon-btn" href="A06-find-company.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1>Verify your machine</h1><span></span>
       </div>
       <div class="scroll with-footer">
-        <p class="lede">We could not match your number. Add a machine serial to verify.</p>
+        <p class="lede">Add a machine serial so we can verify you.</p>
 
         <div class="error-summary" role="alert" style="margin-top:18px" data-when="errors">
           <b>Fix 2 things to continue</b>
@@ -47,7 +48,7 @@
             <input class="input" id="company" value="Shree Packaging Industries">
           </div>
 
-          <div class="field" data-when="ready notfound other submitting">
+          <div class="field" data-when="ready notfound other submitting photofail">
             <label for="serial">Machine serial number<span class="req">*</span></label>
             <div class="serial-row">
               <input class="input mono" id="serial" autocapitalize="characters" value="ZP-TF-2501">
@@ -59,22 +60,23 @@
             <label for="serial-bad">Machine serial number<span class="req">*</span></label>
             <div class="serial-row">
               <input class="input mono" id="serial-bad" value="TF25" aria-invalid="true" aria-describedby="serial-err">
-              <a class="icon-btn" href="#" aria-label="Scan the nameplate QR code"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></a>
+              <a class="icon-btn" href="../customer/C205-scan-qr.html" aria-label="Scan the nameplate QR code"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></a>
             </div>
             <span class="error-text" id="serial-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 6 to 20 letters or digits</span>
           </div>
 
           <div class="banner amber" style="margin-top:12px" data-when="notfound">
             <svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
-            <div><b>We could not find this serial number</b>Check it against the nameplate. You can still send the request and our team will look it up.</div>
+            <div><b>We could not find this serial number</b>Check the nameplate, or send it anyway.
+              <button class="btn btn-secondary btn-sm" style="margin-top:10px" type="button" data-open="support"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>Contact support</button></div>
           </div>
           <div class="banner red" style="margin-top:12px" data-when="other">
             <svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg>
-            <div><b>This machine is registered to a different account</b>If you bought it second hand, call support on
-              <a href="tel:+919991910097">+91 99919 10097</a>.</div>
+            <div><b>This machine is registered to a different account</b>Bought it second hand? Call support.</div>
           </div>
+          <a class="btn btn-secondary btn-sm" style="margin-top:10px" href="tel:+919991910097" data-when="other"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call +91 99919 10097</a>
 
-          <div class="field" data-when="ready notfound other submitting">
+          <div class="field" data-when="ready notfound other submitting photofail">
             <label for="proof">Invoice number or GSTIN<span class="req">*</span></label>
             <input class="input mono" id="proof" autocapitalize="characters" value="24AAAAA0000A1Z5">
             <span class="hint">Either one</span>
@@ -87,11 +89,15 @@
 
           <div class="field">
             <span class="field-label">Nameplate photo</span>
-            <button class="nameplate" type="button" data-open="photo">
+            <button class="nameplate" type="button" data-open="photo" data-when="ready errors notfound other submitting">
               <span class="thumb sm"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg></span>
               <span class="grow"><b>Add a photo of the nameplate</b><span>Optional. Speeds up the check.</span></span>
               <svg class="ic ic-16" aria-hidden="true" style="color:var(--slate-400)"><use href="#ph-plus"/></svg>
             </button>
+            <div class="files" data-when="photofail">
+              <div class="file" data-status="failed"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-image"/></svg></span>
+                <div class="file-body"><b>nameplate.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed. Retry or remove</span></div><span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+            </div>
           </div>
 
           <div class="field">
@@ -102,12 +108,22 @@
       </div>
 
       <div class="footer-bar">
-        <a class="btn btn-primary" href="A08-verification-pending.html" data-when="ready errors notfound other">Submit for verification</a>
+        <a class="btn btn-primary" href="A08-verification-pending.html" data-when="ready errors notfound other photofail">Submit for verification</a>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit for verification</button>
       </div>
     </div>
     <span class="home-indicator"></span>
 
+    <div class="overlay bottom" id="support" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Contact support">
+        <div class="group">
+          <div class="title">Zixom support, 24x7</div>
+          <button type="button" data-close>Call +91 99919 10097</button>
+          <button type="button" data-close>Email info@zixom.in</button>
+        </div>
+        <button class="cancel" type="button" data-close>Cancel</button>
+      </div>
+    </div>
     <div class="overlay bottom" id="photo" hidden>
       <div class="action-sheet" role="dialog" aria-label="Add nameplate photo">
         <div class="group">
@@ -120,9 +136,12 @@
   </div>
 </div>
 
-<p class="plate-note">For people Zixom could not match. Submit creates a verification request and opens A08. The other
-company's name is never shown. Camera denied opens <a href="../system/S07-permission.html">S07</a> and typing the serial
-still works. A failed photo upload can be retried or left out.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Verification with machine details when Zixom cannot match the person.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter company, serial (or scan the QR), invoice number or GSTIN</li><li>Add an optional nameplate photo and notes</li><li>Retry or remove a failed photo</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Submit creates a request and opens <a href="A08-verification-pending.html">A08</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Serial not found: can still submit; serial on another account: no company name shown</li><li>Camera denied <a href="../system/S07-permission.html">S07</a></li><li>Spec: section 10, A07 · EC-23</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

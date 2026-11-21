@@ -78,8 +78,8 @@
         </div>
         <div class="state" data-when="queued" style="padding-top:80px">
           <span class="disc blue"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
-          <h3>Saved on your phone</h3>
-          <p>We send it when you are back online.</p>
+          <h3>Waiting to sync</h3>
+          <p>Saved on your phone. It sends when you are back online.</p>
           <a class="btn btn-secondary" href="E802-profile.html">Done</a>
         </div>
       </div>
@@ -91,8 +91,12 @@
   </div>
 </div>
 
-<p class="plate-note">Tells Zixom something in the app is wrong, with screenshots and app logs. Offline the report is kept
-on the phone and sent later.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Tells Zixom something in the app is not working.</p></div>
+  <div><h3>What you can do</h3><ul><li>Describe the problem (20 characters or more)</li><li>Add up to 3 screenshots</li><li>Include app logs</li><li>Send</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Online: sent with a reference number</li><li>Offline: kept as Waiting to sync and sent later</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A failed screenshot has Retry and Remove (EC-31)</li><li>Files over 10 MB or not JPG or PNG are refused (EC-29, EC-30)</li><li>Spec: E8, E806</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

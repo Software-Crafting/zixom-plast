@@ -9,7 +9,6 @@
 <style>
 .choice .thumb{grid-row:1 / span 2}
 .choice .tags{grid-column:2; display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; font-size:var(--fs-13)}
-.choice .tags a{color:var(--blue); font-weight:600; text-decoration:none}
 .choice[role="checkbox"] .mark{border-radius:7px}
 .choice[role="checkbox"][aria-checked="true"] .mark{border:0; background:var(--slate-800) center / 14px no-repeat
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
@@ -19,12 +18,15 @@ div.choice > :not(.tags){opacity:.55}
 .rcard{padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff}
 .rcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px}
 .rcard h2{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
-.rcard .top a, .rcard .top button{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none; background:none; border:0; padding:0; cursor:pointer}
+.rcard .top .btn{min-height:36px}
+.footer-bar{background:linear-gradient(180deg, rgba(236,236,238,0), var(--surface-bottom) 14px)}
+.scroll.with-footer{padding-bottom:210px}
+.banner .btn{display:flex; width:fit-content; margin-top:8px; padding:0 16px; text-decoration:none; background:#fff; border:1px solid var(--line-strong); font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 .rcard .kv div{padding:8px 0}
 .footer-bar .total span{display:flex; flex-direction:column}
 .footer-bar .total small{font-size:var(--fs-12); color:var(--text-faint)}
 .terms{margin:0 4px; text-align:center; font-size:var(--fs-12); color:var(--text-muted)}
-.terms a{color:var(--blue); font-weight:600; text-decoration:none}
+.terms a{display:inline-flex; align-items:center; min-height:34px; color:var(--blue); font-weight:600; text-decoration:none}
 .price-change{display:flex; justify-content:space-between; align-items:baseline; padding:10px 0; font-size:var(--fs-14)}
 .price-change s{color:var(--text-muted)}
 .price-change b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
@@ -107,11 +109,11 @@ div.choice > :not(.tags){opacity:.55}
         <div class="stack" data-when="review nobilling offline">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to submit.</div>
           <div class="banner red" data-when="nobilling"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>Billing details missing</b><a href="C811-billing-details.html">Add billing details</a></div></div>
-          <div class="rcard"><div class="top"><h2>Machines</h2><button type="button" data-goto="machines">Edit</button></div><dl class="kv" style="margin:0" id="r-machines"></dl></div>
-          <div class="rcard"><div class="top"><h2>Plan and term</h2><button type="button" data-goto="plan">Edit</button></div><dl class="kv" style="margin:0" id="r-plan"></dl></div>
-          <div class="rcard"><div class="top"><h2>Site and start</h2><button type="button" data-goto="site">Edit</button></div><dl class="kv" style="margin:0" id="r-site"></dl></div>
-          <div class="rcard" data-when="review offline"><div class="top"><h2>Billing</h2><a href="C811-billing-details.html">Edit</a></div><dl class="kv" style="margin:0" id="r-billing"></dl></div>
+            <div><b>Billing details missing</b><a class="btn btn-secondary btn-sm" href="C811-billing-details.html">Add billing details</a></div></div>
+          <div class="rcard"><div class="top"><h2>Machines</h2><button class="btn btn-secondary btn-sm" type="button" data-goto="machines">Edit</button></div><dl class="kv" style="margin:0" id="r-machines"></dl></div>
+          <div class="rcard"><div class="top"><h2>Plan and term</h2><button class="btn btn-secondary btn-sm" type="button" data-goto="plan">Edit</button></div><dl class="kv" style="margin:0" id="r-plan"></dl></div>
+          <div class="rcard"><div class="top"><h2>Site and start</h2><button class="btn btn-secondary btn-sm" type="button" data-goto="site">Edit</button></div><dl class="kv" style="margin:0" id="r-site"></dl></div>
+          <div class="rcard" data-when="review offline"><div class="top"><h2>Billing</h2><a class="btn btn-secondary btn-sm" href="C811-billing-details.html">Edit</a></div><dl class="kv" style="margin:0" id="r-billing"></dl></div>
           <div class="money" id="r-money"></div>
           <p class="terms">By continuing you agree to the <a href="C1109-legal.html">AMC terms</a></p>
         </div>
@@ -151,7 +153,7 @@ div.choice > :not(.tags){opacity:.55}
         </div>
         <div class="stack-sm" style="margin-top:14px">
           <button class="btn btn-primary" type="button" data-close>Continue with new price</button>
-          <button class="btn btn-text" type="button" data-close data-goto="plan">Go back</button>
+          <button class="btn btn-secondary" type="button" data-close data-goto="plan">Go back</button>
         </div>
       </div>
     </div>
@@ -167,8 +169,12 @@ div.choice > :not(.tags){opacity:.55}
   </div>
 </div>
 
-<p class="plate-note">Four steps with the price bar fixed at the bottom. A first purchase ends in Request quotation;
-a renewal or priced plan ends in Pay now (C803). Price changed is EC-44. Offline keeps the wizard and disables submit.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Four step wizard to buy an AMC: machines, plan and term, site and start date, review. The total stays in the bottom bar.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick machines; covered ones show the end date with Extend</li><li>Pick a plan and a 1, 2 or 3 year term</li><li>Pick the site and a start date</li><li>Review, edit any step, then submit</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>First purchase: Request quotation, confirmation, back to <a href="C401-amc.html">C401</a></li><li>Renewal or priced plan: Pay now opens <a href="C803-pay-method.html">C803</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Price changed: sheet with the new total (EC-44)</li><li>Machine removed or not eligible: message with Ask a question</li><li>Billing missing opens C811; offline disables submit</li><li>Spec: C404 detail · F5 Buy or renew AMC</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -193,12 +199,12 @@ a renewal or priced plan ends in Pay now (C803). Price changed is EC-44. Offline
 
   /* step 1: eligible machines can be picked; the rest show why not */
   const blocker = (m) => {
-    if (m.status === 'pending') return `${R.tag('Not eligible')}<a href="C602-ask.html">Ask a question</a>`;
+    if (m.status === 'pending') return `${R.tag('Not eligible')}<a class="btn btn-secondary btn-sm" href="C602-ask.html">Ask a question</a>`;
     if (!m.amc) return '';
     const contract = R.amc(m.amc);
     const graceLeft = GRACE_DAYS + R.daysFromToday(contract.end);
-    if (contract.status === 'expired') return graceLeft > 0 ? `${R.tag(`AMC expired, renew within ${graceLeft} days`, 'red')}<a href="C405-renew-amc.html?amc=${contract.number}">Renew</a>` : '';
-    return `${R.tag(`Under AMC until ${R.date(contract.end)}`, 'blue')}<a href="C405-renew-amc.html?amc=${contract.number}">Extend</a>`;
+    if (contract.status === 'expired') return graceLeft > 0 ? `${R.tag(`AMC expired, renew within ${graceLeft} days`, 'red')}<a class="btn btn-secondary btn-sm" href="C405-renew-amc.html?amc=${contract.number}">Renew</a>` : '';
+    return `${R.tag(`Under AMC until ${R.date(contract.end)}`, 'blue')}<a class="btn btn-secondary btn-sm" href="C405-renew-amc.html?amc=${contract.number}">Extend</a>`;
   };
   $('machines').innerHTML = data.machines.map((m) => {
     const why = blocker(m);

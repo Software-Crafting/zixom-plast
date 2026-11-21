@@ -24,9 +24,8 @@
 .mrow b{display:block; font:400 var(--fs-15, 15px) var(--font-display); color:var(--slate-900)}
 .mrow span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .also{margin:8px 2px 0; font-size:var(--fs-12); color:var(--text-muted)}
-.similar{display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; margin:0 calc(var(--gutter) * -1); padding:2px var(--gutter)}
-.similar::-webkit-scrollbar{display:none}
-.similar a{flex:0 0 140px; display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:var(--r-lg); background:#fff;
+.similar{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px}
+.similar a{min-width:0; display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:var(--r-lg); background:#fff;
   border:1px solid var(--line); color:inherit; text-decoration:none}
 .similar .thumb{width:100%; height:70px; margin-bottom:4px}
 .similar b{font-size:var(--fs-13); font-weight:600; color:var(--slate-900); line-height:1.3}
@@ -139,7 +138,7 @@ discontinued. Request quote opens <a href="C706-request-part.html">C706</a>.</p>
   const families = FITS[p.number].split(' ');
   const mine = data.machines.filter((m) => m.company === 'shree' && m.status !== 'pending' && families.includes(m.model.split('-')[0]));
   const replacement = p.replacedBy && catalogue.find((x) => x.number === p.replacedBy);
-  const similar = catalogue.filter((x) => x.number !== p.number && x.price && FITS[x.number].split(' ').some((f) => families.includes(f))).slice(0, 4);
+  const similar = catalogue.filter((x) => x.number !== p.number && x.price && FITS[x.number].split(' ').some((f) => families.includes(f))).slice(0, 3);
 
   const banner = (tone, icon, title, text) => `<div class="banner ${tone}">${R.icon(icon)}<div><b>${title}</b>${text}</div></div>`;
   $('body').innerHTML = `
@@ -155,7 +154,7 @@ discontinued. Request quote opens <a href="C706-request-part.html">C706</a>.</p>
       ${p.stock === 'discontinued' ? '' : `<div class="price">${p.price ? `<b>${R.money(p.price)}</b><span>+ GST 18%</span>` : '<b style="font-size:var(--fs-22)">Price on request</b>'}</div>`}
       <div class="eta">${R.icon(p.stock === 'discontinued' ? 'info' : 'truck')}${DELIVERY[p.stock]}</div>
     </div>
-    ${replacement ? banner('amber', 'arrows-clockwise', 'Replaced by a newer part', `${R.esc(replacement.name)}, <span class="mono">${replacement.number}</span>. <a href="C703-part-detail.html?part=${replacement.number}">View part</a>`) : ''}
+    ${replacement ? banner('amber', 'arrows-clockwise', 'Replaced by a newer part', `${R.esc(replacement.name)}, <span class="mono">${replacement.number}</span>.`) : ''}
     <div data-when="nofit">${banner('amber', 'warning', 'This part does not match your machines', 'Check the model before you order.')}</div>
     ${desc ? `<div class="sec"><h2>About</h2><p class="desc">${R.esc(desc)}</p></div>` : ''}
     ${specs.length ? `<div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">${specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${R.esc(v)}</dd></div>`).join('')}</dl></div>` : ''}

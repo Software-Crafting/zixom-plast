@@ -51,7 +51,7 @@
           </div>
           <div id="all" data-when="ready more offline"></div>
           <div id="filtered" data-when="filtered"></div>
-          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-soft btn-sm" type="button" data-busy>Retry</button></div>
           <a class="btn btn-secondary" href="C813-statement.html" data-when="ready filtered offline"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Export statement</a>
 
           <div class="state" data-when="noresults">
@@ -95,8 +95,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every attempt, newest first, 20 at a time. Paid opens the receipt (<a href="C809-receipt.html">C809</a>),
-failed opens <a href="C806-payment-failed.html">C806</a>, processing opens <a href="C807-payment-pending.html">C807</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every payment the company made, by month, with amount, method and status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by receipt or invoice number</li><li>Filter by date range and type</li><li>Open a receipt</li><li>Export a statement</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Paid rows open <a href="C809-receipt.html">C809</a>; failed and processing rows open <a href="C806-payment-failed.html">C806</a> and <a href="C807-payment-pending.html">C807</a></li><li>Export opens <a href="C813-statement.html">C813</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>20 per page; load more failed shows Retry</li><li>Empty, no results, error, offline</li><li>Spec: section 8, C808</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

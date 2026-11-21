@@ -110,7 +110,7 @@
   const size = (mb) => (mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb} MB`);
   const row = (d, sub) => `<a class="list-item" href="C902-document-viewer.html?doc=${d.id}"><span class="disc">${R.icon(TYPES[d.type][1])}</span>
     <b>${R.esc(d.title)}</b><span class="sub">${R.esc(sub)} · ${size(d.mb)}</span>
-    <span class="end">${d.saved ? `<span class="saved" aria-label="Downloaded">${R.icon('check-circle')}</span>` : ''}${R.icon('caret-right')}</span></a>`;
+    <span class="end">${d.saved ? `<span class="saved" role="img" aria-label="Downloaded">${R.icon('check-circle')}</span>` : ''}${R.icon('caret-right')}</span></a>`;
   const machineName = (serial) => { const m = R.machine(serial); return m.nickname || m.model; };
   const group = (title, docs, sub) => `<p class="list-title">${R.esc(title)}</p>`
     + (docs.length ? `<div class="list">${docs.map((d) => row(d, sub(d))).join('')}</div>` : '<p class="none">No documents yet</p>');

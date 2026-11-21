@@ -72,8 +72,12 @@
   </div>
 </div>
 
-<p class="plate-note">The sign in number cannot be changed in the app; this sends a request. The old number keeps working
-until Zixom confirms the new one.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A request to Zixom to change the engineer's sign in number. It cannot be changed in the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the new number and an optional reason</li><li>Send the request</li><li>Withdraw a pending request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Zixom checks and updates the number; the request shows Waiting for Zixom</li><li>The old number keeps working until Zixom confirms</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Number not 10 digits shows an error on send</li><li>Offline: sending needs the internet</li><li>Spec: E13, E809</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

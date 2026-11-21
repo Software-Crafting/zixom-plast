@@ -121,8 +121,12 @@
   </div>
 </div>
 
-<p class="plate-note">From Job detail while on the way. Sends the reason and new arrival time to the customer as a push;
-up to 3 updates per job, and over 2 hours late also alerts the service manager.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Tells the customer the engineer will be late, from Job detail while on the way.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason: traffic, previous job, vehicle problem or other</li><li>Pick +15 min to +2 h or type a new arrival time</li><li>See the exact message the customer gets</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send update pushes the reason and new time to the customer (<a href="../customer/C516-track.html">C516</a>)</li><li>Offline, the update waits to sync and sends when back online</li><li>Back to job returns to <a href="E202-job-detail.html">E202</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Up to 3 updates per job; after that, call the customer</li><li>Over 2 hours late also alerts the service manager</li><li>Spec: section E11, E217 · EC-52</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

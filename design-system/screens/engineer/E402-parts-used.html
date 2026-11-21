@@ -142,8 +142,12 @@
   </div>
 </div>
 
-<p class="plate-note">Records the parts fitted on this visit. No prices here; warranty defaults from the job's coverage.
-Duplicates merge, and a quantity above what Stores issued warns.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Picker for the parts fitted on this visit, opened from report section 5. No prices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by name or number, or scan the barcode.</li><li>Set quantity 1 to 99, source, old part returned and its photo.</li><li>Mark a warranty part (defaults from coverage), remove a line.</li><li>Add a part not in the list by name for Stores to match.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Done returns to <a href="E401-report.html">E401</a> section 5 with the lines.</li><li>Stores matches manual parts later.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Part does not fit this model: warning with Add anyway.</li><li>Duplicate line merges; quantity above what Stores issued warns.</li><li>Barcode not recognised: type the number. Offline: cached list.</li><li>Spec: section E4, E402</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -181,7 +185,7 @@ Duplicates merge, and a quantity above what Stores issued warns.</p>
       <span class="actions"><button class="icon-btn" type="button" data-file="remove" aria-label="Remove">${R.icon('x')}</button></span></div>
     <label class="row" style="cursor:pointer"><span>Warranty part<br><small style="font-weight:400; color:var(--text-muted)">From coverage: ${ticket.coverage === 'warranty' ? 'Warranty' : 'Not covered'}</small></span>
       <span class="switch"><input type="checkbox" ${ticket.coverage === 'warranty' ? 'checked' : ''} aria-label="Warranty part"><span></span></span></label>
-    <div class="row"><span></span><button class="btn btn-text" type="button" style="color:var(--red); min-height:32px" data-toast="Part removed">${R.icon('trash', 'ic-16')}Remove</button></div>
+    <div class="row"><span></span><button class="btn btn-secondary btn-sm" type="button" style="color:var(--red)" data-toast="Part removed">${R.icon('trash', 'ic-16')}Remove</button></div>
   </div>`;
 
   $('for-model').textContent = `Parts for ${m.model.split(' ')[0]}`;

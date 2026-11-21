@@ -41,7 +41,7 @@
         <div class="stack" id="groups" style="margin-top:16px" data-when="ready offline"></div>
         <div class="state" data-when="empty" style="padding-top:60px">
           <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
-          <h3>No parts for this job</h3>
+          <h3>No parts requested for this job</h3>
           <p>Parts you request or use show here.</p>
         </div>
 
@@ -69,8 +69,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every part requested, issued and used on this ticket with its status; no prices. Rows open the
-request in <a href="E502-parts-requests.html">E502</a>. Try <code>?ticket=TKT-2026-0128</code> for issued and used parts.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every part requested, issued and used on this ticket with its status. No prices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a request to see its progress</li><li>Request parts for this job</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Request parts opens <a href="E501-request-parts.html">E501</a>; Stores is notified</li><li>A request made offline shows Waiting to sync</li><li>Rows open the request in <a href="E502-parts-requests.html">E502</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty: No parts requested for this job</li><li>Try <code>?ticket=TKT-2026-0128</code> for issued and used parts</li><li>Spec: section E11, E218</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

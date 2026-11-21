@@ -39,7 +39,9 @@
   <button type="button" data-state="clash" aria-pressed="false">clashes with a job</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="decline">decline</button>
   <button type="button" data-state="declineerr" aria-pressed="false" data-open="decline">decline errors</button>
+  <button type="button" data-state="submitting" aria-pressed="false">submitting</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
+  <button type="button" data-state="late" aria-pressed="false">synced too late</button>
   <button type="button" data-state="expired" aria-pressed="false">offer expired</button>
   <button type="button" data-state="withdrawn" aria-pressed="false">withdrawn</button>
   <button type="button" data-state="taken" aria-pressed="false">taken by another</button>
@@ -55,15 +57,16 @@
         <h1>New job</h1><span></span>
       </div>
       <div class="scroll with-footer">
-        <div class="stack" data-when="ready critical clash declineerr offline">
+        <div class="stack" data-when="ready critical clash declineerr offline submitting">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Your answer is sent later.</div>
+          <div class="banner amber" data-when="clash"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg><div><b>Clashes with another job</b>You are asked to confirm when you accept.</div></div>
           <div class="ring" id="ring" role="timer" aria-live="off">
             <div class="dial"><svg viewBox="0 0 148 148" aria-hidden="true"><circle class="track" cx="74" cy="74" r="62"/><circle class="left" id="arc" cx="74" cy="74" r="62"/></svg>
               <div class="read"><span>Respond in</span><b id="clock"></b></div></div>
             <p id="ring-note"></p>
           </div>
           <div class="card job" id="job"></div>
-          <a class="link accent" id="propose" style="justify-content:center">Propose another time <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-right"/></svg></a>
+          <a class="btn btn-soft btn-sm" id="propose" style="align-self:center">Propose another time</a>
         </div>
 
         <div class="state" data-when="expired" style="padding-top:90px">
@@ -76,6 +79,12 @@
           <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg></span>
           <h3>This job was reassigned</h3>
           <p>Zixom withdrew the offer.</p>
+          <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
+        </div>
+        <div class="state" data-when="late" style="padding-top:90px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span>
+          <h3>Your answer arrived too late</h3>
+          <p>The offer had closed when you pressed Accept offline.</p>
           <a class="btn btn-primary" href="E101-today.html">Back to Today</a>
         </div>
         <div class="state" data-when="taken" style="padding-top:90px">
@@ -93,6 +102,12 @@
         <div class="btn-pair" style="grid-template-columns:1fr 1fr">
           <button class="btn btn-secondary" type="button" data-open="decline">Decline</button>
           <button class="btn btn-primary" type="button" id="accept">Accept</button>
+        </div>
+      </div>
+      <div class="footer-bar" data-when="submitting">
+        <div class="btn-pair" style="grid-template-columns:1fr 1fr">
+          <button class="btn btn-secondary" type="button" disabled>Decline</button>
+          <button class="btn btn-primary" type="button" aria-busy="true">Accept</button>
         </div>
       </div>
     </div>
@@ -141,8 +156,12 @@
   </div>
 </div>
 
-<p class="plate-note">Answer an offer within 30 minutes; the ring counts down live. Decline needs a reason and a comment
-for Other. Offline answers are queued and count only if the offer was still open.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A new job offer with a 30 minute countdown. The engineer accepts, declines or proposes another time.</p></div>
+  <div><h3>What you can do</h3><ul><li>Accept: confirms the visit window Zixom chose.</li><li>Decline with a reason; Other needs a comment of 10 characters or more.</li><li>Propose another time (<a href="E204-propose-time.html">E204</a>).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Accepted: the job moves to Upcoming and the customer is told.</li><li>Declined: the job goes back to the service manager.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Timer at zero or offer withdrawn: This job was reassigned (EC-53).</li><li>Clash with another job: warning before accepting. Critical severity: red timer.</li><li>Offline: answer queued, rejected after sync if the offer had closed.</li><li>Spec: section 10 and module E2, E203 · EC-53.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

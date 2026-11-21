@@ -47,6 +47,7 @@
           <label for="mobile-bad">Mobile number<span class="req">*</span></label>
           <div class="input-group"><span class="prefix">+91</span><input class="input" id="mobile-bad" inputmode="numeric" aria-invalid="true" aria-describedby="mobile-err"></div>
           <span class="error-text" id="mobile-err"></span>
+          <a class="btn btn-soft btn-sm" id="dup-open" data-when="duplicate" style="margin-top:8px; align-self:flex-start"></a>
         </div>
         <div class="field">
           <span class="field-label">Shift<span class="req">*</span></span>
@@ -75,7 +76,12 @@
   </div>
 </div>
 
-<p class="plate-note">Add, or edit with <code>?operator=</code>. A mobile number can be listed once per machine.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Form to add or edit a machine operator.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter name and 10 digit mobile.</li><li>Pick a shift: Morning, Evening, Night or General.</li><li>Add optional notes.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="C1405-operators.html">C1405</a>.</li><li>Back with changes asks to discard.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Invalid mobile: inline error.</li><li>Mobile already on this machine: error with a link to that operator (EC-41).</li><li>Edited by someone else: refresh banner (EC-22).</li><li>Spec: section C14, C1406 · EC-22, EC-41</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -105,6 +111,8 @@
   $('modes').insertAdjacentHTML('beforeend', `<button type="button" aria-pressed="${!op}" onclick="location.search='${q}'">add</button>
     <button type="button" aria-pressed="${Boolean(op)}" onclick="location.search='${q}&operator=0'">edit</button>`);
 
+  $('dup-open').href = `C1406-edit-operator.html${q}&operator=1`;
+  $('dup-open').textContent = `Open ${OPERATORS[1].name}`;
   $('nav-title').textContent = op ? 'Edit operator' : 'Add operator';
   $('name').value = form.name;
   $('mobile').value = form.mobile;

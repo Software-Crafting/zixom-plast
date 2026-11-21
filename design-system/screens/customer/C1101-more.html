@@ -44,7 +44,7 @@
         </div>
         <div class="me" data-when="error">
           <span class="grow" style="font-size:var(--fs-13)">Couldn't load your profile.</span>
-          <button class="btn btn-text" type="button" data-busy>Retry</button>
+          <button class="btn btn-soft btn-sm" type="button" data-busy>Retry</button>
         </div>
       </header>
 
@@ -102,8 +102,12 @@
   </div>
 </div>
 
-<p class="plate-note">Profile card, then every More item. Team members shows only to the primary contact and Companies only
-when the person belongs to more than one company.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The More tab: the person's profile card, then every other part of the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the profile from the card.</li><li>Open parts, orders, documents, downloads and notifications.</li><li>Manage company, sites, team and companies.</li><li>Open security, settings, help, legal, delete account or log out.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Each row opens its screen, for example <a href="C1102-profile.html">C1102</a> or <a href="C1105-team.html">C1105</a>.</li><li>Log out opens <a href="C1111-log-out.html">C1111</a> to confirm.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Team members shows only to the primary contact (member state).</li><li>Companies shows only for people in more than one company.</li><li>Profile failed: the card shows Retry, the menu still works.</li><li>Spec: section C11, C1101</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

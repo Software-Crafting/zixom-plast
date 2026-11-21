@@ -79,8 +79,12 @@
   </div>
 </div>
 
-<p class="plate-note">Pick a dispute above for under review, resolved with a credit note and refund, or rejected with
-Zixom's reply.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Status of one dispute: amount, reason, Zixom's reply and the timeline.</p></div>
+  <div><h3>What you can do</h3><ul><li>Under review: add a message and files.</li><li>Resolved: open the credit note and follow the refund.</li><li>Rejected: read Zixom's reason and contact support.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Open credit note goes to <a href="C1603-credit-notes.html">C1603</a>; the refund returns to the account paid from.</li><li>Contact support opens <a href="C605-contact.html">C605</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unknown dispute: <a href="../system/S05-not-found.html">S05</a> (EC-20).</li><li>Status model: Submitted, Under review, Resolved or Rejected.</li><li>Spec: section C16, C1602 · EC-20</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -122,8 +126,7 @@ Zixom's reply.</p>
   if (d.creditNote) {
     const credit = R.totals(d.creditNote.lines).total;
     const paidWith = data.payments.find((p) => p.invoice === inv.number && p.status === 'paid');
-    outcome.push(`<div class="banner green">${R.icon('receipt')}<div><b>Credit note <span class="mono">${inv.creditNote}</span>, ${R.money(credit)}</b>
-      <a href="C1603-credit-notes.html">Open credit note</a></div></div>`,
+    outcome.push(`<div class="banner green">${R.icon('receipt')}<div><b>Credit note <span class="mono">${inv.creditNote}</span>, ${R.money(credit)}</b>Issued ${R.date(d.closed)}.</div></div>`,
     `<div class="banner">${R.icon('arrows-clockwise')}<div><b>${d.refund.status}</b>${R.money(credit)} to ${R.esc(paidWith.method)}, by ${R.dayDate(d.refund.expected)}.</div></div>`);
   }
   $('outcome').innerHTML = outcome.join('');

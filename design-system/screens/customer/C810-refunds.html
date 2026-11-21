@@ -11,7 +11,7 @@
 .refund .top{display:flex; justify-content:space-between; align-items:center}
 .refund .top b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
 .refund p{margin:4px 0 14px; font-size:var(--fs-13); color:var(--text-muted)}
-.refund p a{color:var(--blue); text-decoration:none}
+.refund p a{display:inline-block; padding:9px 0; margin:-9px 0; color:var(--blue); text-decoration:none}
 .refund .timeline{padding-top:14px; border-top:1px dashed var(--line-strong)}
 </style>
 </head>
@@ -63,8 +63,12 @@
   </div>
 </div>
 
-<p class="plate-note">Refund status is Initiated, then Refunded, with the expected date. Refunds for failed payments
-follow the 5 to 7 working day rule.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Refunds Zixom has started, with amount, reason, linked order and expected date.</p></div>
+  <div><h3>What you can do</h3><ul><li>Follow each refund's status</li><li>Open the linked order</li><li>Contact support</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Status moves from Refund initiated to Refunded, to the account paid from</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed payment refunds follow the 5 to 7 working day rule</li><li>Empty: No refunds. Error, offline</li><li>Spec: section 8, C810 · status model Payment</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

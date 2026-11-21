@@ -19,6 +19,7 @@
 .amc-main .meter{margin-top:8px}
 .amc-actions{display:grid; grid-template-columns:1fr; padding:0 16px 14px}
 .plan-row .end{color:var(--slate-900); font-weight:600}
+.scroll.with-tabbar{padding-bottom:calc(var(--tabbar-space) + 64px)}
 </style>
 </head>
 <body class="plate">
@@ -95,8 +96,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every AMC contract of the company. Expiring soon is highlighted with the days left; an expired
-contract in its 7 day grace period keeps Renew. Machines opens the machine list (C201).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The AMC segment of the Machines tab: every AMC contract of the company and the plans on offer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch Active, Expiring, Expired or Plans</li><li>Open a contract</li><li>Renew or pay from a contract card</li><li>Buy AMC from the floating button</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A card opens the contract (C402)</li><li>Renew opens C405; Pay now opens payment (C803)</li><li>Buy AMC opens the wizard (C404); Plans open C403</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expiring soon is outlined with the days left</li><li>Expired keeps Renew for the 7 day grace period</li><li>No AMC: View plans; error has Try again</li><li>Spec: C4 AMC, C401 · AMC status model · F5</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -125,9 +130,9 @@ contract in its 7 day grace period keeps Renew. Machines opens the machine list 
   };
   const action = (c) => {
     const graceLeft = GRACE_DAYS + R.daysFromToday(c.end);
-    if (c.status === 'expiring') return `<a class="btn btn-primary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew</a>`;
-    if (c.status === 'expired' && graceLeft > 0) return `<a class="btn btn-primary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew within ${graceLeft} days</a>`;
-    if (['pending', 'suspended'].includes(c.status)) return `<a class="btn btn-primary btn-sm" href="C803-pay-method.html?invoice=${c.status === 'pending' ? 'INV-2026-0988' : 'INV-2026-0989'}">Pay now</a>`;
+    if (c.status === 'expiring') return `<a class="btn btn-secondary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew</a>`;
+    if (c.status === 'expired' && graceLeft > 0) return `<a class="btn btn-secondary btn-sm" href="C405-renew-amc.html?amc=${c.number}">Renew within ${graceLeft} days</a>`;
+    if (['pending', 'suspended'].includes(c.status)) return `<a class="btn btn-secondary btn-sm" href="C803-pay-method.html?invoice=${c.status === 'pending' ? 'INV-2026-0988' : 'INV-2026-0989'}">Pay now</a>`;
     return '';
   };
   const card = (c) => {

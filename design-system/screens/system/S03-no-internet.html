@@ -31,7 +31,8 @@
       <div class="card-fill" data-when="saved">
         <dl class="kv" style="margin:0">
           <div><dt>Last updated</dt><dd>Today, 8:12 AM</dd></div>
-          <div><dt>Saved on this phone</dt><dd>6 machines, 13 requests</dd></div>
+          <div><dt>Machines</dt><dd id="saved-machines"></dd></div>
+          <div><dt>Requests</dt><dd id="saved-tickets"></dd></div>
         </dl>
       </div>
     </div>
@@ -45,11 +46,20 @@
   </div>
 </div>
 
-<p class="plate-note">Full screen only when the app cannot open at all (EC-01). Screens opened earlier show the offline banner instead (EC-02).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The app cannot open at all without a connection.</p></div>
+  <div><h3>What you can do</h3><ul><li>Try again</li><li>Open saved data when there is some</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Back online: the app continues</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>First launch: nothing saved</li><li>Screens opened earlier show the offline strip instead (EC-02)</li><li>Spec: section 7, S03 · EC-01</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
 <script src="../../assets/js/render.js"></script>
 <script src="../../assets/js/ui.js"></script>
+<script>
+document.getElementById('saved-machines').textContent = ZX.data.machines.length;
+document.getElementById('saved-tickets').textContent = ZX.data.tickets.length;
+</script>
 </body>
 </html>

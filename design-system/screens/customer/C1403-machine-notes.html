@@ -82,8 +82,12 @@
   </div>
 </div>
 
-<p class="plate-note">Private notes on one machine via <code>?serial=</code>. Engineers see a note only when it is shared;
-tap a note for Edit, Share and Delete.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Private notes the company keeps on one machine. Engineers see a note only when it is shared.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read notes with title, date, author and attachments.</li><li>Tap a note to Edit, Share with Zixom or Delete.</li><li>Add a note.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Add and Edit open <a href="C1404-edit-note.html">C1404</a>.</li><li>Share makes the note visible to Zixom engineers on this machine.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Delete asks to confirm.</li><li>No notes: empty state.</li><li>Long text is cut to two lines (EC-63).</li><li>Spec: section C14, C1403 · EC-63</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -95,7 +99,7 @@ tap a note for Edit, Share and Delete.</p>
   const $ = (id) => document.getElementById(id);
   /* sample notes, newest first; author is a user id */
   const NOTES = [
-    { title: 'Mould change routine', text: 'Heat the new mould for 20 minutes before the first sheet. Check the plug assist height after every change.', when: '2026-11-20T16:10', by: 'pooja', shared: true },
+    { title: 'Mould change routine', text: 'Heat the new mould for 20 minutes before the first sheet. Check the plug assist height after every change.', when: '2026-11-20T16:10', by: 'pooja', shared: true, files: 1 },
     { title: '', text: 'Zone 4 heater runs hot after about 6 hours. Operators lower it by 5 percent on the night shift.', when: '2026-11-12T09:35', by: 'rakesh', shared: false },
     { title: 'Sheet supplier', text: 'Switched to Gujarat Polyfilms 0.6 mm PET from October. Keep the old settings card in the panel.', when: '2026-10-05T11:20', by: 'rakesh', shared: false },
   ];
@@ -110,7 +114,7 @@ tap a note for Edit, Share and Delete.</p>
   const author = (id) => data.users.find((u) => u.id === id).name;
   $('notes').innerHTML = NOTES.map((n, i) => `<a class="note row-link" href="#" data-open="actions" data-i="${i}">
     <span class="top"><b>${R.esc(n.title || 'Untitled note')}</b>${n.shared ? R.tag('Shared with Zixom', 'blue') : ''}</span>
-    <p>${R.esc(n.text)}</p><span class="meta">${R.date(n.when)} · ${R.esc(author(n.by))}</span></a>`).join('');
+    <p>${R.esc(n.text)}</p><span class="meta">${R.date(n.when)} · ${R.esc(author(n.by))}${n.files ? ` · ${n.files} attachment` : ''}</span></a>`).join('');
 
   const pick = (i) => {
     const n = NOTES[i];

@@ -34,7 +34,7 @@
       </div>
       <div class="scroll with-footer">
         <div class="stack">
-          <div class="banner amber"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><div><b>Location is off</b><button class="link-btn" type="button" data-open="location">Turn it on</button></div></div>
+          <div class="banner amber" style="align-items:center"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><div class="grow"><b>Location is off</b></div><button class="btn btn-secondary btn-sm" type="button" data-open="location">Turn on</button></div>
           <div class="card" id="job"></div>
         </div>
       </div>
@@ -67,8 +67,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown only at Start travel and Check in when location services are off for the whole phone. Travel and
-check in still work; check in then asks for a reason.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Sheet shown when location services are off for the whole phone, at Start travel and Check in only.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the phone's settings to turn Location on.</li><li>Continue without location.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Without location the customer gets no live ETA (<a href="E205-start-travel.html">E205</a>).</li><li>Check in still works but asks for a reason (<a href="E206-check-in.html">E206</a>).</li><li>The job keeps a Location is off banner until it is on.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Permission denied for the app only: <a href="../system/S07-permission.html">S07</a>.</li><li>Spec: section E10, E1013 · EC-26.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

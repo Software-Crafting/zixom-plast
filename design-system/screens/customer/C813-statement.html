@@ -44,8 +44,7 @@
             <button class="chip outline" type="button" aria-pressed="false">This month</button>
             <button class="chip outline" type="button" aria-pressed="true" data-when="ready loading error offline">Last 3 months</button>
             <button class="chip outline" type="button" aria-pressed="false" data-when="large empty">Last 3 months</button>
-            <button class="chip outline" type="button" aria-pressed="false">This financial year</button>
-            <button class="chip outline" type="button" aria-pressed="false">Custom</button>
+            <button class="chip outline" type="button" aria-pressed="false">This FY</button>
           </div>
           <div class="range">
             <div><span class="field-label">From</span><button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="value" id="from"></span></button></div>
@@ -90,8 +89,12 @@
   </div>
 </div>
 
-<p class="plate-note">Invoices and payments for a date range, as a PDF to download or share. Failed and pending attempts
-are left out; they are in <a href="C808-payment-history.html">C808</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Invoices and payments for a date range, with invoiced, received and outstanding totals.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a preset or custom range</li><li>Download the PDF or share it</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The PDF is prepared and saved with a toast</li><li>Failed and pending attempts are left out; see <a href="C808-payment-history.html">C808</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Range over 1 year: warning. Empty range: download disabled</li><li>Error, offline (download disabled)</li><li>Spec: section 8, C813</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

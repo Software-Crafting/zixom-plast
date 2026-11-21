@@ -51,9 +51,12 @@
   </div>
 </div>
 
-<p class="plate-note">No back while the bank confirms. Opened from <a href="C803-pay-method.html">C803</a> with a demo result it
-moves on by itself to <a href="C805-payment-success.html">C805</a>, <a href="C806-payment-failed.html">C806</a> or
-<a href="C807-payment-pending.html">C807</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Waiting screen while the bank confirms a payment. No back button, no actions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Wait; after 30 seconds, Check status</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Moves on by itself to <a href="C805-payment-success.html">C805</a>, <a href="C806-payment-failed.html">C806</a> or <a href="C807-payment-pending.html">C807</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>App closed during payment: on return it checks the status (EC-43)</li><li>Offline: checks resume when back</li><li>Spec: section 8, C804 · EC-43</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

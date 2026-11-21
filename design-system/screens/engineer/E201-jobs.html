@@ -18,6 +18,9 @@
 .job .who .mono{color:var(--slate-700)}
 .job .tags{display:flex; flex-wrap:wrap; gap:6px}
 .job .foot{justify-content:space-between}
+.job p{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+#tabs{overflow:visible; gap:4px}
+#tabs .chip{flex:1 1 auto; justify-content:center; gap:4px; padding:0 8px; font-size:var(--fs-13)}
 </style>
 </head>
 <body class="plate">
@@ -68,7 +71,7 @@
           </div>
 
           <div id="panels" data-when="ready overdue morefail empty offline"></div>
-          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
 
           <div data-when="filtered">
             <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
@@ -104,10 +107,10 @@
 
     <div class="overlay bottom" id="sort" hidden>
       <div class="action-sheet" role="dialog" aria-label="Sort jobs">
-        <div class="group" role="radiogroup" aria-label="Sort by"><div class="title">Sort jobs</div>
-          <button type="button" role="radio" aria-checked="true" data-close>Time window</button>
-          <button type="button" role="radio" aria-checked="false" data-close>Priority</button>
-          <button type="button" role="radio" aria-checked="false" data-close>Newest</button></div>
+        <div class="group" role="menu" aria-label="Sort by"><div class="title">Sort jobs</div>
+          <button type="button" role="menuitemradio" aria-checked="true" data-close>Time window</button>
+          <button type="button" role="menuitemradio" aria-checked="false" data-close>Priority</button>
+          <button type="button" role="menuitemradio" aria-checked="false" data-close>Newest</button></div>
         <button class="cancel" type="button" data-close>Cancel</button>
       </div>
     </div>
@@ -136,8 +139,12 @@
   </div>
 </div>
 
-<p class="plate-note">Only jobs assigned to Sandeep. New jobs show a response timer, red when it is nearly due; empty tabs
-show their own wording. Offline, saved jobs stay searchable and unsent changes carry Waiting to sync.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every job assigned to the engineer, in tabs New, Upcoming, In progress, Completed and All.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch tabs; New shows how many need a response.</li><li>Search by ticket, customer or serial, also offline in saved jobs.</li><li>Filter by date, priority, coverage, service type and status; sort by time window, priority or newest.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A new job opens <a href="E203-accept-job.html">E203</a> to accept or decline.</li><li>Any other job opens <a href="E202-job-detail.html">E202</a>.</li><li>The cloud button opens the sync queue (<a href="E102-sync-queue.html">E102</a>).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Timer turns red when nearly due; each tab has its own empty wording.</li><li>A job reassigned away leaves after it is acknowledged (<a href="E215-job-cancelled.html">E215</a>).</li><li>Offline: saved jobs only; unsent changes show Waiting to sync.</li><li>Spec: E2, E201 · EC-55</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -169,7 +176,7 @@ show their own wording. Offline, saved jobs stay searchable and unsent changes c
 
   $('initials').textContent = me.initials;
   $('name').textContent = me.name;
-  $('today').textContent = new Date(`${data.today}T00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+  $('today').textContent = new Date(`${data.today}T00:00`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).replace(',', '');
   const unsynced = day.sync.length;
   $('sync-count').textContent = unsynced;
   $('sync-btn').setAttribute('aria-label', `${unsynced} items waiting to sync`);
@@ -217,7 +224,7 @@ show their own wording. Offline, saved jobs stay searchable and unsent changes c
   const byWindow = (a, b) => windowSortKey(a).localeCompare(windowSortKey(b));
   const windowSortKey = (t) => t.window?.date || (day.today.some((j) => j.ticket === t.number) ? data.today : t.created);
   $('tabs').innerHTML = TABS.map((tab, i) => `<button class="chip" type="button" role="tab" aria-selected="${i === 0}"
-    aria-controls="panel-${tab[0]}">${tab[1]} <span class="n">${inTab(tab).length}</span></button>`).join('');
+    aria-controls="panel-${tab[0]}">${tab[1]}${tab[0] === 'new' ? ` <span class="n">${inTab(tab).length}</span>` : ''}</button>`).join('');
   const emptyState = ([key, , , text]) => `<div class="state" data-when="empty"><span class="disc">${R.icon(EMPTY_ICON[key])}</span><h3>${text}</h3></div>`;
   $('panels').innerHTML = TABS.map((tab, i) => {
     const jobs = inTab(tab).sort(byWindow);

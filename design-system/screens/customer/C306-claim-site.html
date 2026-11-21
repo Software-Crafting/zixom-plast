@@ -17,6 +17,7 @@
 .two{display:grid; grid-template-columns:1fr; gap:12px}
 .add-time{margin-top:10px}
 .chosen{margin-top:12px}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -51,7 +52,7 @@
           <button class="select" type="button" data-open="sites"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="value" id="site-name"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
           <p class="addr" id="site-addr"></p>
           <div class="banner red" style="margin-top:10px" data-when="noservice"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>We do not serve this pincode yet</b>Call <span id="noservice-phone"></span> to arrange a visit.</div></div>
+            <div><b>We do not serve this pincode yet</b>Call Zixom support to arrange a visit.<a class="btn btn-secondary btn-sm" id="noservice-call" href="#"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-phone"/></svg><span id="noservice-phone"></span></a></div></div>
         </div>
 
         <div class="block">
@@ -114,8 +115,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 4. Site, contact and up to 3 preferred visit times for a covered visit. A pincode Zixom does
-not serve stops the form with a number to call (EC-45).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 4 of the warranty claim wizard: where the visit happens and who to contact.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a saved site or add a new one.</li><li>Set the contact person and a 10 digit mobile number.</li><li>Add up to 3 preferred visit times.</li><li>Write access instructions (up to 300 characters).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens the review at <a href="C307-claim-review.html">C307</a>.</li><li>Zixom confirms one of the preferred times.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not served: the form stops with a Call support button (EC-45).</li><li>Missing phone or time: summary and inline errors.</li><li>Spec: section C3, C306 · EC-45</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -140,6 +145,7 @@ not serve stops the form with a number to call (EC-45).</p>
   document.querySelectorAll('a[data-keep]').forEach((a) => { a.href = `${a.getAttribute('href')}?machine=${serial}`; });
   $('saved').textContent = `Draft saved ${new Date(data.now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
   $('noservice-phone').textContent = data.support.phone;
+  $('noservice-call').href = `tel:${data.support.phone.replace(/\s/g, '')}`;
 
   const fillSite = () => {
     const contact = site.contact || { name: me.name, phone: me.mobile };

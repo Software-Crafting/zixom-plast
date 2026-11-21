@@ -25,6 +25,7 @@
   <button type="button" data-state="large" aria-pressed="false">large photo</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
   <button type="button" data-state="error" aria-pressed="false">cannot open</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="text-sheet">add text</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="discard">discard</button>
 </div>
 
@@ -90,8 +91,12 @@
   </div>
 </div>
 
-<p class="plate-note">Drag on the photo to draw an arrow or a circle; Text opens a field above the keyboard. Annotations are
-saved as a copy on the phone and the original is kept.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Marks up a job photo with arrows, circles and text.</p></div>
+  <div><h3>What you can do</h3><ul><li>Drag on the photo to draw an arrow or a circle.</li><li>Add a short text label (40 characters) above the keyboard.</li><li>Undo, clear, then Save or Discard.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save keeps an annotated copy on the phone and queues it for upload; the original is kept.</li><li>Discard asks first, then returns to the <a href="E1001-camera.html">camera</a>.</li><li>Offline the copy waits in the queue, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Large photo: drawn on a smaller preview, no crash.</li><li>Photo cannot open: it stays saved on the phone.</li><li>Spec: section E10, E1002.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

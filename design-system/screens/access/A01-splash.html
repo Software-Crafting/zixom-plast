@@ -7,6 +7,7 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
+.screen.plain{background:#fff} /* the logo PNG has a white background */
 .splash{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; cursor:pointer}
 .splash img{width:150px; height:auto}
 .loader{width:120px; height:4px; border-radius:var(--r-pill); background:var(--slate-100); overflow:hidden}
@@ -35,11 +36,12 @@
   </div>
 </div>
 
-<p class="plate-note">Logo centred on white, nothing else. While the line runs the app checks the version, maintenance
-and the saved session. It then opens Welcome, or Home when a session is found. A version below the minimum opens
-<a href="../system/S01-force-update.html">S01</a>, maintenance opens <a href="../system/S02-maintenance.html">S02</a>,
-no network on first launch opens <a href="../system/S03-no-internet.html">S03</a>. Opens the next screen after 3
-seconds; tap to skip.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Launch screen for every role: the logo on white while the app checks version, maintenance and session.</p></div>
+  <div><h3>What you can do</h3><ul><li>Wait about 3 seconds, or tap to skip</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>No session: Welcome (<a href="A02-welcome.html">A02</a>)</li><li>Session found: Home or engineer Today</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Old version <a href="../system/S01-force-update.html">S01</a>, maintenance <a href="../system/S02-maintenance.html">S02</a>, no network on first launch <a href="../system/S03-no-internet.html">S03</a></li><li>Spec: section 7, A01 · EC-01, EC-09, EC-10</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

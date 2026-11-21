@@ -46,7 +46,12 @@
   </div>
 </div>
 
-<p class="plate-note">Server and phone time differ by more than 5 minutes (EC-34), so OTP can fail. Try again re-checks the clock.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Phone and server time differ by more than 5 minutes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open settings</li><li>Try again</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Try again re-checks the clock</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Sign in codes can fail until fixed</li><li>Spec: section 7, S16 · EC-34</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -15,7 +15,7 @@ label.list-item{cursor:default}
 .sync p{margin:2px 0 0; font-size:var(--fs-12); color:var(--text-muted)}
 .sync .meter{margin-top:12px}
 .sync .fail{display:flex; align-items:center; gap:6px; margin-top:12px; font-size:var(--fs-13); color:var(--red)}
-.sync .fail a{margin-left:auto}
+.sync .fail span{flex:1}
 .version{margin:22px 0 0; text-align:center; font-size:var(--fs-12); color:var(--text-faint)}
 </style>
 </head>
@@ -41,8 +41,8 @@ label.list-item{cursor:default}
       <div class="scroll">
         <div class="stack" style="padding-bottom:40px">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Sync starts when you are back online.</div>
-          <div class="banner amber" data-when="notifoff"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
-            <div><b>Notifications are off</b>You will miss new jobs. <a href="#">Open Settings</a></div></div>
+          <div class="banner amber" data-when="notifoff" style="align-items:center"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
+            <div class="grow"><b>Notifications are off</b>Urgent ones come by email.</div><button class="btn btn-secondary btn-sm" type="button" data-toast="Opens phone settings">Open Settings</button></div>
 
           <div class="card sync">
             <div class="row-flex">
@@ -51,7 +51,7 @@ label.list-item{cursor:default}
               <button class="btn btn-primary btn-sm" type="button" data-when="offline" disabled>Sync now</button>
             </div>
             <div data-when="syncing"><div class="meter"><i style="width:66%"></i></div><p style="margin-top:8px" id="sync-progress"></p></div>
-            <div class="fail" data-when="failed"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg><span id="fail-text"></span><a class="link" href="E102-sync-queue.html">View</a></div>
+            <div class="fail" data-when="failed"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg><span id="fail-text"></span><a class="btn btn-secondary btn-sm" href="E102-sync-queue.html">View</a></div>
           </div>
 
           <div>
@@ -104,8 +104,12 @@ label.list-item{cursor:default}
   </div>
 </div>
 
-<p class="plate-note">App settings for the engineer. App lock is always on. Sync now sends the queue and shows progress and
-failures; notifications off in the phone shows the EC-27 banner.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>App settings for the engineer: sync, alerts, app lock and data use.</p></div>
+  <div><h3>What you can do</h3><ul><li>Sync now and see progress and failures</li><li>Open notification alerts</li><li>Download over Wi-Fi only, photo quality, saved data</li><li>Read what's new</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Failures open the sync queue (<a href="E102-sync-queue.html">E102</a>)</li><li>Saved data opens <a href="E1006-offline-data.html">E1006</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Notifications off shows the banner with Open Settings (EC-27)</li><li>Wi-Fi only asks before using mobile data (EC-32)</li><li>App lock is always on for engineers</li><li>Spec: E8, E804</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -120,7 +124,7 @@ failures; notifications off in the phone shows the EC-27 banner.</p>
   const screen = document.querySelector('.screen');
   const paint = () => {
     const state = screen.dataset.state;
-    $('sync-title').textContent = state === 'syncing' ? 'Sending' : `${waiting} items waiting`;
+    $('sync-title').textContent = state === 'syncing' ? 'Sending' : `${waiting} items waiting to sync`;
     $('sync-sub').textContent = state === 'syncing' ? `2 of ${waiting} sent` : `Last synced ${R.ago(sync[0].saved)}`;
   };
   $('sync-progress').textContent = 'Keep the app open';

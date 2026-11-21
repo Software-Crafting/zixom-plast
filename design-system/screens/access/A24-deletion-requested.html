@@ -49,11 +49,7 @@
             <h3>Clear these first</h3>
             <p>Pay dues and close open requests, then ask again.</p>
           </div>
-          <div class="stack-sm">
-            <a class="alert-card red" href="../customer/C802-invoice-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Invoice overdue</b><span class="mono">INV-2026-0981, ₹15,340.00</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
-            <a class="alert-card amber" href="../customer/C802-invoice-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-receipt"/></svg></span><b>Invoice due</b><span class="mono">INV-2026-0980, ₹4,720.00</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
-            <a class="alert-card blue" href="../customer/C508-request-detail.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>10 open service requests</b><span>Line 2 former, Tray line and others</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
-          </div>
+          <div class="stack-sm" id="blockers"></div>
         </div>
 
         <div data-when="cancelled">
@@ -88,11 +84,34 @@
   </div>
 </div>
 
-<p class="plate-note">After Delete account (C1110); Zixom processes the request and keeps business records. Blocked while dues or open tickets exist (EC-67).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Status of an account deletion request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Cancel the request (confirmed)</li><li>Contact support</li><li>Go to payments when blocked</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Zixom processes it within 7 working days, then <a href="A25-account-deleted.html">A25</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Blocked while invoices are unpaid or requests open (live from data)</li><li>Business records are kept</li><li>Spec: section 7, A24 · EC-67</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
 <script src="../../assets/js/render.js"></script>
 <script src="../../assets/js/ui.js"></script>
+<script>
+/* Blockers from data.js: unpaid invoices and open tickets. Cards carry no chevron. */
+(() => {
+  const { data, render } = ZX;
+  const balance = (i) => i.amount - (i.paid || 0);
+  const sum = (list) => render.money(list.reduce((total, i) => total + balance(i), 0));
+  const overdue = data.invoices.filter((i) => i.status === 'overdue');
+  const due = data.invoices.filter((i) => i.status === 'due');
+  const open = data.tickets.filter(render.isOpen);
+  const names = [...new Set(open.map((t) => data.machines.find((m) => m.serial === t.machine)).map((m) => m.nickname || m.model))];
+  const card = (tone, icon, title, sub, href) => `<a class="alert-card ${tone}" href="${href}"><span class="disc">${render.icon(icon)}</span><b>${title}</b><span>${render.esc(sub)}</span></a>`;
+  document.getElementById('blockers').innerHTML = [
+    card('red', 'receipt', `${overdue.length} invoices overdue`, `${sum(overdue)} to pay`, '../customer/C801-payments.html'),
+    card('amber', 'receipt', `${due.length} invoices due`, `${sum(due)} to pay`, '../customer/C801-payments.html'),
+    card('blue', 'wrench', `${open.length} open service requests`, `${names.slice(0, 2).join(', ')} and others`, '../customer/C502-requests.html'),
+  ].join('');
+})();
+</script>
 </body>
 </html>

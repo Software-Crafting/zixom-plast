@@ -10,6 +10,8 @@
 .job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
 .job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* single line choices: centre the label against the icon */
+.choice b{grid-row:1 / span 2}
 .sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
@@ -105,8 +107,12 @@
   </div>
 </div>
 
-<p class="plate-note">For an accepted job the engineer can no longer do. The job stays assigned until Zixom moves it;
-once work has started only the service manager can reassign.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>For an accepted job the engineer can no longer do. Asks Zixom to move it to someone else.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason and write a note (10 to 300 characters).</li><li>Send the request.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The job stays with the engineer until Zixom reassigns it; then <a href="E215-job-cancelled.html">E215</a> shows.</li><li>Offline: the request waits in the <a href="E102-sync-queue.html">sync queue</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Work already started: not allowed, ask the service manager (<a href="E211-escalate.html">E211</a>).</li><li>Spec: E2, E212 · flow: decline after accepting.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

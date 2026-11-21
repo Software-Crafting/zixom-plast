@@ -70,8 +70,12 @@
   </div>
 </div>
 
-<p class="plate-note">Required before submit. Running with issue and Not running need a reason; Not running flags the job
-for the manager.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Sheet over report section 8: how the machine is left after the visit. Required before submit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose Running, Running with issue or Not running.</li><li>Give a reason for the last two, then save.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="E401-report.html">E401</a> and clears the red dot.</li><li>Not running flags the job for the manager.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Missing reason: "Say what is wrong", Save stays off.</li><li>Offline: saved on the phone, sent with the report.</li><li>Spec: section E12, E412 · rule: status required to submit</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -17,7 +17,9 @@
 .rep-head .kv div + div{border-top:0}
 .block h3{margin:0 2px 6px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
 .block p{margin:0 2px; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
-.part{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
+.textcard{display:grid; gap:14px; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.textcard .block h3, .textcard .block p{margin-left:0; margin-right:0}
+.part{background:#fff; display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
 .part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .part span{font-size:var(--fs-12); color:var(--text-muted)}
 .part .tag{grid-column:2; grid-row:1 / span 2; align-self:center}
@@ -65,8 +67,10 @@
           </div>
           <div class="banner amber" data-when="requested"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>
             <div><b>Amendment requested</b>Zixom will review it. The report stays as sent until then.</div></div>
+          <div class="banner grey" data-when="closed"><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg>
+            <div><b>Amendments closed</b><span id="closed-note"></span></div></div>
           <div class="banner grey" data-when="waiting"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>
-            <div><b>Sends when you are online</b>Kept on this phone until then. <a href="E102-sync-queue.html">Sync queue</a></div></div>
+            <div><b>Sends when you are online</b>Kept on this phone until then.<a class="btn btn-secondary btn-sm" style="margin-top:10px" href="E102-sync-queue.html">Open sync queue</a></div></div>
 
           <div class="rep-head">
             <div class="ids"><span class="mono" id="rep-number"></span><span class="mono" id="rep-ticket"></span></div>
@@ -75,11 +79,13 @@
             <dl class="kv" id="rep-kv"></dl>
           </div>
 
-          <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
-          <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
-          <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          <div class="textcard">
+            <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
+            <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
+            <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          </div>
           <div class="block"><h3>Parts replaced</h3><div class="stack-sm" id="r-parts"></div></div>
-          <div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div>
+          <div class="textcard"><div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div></div>
           <div class="block"><h3>Before and after</h3><div class="uploads photos" id="r-photos"></div></div>
 
           <div class="block"><h3>Signatures</h3>
@@ -115,7 +121,6 @@
         </div>
       </div>
       <div class="footer-bar" data-when="ready waiting requested closed offline">
-        <span class="hint" style="text-align:center; margin:0 0 10px" data-when="closed" id="closed-note"></span>
         <div class="btn-pair">
           <button class="icon-btn" type="button" aria-label="Share PDF" data-toast="PDF shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
           <button class="btn btn-secondary" type="button" data-open="amend" data-when="ready waiting"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>Request amendment</button>
@@ -141,8 +146,12 @@
   </div>
 </div>
 
-<p class="plate-note">The sent report as the customer gets it, with submit time and sync status. The engineer cannot
-delete it; corrections go to Zixom as an amendment within 7 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The submitted visit report, read only, as the customer receives it. Shows submit time and sync status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Share the PDF.</li><li>Request an amendment with what needs to change.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Waiting to sync sends when online; Sent once Zixom has it.</li><li>An amendment goes to Zixom to approve; the report stays as sent until then.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The engineer cannot delete a submitted report.</li><li>Amendments close 7 days after submission; offline disables them.</li><li>Report not found: <a href="../system/S05-not-found.html">S05</a> style state.</li><li>Spec: section E4, E405 · rules: no delete, amendment only</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -179,7 +188,7 @@ delete it; corrections go to Zixom as an amendment within 7 days.</p>
   document.querySelectorAll('.job-link').forEach((a) => { a.href = `E202-job-detail.html?ticket=${ticket.number}`; });
   $('submitted').textContent = `Submitted ${R.dayDate(SUBMITTED)}, ${time(SUBMITTED)}`;
   $('amend-window').textContent = `Zixom approves changes. Open until ${R.dayDate(amendUntil)}.`;
-  $('closed-note').textContent = `Amendments closed ${AMEND_DAYS} days after submission.`;
+  $('closed-note').textContent = `Closed ${AMEND_DAYS} days after submission.`;
 
   $('rep-number').textContent = DRAFT.number;
   $('rep-ticket').textContent = ticket.number;

@@ -9,10 +9,10 @@
 <style>
 .profile{display:flex; flex-direction:column; align-items:center; gap:8px; padding:8px 0 4px; text-align:center}
 .profile .photo{position:relative}
-.profile .avatar{background:#fff}
-.profile .photo .icon-btn{position:absolute; right:-6px; bottom:-4px; width:32px; height:32px}
+
+.profile .photo .icon-btn{position:absolute; right:-6px; bottom:-4px; width:36px; height:36px; border:3px solid #fff}
 .profile b{font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
-.profile span{font-size:var(--fs-13); color:var(--text-muted)}
+.profile > span:not(.photo){font-size:var(--fs-13); color:var(--text-muted)}
 </style>
 </head>
 <body class="plate">
@@ -22,6 +22,7 @@
   <button type="button" data-state="confirm" aria-pressed="true">1 confirm details</button>
   <button type="button" data-state="permissions" aria-pressed="false">2 permissions</button>
   <button type="button" data-state="denied" aria-pressed="false">location denied</button>
+  <button type="button" data-state="used" aria-pressed="false">invite already used</button>
   <button type="button" data-state="notfound" aria-pressed="false">number not found</button>
 </div>
 
@@ -29,13 +30,12 @@
   <div class="screen" data-state="confirm">
     <div class="status"></div>
     <div class="sheet">
-      <div class="navbar"><span></span></div>
+      <div class="navbar"><span></span><h1 data-when="confirm permissions denied">Get started</h1><span></span></div>
       <div class="scroll with-footer">
 
         <div data-when="confirm">
           <div class="wizard"><div class="meta"><b>Step 1 of 2</b><span>Your details</span></div><div class="bars"><span class="now"></span><span></span></div></div>
-          <h1 class="large-title">Check your details</h1>
-          <p class="lede">Your service manager can correct them.</p>
+          <p class="lede" style="margin-top:0">Check your details. Your service manager can correct them.</p>
           <div class="card-fill" style="margin-top:18px">
             <div class="profile">
               <span class="photo"><span class="avatar lg">SY</span><button class="icon-btn dark" type="button" aria-label="Add a photo"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-camera"/></svg></button></span>
@@ -52,8 +52,7 @@
 
         <div data-when="permissions denied">
           <div class="wizard"><div class="meta"><b>Step 2 of 2</b><span>Permissions</span></div><div class="bars"><span class="done"></span><span class="now"></span></div></div>
-          <h1 class="large-title">Allow access</h1>
-          <p class="lede">You can change these later in Settings.</p>
+          <p class="lede" style="margin-top:0">Allow access. You can change this later in Settings.</p>
           <div class="list" style="margin-top:18px">
             <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span><b>Location</b><span class="sub">For ETA and check in</span>
               <span class="end" data-when="permissions"><span class="tag green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg>Allowed</span></span>
@@ -62,32 +61,46 @@
             <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span><b>Notifications</b><span class="sub">For new job alerts</span><span class="end"><button class="btn btn-soft btn-sm" type="button" data-toast="Notifications allowed">Allow</button></span></div>
           </div>
           <div class="banner amber" style="margin-top:14px" data-when="denied"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
-            <div><b>Location is off</b>No ETA; check in needs a gate photo. <button class="link-btn" type="button" data-toast="Opens iOS Settings">Open Settings</button></div></div>
+            <div><b>Location is off</b>No ETA; check in needs a gate photo.
+              <button class="btn btn-secondary btn-sm" style="margin-top:10px" type="button" data-toast="Opens iOS Settings">Open Settings</button></div></div>
         </div>
 
+        <div data-when="used">
+          <div class="state" style="padding-top:36px">
+            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-envelope-simple"/></svg></span>
+            <h3>Invite already used</h3>
+            <p>This invite was used on another phone.</p>
+          </div>
+        </div>
         <div data-when="notfound">
           <div class="state" style="padding-top:36px">
             <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-identification-card"/></svg></span>
             <h3>We can't find your engineer account</h3>
             <p>+91 99090 33114 is not on the engineer list.</p>
           </div>
-          <div class="list">
-            <a class="list-item" href="tel:+919991910097"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></span><b>Call Zixom support</b><span class="sub">+91 99919 10097, 24x7</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
-          </div>
+
         </div>
       </div>
 
       <div class="footer-bar">
         <button class="btn btn-primary" type="button" data-when="confirm" onclick="document.querySelector('[data-state=permissions]').click()">These are correct</button>
         <a class="btn btn-primary" href="A13-app-lock-setup.html" data-when="permissions denied">Continue</a>
-        <a class="btn btn-secondary" href="A03-sign-in.html" data-when="notfound">Try another number</a>
+        <div class="stack-sm" data-when="notfound used">
+          <a class="btn btn-primary" href="tel:+919991910097"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom support</a>
+          <a class="btn btn-secondary" href="A03-sign-in.html">Try another number</a>
+        </div>
       </div>
     </div>
     <span class="home-indicator"></span>
   </div>
 </div>
 
-<p class="plate-note">First engineer sign in only: confirm details, then allow location, camera and notifications. Next is app lock, then Today.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>First sign in for an engineer: confirm details, then permissions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check name, code, region, skills; add a photo</li><li>Allow location, camera and notifications</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Continue opens app lock <a href="A13-app-lock-setup.html">A13</a>, then Today</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Location denied: no ETA, gate photo at check in, Open Settings</li><li>Invite already used or number not found: call support</li><li>Spec: section 7, A17 · EC-25</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

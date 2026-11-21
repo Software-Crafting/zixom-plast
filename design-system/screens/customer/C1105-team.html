@@ -53,7 +53,7 @@
           <div><b>25 of 25 people</b>Disable or remove someone to invite more.</div></div>
 
         <div data-when="ready taken engineer limit offline">
-          <p class="count-line"><span><b id="count"></b> of 25 people</span></p>
+          <p class="count-line" data-when="ready taken engineer offline"><span><b id="count"></b> of 25 people</span></p>
           <div class="list" id="members"></div>
           <div class="list" style="margin-top:16px">
             <a class="list-item" href="C1114-change-primary.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span><b>Change primary contact</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
@@ -157,8 +157,12 @@
   </div>
 </div>
 
-<p class="plate-note">Everyone in the company, with masked mobile and status. Invite by name and mobile, then resend, revoke,
-disable, enable or remove from the row menu. Up to 25 people.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Everyone in the company with masked mobile and status. Only the primary contact sees it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Invite a person by name and mobile.</li><li>Resend, share or revoke an invite.</li><li>Disable, enable or remove a member.</li><li>Change the primary contact.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send invite opens <a href="C1117-invite-sent.html">C1117</a>; they get an SMS link that expires in 7 days.</li><li>A disabled person is signed out on their next request (<a href="../access/A16-account-suspended.html">A16</a>).</li><li>Change primary contact opens <a href="C1114-change-primary.html">C1114</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Number in another company or of an engineer: blocked, no invite.</li><li>The primary contact can't be disabled.</li><li>25 people at most; Invite is off at the limit.</li><li>Spec: section C11, C1105 · EC-18, EC-19</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -17,6 +17,8 @@
 .list-item.clash .disc{background:var(--amber-50); color:var(--amber)}
 .list-item .end .tag .ic{width:14px; height:14px; color:inherit}
 .dates .date.has-jobs b::after{content:""; display:block; width:5px; height:5px; margin:3px auto 0; border-radius:50%; background:currentColor; opacity:.5}
+#strip{margin:0; padding:2px 0; gap:6px; overflow:visible}
+#strip .date{flex:1 1 0; width:auto; min-width:0}
 </style>
 </head>
 <body class="plate">
@@ -25,7 +27,8 @@
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">ready, week</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
-  <button type="button" data-state="emptyday" aria-pressed="false">empty day</button>
+  <button type="button" data-state="ready" aria-pressed="false" onclick="document.querySelector('[aria-controls=day]').click()">day, travel</button>
+  <button type="button" data-state="ready" aria-pressed="false" id="empty-day-btn">empty day</button>
   <button type="button" data-state="error" aria-pressed="false">error</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
 </div>
@@ -58,12 +61,6 @@
             </div>
           </div>
 
-          <div class="state" data-when="emptyday" style="padding-top:60px">
-            <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></span>
-            <h3 id="empty-title"></h3>
-            <p>New jobs show here when they are assigned.</p>
-          </div>
-
           <div class="stack-sm" data-when="loading">
             <span class="skeleton" style="height:56px; border-radius:var(--r-pill)"></span>
             <span class="skeleton sk-line" style="width:40%; margin:14px 4px 4px"></span>
@@ -86,8 +83,12 @@
   </div>
 </div>
 
-<p class="plate-note">This week's jobs and AMC preventive visits. Day view adds travel between sites; two jobs at the same time
-get an amber clash warning.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's week: assigned jobs and AMC preventive visits, day by day.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch between Week and Day</li><li>Pick a date in Day view to see travel between sites</li><li>Open a job or machine</li><li>Open the holiday calendar from the top right</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A job opens <a href="E202-job-detail.html">E202 Job detail</a></li><li>An AMC visit opens the machine</li><li>Clashes are moved by the manager, not here</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Two jobs that overlap both show Clash, with a banner</li><li>Empty day and Sunday day off</li><li>Offline: last downloaded schedule</li><li>Spec: section E7, E701</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -100,7 +101,7 @@ get an amber clash warning.</p>
   const day = data.engineerDay;
   /* page data: AMC preventive visits this week, and a slot for a job Zixom has not given a window yet */
   const AMC_VISITS = [
-    { amc: 'AMC-2026-0010', date: '2026-11-27', slot: '9 to 12 AM' },
+    { amc: 'AMC-2026-0010', date: '2026-11-27', slot: '9 AM to 12 PM' },
     { amc: 'AMC-2026-0011', date: '2026-11-28', slot: '12 to 3 PM' },
   ];
   const UNSET_SLOT = '3 to 6 PM';
@@ -127,6 +128,9 @@ get an amber clash warning.</p>
   const startHour = (slot) => { const h = parseInt(slot, 10); return h < 8 ? h + 12 : h; }; /* slots run 9 AM to 6 PM */
   week.forEach((d) => jobs[d].sort((a, b) => startHour(a.slot) - startHour(b.slot)));
 
+  const clashJob = day.today.find((j) => j.overlapWarning);
+  const clashWith = day.today.find((j) => j.status === 'scheduled');
+  const clashSet = new Set([clashJob.ticket, clashWith.ticket]);
   const row = (j) => {
     if (j.kind === 'amc') {
       const contract = R.amc(j.amc);
@@ -137,23 +141,24 @@ get an amber clash warning.</p>
     }
     const t = ticket(j.ticket);
     const p = place(t.machine);
-    return `<a class="list-item${j.overlapWarning ? ' clash' : ''}" href="E202-job-detail.html?ticket=${t.number}">
-      <span class="disc">${R.icon(j.overlapWarning ? 'warning' : 'wrench')}</span>
+    const clashing = clashSet.has(t.number);
+    return `<a class="list-item${clashing ? ' clash' : ''}" href="E202-job-detail.html?ticket=${t.number}">
+      <span class="disc">${R.icon(clashing ? 'warning' : 'wrench')}</span>
       <b>${R.esc(p.m.nickname || p.m.model)}</b><span class="sub">${j.slot} · <span class="mono">${t.number}</span> · ${R.esc(p.site)}</span>
-      <span class="end">${j.overlapWarning ? R.tag('Clash', 'amber') : ''}${R.icon('caret-right')}</span></a>`;
+      <span class="end">${clashing ? R.tag('Clash', 'amber') : ''}${R.icon('caret-right')}</span></a>`;
   };
   const gap = (j) => (j.distanceKm ? `<div class="gap">${R.icon('car-profile')}${j.distanceKm} km to this site${j.etaMin ? `, about ${j.etaMin} min` : ''}</div>` : '');
   const headLabel = (d) => `${R.dayDate(d)}`;
   const count = (d) => (new Date(`${d}T00:00:00`).getDay() === DAY_OFF ? 'Day off' : `${jobs[d].length || 'No'} job${jobs[d].length === 1 ? '' : 's'}`);
 
-  $('week').innerHTML = week.map((d) => `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${count(d)}</span></div>
+  $('week').innerHTML = week.map((d) => `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${jobs[d].length ? count(d) : ''}</span></div>
     ${jobs[d].length ? `<div class="list">${jobs[d].map(row).join('')}</div>` : `<div class="none">${count(d)}</div>`}`).join('');
 
   const renderDay = (d) => {
     const list = jobs[d];
-    $('day-body').innerHTML = `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${count(d)}</span></div>`
+    $('day-body').innerHTML = `<div class="day-head${d === data.today ? ' today' : ''}"><b>${headLabel(d)}</b><span>${list.length ? count(d) : ''}</span></div>`
       + (list.length ? `<div class="list">${list.map((j, i) => (i ? gap(j) : '') + row(j)).join('')}</div>`
-        : `<div class="state" style="padding-top:24px"><span class="disc">${R.icon('calendar-blank')}</span><h3>No jobs on ${R.dayDate(d)}</h3></div>`);
+        : `<div class="state" style="padding-top:24px"><span class="disc">${R.icon('calendar-blank')}</span>${count(d) === 'Day off' ? '<h3>Day off</h3>' : `<h3>No jobs on ${R.dayDate(d)}</h3><p>New jobs show here when assigned.</p>`}</div>`);
   };
   $('strip').innerHTML = week.map((d) => { const x = new Date(`${d}T00:00:00`);
     return `<button class="date${jobs[d].length ? ' has-jobs' : ''}" type="button" data-date="${d}" aria-pressed="${d === data.today}">
@@ -161,12 +166,13 @@ get an amber clash warning.</p>
   $('strip').addEventListener('click', (e) => { const b = e.target.closest('[data-date]'); if (b) renderDay(b.dataset.date); });
   renderDay(data.today);
 
-  const clash = day.today.filter((j) => j.overlapWarning).map((j) => ticket(j.ticket));
-  const clashWith = day.today.find((j) => j.status === 'scheduled');
-  $('clash').innerHTML = `${R.icon('warning')}<div><b>2 jobs overlap today, ${day.today.find((j) => j.overlapWarning).slot}</b>
-    <span class="mono">${clashWith.ticket}</span> and <span class="mono">${clash[0].number}</span>. Ask your manager to move one.</div>`;
+  $('clash').innerHTML = `${R.icon('warning')}<div><b>2 jobs overlap today, ${clashJob.slot}</b>
+    <span class="mono">${clashWith.ticket}</span> and <span class="mono">${clashJob.ticket}</span>. Ask your manager to move one.</div>`;
   const emptyDate = week.find((d) => !jobs[d].length && new Date(`${d}T00:00:00`).getDay() !== DAY_OFF);
-  $('empty-title').textContent = `No jobs on ${R.dayDate(emptyDate)}`;
+  $('empty-day-btn').addEventListener('click', () => {
+    document.querySelector('[aria-controls=day]').click();
+    document.querySelector(`[data-date="${emptyDate}"]`).click();
+  });
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

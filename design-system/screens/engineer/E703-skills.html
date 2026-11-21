@@ -79,8 +79,12 @@
   </div>
 </div>
 
-<p class="plate-note">Read only. Where the engineer is sent and which machines they may work on, both set by Zixom.
-Nothing set shows who to contact.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Read only: the regions the engineer covers, the machine types and skills Zixom has set.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check regions, machine types and skills</li><li>Open certifications and training</li><li>Contact the manager to change anything</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Certifications open <a href="E808-certifications.html">E808</a></li><li>Zixom uses these to assign jobs</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Not set: Not set yet. Contact your manager, with <a href="E1011-team-contacts.html">team contacts</a></li><li>Offline: saved copy</li><li>Spec: section E7, E703</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -101,7 +105,7 @@ Nothing set shows who to contact.</p>
     <b>${R.esc(name)}</b><span class="sub">${R.esc(sub)}</span></div>`).join('');
   $('types').innerHTML = TYPES.map((type) => `<div class="list-item static"><span class="disc">${R.icon(MACHINE_ICON[type])}</span>
     <b>${R.esc(type)}</b><span class="sub">${data.machines.filter((m) => m.type === type).map((m) => m.model.split(' ')[0]).filter((v, i, a) => a.indexOf(v) === i).join(', ')}</span></div>`).join('');
-  $('skills').innerHTML = me.skills.map((s) => `<span class="chip outline">${R.esc(s)}</span>`).join('');
+  $('skills').innerHTML = me.skills.map((s) => `<span class="tag outline">${R.esc(s)}</span>`).join('');
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

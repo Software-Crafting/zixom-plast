@@ -10,6 +10,7 @@
 .list-item.expired{background:var(--red-50)}
 .list-item.expired .disc{background:#fff; color:var(--red)}
 .list-item.static{cursor:default}
+.list-item .sub.soon{color:var(--amber)}
 .list-item .disc.green{background:var(--green-50); color:var(--green)}
 </style>
 </head>
@@ -81,8 +82,12 @@
   </div>
 </div>
 
-<p class="plate-note">Machine types the engineer is certified for, with expiry dates, and training done. Expired certificates
-are highlighted at the top.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Machine types the engineer is certified for, expiry dates and training done. Read only.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a certificate to see its number and dates</li><li>Download the certificate PDF</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Renewals are booked by the manager; contact them from <a href="E1011-team-contacts.html">E1011</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expired certificate highlighted with a banner; ending within 30 days shows the days left</li><li>Empty: Not set yet, contact your manager</li><li>Spec: E13, E808</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -104,12 +109,14 @@ are highlighted at the top.</p>
   const status = (c) => {
     const left = R.daysFromToday(c.expires);
     if (left < 0) return R.tag('Expired', 'red');
-    if (left <= SOON) return R.tag(`Ends in ${left} days`, 'amber');
     return '';
   };
+  const sub = (c) => { const left = R.daysFromToday(c.expires);
+    if (left < 0) return `<span class="sub">Ended ${R.date(c.expires)}</span>`;
+    return left <= SOON ? `<span class="sub soon">Ends in ${left} days, ${R.date(c.expires)}</span>` : `<span class="sub">Valid until ${R.date(c.expires)}</span>`; };
   const sorted = [...CERTS].sort((a, b) => a.expires.localeCompare(b.expires));
   $('certs').innerHTML = sorted.map((c) => `<button class="list-item${R.daysFromToday(c.expires) < 0 ? ' expired' : ''}" type="button" data-open="cert" data-cert="${c.number}">
-    <span class="disc">${R.icon('certificate')}</span><b>${R.esc(c.name)}</b><span class="sub">Valid until ${R.date(c.expires)}</span>
+    <span class="disc">${R.icon('certificate')}</span><b>${R.esc(c.name)}</b>${sub(c)}
     <span class="end">${status(c)}${R.icon('caret-right')}</span></button>`).join('');
   $('training').innerHTML = TRAINING.map(([name, when]) => `<div class="list-item static"><span class="disc green">${R.icon('check-circle')}</span>
     <b>${R.esc(name)}</b><span class="sub">${R.date(when)}</span></div>`).join('');
@@ -121,7 +128,7 @@ are highlighted at the top.</p>
     const c = CERTS.find((x) => x.number === number);
     $('c-title').textContent = c.name;
     $('c-facts').innerHTML = `<div><dt>Number</dt><dd class="mono">${c.number}</dd></div><div><dt>Issued</dt><dd>${R.date(c.issued)}</dd></div>
-      <div><dt>Valid until</dt><dd>${R.date(c.expires)}</dd></div>`;
+      <div><dt>Valid until</dt><dd>${R.date(c.expires)}</dd></div>${R.daysFromToday(c.expires) < 0 ? `<div><dt>Status</dt><dd>${R.tag('Expired', 'red')}</dd></div>` : ''}`;
   };
   document.addEventListener('click', (e) => { const b = e.target.closest('[data-cert]'); if (b) open(b.dataset.cert); });
   open(sorted[0].number);

@@ -13,7 +13,7 @@
 .rcard.missing{border-color:rgba(194,59,59,.35)}
 .rcard .top{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px}
 .rcard h2{display:flex; align-items:center; gap:8px; margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
-.rcard .top a{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.rcard .top .btn-sm{min-height:34px; padding:0 14px; flex-shrink:0}
 .rcard .kv div{padding:7px 0}
 .rcard .text{margin:0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
 .rcard .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
@@ -47,6 +47,7 @@
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
   <button type="button" data-state="queued" aria-pressed="false">saved offline</button>
   <button type="button" data-state="failed" aria-pressed="false">submit failed</button>
+  <button type="button" data-state="rejected" aria-pressed="false">field rejected</button>
   <button type="button" data-state="uploading" aria-pressed="false">photos uploading</button>
   <button type="button" data-state="ready" data-open="cancelled" aria-pressed="false">job cancelled</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
@@ -62,15 +63,17 @@
         <h1>Review report</h1><span></span>
       </div>
       <div class="scroll with-footer">
-        <div data-when="ready missing submitting offline failed uploading">
-          <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span data-when="ready missing submitting failed uploading">Saved just now</span><span data-when="offline">Saved on this phone</span></p>
+        <div data-when="ready missing submitting offline failed uploading rejected">
+          <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span data-when="ready missing submitting failed uploading rejected">Saved just now</span><span data-when="offline">Saved on this phone</span></p>
           <div class="stack">
             <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
               <div><b>You are offline</b>Submit saves it and sends when you are online.</div></div>
             <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-              <div><b>Could not submit</b>Kept as a draft. <button class="link-btn" type="button" data-busy>Retry</button></div></div>
+              <div><b>Could not submit</b>Kept as a draft. Try again below.</div></div>
+            <div class="banner red" data-when="rejected"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+              <div><b>Zixom rejected the fault code</b>Use a code from the HMI list. It stays in the sync queue.<a class="btn btn-secondary btn-sm" style="margin-top:10px" href="E401-report.html?section=2">Fix fault code</a></div></div>
             <div class="banner" data-when="uploading"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>
-              <div><b>2 photos still uploading</b>You can submit. They finish in the background. <a href="E1008-upload-queue.html">View</a></div></div>
+              <div><b>2 photos still uploading</b>You can submit. They finish in the background.<a class="btn btn-secondary btn-sm" style="margin-top:10px" href="E1008-upload-queue.html">View uploads</a></div></div>
             <div class="error-summary" role="alert" data-when="missing"><b>Fix 3 things to submit</b><ul id="errors"></ul></div>
             <div id="cards" class="stack"></div>
             <a class="btn btn-secondary" href="E409-report-preview.html" id="preview"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Preview PDF</a>
@@ -85,7 +88,7 @@
             <h3 data-when="queued">Saved. Will send when you are online</h3>
             <p><span class="mono report-no"></span></p>
             <span class="tag outline" style="margin-top:10px" data-when="queued"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg>Waiting to sync</span>
-            <a class="pdf-card row-link" href="E405-report-submitted.html" id="submitted-link">
+            <a class="pdf-card" href="E405-report-submitted.html" id="submitted-link">
               <span class="pdf-page" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
               <span><b class="pdf-name"></b><span>2 pages · Customer copy</span></span></a>
             <div class="btns">
@@ -110,9 +113,10 @@
           <span class="code mono">ZC-500</span>
         </div>
       </div>
-      <div class="footer-bar" data-when="ready missing submitting offline failed uploading">
+      <div class="footer-bar" data-when="ready missing submitting offline failed uploading rejected">
         <button class="btn btn-primary" type="button" data-goto="done" data-when="ready uploading">Submit report</button>
         <button class="btn btn-primary" type="button" data-goto="done" data-when="failed">Retry submit</button>
+        <button class="btn btn-primary" type="button" disabled data-when="rejected">Submit report</button>
         <button class="btn btn-primary" type="button" data-goto="queued" data-when="offline">Submit report</button>
         <button class="btn btn-primary" type="button" disabled data-when="missing">Submit report</button>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submitting</button>
@@ -132,8 +136,12 @@
   </div>
 </div>
 
-<p class="plate-note">Read only summary with Edit links into each section. Missing items block Submit and link straight to
-the fix (EC-58). Offline submit queues the report as Waiting to sync (F9).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Final check of the visit report before it goes to Zixom and the customer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read every section and jump back with Edit.</li><li>Preview the PDF, get or redo the customer signature.</li><li>Submit the report.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Online: Report submitted, then Complete job (<a href="E210-complete-job.html">E210</a>), Share PDF or the report (<a href="E405-report-submitted.html">E405</a>).</li><li>Offline: saved with Waiting to sync and sent later.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Missing items block Submit, each links to its fix (EC-58).</li><li>Submit fails: stays a draft with Retry. Server rejects a field: stays queued with the reason.</li><li>Photos still uploading: submit anyway. Cancelled job: kept as a draft.</li><li>Spec: section E4, E404 · EC-55, EC-58</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -180,7 +188,7 @@ the fix (EC-58). Offline submit queues the report as Waiting to sync (F9).</p>
   $('errors').innerHTML = ERRORS.map(([s, text]) => `<li><a href="${s ? edit(s) : `E403-signature.html?${q}`}">${text}</a></li>`).join('');
 
   const card = (section, title, body, missing) => `<div class="rcard${missing ? ' missing' : ''}">
-    <div class="top"><h2>${title}${missing ? '<span class="tag red">Missing</span>' : ''}</h2><a href="${edit(section)}">Edit</a></div>${body}</div>`;
+    <div class="top"><h2>${title}${missing ? '<span class="tag red">Missing</span>' : ''}</h2><a class="btn btn-secondary btn-sm" href="${edit(section)}">Edit</a></div>${body}</div>`;
   const missingLine = (text) => `<p class="miss">${R.icon('warning-circle', 'ic-16')}${text}</p>`;
 
   const render = () => {
@@ -205,7 +213,7 @@ the fix (EC-58). Offline submit queues the report as Waiting to sync (F9).</p>
       card(9, 'Recommendations', `<ul>${DRAFT.recommendations.map(([k, t]) => `<li>${k}: ${R.esc(t)}</li>`).join('')}</ul>`),
       card(10, 'Customer remarks', `<p class="text">"${R.esc(DRAFT.remarks)}"</p>`),
       `<div class="rcard${missing ? ' missing' : ''}"><div class="top"><h2>Customer signature${missing ? '<span class="tag red">Missing</span>' : ''}</h2>
-        <a href="E403-signature.html?${q}">${missing ? 'Get signature' : 'Sign again'}</a></div>
+        <a class="btn btn-secondary btn-sm" href="E403-signature.html?${q}">${missing ? 'Get signature' : 'Sign again'}</a></div>
         ${missing ? missingLine('Not signed yet') : `<div class="sig"><span><b>${DRAFT.signedBy.join(', ')}</b><span>Signed ${time(DRAFT.signedAt)}</span></span>${SIGNATURE}</div>`}</div>`,
     ].join('');
   };

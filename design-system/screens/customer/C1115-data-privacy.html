@@ -35,9 +35,9 @@
       <div class="scroll">
         <div class="offline-strip" style="margin:0 0 8px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to send a request.</div>
         <div class="banner" data-when="copypending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
-          <div><b>Copy of your data requested</b><span class="mono">DATA-2026-0003</span> · Sent Fri 20 Nov. We email it to you.</div></div>
+          <div><b>Copy of your data requested</b><span class="mono">DATA-2026-0003</span> · Sent Fri 20 Nov</div></div>
         <div class="banner amber" data-when="delpending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
-          <div><b>Deletion requested</b><span class="mono">DEL-2026-0007</span>. <a href="../access/A24-deletion-requested.html">View status</a></div></div>
+          <div><b>Deletion requested</b><span class="mono">DEL-2026-0007</span> · Sent Sat 21 Nov</div></div>
 
         <div data-when="ready copypending delpending offline">
           <p class="list-title" style="margin-top:8px">What we store</p>
@@ -60,8 +60,9 @@
             <button class="list-item" type="button" data-open="copy" data-when="ready"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Request a copy of my data</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></button>
             <div class="list-item" style="cursor:default; opacity:.5" data-when="copypending delpending offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span><b>Request a copy of my data</b><span class="sub" data-when="copypending delpending">A request is already open</span><span class="sub" data-when="offline">Needs the internet</span></div>
             <a class="list-item danger" href="C1110-delete-account.html" data-when="ready copypending offline"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-trash"/></svg></span><b>Request deletion</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="../access/A24-deletion-requested.html" data-when="delpending"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg></span><b>Deletion status</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+            <a class="list-item" href="C1109-legal.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-text"/></svg></span><b>Privacy policy</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
           </div>
-          <a class="link accent" href="C1109-legal.html" style="margin:14px 4px 0">Privacy policy</a>
         </div>
 
         <div class="stack-sm" data-when="loading" style="margin-top:12px">
@@ -87,8 +88,12 @@
   </div>
 </div>
 
-<p class="plate-note">What the app stores and for how long, with requests for a copy or for deletion. An open request shows
-its status and blocks a second one.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>What the app stores, how long it keeps it, and your data requests.</p></div>
+  <div><h3>What you can do</h3><ul><li>Request a copy of your data by email</li><li>Request deletion</li><li>Check an open request</li><li>Read the privacy policy</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Copy: Zixom emails it; the request shows here until done</li><li>Deletion opens <a href="C1110-delete-account.html">C1110</a>; its status is <a href="../access/A24-deletion-requested.html">A24</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>An open request blocks a second one</li><li>Offline: requests need the internet</li><li>Spec: C18, C1115</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

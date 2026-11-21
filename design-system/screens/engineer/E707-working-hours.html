@@ -35,7 +35,7 @@
       </div>
       <div class="scroll with-footer">
         <div class="stack">
-          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. The request is sent when you are back online.</div>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. The request sends when you are online.</div>
           <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0">
             <div><dt>Now</dt><dd class="now-hours"></dd></div>
             <div data-when="pending"><dt>Asked for</dt><dd id="asked"></dd></div>
@@ -43,7 +43,7 @@
           </dl></div>
 
           <div class="banner grey" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg><div>One request at a time. You can ask again after Mr Kapoor decides.</div></div>
-          <button class="btn btn-secondary" type="button" data-when="pending" data-open="withdraw">Withdraw request</button>
+          <button class="btn btn-secondary" type="button" data-when="pending" data-open="withdraw" style="color:var(--red)">Withdraw request</button>
 
           <div class="error-summary" role="alert" data-when="errors"><b>Fix 2 things to send</b>
             <ul><li><a href="#end-bad">End time must be after the start time</a></li><li><a href="#reason-bad">Give a reason of at least 10 characters</a></li></ul></div>
@@ -69,7 +69,9 @@
         </div>
       </div>
       <div class="footer-bar" data-when="ready errors offline">
-        <button class="btn btn-primary" type="button" data-busy data-toast="Request sent to Mr Kapoor"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send to manager</button>
+        <button class="btn btn-primary" type="button" data-when="ready" data-busy data-toast="Request sent to Mr Kapoor"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send to manager</button>
+        <button class="btn btn-primary" type="button" data-when="errors"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send to manager</button>
+        <button class="btn btn-primary" type="button" data-when="offline" data-toast="Saved. Waiting to sync"><svg class="ic" aria-hidden="true"><use href="#ph-paper-plane-tilt"/></svg>Send to manager</button>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -84,8 +86,12 @@
   </div>
 </div>
 
-<p class="plate-note">Asks the manager to change the usual days and hours. Only one request can be open; while it waits the
-form is replaced by its status.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A request to the manager to change the engineer's usual working days and hours.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick working days, start and end time</li><li>Give a reason of at least 10 characters</li><li>Withdraw a pending request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The manager approves or rejects; a push arrives</li><li>New hours show on <a href="E702-leave.html">E702</a> once approved</li><li>Offline: request waits to sync</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only one open request; while it waits the form shows its status</li><li>End before start, short reason: field errors</li><li>Spec: section E13, E707</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -13,7 +13,7 @@
   background:#fff; box-shadow:inset 0 0 0 1px var(--line); color:var(--slate-800); font:400 var(--fs-13) var(--font-display); text-decoration:none}
 .duty-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--blue)}
 .duty-pill.leave .dot{background:var(--slate-400)}
-.sync-chip{margin-top:10px; height:30px; font:500 var(--fs-12) var(--font-body)}
+.sync-chip{margin-top:10px; height:34px; font:500 var(--fs-12) var(--font-body)}
 .sync-chip .ic{width:16px; height:16px; color:var(--blue)}
 .sync-chip.bad .ic{color:var(--red)}
 .stats.three{grid-template-columns:repeat(3, 1fr)}
@@ -51,6 +51,8 @@
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="deadline" aria-pressed="false">response due soon</button>
+  <button type="button" data-state="evening" aria-pressed="false">after 5 PM</button>
   <button type="button" data-state="twooffers" aria-pressed="false">two offers</button>
   <button type="button" data-state="reassigned" aria-pressed="false" data-toast="TKT-2026-0132 was moved to Anita Verma">job reassigned</button>
   <button type="button" data-state="empty" aria-pressed="false">no jobs today</button>
@@ -74,10 +76,10 @@
       </div>
       <div class="title-row">
         <h1 class="root-title">Today</h1>
-        <a class="duty-pill" href="E103-duty-status.html" data-when="ready loading twooffers reassigned empty offline offlinenone error"><span class="dot"></span>On job<svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></a>
+        <a class="duty-pill" href="E103-duty-status.html" data-when="ready deadline evening loading twooffers reassigned empty offline offlinenone error"><span class="dot"></span>On job<svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></a>
         <span class="duty-pill leave" data-when="leave"><span class="dot"></span>On leave</span>
       </div>
-      <a class="sync-chip" href="E102-sync-queue.html" id="sync-chip" data-when="ready twooffers reassigned offline offlinenone error"></a>
+      <a class="sync-chip" href="E102-sync-queue.html" id="sync-chip" data-when="ready deadline evening twooffers reassigned offline offlinenone error"></a>
     </header>
 
     <div class="sheet">
@@ -85,18 +87,20 @@
         <div class="stack" style="margin-top:12px">
           <div class="offline-strip" style="margin:0" data-when="offline offlinenone"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved 11:42 AM.</div>
 
-          <div class="stats three" id="stats" data-when="ready twooffers reassigned offline"></div>
+          <div class="stats three" id="stats" data-when="ready deadline evening twooffers reassigned offline"></div>
 
-          <div class="stack-sm" id="offers" data-when="ready twooffers reassigned offline"></div>
+          <div class="banner amber" data-when="deadline"><svg class="ic" aria-hidden="true"><use href="#ph-clock-countdown"/></svg><div><b>Response due in 25 min</b><span id="deadline-text"></span> <a id="deadline-link" href="E202-job-detail.html">Open job</a></div></div>
 
-          <div data-when="ready twooffers reassigned offline">
+          <div class="stack-sm" id="offers" data-when="ready deadline evening twooffers reassigned offline"></div>
+
+          <div data-when="ready deadline evening twooffers reassigned offline">
             <div class="section-head" style="margin-bottom:10px"><h2>Next job</h2></div>
             <div id="next"></div>
           </div>
 
-          <div data-when="ready twooffers reassigned offline">
+          <div data-when="ready deadline evening twooffers reassigned offline">
             <div class="section-head"><h2>Today's jobs</h2><span class="hint" style="margin:0" id="job-count"></span></div>
-            <div id="jobs" data-when="ready twooffers offline"></div>
+            <div id="jobs" data-when="ready deadline evening twooffers offline"></div>
             <div id="jobs-moved" data-when="reassigned"></div>
           </div>
 
@@ -132,9 +136,9 @@
             <span class="skeleton" style="height:58px"></span><span class="skeleton" style="height:58px"></span><span class="skeleton" style="height:58px; opacity:.6"></span>
           </div>
 
-          <div class="foot-links" data-when="ready twooffers reassigned empty offline leave">
+          <div class="foot-links" data-when="ready deadline evening twooffers reassigned empty offline leave">
             <a class="row-link" href="E201-jobs.html">Tomorrow's jobs <span id="tomorrow"></span></a>
-            <a class="row-link" href="E1009-end-of-day.html" data-when="ready twooffers reassigned offline">End of day summary</a>
+            <a class="row-link" href="E1009-end-of-day.html" data-when="evening">End of day summary</a>
           </div>
         </div>
       </div>
@@ -145,8 +149,12 @@
   </div>
 </div>
 
-<p class="plate-note">Start of the day: duty status (<a href="E103-duty-status.html">E103</a>), sync chip (<a href="E102-sync-queue.html">E102</a>),
-offers with their timer, the next job and today's jobs in time order. Works offline from saved jobs; an overlap shows amber on the later job.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's start screen: what is next, what is waiting, what is unsent.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change duty status from the pill (<a href="E103-duty-status.html">E103</a>).</li><li>Accept or decline an offer before its timer runs out.</li><li>Navigate, call the site contact or start travel on the next job.</li><li>Open any of today's jobs.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Accept or Decline opens <a href="E203-accept-job.html">E203</a>; Start travel opens <a href="E205-start-travel.html">E205</a>.</li><li>The sync chip opens <a href="E102-sync-queue.html">E102</a>.</li><li>After 5 PM the End of day summary link appears (<a href="E1009-end-of-day.html">E1009</a>).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Two offers show their own timers; an overlap is amber on the later job.</li><li>Job reassigned while open: card updates and a toast says why.</li><li>Offline: saved jobs stay usable; nothing saved asks to connect once.</li><li>Spec: E1, E101 · EC-04, EC-55</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -195,9 +203,9 @@ offers with their timer, the next job and today's jobs in time order. Works offl
       <div class="top"><span class="tag red">${R.icon('clock-countdown')}Respond in <span data-left="${o.minutesLeft * 60}">${o.minutesLeft}:00</span></span><span class="mono">${t.number}</span></div>
       <h3 class="card-title" style="margin-top:12px">New job: ${R.esc(m.model)}</h3>
       <p class="card-sub">${R.esc(companyOf(m).name)}, ${R.esc(siteOf(m).name)} · ${R.dayDate(o.slot.date)}, ${R.esc(o.slot.slot)} · ${o.distanceKm} km</p>
-      <div class="btn-pair" data-when="ready twooffers reassigned">
+      <div class="btn-pair" data-when="ready deadline evening twooffers reassigned">
         <a class="btn btn-secondary btn-sm" href="E203-accept-job.html?ticket=${t.number}">Decline</a>
-        <a class="btn btn-primary btn-sm" href="E203-accept-job.html?ticket=${t.number}">Accept</a>
+        <a class="btn btn-soft btn-sm" href="E203-accept-job.html?ticket=${t.number}">Accept</a>
       </div>
       <p class="wait" data-when="offline">Connect to respond.</p>
     </div>`;
@@ -247,6 +255,10 @@ offers with their timer, the next job and today's jobs in time order. Works offl
   };
   document.getElementById('jobs').innerHTML = jobs.map((j) => row(j)).join('');
   document.getElementById('jobs-moved').innerHTML = jobs.map((j) => row(j, j.ticket === REASSIGNED.ticket)).join('');
+  /* ponytail: demo deadline on the scheduled job, no response deadline field in data.js */
+  const due = jobs.find((j) => j.status === 'scheduled');
+  document.getElementById('deadline-text').textContent = `${due.ticket}, ${R.machine(ticket(due.ticket).machine).nickname}.`;
+  document.getElementById('deadline-link').href = `E202-job-detail.html?ticket=${due.ticket}`;
   document.getElementById('job-count').textContent = `${jobs.length} jobs`;
   document.getElementById('tomorrow').textContent = `${day.tomorrow.length} jobs`;
 })();

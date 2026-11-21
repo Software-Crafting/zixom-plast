@@ -13,6 +13,7 @@
 .site p{margin:4px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
 .site .meta{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:10px; font-size:var(--fs-12); color:var(--text-muted)}
 .site .meta span{display:inline-flex; align-items:center; gap:4px}
+.pin-row{display:flex; align-items:center; gap:10px; min-height:52px; padding:0 6px 0 14px; border-radius:var(--r-md); background:var(--field); border:1.5px solid var(--line); font-size:var(--fs-15); color:var(--slate-800)}
 .site .icon-btn{width:36px; height:36px; border:0; background:var(--slate-100)}
 </style>
 </head>
@@ -90,6 +91,8 @@
             <span class="error-text" id="pin-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Couldn't find this pincode. Enter city and state.</span></div>
           <div class="field" data-when="pinfail"><label for="s-city">City and state<span class="req">*</span></label><input class="input" id="s-city" placeholder="Ahmedabad, Gujarat"></div>
           <div class="field"><label for="s-addr">Address<span class="req">*</span></label><input class="input" id="s-addr"></div>
+          <div class="field"><span class="field-label">Map pin</span>
+            <div class="pin-row"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg><span class="grow">Pin set near the gate</span><button class="btn btn-soft btn-sm" type="button" data-toast="Map opens to move the pin">Adjust</button></div></div>
           <div class="field"><label for="s-contact">Site contact<span class="req">*</span></label><input class="input" id="s-contact"></div>
           <div class="field"><label for="s-phone">Contact mobile<span class="req">*</span></label>
             <div class="input-group"><span class="prefix">+91</span><input class="input" id="s-phone" inputmode="numeric"></div></div>
@@ -109,8 +112,12 @@
   </div>
 </div>
 
-<p class="plate-note">Sites of the current company with address, contact and machine count. A site with machines can't be
-deleted; if the pincode lookup fails, city and state are typed in.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The company's sites with address, site contact and how many machines each has.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a site.</li><li>Edit name, pincode, address, map pin, contact and access notes.</li><li>Open a site in Maps.</li><li>Delete a site with no machines.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Add site opens <a href="C1507-add-site.html">C1507</a>.</li><li>Save shows a toast and updates the card.</li><li>A blocked delete offers View machines (<a href="C201-machines.html">C201</a>).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Site with machines can't be deleted.</li><li>Pincode lookup failed: city and state are typed in (EC-45).</li><li>No sites yet: empty state with Add site.</li><li>Spec: section C11, C1104 · EC-45</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

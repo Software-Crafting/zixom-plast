@@ -44,7 +44,7 @@
         </ol>
 
         <div class="banner red" data-when="sharefail" style="margin-top:8px"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-          <div><b>Couldn't share the link</b><button class="link-btn" type="button" data-busy>Try again</button></div></div>
+          <div><b>Couldn't share the link</b><button class="btn btn-soft btn-sm" style="margin-top:8px" type="button" data-busy>Try again</button></div></div>
       </div>
       <div class="footer-bar">
         <div class="stack-sm">
@@ -57,8 +57,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown after Send invite in <a href="C1105-team.html">C1105</a>. The link can also be shared by
-WhatsApp or any app; if sharing fails, try again.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Confirmation after the primary contact invites a colleague in <a href="C1105-team.html">C1105</a>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Share the invite link by WhatsApp or any app</li><li>Retry a failed share</li><li>Done returns to Team members</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The colleague signs in with the invited number and joins the company (<a href="../access/A18-accept-invitation.html">A18</a>)</li><li>They show as Invited in Team members until then</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Link valid 7 days; Resend makes a new one</li><li>Share failed shows Try again</li><li>Spec: C18, C1117 · F11</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

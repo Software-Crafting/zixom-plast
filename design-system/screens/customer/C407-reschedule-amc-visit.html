@@ -44,7 +44,7 @@
             <b id="visit-when"></b><span id="visit-meta"></span>
           </div>
 
-          <div class="banner green" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+          <div class="banner" data-when="pending"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
             <div><b>Waiting for Zixom to approve</b><span id="pending-text"></span></div></div>
           <div class="banner amber" data-when="close"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
             <div><b>Too close to the visit</b>Changes need 48 hours notice. Call Zixom.</div></div>
@@ -52,7 +52,7 @@
             <div><b>No free slots in the next 2 weeks</b>Ask Zixom to propose a date.</div></div>
 
           <div data-when="ready sending offline">
-            <div class="field-label">New date · December 2026</div>
+            <div class="field-label">New date · December 2026 <span style="font-weight:400; color:var(--text-muted)">· at least 48 hours ahead</span></div>
             <div class="dates" data-single id="dates"></div>
             <div class="field-label" style="margin-top:14px">Time window</div>
             <div class="slots" data-single>
@@ -105,8 +105,12 @@
   </div>
 </div>
 
-<p class="plate-note">Ask to move a planned preventive visit. Needs 48 hours notice; the old date stays until Zixom approves.
-With no free slots, Zixom proposes a date.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Asks Zixom to move a planned preventive visit to another date and time window.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a new date and window</li><li>Pick a reason, add an optional note</li><li>Send the request, or ask Zixom to propose a date</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Pending approval: the old date stays until Zixom approves</li><li>Approval or a new proposal arrives by push and email</li><li>View schedule returns to <a href="C406-amc-visits.html">C406</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Inside 48 hours of the visit: call Zixom (shown as if opened then)</li><li>No free slots: Ask Zixom to propose</li><li>Offline disables Send</li><li>Spec: C407</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

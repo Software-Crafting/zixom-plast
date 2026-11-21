@@ -7,12 +7,11 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.mpick{display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; margin:0 calc(var(--gutter) * -1); padding:2px var(--gutter)}
-.mpick::-webkit-scrollbar{display:none}
-.mpick a{flex:0 0 132px; display:flex; flex-direction:column; gap:8px; padding:12px; border-radius:var(--r-lg); background:#fff;
+.mpick{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px}
+.mpick a{min-width:0; display:flex; flex-direction:column; gap:8px; padding:12px; border-radius:var(--r-lg); background:#fff;
   border:1px solid var(--line); color:inherit; text-decoration:none}
-.mpick .thumb{width:100%; height:64px}
-.mpick b{font:400 var(--fs-14) var(--font-display); color:var(--slate-900); line-height:1.3}
+.mpick .thumb{width:100%; height:52px}
+.mpick b{font:400 var(--fs-13) var(--font-display); color:var(--slate-900); line-height:1.3}
 .mpick span.mono{font-size:var(--fs-11); color:var(--text-muted)}
 .cats{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px}
 .cats a{display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 4px 12px; border-radius:var(--r-lg); background:#fff;
@@ -57,7 +56,7 @@
             <div class="mpick" id="machines"></div>
             <div class="section-head"><h2>Categories</h2></div>
             <div class="cats" id="cats"></div>
-            <div class="section-head"><h2>Recently ordered</h2><a href="C707-orders.html">Orders <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-up-right"/></svg></a></div>
+            <div class="section-head"><h2>Recently ordered</h2></div>
             <div id="recent"></div>
             <div class="list">
               <a class="list-item" href="C707-orders.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-truck"/></svg></span><b>Orders and requests</b><span class="sub" id="orders-sub"></span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>

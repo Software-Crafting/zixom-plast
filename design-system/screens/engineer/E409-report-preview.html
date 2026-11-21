@@ -17,7 +17,10 @@
 .rep-head .kv div + div{border-top:0}
 .block h3{margin:0 2px 6px; font-size:var(--fs-13); font-weight:600; color:var(--text-muted)}
 .block p{margin:0 2px; font-size:var(--fs-14); line-height:1.55; color:var(--slate-900)}
-.part{display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
+.textcard{display:grid; gap:14px; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.textcard .block h3, .textcard .block p{margin-left:0; margin-right:0}
+[data-state="rendering"] .review-link, [data-state="failed"] .review-link{opacity:.42; pointer-events:none}
+.part{background:#fff; display:grid; grid-template-columns:1fr auto; gap:4px 12px; padding:12px 14px; border-radius:var(--r-md); border:1px solid var(--line)}
 .part b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .part span{font-size:var(--fs-12); color:var(--text-muted)}
 .part .tag{grid-column:2; grid-row:1 / span 2; align-self:center}
@@ -69,11 +72,13 @@
             <dl class="kv" id="rep-kv"></dl>
           </div>
 
-          <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
-          <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
-          <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          <div class="textcard">
+            <div class="block"><h3>Reported problem</h3><p id="r-problem"></p></div>
+            <div class="block"><h3>Findings</h3><p id="r-findings"></p></div>
+            <div class="block"><h3>Work done</h3><p id="r-work"></p></div>
+          </div>
           <div class="block"><h3>Parts replaced</h3><div class="stack-sm" id="r-parts"></div></div>
-          <div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div>
+          <div class="textcard"><div class="block"><h3>Recommendations</h3><p id="r-reco"></p></div></div>
           <div class="block"><h3>Before and after</h3><div class="uploads photos" id="r-photos"></div></div>
 
           <div class="block"><h3>Signatures</h3>
@@ -111,8 +116,12 @@
   </div>
 </div>
 
-<p class="plate-note">The customer copy exactly as <a href="../customer/C512-service-report.html">C512</a> shows it, built
-before submit. No prices; cost shows as covered or chargeable only. Large reports show progress.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Preview of the report PDF exactly as the customer receives it (<a href="../customer/C512-service-report.html">C512</a>), before submit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Scroll the customer copy.</li><li>Go back to edit, or continue to submit.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Back to edit opens <a href="E401-report.html">E401</a>; Continue returns to <a href="E404-report-review.html">E404</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Large reports build with a progress bar.</li><li>Build fails: message with Retry; the report is safe.</li><li>No prices: cost shows as covered or chargeable only.</li><li>Spec: section E12, E409</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

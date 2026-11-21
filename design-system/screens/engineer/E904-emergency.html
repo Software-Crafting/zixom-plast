@@ -42,7 +42,7 @@
 
         <div class="stack-sm" style="margin-top:16px" data-when="ready shared noloc offline">
           <a class="btn btn-danger big" href="tel:112"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call 112</a>
-          <a class="btn btn-primary" href="#" id="call-manager"></a>
+          <a class="btn btn-secondary" href="#" id="call-manager"></a>
         </div>
         <div class="card" style="margin-top:16px" id="copies" data-when="nocall"></div>
 
@@ -62,8 +62,12 @@
   </div>
 </div>
 
-<p class="plate-note">Reachable from every job screen. Call 112, call the service manager, or share live location with him.
-Without location permission it sends the site address; a phone that cannot call shows numbers to copy.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Emergency help, reachable from every job screen.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call 112.</li><li>Call the service manager.</li><li>Share live location with the manager.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Calls open the phone dialler.</li><li>The manager gets the live location for 60 minutes.</li><li>Hazard to report afterwards: <a href="E903-incident.html">E903 Incident</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No location permission: sends the job's site address.</li><li>Phone cannot call: numbers show with Copy. Offline: calls still work.</li><li>Spec: section E9, E904.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

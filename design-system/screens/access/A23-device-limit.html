@@ -62,7 +62,12 @@
   </div>
 </div>
 
-<p class="plate-note">After the OTP when the account is at its limit: 2 devices for a customer, 1 for an engineer (EC-12). The signed out device sees <a href="A15-session-expired.html">A15</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Device limit reached at sign in: 2 for a customer, 1 for an engineer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose a device to sign out</li><li>Cancel</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The chosen device is signed out (it sees <a href="A15-session-expired.html">A15</a>) and sign in continues</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Engineer: one device, unsynced items warned</li><li>Sign out failed: Try again</li><li>Spec: section 7, A23 · EC-12</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

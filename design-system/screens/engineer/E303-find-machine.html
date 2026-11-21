@@ -50,7 +50,6 @@
           <a class="scan-row" href="E1005-scan.html" data-when="ready empty offline">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-qr-code"/></svg></span>
             <span class="grow"><b>Scan the machine QR</b><span>On the nameplate</span></span>
-            <svg class="ic ic-16" aria-hidden="true" style="color:var(--slate-400)"><use href="#ph-caret-right"/></svg>
           </a>
 
           <div data-when="ready offline">
@@ -103,8 +102,12 @@
   </div>
 </div>
 
-<p class="plate-note">Machines on Sandeep's jobs, searchable by serial or by QR. A machine outside his jobs can be opened,
-and the lookup is logged. Offline searches the saved machines.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Machines tab of the engineer app: the machines on his jobs, found by serial number or QR.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by serial number.</li><li>Scan the nameplate QR.</li><li>Open a machine on his jobs.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A machine opens <a href="E302-machine-detail.html">E302</a>; Scan opens <a href="E1005-scan.html">E1005</a>.</li><li>Opening a machine outside his jobs is logged for Zixom.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Serial not found offers Scan QR instead.</li><li>Offline searches saved machines only.</li><li>Spec: section 9, E3, E303 · Q on outside lookups</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

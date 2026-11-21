@@ -12,6 +12,8 @@
 .job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .list .list-item{cursor:default}
 .add-row b{grid-column:2; grid-row:1; color:var(--blue)}
+.upload .sync{position:absolute; top:6px; right:6px; width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:var(--amber-50); color:var(--amber)}
+.upload .sync .ic{width:14px; height:14px}
 .add-row .disc{grid-column:1; grid-row:1; background:var(--blue-50); color:var(--blue)}
 </style>
 </head>
@@ -57,7 +59,7 @@
               <span class="field-label">Parts needed<span class="counter">Optional</span></span>
               <div class="list">
                 <div class="list-item" id="part"></div>
-                <a class="list-item add-row" id="add-part" href="E402-parts-used.html"><span class="disc"></span><b>Add part</b><span class="end"></span></a>
+                <a class="list-item add-row" id="add-part" href="E402-parts-used.html"><span class="disc"></span><b>Add part</b></a>
               </div>
             </div>
 
@@ -72,7 +74,7 @@
               <div class="uploads">
                 <div class="upload"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
                 <div class="upload" data-when="ready errors"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg></div>
-                <div class="upload" data-when="offline"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="tag amber" style="position:absolute; bottom:6px; height:20px; padding:0 6px; font-size:10px">Not synced</span></div>
+                <div class="upload" data-when="offline"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-image"/></svg><span class="sync" role="img" aria-label="Waiting to sync" title="Waiting to sync"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg></span></div>
                 <button class="upload add" type="button" data-open="photo" aria-label="Add photo"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
               </div>
             </div>
@@ -129,9 +131,12 @@
   </div>
 </div>
 
-<p class="plate-note">Records work or parts that were not in the request, then leads to an estimate in
-<a href="E408-estimate.html">E408</a>. On a warranty job the work becomes chargeable only after the manager decides.
-Try <code>?ticket=TKT-2026-0124</code> for a chargeable job.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Records work or parts found on site that were not in the request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Describe the work (required, 10 to 500 characters)</li><li>Add parts, photos and your rough cost</li><li>Save it as a note or add it to an estimate</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Add to estimate opens <a href="E408-estimate.html">E408</a> with this work filled in</li><li>Save note keeps it on the job as an internal note</li><li>Offline, both save on the phone and sync later</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Warranty job: extra work is chargeable only after the manager decides</li><li>Zixom sets the final price; the rough cost is only your estimate</li><li>Try <code>?ticket=TKT-2026-0124</code> for a chargeable job</li><li>Spec: section E11, E221</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -158,7 +163,6 @@ Try <code>?ticket=TKT-2026-0124</code> for a chargeable job.</p>
   document.querySelectorAll('.back-job').forEach((a) => { a.href = `E202-job-detail.html${q}`; });
   $('add-part').href = `E402-parts-used.html${q}`;
   $('add-part').querySelector('.disc').innerHTML = R.icon('plus');
-  $('add-part').querySelector('.end').innerHTML = R.icon('caret-right');
   $('job').innerHTML = `${R.thumb(m, 'sm')}<span class="grow"><b>${R.esc(m.nickname || m.model)}</b>
     <span><span class="mono">${t.number}</span> · ${R.esc(site.name)}</span></span>`;
 

@@ -17,6 +17,8 @@
 .choice.off .thumb, .choice.off b, .choice.off p{opacity:.55}
 .choice.off .paid{grid-column:2; justify-self:start; margin-top:10px}
 .list-title:first-child{margin-top:0}
+.dup-links{display:flex; flex-wrap:wrap; gap:0 8px}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -103,8 +105,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 1. Only machines in warranty today can be claimed; the rest are disabled with the reason and
-a paid service link (EC-46). A machine with an open claim links to it.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 1 of the warranty claim wizard: pick the machine the claim is for.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a machine that is in warranty today.</li><li>Open an existing open claim on that machine.</li><li>Raise a paid service request for an out of warranty machine.</li><li>Save a draft or leave (Save draft or Discard).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens <a href="C304-claim-problem.html">C304</a> with the machine.</li><li>Raise paid service opens <a href="C503-raise-machine.html">C503</a> with the machine picked.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Out of warranty: disabled with the reason (EC-46).</li><li>Open claim on the machine: links to it (EC-41).</li><li>No machine in warranty: empty state with paid service.</li><li>Spec: section C3, C303 · EC-41, EC-46</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -142,7 +148,7 @@ a paid service link (EC-46). A machine with an open claim links to it.</p>
   const showPicked = () => {
     const open = OPEN_CLAIMS.filter((c) => c.machine === picked);
     $('dup').innerHTML = open.length ? `<div class="banner amber">${R.icon('warning')}<div><b>Open claims on this machine</b>
-      ${open.map((c) => `<a href="C308-claim.html?claim=${c.number}">${c.number}</a> ${R.esc(c.summary)}`).join('<br>')}<br>Raise a new one only for a different problem.</div></div>` : '';
+      Raise a new one only for a different problem.<span class="dup-links">${open.map((c) => `<a class="btn btn-secondary btn-sm" href="C308-claim.html?claim=${c.number}" aria-label="Open ${c.number}, ${R.esc(c.summary)}">${R.esc(c.summary)}</a>`).join('')}</span></div></div>` : '';
     $('next').href = `C304-claim-problem.html?machine=${picked}`;
     document.querySelectorAll('[data-serial]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.serial === picked)));
   };

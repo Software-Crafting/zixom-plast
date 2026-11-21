@@ -9,7 +9,6 @@
 <style>
 .title-row{display:flex; align-items:center; justify-content:space-between; margin-top:18px}
 .title-row .root-title{margin:0}
-.title-row .btn{min-height:0; padding:0}
 .urgent{border-color:var(--red)}
 .urgent .tag{grid-column:2; justify-self:start; margin-top:6px}
 .notif.is-urgent .disc{background:var(--red-50); color:var(--red)}
@@ -21,6 +20,7 @@
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="grouped" aria-pressed="false">many at once</button>
   <button type="button" data-state="empty" aria-pressed="false">empty</button>
   <button type="button" data-state="notfound" aria-pressed="false" data-open="gone">record removed</button>
   <button type="button" data-state="error" aria-pressed="false">error</button>
@@ -39,7 +39,7 @@
       </div>
       <div class="title-row">
         <h1 class="root-title">Inbox</h1>
-        <button class="btn btn-text" type="button" id="mark-all" data-when="ready notfound offline" data-toast="All marked as read">Mark all read</button>
+        <button class="btn btn-secondary btn-sm" type="button" id="mark-all" data-when="ready grouped notfound offline" data-toast="All marked as read">Mark all read</button>
       </div>
     </header>
 
@@ -47,9 +47,12 @@
       <div class="scroll with-tabbar">
         <div class="stack" style="margin-top:16px">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
-          <div id="urgent" data-when="ready notfound offline"></div>
-          <div data-when="ready notfound offline">
-            <p class="list-title" style="margin-top:0" id="unread-title"></p>
+          <div id="urgent" data-when="ready grouped notfound offline"></div>
+          <div data-when="ready grouped notfound offline">
+            <p class="list-title" style="margin-top:0" id="unread-title" data-when="ready notfound offline"></p>
+            <p class="list-title" style="margin-top:0" data-when="grouped">3 unread</p>
+            <a class="notif unread" href="E502-parts-requests.html" data-when="grouped"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-package"/></svg></span>
+              <span><b>4 parts updates</b><p>SPR-2026-0030 and 3 more</p></span><time>2 min ago</time></a>
             <div id="list"></div>
           </div>
 
@@ -88,8 +91,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every message for the engineer, newest first. A new assignment is a time sensitive alert pinned on
-top until answered; a message whose job no longer exists says so instead of opening.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's inbox: assignments, customer replies, parts, manager messages and leave decisions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a message to go to its job, request or leave</li><li>Answer a new assignment from the pinned time sensitive card</li><li>Mark all read</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>New job opens <a href="E203-accept-job.html">E203</a>; replies open <a href="E202-job-detail.html">E202</a>; parts open <a href="E502-parts-requests.html">E502</a></li><li>Reassigned or cancelled opens <a href="E215-job-cancelled.html">E215</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A removed record says so instead of opening (EC-61)</li><li>Many at once are grouped, one push per event (EC-62)</li><li>Offline shows the saved inbox</li><li>Spec: E8, E801 · section 12 notifications</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -123,7 +130,7 @@ top until answered; a message whose job no longer exists says so instead of open
 
   const urgent = day.inbox.find((i) => i.urgent);
   $('urgent').innerHTML = `<a class="alert-card red urgent" href="${href(urgent)}"><span class="disc">${R.icon(urgent.icon)}</span>
-    <b>${R.esc(urgent.title)}</b><span>${R.esc(urgent.sub)}</span>${R.icon('caret-right', 'ic-16')}
+    <b>${R.esc(urgent.title)}</b><span>${R.esc(urgent.sub)}</span>
     <span class="tag red">Time sensitive</span></a>`;
   const rest = day.inbox.filter((i) => !i.urgent);
   $('list').innerHTML = rest.map(row).join('');

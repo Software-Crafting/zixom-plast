@@ -88,8 +88,12 @@
   </div>
 </div>
 
-<p class="plate-note">Dictation for findings or notes in the visit report. Start, speak, Stop, edit the text, then Insert puts it
-in the field. Microphone denied goes to <a href="../system/S07-permission.html">S07</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Dictation sheet to fill findings or notes in the visit report by speaking.</p></div>
+  <div><h3>What you can do</h3><ul><li>Start, speak, then Stop.</li><li>Edit the text or speak more.</li><li>Insert puts the text in the field.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The text lands in the report field (<a href="E401-report.html">E401</a>), saved on the phone as a draft.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Noisy plant: "Could not understand, try again".</li><li>Speech service offline: type instead.</li><li>Microphone denied: <a href="../system/S07-permission.html">S07</a>. Spec: section E10, E1004.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -141,6 +145,7 @@ in the field. Microphone denied goes to <a href="../system/S07-permission.html">
   document.querySelectorAll('.plate-states button').forEach((b) => b.addEventListener('click', () => {
     window.clearInterval(typing);
     $('transcript').value = SAMPLE[b.dataset.state] ?? '';
+    $('transcript').placeholder = b.dataset.state === 'nospeech' ? 'Type your findings' : 'Tap Start and speak';
   }));
 })();
 </script>

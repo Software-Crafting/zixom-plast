@@ -27,6 +27,12 @@
 .inv b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .inv .amt{font:400 var(--fs-14) var(--font-display); color:var(--slate-900); text-align:right}
 .inv .sub{font-size:var(--fs-12); color:var(--text-muted)}
+.banner .btn{display:flex; width:fit-content; margin-top:8px; padding:0 16px; text-decoration:none; background:#fff; border:1px solid var(--line-strong); font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.pdf-missing{display:flex; align-items:center; gap:12px; padding:14px 16px}
+.pdf-missing .ic{color:var(--slate-600)}
+.pdf-missing div{flex:1}
+.pdf-missing b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
+.pdf-missing span{font-size:var(--fs-12); color:var(--text-muted)}
 </style>
 </head>
 <body class="plate">
@@ -58,7 +64,7 @@
           <div class="c-head" id="head"></div>
           <div id="banner"></div>
           <div class="banner amber" data-when="used"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
-            <div><b>All visits used</b><span class="used-text"></span> <a href="C503-raise-machine.html">Raise paid service</a></div></div>
+            <div><b>All visits used</b><span class="used-text"></span><a class="btn btn-secondary btn-sm" id="paid-service" href="C503-raise-machine.html">Raise paid service</a></div></div>
 
           <div class="card"><h3 class="panel-title">Covered machines</h3><div id="machines"></div></div>
           <div class="card"><h3 class="panel-title">What is included</h3><dl class="kv" style="margin:0" id="included"></dl></div>
@@ -70,8 +76,9 @@
             <a class="list-item" href="C902-document-viewer.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg></span>
               <b>Download contract</b><span class="sub">PDF, 0.6 MB</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></span></a>
           </div>
-          <div class="banner grey" data-when="nopdf"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>
-            <div><b>Contract PDF not available yet</b><a href="C602-ask.html">Ask a question</a></div></div>
+          <div class="card pdf-missing" data-when="nopdf"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>
+            <div><b>Contract PDF</b><span>Not available yet</span></div>
+            <a class="btn btn-secondary btn-sm" href="C602-ask.html">Ask a question</a></div>
         </div>
 
         <div class="stack" data-when="loading">
@@ -107,8 +114,12 @@
   </div>
 </div>
 
-<p class="plate-note">Any contract via <code>?amc=</code>; pick one above for each status. The main button follows the status:
-Raise breakdown request, Renew or Pay now. All visits used shows the chargeable option (EC-48).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One AMC contract: plan, machines, what is included, visits, invoices and the contract PDF.</p></div>
+  <div><h3>What you can do</h3><ul><li>Use the main button: Raise breakdown request, Renew or Pay now</li><li>Open a machine, the visit schedule or an invoice</li><li>Download the contract PDF</li><li>More: reschedule a visit, ask a question, do not renew</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Raise opens <a href="C503-raise-machine.html">C503</a> with the machine picked</li><li>Renew opens C405; Pay now opens C803</li><li>Visits open C406; invoices C802; PDF C902</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Suspended: red banner with the amount and Pay now</li><li>Expired: renew within 7 days, then Buy AMC</li><li>All visits used: chargeable option (EC-48); removed machine shows the date</li><li>Spec: C402 detail · AMC status model</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -169,6 +180,7 @@ Raise breakdown request, Renew or Pay now. All visits used shows the chargeable 
   };
   if (BANNERS[c.status]) $('banner').innerHTML = BANNERS[c.status](); else $('banner').remove();
   document.querySelector('.used-text').textContent = `Extra visits are chargeable with ${plan.discount}% off parts.`;
+  $('paid-service').href = `C503-raise-machine.html?machine=${firstMachine}`;
 
   const mrow = (m) => `<a class="mrow" href="C202-machine-detail.html?serial=${m.serial}">${R.thumb(m, 'sm')}
     <span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span></a>`;
@@ -183,8 +195,10 @@ Raise breakdown request, Renew or Pay now. All visits used shows the chargeable 
 
   const next = NEXT_VISIT[c.number];
   $('visits').innerHTML = `<h3 class="panel-title">Visits</h3>
-    <p class="big">${visitsLeft} <small>of ${c.visitsIncluded} left</small></p>
-    <div class="meter" style="margin-top:10px"><i style="width:${(c.visitsUsed / c.visitsIncluded) * 100}%"></i></div>
+    <p class="big" data-when="ready removed nopdf offline">${visitsLeft} <small>of ${c.visitsIncluded} left</small></p>
+    <p class="big" data-when="used">0 <small>of ${c.visitsIncluded} left</small></p>
+    <div class="meter" style="margin-top:10px" data-when="ready removed nopdf offline"><i style="width:${(c.visitsUsed / c.visitsIncluded) * 100}%"></i></div>
+    <div class="meter" style="margin-top:10px" data-when="used"><i style="width:100%"></i></div>
     <a class="next" href="C406-amc-visits.html">${next ? `Next visit ${R.dayDate(next[0])}, ${next[1]}` : 'Visit schedule'}
       <span>${next ? 'Planned by Zixom' : 'No visit planned'}</span></a>`;
 

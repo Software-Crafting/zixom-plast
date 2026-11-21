@@ -57,8 +57,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every company the person belongs to; the active one is checked. Switching reloads each tab with a
-skeleton. With one company this screen is hidden.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every company the person belongs to; the active one is checked.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick another company</li><li>Switch company</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Every tab reloads with a skeleton, then shows the new company's data</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>One company: this screen is hidden</li><li>Up to 5 companies per person</li><li>Offline: switching needs the internet</li><li>Spec: C18, C1113</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

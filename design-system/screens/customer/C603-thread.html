@@ -18,8 +18,9 @@
 .bubble.them .att{background:var(--slate-100)}
 .bubble.clamp{display:-webkit-box; -webkit-line-clamp:12; -webkit-box-orient:vertical; overflow:hidden}
 .bubble-meta .read{color:var(--blue)}
-.bubble-meta .retry{margin-left:4px; padding:0; border:0; background:none; color:inherit; font:700 var(--fs-11) var(--font-body); text-decoration:underline; cursor:pointer}
-.show-more{align-self:flex-start; margin:-2px 0 8px 6px; padding:0; border:0; background:none; color:var(--blue); font:600 var(--fs-12) var(--font-body); cursor:pointer}
+.bubble-meta.failed{align-items:center; gap:6px}
+.bubble-meta .btn{margin-left:4px}
+.show-more{align-self:flex-start; margin:-2px 0 4px}
 .resolve{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; padding:10px 10px 10px 16px;
   border-radius:var(--r-pill); background:#fff; border:1px solid var(--line); font-size:var(--fs-13); color:var(--slate-800)}
 .composer{position:absolute; z-index:20; left:0; right:0; bottom:0; display:flex; align-items:center; gap:8px; padding:10px var(--gutter) 30px;
@@ -172,7 +173,7 @@ are read only with Reopen; a failed message keeps its text with Retry.</p>
       ] },
   ];
   const LONG_REPLY = 'For 0.8 mm PET on the AFM-760:\n1. Raise the top heater to 72 percent.\n2. Keep the bottom heater at 60 percent.\n3. Heat time 9.5 seconds.\n4. Forming air 5.5 bar.\n5. Cooling 3 seconds.\n6. Run 20 trial sheets first.\n7. Check wall thickness at the corners.\n8. If corners are thin, add 0.5 seconds heat time.\n9. If sheet sags, lower the top heater by 2 percent.\n10. Clean the heater reflectors before the trial.\n11. Note the settings on the HMI recipe page.\n12. Save them as a new recipe.\n13. Share the trial results here.\n14. We can arrange a calibration visit if needed.';
-  const STATUS = { open: ['Open', 'blue'], complaint: ['Complaint', 'red'], answered: ['Answered', 'green'], closed: ['Closed', ''] };
+  const STATUS = { open: ['Open', 'blue'], complaint: ['Open', 'blue'], answered: ['Answered', 'green'], closed: ['Closed', ''] };
 
   /* a question just sent from C602 is not in data.js: build it from the query string */
   const params = new URLSearchParams(location.search);
@@ -242,11 +243,11 @@ are read only with Reopen; a failed message keeps its text with Retry.</p>
   }).join('');
   const queued = 'Will try a trial run this afternoon.';
   const extra = closed ? '' : `
-    <div class="bubble me" data-when="sending failed">${queued}</div>
+    <div class="bubble me" data-when="sending failed">${queued}<span data-when="failed">${att(['file-pdf', 'trial-plan.pdf', '640 KB'])}</span></div>
     <div class="bubble-meta me" data-when="sending">${STATE.sending}</div>
-    <div class="bubble-meta me failed" data-when="failed">${R.icon('warning-circle', 'ic-16')}Not sent.<button class="retry" type="button" data-toast="Sent">Retry</button></div>
+    <div class="bubble-meta me failed" data-when="failed">${R.icon('warning-circle', 'ic-16')}Not sent<button class="btn btn-soft btn-sm" type="button" data-toast="Sent">Retry</button></div>
     <div class="bubble them clamp" data-when="long newmsg" style="white-space:pre-line">${R.esc(LONG_REPLY)}</div>
-    <button class="show-more" type="button" data-when="long" onclick="this.previousElementSibling.classList.remove('clamp'); this.remove()">Show more</button>
+    <button class="btn btn-soft btn-sm show-more" type="button" data-when="long" onclick="this.previousElementSibling.classList.remove('clamp'); this.remove()">Show more</button>
     <div class="bubble-meta" data-when="long newmsg">${R.esc(agent)} · 11:52 AM</div>`;
   const resolve = q.status === 'answered' ? `<div class="resolve"><span>Did this answer it?</span>
     <button class="btn btn-secondary btn-sm" type="button" data-open="rate">Mark as resolved</button></div>` : '';

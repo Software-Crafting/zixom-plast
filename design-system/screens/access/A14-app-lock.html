@@ -61,7 +61,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown at launch and after 5 minutes in the background; the Face ID prompt is drawn by iOS. After 5 failures the person signs in again (EC-38).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Lock screen at launch and after 5 minutes in the background.</p></div>
+  <div><h3>What you can do</h3><ul><li>Unlock with Face ID</li><li>Use the phone passcode</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Unlocks to the screen the person left</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cancelled: stays locked with Unlock</li><li>5 failures: sign in again with OTP <a href="A03-sign-in.html">A03</a> (EC-38)</li><li>Spec: section 7, A14</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

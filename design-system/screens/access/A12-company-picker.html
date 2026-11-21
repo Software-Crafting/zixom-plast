@@ -7,7 +7,7 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.choice .tag{margin-top:8px; grid-column:2; justify-self:start}
+
 .draft-note{grid-column:2; display:flex; align-items:center; gap:5px; margin-top:6px; font-size:var(--fs-12); color:var(--amber)}
 .draft-note .ic{width:14px; height:14px}
 </style>
@@ -26,11 +26,8 @@
     <div class="sheet">
       <div class="navbar"><span></span><h1>Choose company</h1><span></span></div>
       <div class="scroll with-footer">
-        <h1 class="large-title">Welcome back, Rakesh</h1>
-        <p class="lede" data-when="ready">You work with 2 companies. Each has its own machines, requests and payments.</p>
-        <p class="lede" data-when="removed">Your list has changed since you last signed in.</p>
-
-        <div class="banner amber" style="margin-top:14px" data-when="removed">
+        <p class="lede" style="margin-top:0" data-when="ready">Welcome back, Rakesh. Pick a company.</p>
+        <div class="banner amber" data-when="removed">
           <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
           <div><b>You are no longer part of Nova Cups Pvt Ltd</b>Their primary contact removed you. Ask Imran Qureshi if this is a mistake.</div>
         </div>
@@ -39,21 +36,19 @@
           <button class="choice" role="radio" aria-checked="true" type="button">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
             <b>Shree Packaging Industries</b>
-            <p>Ahmedabad · 6 machines · 2 sites</p>
-            <span class="tag blue">Primary contact</span>
+            <p>Primary contact · 6 machines</p>
             <span class="mark"></span>
           </button>
           <button class="choice" role="radio" aria-checked="false" type="button" data-when="ready">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
             <b>Nova Cups Pvt Ltd</b>
-            <p>Pune · No machines yet</p>
-            <span class="tag">Member</span>
+            <p>Member · No machines yet</p>
             <span class="draft-note"><svg class="ic" aria-hidden="true"><use href="#ph-note-pencil"/></svg>1 unsent draft</span>
             <span class="mark"></span>
           </button>
         </div>
 
-        <label class="check" style="margin-top:18px"><input type="checkbox" checked>Remember my choice. Switch any time from Home.</label>
+        <label class="check" style="margin-top:18px"><input type="checkbox" checked>Remember my choice</label>
       </div>
 
       <div class="footer-bar">
@@ -64,9 +59,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown once after sign in to a person in more than one company; the choice is remembered and
-switched from Home (C1113). Drafts stay with the company they were started in (EC-69). A deactivated company opens
-<a href="A16-account-suspended.html">A16</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Company choice for a person in more than one company.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a company; see primary contact or member and drafts</li><li>Remember the choice</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Continue opens that company's Home; switch later from Home</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Removed since last time: banner and the list refreshes</li><li>Deactivated company <a href="A16-account-suspended.html">A16</a>; drafts stay with their company (EC-69)</li><li>Spec: section 7, A12</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

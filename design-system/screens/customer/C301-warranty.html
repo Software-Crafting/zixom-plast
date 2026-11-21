@@ -19,6 +19,7 @@
 .claims-head h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
 .count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px 10px; font-size:var(--fs-13); color:var(--text-muted)}
 .count-line b{color:var(--slate-900); font-weight:600}
+.scroll.with-tabbar{padding-bottom:calc(var(--tabbar-space) + 64px)} /* clear the New claim button */
 </style>
 </head>
 <body class="plate">
@@ -73,7 +74,7 @@
             <div data-when="filtered">
               <div class="claims-head"><h2>Claims</h2></div>
               <div class="tools two" style="margin-bottom:10px"><div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg><input class="input" type="search" placeholder="Claim number or machine" aria-label="Search"></div><button class="icon-btn" type="button" data-open="filter" aria-label="Filter claims"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button></div>
-              <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+              <p class="count-line"><span id="filtered-count"></span><button class="btn btn-soft btn-sm" type="button">Clear filters</button></p>
               <div class="stack-sm" id="filtered"></div>
             </div>
 
@@ -132,8 +133,12 @@
   </div>
 </div>
 
-<p class="plate-note">Support tab, Warranty segment. Coverage per machine with days left, then the company's claims,
-Open and Closed, filterable by machine or status.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Support tab, Warranty segment: warranty coverage per machine and the company's claims.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a machine's coverage (days left).</li><li>Search claims, filter by machine or status, switch Open and Closed.</li><li>Open a claim or start a New claim.</li><li>Call or email Zixom support.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Coverage opens <a href="C302-warranty-details.html">C302</a>, a claim opens <a href="C308-claim.html">C308</a>.</li><li>New claim starts the wizard at <a href="C303-claim-machine.html">C303</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No claims: empty state; offline shows the last update time.</li><li>A claim waiting for the customer is listed first.</li><li>Spec: section C3, C301 · F3</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

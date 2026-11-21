@@ -130,8 +130,12 @@
   </div>
 </div>
 
-<p class="plate-note">Pick an invoice above; INV-2026-0981 already has an open dispute on its delivery line. Paid invoices
-can be disputed, and leaving keeps a draft.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Form to dispute one charge on an issued invoice. Any company member can use it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the invoice and the charge line.</li><li>Choose a reason and describe the problem (20 to 1000 characters).</li><li>Attach evidence: PDF, JPG or PNG up to 10 MB.</li><li>Leave at any time; the draft is kept.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Submit shows the dispute number, then <a href="C1602-dispute-status.html">C1602</a> tracks it.</li><li>Zixom accounts reviews it and replies by push and email.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open dispute on the same line: link to it instead (EC-41). Paid invoices allowed.</li><li>Wrong file type or failed upload: per file message and retry (EC-30, EC-31).</li><li>Offline: draft saved, submit waits (EC-02). Double tap blocked (EC-40).</li><li>Spec: section C16, C1601 · EC-30, EC-31, EC-40, EC-41</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

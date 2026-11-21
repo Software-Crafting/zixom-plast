@@ -11,6 +11,7 @@
 .prev h2{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
 .prev .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .prev p{margin:6px 0 0; font-size:var(--fs-13); color:var(--text)}
+.choice b{grid-row:1 / span 2}
 </style>
 </head>
 <body class="plate">
@@ -54,7 +55,7 @@
         </div>
 
         <div class="state" data-when="done" style="padding-top:90px">
-          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check"/></svg></span>
           <h3>Thanks for telling us</h3>
           <p class="active-until-plain"></p>
         </div>
@@ -79,13 +80,13 @@
       <div class="footer-bar">
         <div class="stack-sm" data-when="ready">
           <button class="btn btn-primary" type="button" data-goto="sending">Submit</button>
-          <button class="btn btn-text" type="button" data-goto="done">Skip</button>
+          <button class="btn btn-secondary" type="button" data-goto="done">Skip</button>
         </div>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="sending">Submit</button>
         <button class="btn btn-primary" type="button" disabled data-when="offline">Submit</button>
         <div class="stack-sm" data-when="done">
           <a class="btn btn-primary contract-link" href="C402-amc-contract.html">View contract</a>
-          <a class="btn btn-text renew-link" href="C405-renew-amc.html">Changed your mind? Renew</a>
+          <a class="btn btn-secondary renew-link" href="C405-renew-amc.html">Renew instead</a>
         </div>
       </div>
     </div>
@@ -93,8 +94,12 @@
   </div>
 </div>
 
-<p class="plate-note">Optional feedback when a customer will not renew. The contract stays active until its end date and
-renewal reminders stop. Skip sends the choice without a reason.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Optional feedback when the customer decides not to renew an AMC contract.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason and add a comment</li><li>Submit, or Skip without a reason</li><li>Change your mind and renew</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The contract stays active until its end date</li><li>Renewal reminders stop; Zixom sees the reason</li><li>View contract returns to <a href="C402-amc-contract.html">C402</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reason and comment are optional (skippable)</li><li>Offline disables Submit</li><li>Spec: C408 · AMC reminders</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

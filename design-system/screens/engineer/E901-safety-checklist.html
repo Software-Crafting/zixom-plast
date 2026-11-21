@@ -49,9 +49,9 @@
           <p class="who" id="who"></p>
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Your answers are saved on the phone.</div>
           <div class="banner amber" data-when="induction"><svg class="ic" aria-hidden="true"><use href="#ph-hard-hat"/></svg>
-            <div><b>Site induction needed first</b><a href="E906-induction.html">Confirm induction</a></div></div>
+            <div><b>Site induction needed first</b>Confirm it before the checklist.</div></div>
           <a class="alert-card amber" href="E905-hazards.html" id="hazards"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-shield-warning"/></svg></span>
-            <b>Hazard notes for this machine</b><span>Hot surfaces, high voltage, pressure, moving parts</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-right"/></svg></a>
+            <b>Hazard notes for this machine</b><span>Hot surfaces, high voltage, pressure, moving parts</span></a>
           <div class="stack-sm" id="items"></div>
           <div class="sign"><svg class="ic" aria-hidden="true"><use href="#ph-signature"/></svg><span>Confirmed by <b id="engineer"></b></span></div>
         </div>
@@ -92,8 +92,12 @@
   </div>
 </div>
 
-<p class="plate-note">Mandatory after check in. Start work unlocks when every statement is Yes, or Not applicable with a
-reason; any No stops the job with Fix, Escalate or Report an incident. The time is saved, and it works offline.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Mandatory safety checklist the engineer completes after check in, before any work on the machine.</p></div>
+  <div><h3>What you can do</h3><ul><li>Answer each statement Yes, No or Not applicable (a reason is required).</li><li>Open the machine hazard notes above the list.</li><li>Start work once every item is Yes or Not applicable with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Start work saves the confirmation time and opens <a href="E207-work.html">E207 Work</a>.</li><li>Any No shows Do not start work: fix it, <a href="E211-escalate.html">Escalate</a> or <a href="E903-incident.html">Report an incident</a>.</li><li>Offline the answers stay on the phone, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Site needs an induction: <a href="E906-induction.html">E906</a> first.</li><li>Each machine type loads its own checklist.</li><li>Spec: section E9, E901 detailed spec.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -122,7 +126,7 @@ reason; any No stops the job with Fix, Escalate or Report an incident. The time 
   $('escalate').href = `E211-escalate.html?ticket=${ticketNo}`;
   $('to-work').href = `E207-work.html?ticket=${ticketNo}`;
   $('hazards').href = `E905-hazards.html?serial=${m.serial}`;
-  $('who').innerHTML = `<span class="mono">${ticketNo}</span> · ${R.esc(m.nickname || m.model)}`;
+  $('who').innerHTML = `<span class="mono">${ticketNo}</span> · ${R.esc(m.nickname || m.model)} · ${R.esc(m.type)} checklist`;
   $('engineer').textContent = R.engineer(day.engineer).name;
   $('started-at').textContent = `Saved at 12:00 PM, ${R.dayDate(data.today)}.`;
 
@@ -155,7 +159,11 @@ reason; any No stops the job with Fix, Escalate or Report an incident. The time 
   };
   apply(PRESETS.ready);
 
-  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => apply(PRESETS[b.dataset.state])));
+  const savedAt = `Saved at 12:00 PM, ${R.dayDate(data.today)}.`;
+  document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
+    apply(PRESETS[b.dataset.state]);
+    $('started-at').textContent = b.dataset.state === 'offline' ? `${savedAt} Waiting to sync.` : savedAt;
+  }));
   document.addEventListener('click', (event) => {
     if (event.target.closest('.yn button')) requestAnimationFrame(update); /* after ui.js sets aria-pressed */
     if (event.target.closest('#fix')) {

@@ -107,7 +107,12 @@
   </div>
 </div>
 
-<p class="plate-note">Installation photos from Zixom cannot be deleted; your team's photos can. Images are placeholders.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Photo gallery of one machine: installation photos from Zixom and photos your team adds.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a photo from the camera or library.</li><li>Open a photo to share it.</li><li>Delete your own team's photos.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>New photos upload with per file progress and appear under Added by your team.</li><li>Delete asks to confirm.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Zixom photos cannot be deleted.</li><li>Failed upload: Retry or Remove (EC-31).</li><li>Camera or library access off: <a href="../system/S07-permission.html">S07</a> (EC-23, EC-24).</li><li>Spec: section C14, C1407 · EC-23, EC-31</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

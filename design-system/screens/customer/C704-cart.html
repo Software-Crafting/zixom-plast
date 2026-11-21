@@ -13,7 +13,7 @@
 .citem .mono{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .citem .amt{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap}
 .citem .controls{grid-column:1 / -1; display:flex; align-items:center; gap:8px}
-.citem .controls .btn-text{margin-left:auto; min-height:0; padding:0 4px; font-size:var(--fs-13)}
+.citem .controls .save{margin-left:auto}
 .citem .note{grid-column:1 / -1; display:flex; align-items:center; gap:8px; margin:0; font-size:var(--fs-13); color:var(--amber)}
 .citem .note .btn{margin-left:auto}
 .citem .error-text{grid-column:1 / -1; margin:0}
@@ -101,7 +101,7 @@ parts with price on request go to a quote, never the cart.</p>
   const part = (n) => (n === DIGITAL_GAUGE.number ? DIGITAL_GAUGE : data.parts.find((p) => p.number === n));
 
   $('removed-text').textContent = `${DIGITAL_GAUGE.name} is no longer available.`;
-  const stepper = (qty) => `<span class="stepper"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button><output value="${qty}">${qty}</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span>`;
+  const stepper = (qty) => `<span class="stepper lg"><button type="button" data-step="-1" aria-label="Less">${R.icon('minus')}</button><output value="${qty}">${qty}</output><button type="button" data-step="1" aria-label="More">${R.icon('plus')}</button></span>`;
   const remove = `<button class="icon-btn sm" type="button" aria-label="Remove" data-toast="Removed from cart">${R.icon('trash', 'ic-18')}</button>`;
 
   const lines = [...CART, [DIGITAL_GAUGE.number, 1]];
@@ -113,7 +113,7 @@ parts with price on request go to a quote, never the cart.</p>
         <span class="thumb sm">${R.icon('package')}</span>
         <span><a href="C703-part-detail.html?part=${n}">${R.esc(p.name)}</a><span class="mono">${n}</span></span>
         <span class="amt">${R.money(p.price * qty)}</span>
-        <div class="controls">${stepper(qty)}<button class="btn btn-text" type="button" data-toast="Saved for later">Save for later</button>${remove}</div>
+        <div class="controls">${stepper(qty)}<button class="btn btn-soft btn-sm save" type="button" data-toast="Saved for later">Save for later</button>${remove}</div>
         ${changed ? `<p class="note" data-when="changed">${R.icon('warning', 'ic-16')}Now ${R.money(changed)} each<button class="btn btn-soft btn-sm" type="button" data-toast="Price updated">Update</button></p>
           <span class="error-text" data-when="limit">${R.icon('warning-circle', 'ic-16')}Only ${STOCK_LEFT} available</span>` : ''}
       </div>`;

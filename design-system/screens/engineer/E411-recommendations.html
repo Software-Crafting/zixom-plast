@@ -13,7 +13,7 @@
 .reco b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .reco .sub{grid-column:2; margin-top:2px; font-size:var(--fs-13); line-height:1.4; color:var(--text)}
 .reco .icon-btn{grid-column:3; grid-row:1 / span 2; width:34px; height:34px; border:0; background:var(--slate-100)}
-.reco .follow{grid-column:2; margin-top:6px; font-size:var(--fs-13); font-weight:600; color:var(--blue); text-decoration:none}
+.reco .follow{grid-column:2; justify-self:start; margin-top:8px}
 .types{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 .types button{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:14px; border-radius:var(--r-lg); background:#fff;
   border:1px solid var(--line); color:var(--slate-900); font:600 var(--fs-13) var(--font-body); cursor:pointer; text-align:left}
@@ -89,8 +89,12 @@
   </div>
 </div>
 
-<p class="plate-note">Follow up visit, parts to order, operator advice and consumables. They print in the customer copy; a
-follow up visit links to <a href="E407-follow-up.html">E407</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Recommended actions after the visit, printed in the customer copy of the report.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add a follow up visit, parts to order, operator advice or consumables.</li><li>Remove one, then save.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to report section 9 in <a href="E401-report.html">E401</a>.</li><li>A follow up visit offers to create it in <a href="E407-follow-up.html">E407</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Optional: empty shows "No recommendations".</li><li>Offline: saved on the phone.</li><li>Spec: section E12, E411</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -115,7 +119,7 @@ follow up visit links to <a href="E407-follow-up.html">E407</a>.</p>
     const items = follow ? [FOLLOW, ...RECOS] : RECOS;
     $('recos').innerHTML = items.map(([kind, text]) => `<div class="reco"><span class="disc">${R.icon(iconOf(kind))}</span><b>${kind}</b>
       <span class="sub">${R.esc(text)}</span>
-      ${kind === FOLLOW[0] ? `<a class="follow" href="E407-follow-up.html?ticket=${ticketNumber}">Create follow up visit ${R.icon('caret-right', 'ic-16')}</a>` : ''}
+      ${kind === FOLLOW[0] ? `<a class="follow btn btn-secondary btn-sm" href="E407-follow-up.html?ticket=${ticketNumber}">Create follow up visit</a>` : ''}
       <button class="icon-btn" type="button" aria-label="Remove ${kind}" data-toast="Removed">${R.icon('trash', 'ic-16')}</button></div>`).join('');
   };
   render();

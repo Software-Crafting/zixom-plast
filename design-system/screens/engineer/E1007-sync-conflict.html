@@ -76,8 +76,12 @@
   </div>
 </div>
 
-<p class="plate-note">Your version and the latest version side by side for each changed field. Report text can be merged by editing,
-a cancelled job can only take latest, and anything left unresolved stays in the <a href="E102-sync-queue.html">sync queue</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Opened from a Conflict item in the sync queue when Zixom changed a job the engineer edited offline.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick Your version or Latest version per field</li><li>Keep all mine or Take all latest</li><li>Merge report text by editing it</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save choices sends the result and returns to the <a href="E102-sync-queue.html">sync queue</a></li><li>Left alone, the item stays in the queue and the job shows a banner</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Job cancelled by Zixom: only Take latest</li><li>Parts lines merge by part number</li><li>Spec: E1007 detail · EC-57</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

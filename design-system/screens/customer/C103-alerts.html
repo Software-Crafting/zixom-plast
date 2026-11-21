@@ -69,8 +69,12 @@
   </div>
 </div>
 
-<p class="plate-note">Everything that needs the company, most urgent first, each with its action. Dismiss hides an
-alert; dismissing all shows the empty state.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every alert for the company, most urgent first, each with its action.</p></div>
+  <div><h3>What you can do</h3><ul><li>Run the alert action (pay, renew, review, reply)</li><li>Dismiss an alert</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Each action opens its screen: C802, C405, C509, C302, C308</li><li>Dismissing all shows Nothing needs your attention</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Offline shows the last load (EC-02)</li><li>Error with Try again (EC-07)</li><li>Spec: C1, C103</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -92,8 +96,8 @@ alert; dismissing all shows the empty state.</p>
     $('alerts').innerHTML = alerts.map((a, i) => `<div class="acard ${a.tone}">
       <span class="disc">${R.icon(a.icon)}</span><b>${R.esc(a.title)}</b>
       <span class="sub${a.mono ? ' mono' : ''}">${R.esc(a.sub)}</span>
-      <span class="row"><a class="btn btn-primary btn-sm" href="${R.esc(a.href)}">${ACTION[a.href]}</a>
-        <button class="btn btn-text" type="button" data-dismiss="${i}" data-toast="Alert dismissed" style="color:var(--slate-600)">Dismiss</button></span>
+      <span class="row"><a class="btn btn-secondary btn-sm" href="${R.esc(a.href)}">${ACTION[a.href]}</a>
+        <button class="btn btn-soft btn-sm" type="button" data-dismiss="${i}" data-toast="Alert dismissed">Dismiss</button></span>
     </div>`).join('');
   };
   $('alerts').addEventListener('click', (event) => {

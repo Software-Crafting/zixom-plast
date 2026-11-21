@@ -8,12 +8,12 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .checks{margin:0; padding:0; list-style:none}
-.checks li{display:flex; align-items:center; gap:10px; padding:9px 0; font-size:var(--fs-14); color:var(--slate-900)}
+.checks li{display:flex; align-items:center; gap:10px; padding:12px 0; font-size:var(--fs-14); color:var(--slate-900)}
 .checks li + li{border-top:1px solid var(--line)}
 .checks .ic{width:18px; height:18px; color:var(--green); flex:none}
 .checks li span{margin-left:auto; font-size:var(--fs-12); color:var(--text-muted)}
 .trained{display:flex; flex-wrap:wrap; gap:8px}
-.trained span{display:inline-flex; align-items:center; gap:8px; padding:4px 12px 4px 4px; border-radius:var(--r-pill); background:var(--field); border:1px solid var(--line); font-size:var(--fs-13); color:var(--slate-900)}
+.trained span{display:inline-flex; align-items:center; gap:8px; padding:4px 12px 4px 4px; border-radius:var(--r-pill); background:var(--wash); font-size:var(--fs-13); color:var(--slate-900)}
 .trained .avatar{width:28px; height:28px; font-size:11px}
 </style>
 </head>
@@ -42,10 +42,10 @@
         <div class="stack" data-when="ready pdf offline">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved copy from 11:42 AM.</div>
           <p class="card-sub" style="margin:0" id="machine-line"></p>
-          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
-          <div><div class="section-head" style="margin-bottom:6px"><h2>Tests done</h2></div><ul class="checks" id="tests"></ul></div>
-          <div><div class="section-head" style="margin-bottom:10px"><h2>Operators trained</h2></div><div class="trained" id="trained"></div></div>
           <div class="banner grey" data-when="pdf"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg><div><b>Certificate not ready</b>Try again in a few minutes.</div></div>
+          <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
+          <div><div class="section-head" style="margin-bottom:6px"><h2>Tests done</h2></div><div class="card-fill" style="padding:2px 16px"><ul class="checks" id="tests"></ul></div></div>
+          <div><div class="section-head" style="margin-bottom:10px"><h2>Operators trained</h2></div><div class="card-fill" style="padding:14px 16px"><div class="trained" id="trained"></div></div></div>
         </div>
 
         <div class="state" data-when="norecord" style="padding-top:64px">
@@ -78,8 +78,12 @@
   </div>
 </div>
 
-<p class="plate-note">The record from the commissioning visit. Machines commissioned before Zixom kept digital records show
-Not recorded with Ask a question.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The commissioning and training record from the visit that put the machine into service.</p></div>
+  <div><h3>What you can do</h3><ul><li>See date, engineer, tests done and operators trained.</li><li>Download or share the certificate PDF.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Download saves the PDF; Share opens the phone share sheet.</li><li>Not recorded offers Ask a question (<a href="C602-ask.html">C602</a>).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Older machines: Not recorded.</li><li>Certificate not ready: Download and Share off.</li><li>Share fails: <a href="../system/S17-share-failed.html">S17</a>.</li><li>Spec: section C14, C1408</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

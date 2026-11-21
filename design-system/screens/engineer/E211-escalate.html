@@ -10,6 +10,8 @@
 .job{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
 .job b{display:block; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .job .grow > span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* single line choices: centre the label against the icon */
+.choice b{grid-row:1 / span 2}
 .sec-title{margin:4px 2px 8px; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .add-file{display:flex; align-items:center; gap:12px; width:100%; margin-top:8px; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
   background:#fff; font:inherit; text-align:left; cursor:pointer}
@@ -139,8 +141,12 @@
   </div>
 </div>
 
-<p class="plate-note">From Job detail while work is in progress. One open escalation per job: a second one is blocked
-until the manager replies. Offline, the request waits in the sync queue.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Ask the service manager for help on a job: a senior engineer, a part, safety, scope or a warranty dispute.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason and write a note (10 to 500 characters).</li><li>Attach a photo, video or file.</li><li>Send to the service manager.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The manager is notified; the reply shows on <a href="E202-job-detail.html">Job detail</a>.</li><li>Offline: the request waits in the <a href="E102-sync-queue.html">sync queue</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>One open escalation per job: a second is blocked until the manager replies.</li><li>Also opened from the safety checklist (<a href="E901-safety-checklist.html">E901</a>) when work cannot proceed.</li><li>Spec: E2, E211.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

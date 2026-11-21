@@ -35,7 +35,7 @@
       </div>
       <div class="scroll with-footer">
         <div class="stack">
-          <div class="banner red" data-when="blocked"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>Not enough space on your phone</b><button class="link-btn" type="button" data-open="storage">Free space</button></div></div>
+          <div class="banner red" data-when="blocked" style="align-items:center"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div class="grow"><b>Not enough space</b></div><button class="btn btn-secondary btn-sm" type="button" data-open="storage">Free space</button></div>
           <div class="card" id="job"></div>
         </div>
       </div>
@@ -79,8 +79,12 @@
   </div>
 </div>
 
-<p class="plate-note">Warns when the phone is low on space and shows what the app can clear. Under 200 MB a new report cannot
-start; the warning clears itself once space is available.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Warning when the phone is low on space, with what the app can clear.</p></div>
+  <div><h3>What you can do</h3><ul><li>See the space left.</li><li>Free uploaded photos and videos or old manuals.</li><li>Open the phone's storage settings.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Once space is available the warning clears itself and the report can start (<a href="E401-report.html">E401</a>).</li><li>Only items already sent to Zixom are cleared; anything Waiting to sync stays.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Under 200 MB a new report cannot start.</li><li>Phone storage full: <a href="../system/S10-storage-full.html">S10</a>.</li><li>Spec: section E10, E1014.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

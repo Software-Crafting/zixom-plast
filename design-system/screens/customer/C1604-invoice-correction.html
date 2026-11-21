@@ -50,11 +50,13 @@
             <div class="no"><b><svg class="ic" aria-hidden="true"><use href="#ph-lock-simple"/></svg>Cannot change</b>Amounts<br>Items<br>Dates</div>
           </div>
           <div id="form">
-            <span class="field-label">What is wrong<span class="req">*</span></span>
-            <div class="checks">
-              <label class="check"><input type="checkbox" checked>GSTIN</label>
-              <label class="check"><input type="checkbox">Company name</label>
-              <label class="check"><input type="checkbox">Billing address</label>
+            <div class="field">
+              <span class="field-label">What is wrong<span class="req">*</span></span>
+              <div class="checks">
+                <label class="check"><input type="checkbox" checked>GSTIN</label>
+                <label class="check"><input type="checkbox">Company name</label>
+                <label class="check"><input type="checkbox">Billing address</label>
+              </div>
             </div>
             <div class="field" data-when="ready submitting submitted offline">
               <label for="gstin">Correct GSTIN<span class="req">*</span></label>
@@ -66,7 +68,7 @@
               <input class="input mono" id="gstin-bad" value="24AAAAA0000A2Z" aria-invalid="true" aria-describedby="gstin-err">
               <span class="error-text" id="gstin-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter the 15 character GSTIN</span>
             </div>
-            <p class="hint" style="margin:4px 2px 0">Wrong amount? <a class="link accent" id="dispute" href="C1601-dispute.html">Dispute a charge</a></p>
+            <a class="btn btn-soft btn-sm" id="dispute" href="C1601-dispute.html" style="margin-top:4px">Wrong amount? Dispute a charge</a>
           </div>
         </div>
       </div>
@@ -88,8 +90,12 @@
   </div>
 </div>
 
-<p class="plate-note">Pick an invoice above: open for correction, a request already pending, or closed because that month's
-GST return is filed.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Ask Zixom to fix the GSTIN, company name or billing address on an issued invoice.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tick what is wrong and enter the correct value.</li><li>See what can and cannot change.</li><li>Go to Dispute a charge for a wrong amount.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The pending request shows on the invoice (<a href="C802-invoice-detail.html">C802</a>) until Zixom issues the corrected one.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>GST return for that month filed: corrections closed, with the date.</li><li>Request already pending: shown instead of the form.</li><li>GSTIN must be 15 characters.</li><li>Spec: section C16, C1604 · EC-40</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -85,7 +85,8 @@
       </div>
 
       <div class="footer-bar">
-        <button class="btn btn-primary" type="button" data-when="ready photo uploading offline" onclick="document.querySelector('[data-state=confirmed]').click()">Confirm induction</button>
+        <button class="btn btn-primary" type="button" data-when="ready photo uploading" onclick="document.querySelector('[data-state=confirmed]').click()">Confirm induction</button>
+        <button class="btn btn-primary" type="button" data-when="offline" id="confirm-offline">Confirm induction</button>
         <button class="btn btn-primary" type="button" data-when="errors">Confirm induction</button>
         <a class="btn btn-primary" href="E901-safety-checklist.html" id="next" data-when="confirmed notneeded">Continue to safety checklist</a>
       </div>
@@ -94,8 +95,12 @@
   </div>
 </div>
 
-<p class="plate-note">For sites that need an induction, before the safety checklist. Records when, who briefed and an
-optional photo of the pass. Sites without one skip straight to <a href="E901-safety-checklist.html">E901</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Records the site's safety induction, for sites that need one, before the safety checklist.</p></div>
+  <div><h3>What you can do</h3><ul><li>Set the date and time of the induction.</li><li>Enter who briefed you.</li><li>Add an optional photo of the pass, then confirm.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Confirm saves the induction on the job and leads to the <a href="E901-safety-checklist.html">E901 safety checklist</a>.</li><li>Offline it is saved on the phone, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Site does not need one: skipped, straight to E901.</li><li>Briefed by missing: error on confirm. Failed photo keeps Retry.</li><li>Spec: section E9, E906.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -120,7 +125,13 @@ optional photo of the pass. Sites without one skip straight to <a href="E901-saf
   $('site-name').textContent = site.name;
   $('d').value = data.today;
   $('by').value = BRIEFED_BY;
-  $('confirmed-at').textContent = `${R.dayDate(data.today)}, 9:40 AM. Briefed by ${BRIEFED_BY.split(',')[0]}.`;
+  const confirmedAt = `${R.dayDate(data.today)}, 9:40 AM. Briefed by ${BRIEFED_BY.split(',')[0]}.`;
+  $('confirmed-at').textContent = confirmedAt;
+  document.querySelector('[data-state=confirmed]').addEventListener('click', () => { $('confirmed-at').textContent = confirmedAt; });
+  $('confirm-offline').addEventListener('click', () => {
+    document.querySelector('[data-state=confirmed]').click();
+    $('confirmed-at').textContent = `${confirmedAt} Waiting to sync.`;
+  });
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

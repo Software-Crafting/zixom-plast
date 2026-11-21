@@ -99,8 +99,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opens from Add machine. Tap the frame to simulate a good scan, which returns to C203 with the machine
-found. Camera denied hands over to <a href="../system/S07-permission.html">S07</a>; typing the serial always works.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Camera view to scan the QR on a machine nameplate.</p></div>
+  <div><h3>What you can do</h3><ul><li>Scan the code (tap the frame here)</li><li>Turn on the torch</li><li>Enter the serial manually</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A good scan returns to <a href="C203-add-machine.html">C203</a> with the machine found</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Camera denied hands over to <a href="../system/S07-permission.html">S07</a> (EC-23)</li><li>Not recognised or another product: Try again</li><li>Low light hint</li><li>Spec: C2, C205</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

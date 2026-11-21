@@ -88,8 +88,12 @@
   </div>
 </div>
 
-<p class="plate-note">Pauses the job with a reason; the ticket stays with Sandeep. Parts and customer waits need a resume
-date, Other needs a note. Waiting for parts offers a parts request, a safety issue offers an incident report.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Pauses a job with a reason. The ticket stays assigned to the engineer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason; parts and customer waits need a resume date, Other needs a note (10 to 300 characters).</li><li>Add an optional photo.</li><li>Request parts (<a href="E501-request-parts.html">E501</a>) or report a safety incident (<a href="E903-incident.html">E903</a>).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Status becomes On hold; the customer and the manager see the reason.</li><li>Back on the job (<a href="E202-job-detail.html">E202</a>), Resume continues the work.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Report not finished: it stays as a draft.</li><li>Resume date in the past: error.</li><li>Offline: queued with Waiting to sync. Spec: section 10 and module E2, E208.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

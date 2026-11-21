@@ -110,8 +110,12 @@
   </div>
 </div>
 
-<p class="plate-note">Records arrival time and location, then opens the safety checklist. Outside 300 m needs a reason
-and a gate photo; a weak signal waits 20 seconds before offering the override.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Arrival at the site. The app checks the phone is within the 300 m radius Zixom set and records the time.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check in when inside the radius.</li><li>Outside it: check in anyway with a reason and a photo of the gate.</li><li>Customer not reachable at the gate: <a href="E209-customer-unavailable.html">E209</a>.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Status becomes At site, the customer is told, and the safety checklist opens (<a href="E901-safety-checklist.html">E901</a>).</li><li>An outside check in is flagged for the manager.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Weak GPS: waits 20 seconds, then offers the override (EC-54).</li><li>Location off: <a href="E1013-location-off.html">E1013</a> (EC-25). Offline: saved with the time.</li><li>Spec: section 10 and module E2, E206 · EC-25, EC-54.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -57,7 +57,7 @@
         <div class="stack">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to pay.</div>
           <div class="banner red" data-when="unavailable"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>Online payment is not available</b>Try again in a few minutes. <button class="link-btn" type="button" data-busy>Retry</button></div></div>
+            <div><b>Online payment is not available</b>Try again in a few minutes.<span style="display:block; margin-top:8px"><button class="btn btn-soft btn-sm" type="button" data-busy>Retry</button></span></div></div>
 
           <div class="money" id="summary"></div>
 
@@ -84,7 +84,7 @@
                 <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wallet"/></svg></span><b>Wallet</b><p>Paytm, PhonePe and more</p><span class="mark"></span></button>
             </div>
             <div class="list" style="margin-top:16px">
-              <a class="list-item" id="bank" href="C1608-bank-transfer.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Pay by bank transfer</b><span class="sub">Upload proof after paying</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+              <a class="list-item" id="bank" href="C1608-bank-transfer.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span><b>Pay by bank transfer</b><span class="sub">Upload proof after paying</span></a>
             </div>
           </div>
 
@@ -151,8 +151,12 @@
   </div>
 </div>
 
-<p class="plate-note">Amount summary and Razorpay methods. After the gateway returns, the app checks the status with the
-server (<a href="C804-payment-processing.html">C804</a>). A second Pay tap is ignored; closing the app mid payment is EC-43.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Amount summary and the Razorpay methods for one or more invoices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick UPI (and the app), card, net banking or wallet</li><li>Pay, or choose bank transfer instead</li><li>Cancel inside the gateway sheet</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The gateway returns, the app checks with the server: <a href="C804-payment-processing.html">C804</a>, then C805, C806 or C807</li><li>Bank transfer opens <a href="C1608-bank-transfer.html">C1608</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cancelled: back here with a toast. A second Pay tap is ignored</li><li>Price changed (EC-44), paid on another device, no UPI app, gateway down, offline</li><li>Spec: section 8, C803 · EC-43, EC-44</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

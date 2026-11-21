@@ -18,6 +18,7 @@
 .media-head span{font-size:var(--fs-12); color:var(--text-muted)}
 .files:empty{display:none}
 .files + .btn{margin-top:10px}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -51,7 +52,7 @@
         <div class="stack">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Uploads start when you are back.</div>
           <div class="banner amber" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-camera"/></svg><div>Add at least 1 photo or video of the fault and the nameplate photo.</div></div>
-          <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div>1 photo did not upload. <button class="link-btn" type="button" data-busy>Retry</button></div></div>
+          <div class="banner red" data-when="failed"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg><div><b>1 photo did not upload</b><button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div></div>
           <div class="banner" data-when="trimmed"><svg class="ic" aria-hidden="true"><use href="#ph-timer"/></svg><div>Your video was trimmed to 60 seconds.</div></div>
           <div class="banner" data-when="resumed"><svg class="ic" aria-hidden="true"><use href="#ph-cloud-arrow-up"/></svg><div><b>Uploads resumed</b>2 files continued after the app was closed.</div></div>
 
@@ -147,8 +148,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 3. At least 1 fault photo or video and the nameplate photo; up to 10 photos, one 60 second
-video and 3 documents. Failed files can be left out after a confirmation.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 3 of the warranty claim wizard: proof of the fault.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add fault photos or a video (at least 1, up to 10 photos and 1 video of 60 seconds).</li><li>Add the nameplate photo (required).</li><li>Add up to 3 other documents (PDF, JPG, PNG).</li><li>Pause, retry or remove each file.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens <a href="C306-claim-site.html">C306</a> once the minimum is met.</li><li>Failed files can be left out after a confirmation.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Camera denied (<a href="../system/S07-permission.html">S07</a>), too large or wrong type (EC-29, EC-30).</li><li>Long video trimmed; large video on mobile data asks first.</li><li>Uploads resume after the app was closed.</li><li>Spec: section C3, C305</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

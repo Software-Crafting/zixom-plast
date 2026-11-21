@@ -81,7 +81,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the duty pill on <a href="E101-today.html">E101</a>. Off duty is refused while a job is in progress; offline, the change saves on the phone and syncs later.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Sheet over Today where the engineer sets their duty status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick Available, On job, On break or Off duty.</li><li>Add an optional reason, then Save.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="E101-today.html">E101</a> with the new pill; Zixom sees the status.</li><li>On break and Off duty hold new offers.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Off duty is refused while a job is in progress.</li><li>Offline: saves on the phone and syncs later (<a href="E102-sync-queue.html">E102</a>).</li><li>Spec: E1, E103</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

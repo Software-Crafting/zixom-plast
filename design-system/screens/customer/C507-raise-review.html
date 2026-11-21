@@ -13,8 +13,8 @@
 /* this page */
 .rcard{padding:14px 16px; border-radius:var(--r-lg); border:1px solid var(--line); background:#fff}
 .rcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
+.rcard .top .btn{min-height:36px; padding:0 14px}
 .rcard h2{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
-.rcard .top a{font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
 .rcard .kv div{padding:8px 0}
 .rcard .text{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
 .mline{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; margin-bottom:12px}
@@ -27,6 +27,7 @@
 .next-steps{margin:14px 0 0; padding:0; list-style:none; text-align:left; font-size:var(--fs-13); color:var(--slate-700)}
 .next-steps li{display:flex; gap:10px; align-items:center; padding:6px 0}
 .next-steps .n{width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); font:600 var(--fs-11) var(--font-body)}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -57,31 +58,31 @@
         <p class="autosave"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg><span id="saved"></span></p>
         <div class="stack">
           <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
-            <div><b>You are offline</b>Your request is kept as a draft. Machine down? <a href="C1502-urgent-request.html">Send an urgent request</a></div></div>
+            <div><b>You are offline</b>Your request is kept as a draft. <a class="btn btn-secondary btn-sm" href="C1502-urgent-request.html">Machine down? Send urgent request</a></div></div>
           <div class="banner amber" data-when="changed"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg>
             <div><b>Coverage changed since step 1</b><span id="changed-text"></span></div></div>
           <div class="banner red" data-when="mediafail"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>1 photo did not upload</b><button class="link-btn" type="button" data-busy>Retry</button> or submit without it.</div></div>
+            <div><b>1 photo did not upload</b>Retry or submit without it.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div></div>
 
           <div class="rcard">
-            <div class="top"><h2>Machine and coverage</h2><a href="C503-raise-machine.html" data-keep>Edit</a></div>
+            <div class="top"><h2>Machine and coverage</h2><a class="btn btn-soft btn-sm" href="C503-raise-machine.html" data-keep>Edit</a></div>
             <div class="mline" id="mline"></div>
             <div id="coverage"></div>
           </div>
 
           <div class="rcard">
-            <div class="top"><h2>Issue</h2><a href="C504-raise-issue.html" data-keep>Edit</a></div>
+            <div class="top"><h2>Issue</h2><a class="btn btn-soft btn-sm" href="C504-raise-issue.html" data-keep>Edit</a></div>
             <dl class="kv" style="margin:0" id="issue"></dl>
             <p class="text" id="issue-text"></p>
           </div>
 
           <div class="rcard">
-            <div class="top"><h2>Photos and videos</h2><a href="C505-raise-media.html" data-keep>Edit</a></div>
+            <div class="top"><h2>Photos and videos</h2><a class="btn btn-soft btn-sm" href="C505-raise-media.html" data-keep>Edit</a></div>
             <div class="mini" id="media"></div>
           </div>
 
           <div class="rcard">
-            <div class="top"><h2>Visit details</h2><a href="C506-raise-visit.html" data-keep>Edit</a></div>
+            <div class="top"><h2>Visit details</h2><a class="btn btn-soft btn-sm" href="C506-raise-visit.html" data-keep>Edit</a></div>
             <dl class="kv" style="margin:0" id="visit"></dl>
           </div>
           <p class="terms">By submitting you agree to the <a href="C1109-legal.html">service terms</a></p>
@@ -174,7 +175,7 @@ never shows success (EC-03); a duplicate links to the open request (EC-41).</p>
   const BANNER = {
     warranty: `<div class="banner green">${R.icon('shield-check')}<div><b>Under warranty</b>No charge for covered work.</div></div>`,
     amc: contract && `<div class="banner">${R.icon('seal-check')}<div><b>Under AMC</b>No charge for included visits. ${contract.visitsIncluded - contract.visitsUsed} of ${contract.visitsIncluded} left.</div></div>`,
-    chargeable: `<div class="banner grey">${R.icon('currency-inr')}<div><b>Chargeable</b>Visit fee ${R.money(VISIT_FEE)} plus parts and labour. Extra work needs your approval. <a href="C1504-charges.html">See charges</a></div></div>`,
+    chargeable: `<div class="banner grey">${R.icon('currency-inr')}<div><b>Chargeable</b>Visit fee ${R.money(VISIT_FEE)} plus parts and labour. Extra work needs your approval.<a class="btn btn-secondary btn-sm" href="C1504-charges.html">See charges</a></div></div>`,
   };
   $('mline').innerHTML = `${R.thumb(m, 'sm')}<span><b>${R.esc(m.nickname || m.model)}</b><span class="mono">${m.serial}</span></span>`;
   $('coverage').innerHTML = BANNER[coverage];

@@ -23,6 +23,7 @@
 .legend i{width:12px; height:12px; border-radius:50%}
 .none{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); font-size:var(--fs-13); color:var(--text-muted)}
 .list-item.static{cursor:default}
+.month-bar .icon-btn:disabled{opacity:.35; pointer-events:none}
 .list-item .disc.red{background:var(--red-50); color:var(--red)}
 .list-item .disc.blue{background:var(--blue-50); color:var(--blue)}
 .list-item .disc.amber{background:var(--amber-50); color:var(--amber)}
@@ -36,6 +37,7 @@
   <button type="button" data-state="ready" data-month="2026-12" aria-pressed="false">month with leave</button>
   <button type="button" data-state="ready" data-month="2027-02" aria-pressed="false">empty month</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="error" aria-pressed="false">error</button>
   <button type="button" data-state="offline" data-month="2026-11" aria-pressed="false">offline</button>
 </div>
 
@@ -49,7 +51,7 @@
       </div>
       <div class="scroll">
         <div class="stack" data-when="ready offline" style="padding-bottom:40px">
-          <div class="banner grey" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg><div><b>You are offline</b>Showing the last downloaded month.</div></div>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Showing the last downloaded month.</div>
           <div class="card">
             <div class="month-bar">
               <button class="icon-btn" type="button" id="prev" aria-label="Previous month"><svg class="ic" aria-hidden="true"><use href="#ph-caret-left"/></svg></button>
@@ -64,6 +66,13 @@
           <div id="items"></div>
         </div>
 
+        <div class="state" data-when="error" style="padding-top:80px">
+          <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+          <h3>Something went wrong</h3><p>We could not load the calendar. Please try again.</p>
+          <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
+          <span class="code mono">ZC-500</span>
+        </div>
+
         <div class="stack" data-when="loading">
           <span class="skeleton" style="height:390px; border-radius:var(--r-lg)"></span>
           <span class="skeleton" style="height:120px; border-radius:var(--r-lg)"></span>
@@ -74,8 +83,12 @@
   </div>
 </div>
 
-<p class="plate-note">Zixom holidays and the engineer's own leave on a month view. Offline it keeps the last downloaded month
-and the month buttons are off.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A month view of Zixom holidays and the engineer's own leave.</p></div>
+  <div><h3>What you can do</h3><ul><li>Move between months, November to March</li><li>See holidays, approved and pending leave</li><li>Open a leave to see its detail</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A leave opens <a href="E706-leave-detail.html">E706 Leave detail</a></li><li>New leave is requested from <a href="E702-leave.html">E702</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty month shows No holidays</li><li>Offline: last downloaded month, month buttons off</li><li>Spec: section E13, E705</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

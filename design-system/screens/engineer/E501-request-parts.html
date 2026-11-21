@@ -24,6 +24,7 @@
 .pick .meta{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .pick-list{max-height:330px; overflow-y:auto; margin-top:8px}
 .sent{padding-top:60px}
+.choice .disc, .choice .mark{grid-row:auto}
 </style>
 </head>
 <body class="plate">
@@ -156,8 +157,12 @@
   </div>
 </div>
 
-<p class="plate-note">Ask Stores for parts for this job, no prices. Out of stock shows the lead time and can still be
-requested; the same part already requested on this job links to it. Offline saves a draft that waits to sync.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer asks Stores for spare parts for one job. No prices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, scan or pick parts, quantity 1 to 99</li><li>Choose when it is needed and where to deliver</li><li>Describe a part that is not listed, with a photo</li><li>Add a note up to 200 characters</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send creates SPR-2026-0032 and notifies Stores</li><li>Progress shows in <a href="E502-parts-requests.html">E502 My parts requests</a></li><li>Offline: saved as a draft, Waiting to sync</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Out of stock shows the lead time and can still be requested</li><li>Same part already requested on this job links to it</li><li>Spec: section E5, E501 and its detailed spec</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

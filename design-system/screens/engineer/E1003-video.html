@@ -13,7 +13,7 @@
 .cam-top h1 span{display:block; margin-top:2px; font:500 var(--fs-12) var(--font-mono); color:rgba(255,255,255,.6)}
 .finder{position:relative; flex:1; min-height:0; margin:0 var(--gutter); border-radius:28px; overflow:hidden; display:grid; place-items:center;
   background:linear-gradient(160deg, #3A4552 0, #232B34 70%); color:#fff}
-.finder > .ic{width:120px; height:120px; opacity:.14}
+.finder > .ic, .finder > span > .ic{width:120px; height:120px; opacity:.14}
 .finder-pills{position:absolute; z-index:2; top:12px; left:12px; right:12px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap}
 .cam-pill{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:var(--r-pill); background:rgba(11,15,19,.55);
   color:#fff; font-size:var(--fs-12); font-weight:500; text-decoration:none}
@@ -100,8 +100,12 @@
   </div>
 </div>
 
-<p class="plate-note">One clip up to 60 seconds; the timer runs live and recording stops at the limit. Save keeps the clip on
-the phone; a large clip asks before using mobile data (<a href="../system/S15-mobile-data.html">S15</a>).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Records one short video clip for the job in progress.</p></div>
+  <div><h3>What you can do</h3><ul><li>Record up to 60 seconds with a live timer.</li><li>Play the preview, then Retake or Save.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save keeps the clip on the phone and queues it for upload (<a href="E1008-upload-queue.html">E1008</a>), then returns to the job.</li><li>Offline it waits in the queue, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Limit reached stops recording.</li><li>Large clip asks before mobile data: <a href="../system/S15-mobile-data.html">S15</a>.</li><li>Camera denied: <a href="../system/S07-permission.html">S07</a>. Spec: section E10, E1003.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -22,7 +22,7 @@
 .receipt dt{color:var(--text-muted)}
 .receipt dd{margin:0; max-width:62%; text-align:right; color:var(--slate-900); font-weight:500; overflow-wrap:anywhere}
 .receipt dd.mono{font-size:var(--fs-13)}
-.receipt dd a{color:var(--blue); text-decoration:none}
+.receipt dd a{display:inline-block; padding:9px 0; margin:-9px 0; color:var(--blue); text-decoration:none}
 </style>
 </head>
 <body class="plate">
@@ -76,8 +76,12 @@
   </div>
 </div>
 
-<p class="plate-note">Any receipt via <code>?receipt=</code>. Share opens the phone's share sheet; if it fails,
-<a href="../system/S17-share-failed.html">S17</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One payment receipt: number, invoice, amount, method, transaction ID, date and GSTIN.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download the PDF</li><li>Share it</li><li>Open the invoice</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Download saves the PDF with a toast</li><li>The invoice link opens <a href="C802-invoice-detail.html">C802</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Receipt not found, error, offline (download disabled)</li><li>Share fails: <a href="../system/S17-share-failed.html">S17</a></li><li>Spec: section 8, C809</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

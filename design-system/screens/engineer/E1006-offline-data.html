@@ -19,7 +19,8 @@
 .item .progress{display:block; height:4px; margin-top:8px; border-radius:var(--r-pill); background:var(--slate-100); overflow:hidden}
 .item .progress i{display:block; height:100%; background:var(--blue)}
 .item .end{display:flex; align-items:center; gap:4px}
-.item .end .btn{min-height:0; padding:0 4px; font-size:var(--fs-13)}
+.item .end .btn{min-height:34px; padding:0 14px; font-size:var(--fs-13)}
+[data-state="offline"] .item .dl, [data-state="storage"] .item .dl{opacity:.45; pointer-events:none}
 .item .end .icon-btn{width:34px; height:34px; border:0; background:none; color:var(--slate-500)}
 .clear{color:var(--red); width:100%; margin-top:8px}
 </style>
@@ -97,8 +98,12 @@
   </div>
 </div>
 
-<p class="plate-note">What is saved for offline work: tomorrow's jobs, their machine histories and manuals, with size and last update.
-Tomorrow's jobs download at night on Wi-Fi.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>What the engineer's phone holds for work without network: tomorrow's jobs, machine histories and manuals.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download now, or download a single job</li><li>Remove one item or Clear all</li><li>Turn night download on Wi-Fi on or off</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Saved jobs open offline from <a href="E101-today.html">Today</a> and <a href="E201-jobs.html">Jobs</a></li><li>Clear all keeps unsent reports and photos on the phone</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Storage low pauses downloads: <a href="../system/S10-storage-full.html">S10</a></li><li>A job not downloaded shows a banner on the job</li><li>Spec: section 8, E1006</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -129,7 +134,7 @@ Tomorrow's jobs download at night on Wi-Fi.</p>
       if (when) return row('clipboard-text', title, `<span class="mono">${t.number}</span> · ${mb} MB · ${updated(when)}`, removeBtn(title));
       if (downloading) return row('clipboard-text', title, `<span class="mono">${t.number}</span> · Downloading 40%`, '', '<span class="progress"><i style="width:40%"></i></span>');
       return row('clipboard-text', title, `<span class="mono">${t.number}</span> · Not downloaded`,
-        '<button class="btn btn-text" type="button" data-busy>Download</button>');
+        '<button class="btn btn-secondary btn-sm dl" type="button" data-busy>Download</button>');
     }).join('');
     const histories = serials.map((s) => {
       const m = R.machine(s);

@@ -75,7 +75,7 @@
           <div>
             <p class="list-title" style="margin-top:0">Lines</p>
             <div class="lines" id="lines"></div>
-            <button class="btn btn-secondary btn-sm" type="button" style="width:100%; margin-top:8px" data-open="add-line"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add line</button>
+            <button class="btn btn-secondary btn-sm" type="button" style="width:100%; margin-top:8px" data-open="add-line" data-when="ready approval invalid offline"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add line</button>
           </div>
 
           <div class="disc-row" id="disc-row">
@@ -85,7 +85,7 @@
 
           <div class="money" id="money"></div>
 
-          <dl class="kv" style="margin:0 2px" id="validity"></dl>
+          <div class="card-fill"><dl class="kv" style="margin:0" id="validity"></dl></div>
 
           <div class="field"><label for="note">Note to the customer<span class="counter" id="note-count"></span></label>
             <textarea class="textarea" id="note" maxlength="300"></textarea></div>
@@ -117,7 +117,7 @@
         </div>
         <div class="pair" data-when="offline">
           <button class="btn btn-secondary" type="button" data-toast="Draft saved">Save draft</button>
-          <button class="btn btn-primary" type="button" disabled>Send to customer</button>
+          <button class="btn btn-primary" type="button" data-toast="Saved. Waiting to sync">Send when online</button>
         </div>
         <a class="btn btn-primary job-link" href="E202-job-detail.html" data-when="approved rejected noanswer">Back to job</a>
         <button class="btn btn-primary" type="button" data-goto="ready" data-when="expired">Make a new estimate</button>
@@ -159,8 +159,12 @@
   </div>
 </div>
 
-<p class="plate-note">Extra work quoted on site. Warranty covered lines show zero and are locked; discount up to 5 percent
-goes straight to the customer, above that to the manager first. Valid 3 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's own quotation for chargeable extra work, made on site. The only screen where he sees prices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add lines for labour, parts, travel or other, with quantity and rate.</li><li>Set a discount, write a note to the customer.</li><li>Save a draft or send it.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send creates QT-2026-0042; the customer approves or rejects in the app (<a href="../customer/C509-estimate.html">C509</a>).</li><li>The engineer is told the answer; rejected returns the job to work in progress.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Discount above 5 percent goes to the manager first.</li><li>Warranty covered lines show zero and are locked.</li><li>No answer in 24 hours: reminder and manager alert. Expires after 3 days.</li><li>Offline: saved as a draft, sent when online. Spec: section E4, E408</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

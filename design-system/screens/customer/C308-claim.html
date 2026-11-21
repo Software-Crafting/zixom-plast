@@ -29,6 +29,7 @@
 .mini .upload{width:56px; height:56px; aspect-ratio:auto}
 .acts{display:flex; gap:10px}
 .acts .btn{flex:1; padding:0 12px}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -139,9 +140,12 @@
   </div>
 </div>
 
-<p class="plate-note">One warranty claim from submit to decision; pick a claim above for each status. Open with
-<code>?claim=WCL-2026-0042</code>. Appeal opens <a href="C310-appeal-claim.html">C310</a>, the linked request
-<a href="C508-request-detail.html">C508</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One warranty claim from submit to decision. Pick a claim above for each status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Follow the status timeline and read Zixom's decision.</li><li>Upload information when Zixom asks, add a comment.</li><li>Cancel the claim before approval.</li><li>Rejected: appeal or raise a paid service. Resolved: rate.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Approved: the linked no charge request opens in <a href="C508-request-detail.html">C508</a>.</li><li>Appeal opens <a href="C310-appeal-claim.html">C310</a>, Rate opens <a href="C514-rate-service.html">C514</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reply overdue: red banner, Zixom may reject.</li><li>Comment not sent stays with Retry; updated while open shows Refresh.</li><li>Not found: <a href="../system/S05-not-found.html">S05</a>. Open with <code>?claim=WCL-2026-0042</code>.</li><li>Spec: section C3, C308</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -238,7 +242,7 @@
 
   /* ---------- banners ---------- */
   const banners = `<div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>
-    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div>This claim was updated. <button class="link-btn" type="button" data-busy>Refresh</button></div></div>`;
+    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div><b>This claim was updated</b><button class="btn btn-secondary btn-sm" type="button" data-busy>Refresh</button></div></div>`;
 
   /* ---------- header ---------- */
   const header = `<div>
@@ -314,7 +318,7 @@
   const bubbles = comments.map(([who, text, meta]) => `<div class="bubble ${who}">${R.esc(text)}</div>
     <div class="bubble-meta ${who === 'me' ? 'me' : ''}">${R.esc(meta)}</div>`).join('');
   const failed = `<div class="bubble me" data-when="commentfail">${R.esc(FAILED_COMMENT)}</div>
-    <button class="bubble-meta me failed" type="button" data-when="commentfail" data-busy style="border:0; background:none; width:100%">${R.icon('warning-circle', 'ic-16')}Not sent. Tap to retry</button>`;
+    <button class="bubble-meta me failed" type="button" data-when="commentfail" data-busy style="border:0; background:none; width:100%; min-height:34px; justify-content:flex-end">${R.icon('warning-circle', 'ic-16')}Not sent. Tap to retry</button>`;
   const thread = `<div class="sec" data-when="${ok}"><h2>Messages with Zixom</h2>
       <div class="stack-sm" data-when="threadloading"><span class="skeleton" style="height:56px; width:80%; border-radius:18px"></span><span class="skeleton" style="height:44px; width:60%; margin-left:auto; border-radius:18px"></span></div>
       <div data-when="ready refresh overdue commentfail offline">

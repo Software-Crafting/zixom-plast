@@ -19,6 +19,10 @@
 .choice:disabled{opacity:.6}
 .choice .mono{white-space:nowrap}
 .footer-bar .banner{margin-bottom:10px}
+.footer-bar{background:linear-gradient(180deg, rgba(236,236,238,0), var(--surface-bottom) 14px)}
+.scroll.with-footer{padding-bottom:260px}
+.banner .btn{display:inline-flex; width:fit-content; margin-top:8px; padding:0 16px; text-decoration:none; background:#fff; border:1px solid var(--line-strong); font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.banner .btns{display:flex; flex-wrap:wrap; gap:8px}
 </style>
 </head>
 <body class="plate">
@@ -36,6 +40,7 @@
   <button type="button" data-pick="ZP-TF-2310">warranty</button>
   <button type="button" data-pick="ZP-CF-2011">AMC</button>
   <button type="button" data-pick="ZP-PC-1805">chargeable</button>
+  <button type="button" data-pick="ZP-VF-1908" data-used>AMC visits used</button>
 </div>
 
 <div class="device">
@@ -107,8 +112,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 1: pick the machine and see what it costs. A machine waiting for verification is disabled; a
-machine with an open request shows it with View request and Raise another. With one machine it is preselected.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 1 of 5 of a service request: pick the machine and see its coverage.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search machines or scan the QR</li><li>Pick a machine and see warranty, AMC or chargeable</li><li>Save draft or go Next</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens <a href="C504-raise-issue.html">C504</a></li><li>Save draft keeps it in Support (C1508)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open request on the machine: View request or Raise another (EC-41)</li><li>AMC visits all used: chargeable with the AMC discount (EC-48)</li><li>Waiting for verification: disabled; offline: coverage confirmed later</li><li>Spec: C503 detail</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -121,6 +130,9 @@ machine with an open request shows it with View request and Raise another. With 
   const ENDED = ['closed', 'cancelled'];
   /* Sample value not in data.js yet (move there): visit fee before GST, matches the INV-2026-0980 line */
   const VISIT_FEE = 700;
+  /* sample only: AMC parts discount by plan (Q12 defaults, as C402) */
+  const AMC_DISCOUNT = { 'Essential': 5, 'Preventive Plus': 10, 'Comprehensive': 15 };
+  let allUsed = false;
   let picked = new URLSearchParams(location.search).get('machine') || 'ZP-CF-2011';
 
   const coverageOf = (m) => {
@@ -132,8 +144,9 @@ machine with an open request shows it with View request and Raise another. With 
     const coverage = coverageOf(m);
     if (coverage === 'warranty') return `<div class="banner green">${R.icon('shield-check')}<div><b>Under warranty</b>No charge for covered work.</div></div>`;
     const contract = m.amc && R.amc(m.amc);
+    if (coverage === 'amc' && allUsed) return `<div class="banner amber">${R.icon('warning')}<div><b>All ${contract.visitsIncluded} AMC visits used</b>This visit is chargeable, ${R.money(VISIT_FEE)} plus parts, with ${AMC_DISCOUNT[contract.plan]}% off parts.</div></div>`;
     if (coverage === 'amc') return `<div class="banner">${R.icon('seal-check')}<div><b>Under AMC</b>No charge for included visits. ${contract.visitsIncluded - contract.visitsUsed} of ${contract.visitsIncluded} left.</div></div>`;
-    const lapsed = contract ? ` AMC ended ${-R.daysFromToday(contract.end)} days ago. <a href="C405-renew-amc.html">Renew AMC</a>` : ` <a href="C1504-charges.html">See charges</a>`;
+    const lapsed = contract ? ` AMC ended ${-R.daysFromToday(contract.end)} days ago.<a class="btn btn-secondary btn-sm" href="C405-renew-amc.html?amc=${contract.number}">Renew AMC</a>` : `<a class="btn btn-secondary btn-sm" href="C1504-charges.html">See charges</a>`;
     return `<div class="banner grey">${R.icon('currency-inr')}<div><b>Chargeable</b>Visit fee ${R.money(VISIT_FEE)} plus parts and labour.${lapsed}</div></div>`;
   };
   const openRequest = (m) => data.tickets.filter((t) => t.machine === m.serial && !ENDED.includes(t.status))
@@ -155,7 +168,7 @@ machine with an open request shows it with View request and Raise another. With 
     const existing = openRequest(m);
     $('coverage').innerHTML = coverageBanner(m);
     $('dup').innerHTML = `${existing ? `<div class="banner amber">${R.icon('warning')}<div><b>There is already an open request for this machine</b>
-        <a href="C508-request-detail.html?ticket=${existing.number}">View request</a> · <button class="link-btn" type="button" onclick="this.closest('.banner').hidden = true">Raise another</button></div></div>` : ''}`;
+        <span class="btns"><a class="btn btn-secondary btn-sm" href="C508-request-detail.html?ticket=${existing.number}">View request</a><button class="btn btn-secondary btn-sm" type="button" onclick="this.closest('.banner').hidden = true">Raise another</button></span></div></div>` : ''}`;
     $('next').href = `C504-raise-issue.html?machine=${picked}`;
     document.querySelectorAll('[data-serial]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.serial === picked)));
   };
@@ -163,11 +176,13 @@ machine with an open request shows it with View request and Raise another. With 
     const b = event.target.closest('[data-serial]:not(:disabled)');
     if (!b) return;
     picked = b.dataset.serial;
+    allUsed = false;
     showPicked();
   });
   document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
     document.querySelector('.plate-states [data-state="ready"]').click();
     picked = b.dataset.pick;
+    allUsed = 'used' in b.dataset;
     showPicked();
   }));
   /* idle state clears the pick, ready restores it */

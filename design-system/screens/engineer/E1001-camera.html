@@ -29,8 +29,8 @@
 .cam-tools button{display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 14px; border:0; border-radius:var(--r-pill);
   background:rgba(255,255,255,.12); color:#fff; font:500 var(--fs-13) var(--font-body); cursor:pointer}
 .cam-tools button[aria-pressed="true"]{background:#fff; color:var(--slate-900)}
-.cam-tags{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:12px var(--gutter) 0}
-.cam-tags .chip{height:34px; background:transparent; color:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.22)}
+.cam-tags{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:12px var(--gutter) 0}
+.cam-tags .chip{height:34px; padding:0 14px; background:transparent; color:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.22)}
 .cam-tags .chip[aria-pressed="true"]{background:#FFD98A; border-color:#FFD98A; color:#3D2A00}
 .cam-controls{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:16px var(--gutter) 40px}
 .shots{position:relative; justify-self:start; width:52px; height:52px; display:grid; place-items:center; border-radius:14px;
@@ -106,7 +106,7 @@
     <div class="cam-review" data-when="review">
       <button class="btn btn-secondary on-glass" type="button" id="retake"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg>Retake</button>
       <button class="btn btn-primary cam-light" type="button" id="use" data-toast="Photo saved on this phone">Use photo</button>
-      <a class="btn btn-text" href="E1002-annotate.html" style="grid-column:1 / -1; color:#fff"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg>Annotate</a>
+      <a class="btn btn-secondary btn-sm on-glass" href="E1002-annotate.html" style="grid-column:1 / -1; justify-self:center"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg>Annotate</a>
     </div>
 
     <div class="cam-review" data-when="denied" style="grid-template-columns:1fr">
@@ -117,8 +117,12 @@
   </div>
 </div>
 
-<p class="plate-note">Photos for the job in progress. Each photo is saved on the phone first, tagged, and queued for upload.
-Multi shot keeps the camera open; single shot shows Retake. Camera denied hands over to <a href="../system/S07-permission.html">S07</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>In app camera for photos on the job in progress.</p></div>
+  <div><h3>What you can do</h3><ul><li>Capture with flash, grid and multi shot.</li><li>Tag each photo: Before, After, Fault, Part, Nameplate or Other.</li><li>Retake, use or annotate a single shot; Done when finished.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Each photo is saved on the phone first and queued for upload (<a href="E1008-upload-queue.html">E1008</a>).</li><li>Annotate opens <a href="E1002-annotate.html">E1002</a>; Done returns to the job.</li><li>Offline photos wait in the queue, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Camera denied: <a href="../system/S07-permission.html">S07</a>, gallery still works.</li><li>Storage low: <a href="../system/S10-storage-full.html">S10</a>. 10 photos per job.</li><li>Spec: section E10, E1001.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

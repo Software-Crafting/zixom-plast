@@ -62,8 +62,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the rejection notification or at launch. Shows Zixom's reason when there is one, a
-generic text when not, and points to a call after a repeated rejection.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Zixom could not verify the person; shows the reason.</p></div>
+  <div><h3>What you can do</h3><ul><li>Try again with new details</li><li>Contact support</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Try again reopens <a href="A07-verify-machine.html">A07</a> filled in</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No reason given: generic text</li><li>Second rejection: Call support becomes the main action</li><li>Spec: section 7, A09</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

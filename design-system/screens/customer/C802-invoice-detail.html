@@ -14,8 +14,8 @@
 .inv-head p{margin:6px 0 0; font-size:var(--fs-14); color:var(--text)}
 .money small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .money .balance{color:var(--slate-900)}
-.kv a{color:var(--blue); text-decoration:none}
-.foot-link{display:flex; width:100%; margin-top:6px}
+.kv a{display:inline-block; padding:9px 0; margin:-9px 0; color:var(--blue); text-decoration:none}
+.banner .btn{margin-top:8px}
 </style>
 </head>
 <body class="plate">
@@ -56,7 +56,7 @@
             <div id="payments"></div>
           </div>
           <div>
-            <p class="list-title">Need help with this invoice?</p>
+            <div class="section-head" style="margin-bottom:10px"><h2>Need help?</h2></div>
             <div class="list">
               <a class="list-item" href="C602-ask.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg></span><b>Raise a billing query</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
               <a class="list-item" href="C1601-dispute.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Dispute a charge</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
@@ -97,6 +97,7 @@
           <div class="title mono" id="more-title"></div>
           <button type="button" data-close data-toast="Invoice saved to Downloads">Download invoice</button>
           <button type="button" data-close>Share invoice</button>
+          <button type="button" data-go="C812-payment-proof.html" id="proof-action">I paid by bank transfer or cheque</button>
         </div>
         <button class="cancel" type="button" data-close>Cancel</button>
       </div>
@@ -104,8 +105,12 @@
   </div>
 </div>
 
-<p class="plate-note">Any invoice via <code>?invoice=</code>; pick one above to see each banner. An invoice of another
-company opens <a href="../system/S06-no-access.html">S06</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One invoice: amount, status, dates, linked request, order or contract, GST lines and payments received.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pay the balance</li><li>Download or share the invoice</li><li>Report a bank transfer or cheque (more menu)</li><li>Raise a query, dispute a charge, request a correction</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Pay opens <a href="C803-pay-method.html">C803</a>; proof opens <a href="C812-payment-proof.html">C812</a></li><li>Processing shows Check status; Awaiting verification and Paid hide Pay</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pick an invoice above: overdue, partly paid, failed, processing, credit note</li><li>Other company's invoice: <a href="../system/S06-no-access.html">S06</a></li><li>Spec: section 8, C802</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -149,10 +154,10 @@ company opens <a href="../system/S06-no-access.html">S06</a>.</p>
   const banners = [];
   if (inv.status === 'overdue') banners.push(banner('red', 'warning-circle', `Overdue by ${-R.daysFromToday(inv.due)} days`, `Was due on ${R.date(inv.due)}.`));
   if (inv.paid && balance > 0) banners.push(banner('', 'info', 'Partly paid', `${R.money(inv.paid)} received. Pay now pays the balance.`));
-  if (failed && payable) banners.push(banner('amber', 'warning', 'Last payment failed', `${R.esc(failed.reason)} on ${R.dayDate(failed.when)}. <a href="C806-payment-failed.html?invoice=${inv.number}">Details</a>`));
-  if (inv.status === 'processing') banners.push(banner('', 'hourglass', 'Payment being confirmed', 'Do not pay again. <a href="C807-payment-pending.html?invoice=' + inv.number + '">Check status</a>'));
+  if (failed && payable) banners.push(banner('amber', 'warning', 'Last payment failed', `${R.esc(failed.reason)} on ${R.dayDate(failed.when)}.`));
+  if (inv.status === 'processing') banners.push(banner('', 'hourglass', 'Payment being confirmed', 'Do not pay again.'));
   if (inv.status === 'verification') banners.push(banner('grey', 'hourglass', 'Awaiting verification', 'Zixom is checking your payment proof.'));
-  if (inv.creditNote) banners.push(banner('green', 'receipt', `Credit note <span class="mono">${inv.creditNote}</span>`, '<a href="C1603-credit-notes.html">View credit note</a>'));
+  if (inv.creditNote) banners.push(banner('green', 'receipt', `Credit note <span class="mono">${inv.creditNote}</span>`, '<a class="btn btn-soft btn-sm" href="C1603-credit-notes.html">View credit note</a>'));
   $('banners').innerHTML = banners.join('');
 
   const LINKED = { TKT: ['Service request', 'C508-request-detail.html?ticket='], ORD: ['Order', 'C708-order-detail.html?order='],
@@ -179,7 +184,8 @@ company opens <a href="../system/S06-no-access.html">S06</a>.</p>
         <span class="end"><span class="mono" style="font-size:var(--fs-12)">${p.receipt}</span>${R.icon('caret-right')}</span></a>`).join('')}</div>`
     : `<p class="hint" style="margin:0 4px">${pending ? 'One payment is being confirmed.' : 'No payments yet.'}</p>`;
 
-  const download = '<button class="icon-btn" type="button" data-toast="Invoice saved to Downloads" aria-label="Download invoice"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></button>';
+  const download = '<button class="icon-btn" type="button" data-toast="Invoice saved to Downloads" aria-label="Download invoice" data-when="ready offline"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></button>'
+    + '<button class="icon-btn" type="button" data-toast="Invoice PDF not ready yet" aria-label="Download invoice" data-when="pdf"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg></button>';
   const footer = {
     pay: `<div class="btn-pair">${download}
         <a class="btn btn-primary" href="C803-pay-method.html?invoice=${inv.number}" data-when="ready pdf">Pay ${R.money(balance)}</a>
@@ -188,6 +194,8 @@ company opens <a href="../system/S06-no-access.html">S06</a>.</p>
     other: `<button class="btn btn-secondary" type="button" data-toast="Invoice saved to Downloads"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download invoice</button>`,
   };
   $('footer').innerHTML = payable ? footer.pay : inv.status === 'processing' ? footer.processing : footer.other;
+  if (payable) $('proof-action').addEventListener('click', () => { location.href = `C812-payment-proof.html?invoice=${inv.number}`; });
+  else $('proof-action').remove();
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

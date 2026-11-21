@@ -90,7 +90,7 @@
         <button class="btn btn-primary" type="button" data-when="error" disabled>Save</button>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="saving">Save</button>
         <button class="btn btn-primary" type="button" data-when="conflict" data-toast="Showing the latest" onclick="document.querySelector('[data-state=ready]').click()">Refresh</button>
-        <button class="btn btn-text" type="button" style="width:100%" data-when="conflict" onclick="document.querySelector('.plate-states [data-state=edited]').click()">Keep my changes</button>
+        <button class="btn btn-secondary" type="button" style="margin-top:10px" data-when="conflict" onclick="document.querySelector('.plate-states [data-state=edited]').click()">Keep my changes</button>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -119,8 +119,12 @@
   </div>
 </div>
 
-<p class="plate-note">Edits what the company owns; model, serial and dates stay with Zixom. Leaving with changes asks
-first. If Zixom saved the machine meanwhile, the edits stay in the form until the person refreshes or keeps them.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Edits what the company owns: nickname, site, contact, running hours and notes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change editable fields</li><li>Save</li><li>See fields set by Zixom</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="C202-machine-detail.html">C202</a> with a toast</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Leaving with changes asks first</li><li>Hours lower than the last entry are blocked</li><li>Zixom changed it: Refresh or keep my changes (EC-22)</li><li>Spec: C2, C206</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

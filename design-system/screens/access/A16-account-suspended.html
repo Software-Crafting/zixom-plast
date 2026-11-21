@@ -37,7 +37,8 @@
 
         <div class="card-fill">
           <dl class="kv" style="margin:0">
-            <div><dt>Account</dt><dd>+91 97140 22321</dd></div>
+            <div data-when="suspended company removed"><dt>Account</dt><dd>+91 97140 22321</dd></div>
+            <div data-when="engineer"><dt>Account</dt><dd>+91 99250 61847</dd></div>
             <div data-when="suspended company removed"><dt>Company</dt><dd>Shree Packaging Industries</dd></div>
             <div data-when="engineer"><dt>Employee code</dt><dd class="mono">ZP-SE-031</dd></div>
             <div><dt>Since</dt><dd>23 Nov 2026, 8:40 AM</dd></div>
@@ -66,7 +67,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown at sign in or when the next request fails after access was removed (EC-17, EC-19). Unsent drafts stay on the phone for 30 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The account can no longer be used: suspended, company inactive, removed or engineer left.</p></div>
+  <div><h3>What you can do</h3><ul><li>Contact support (Call or Email)</li><li>Sign out</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Sign out opens <a href="A03-sign-in.html">A03</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Shown at sign in or when the next request fails (EC-17, EC-19)</li><li>Unsent drafts stay on the phone for 30 days</li><li>Spec: section 7, A16</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

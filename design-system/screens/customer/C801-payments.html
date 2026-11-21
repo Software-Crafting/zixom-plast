@@ -7,7 +7,7 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
-.owe{margin-top:16px; padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-lift)}
+.owe{margin-top:16px; padding:16px; border-radius:24px; background:#fff; box-shadow:var(--shadow-soft)}
 .owe .label{font-size:var(--fs-13); color:var(--text-muted)}
 .owe .big{display:block; margin-top:4px; font:400 var(--fs-28) var(--font-display); color:var(--slate-900)}
 .owe .over{display:block; margin-top:4px; font-size:var(--fs-13); font-weight:600; color:var(--red)}
@@ -15,7 +15,6 @@
 .owe .btn{margin-top:14px}
 .count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
 .count-line b{color:var(--slate-900); font-weight:600}
-.count-line .btn-text{min-height:0; padding:0; display:inline-flex; gap:6px; align-items:center}
 /* invoice row */
 .inv{display:grid; grid-template-columns:auto 1fr auto; column-gap:12px; row-gap:10px; padding:14px; border-radius:var(--r-lg);
   background:#fff; border:1px solid var(--line); color:inherit; text-decoration:none}
@@ -78,7 +77,7 @@
           <div class="stack" style="margin-top:16px">
             <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
 
-            <div class="segment" role="tablist" aria-label="Invoices" data-when="ready filtered noresults offline empty">
+            <div class="segment" role="tablist" aria-label="Invoices" data-when="ready filtered noresults offline">
               <button role="tab" aria-selected="true" aria-controls="p-due" id="t-due">Due</button>
               <button role="tab" aria-selected="false" aria-controls="p-paid" id="t-paid">Paid</button>
               <button role="tab" aria-selected="false" aria-controls="p-est" id="t-est">Estimates</button>
@@ -96,7 +95,7 @@
                 <p class="count-line" data-when="ready offline"><span><b id="due-count"></b> · by due date</span></p>
                 <div data-when="filtered">
                   <div class="chips" style="margin-bottom:6px"><button class="chip outline" type="button" aria-pressed="false">Parts <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
-                  <p class="count-line"><span><b id="filtered-count"></b></span><button class="btn btn-text" type="button">Clear filters</button></p>
+                  <p class="count-line"><span><b id="filtered-count"></b></span><button class="btn btn-soft btn-sm" type="button">Clear filters</button></p>
                 </div>
                 <div class="stack-sm" id="due" data-when="ready offline"></div>
                 <div class="stack-sm" id="due-filtered" data-when="filtered"></div>
@@ -178,8 +177,12 @@
   </div>
 </div>
 
-<p class="plate-note">What the company owes, overdue first. Due lists every unpaid invoice; Processing and Awaiting
-verification ones open without Pay now. Pay all due opens <a href="C1607-select-invoices.html">C1607</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The Payments tab: what the company owes, overdue first, with paid invoices and estimates waiting for approval.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open an invoice or estimate</li><li>Pay all due in one go</li><li>Search, filter by type or date, sort</li><li>Open history, statement, refunds, credit notes, bank details</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>An invoice opens <a href="C802-invoice-detail.html">C802</a>; Pay all due opens <a href="C1607-select-invoices.html">C1607</a></li><li>Processing and Awaiting verification invoices open without Pay now</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Nothing to pay, no results, error, offline (pay disabled)</li><li>Spec: section 8 Payments, C801 · EC-42</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

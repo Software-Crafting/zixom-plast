@@ -26,9 +26,6 @@
 .first h3{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
 .first p{margin:8px auto 0; max-width:270px; font-size:var(--fs-14); line-height:1.5; color:var(--text)}
 .first .btn{margin-top:18px}
-.first .steps{display:flex; flex-direction:column; gap:10px; margin-top:18px; text-align:left}
-.first .steps div{display:flex; align-items:center; gap:10px; font-size:var(--fs-13); color:var(--slate-700)}
-.first .steps .n{width:24px; height:24px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:#fff; font:600 var(--fs-12) var(--font-body)}
 .news{display:grid; grid-template-columns:auto 1fr; gap:12px; padding:14px; border-radius:var(--r-lg); background:var(--field); color:inherit; text-decoration:none}
 .news .disc{width:40px; height:40px; display:grid; place-items:center; border-radius:var(--r-pill); background:#fff; color:var(--slate-800)}
 .news b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
@@ -78,20 +75,15 @@
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
           <div class="banner amber" data-when="notifoff">
             <svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg>
-            <div><b>Turn on notifications to get service updates</b>You will miss engineer and payment alerts. <a href="C1002-notification-settings.html">Open Settings</a></div>
+            <div><b>Notifications are off</b>You will miss engineer and payment alerts. <a href="C1002-notification-settings.html">Turn on</a></div>
           </div>
 
           <!-- first use: one card, everything else hidden -->
           <div class="first" data-when="first">
             <span class="thumb" aria-hidden="true"><svg class="ic"><use href="#ph-factory"/></svg></span>
             <h3>Add your first machine</h3>
-            <p>Scan the QR on the nameplate or type the serial number. Warranty and AMC fill in by themselves.</p>
+            <p>Scan the nameplate QR or type the serial number.</p>
             <a class="btn btn-primary" href="C203-add-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a>
-            <div class="steps">
-              <div><span class="n">1</span>Find the serial number on the nameplate</div>
-              <div><span class="n">2</span>Confirm the machine and pick its site</div>
-              <div><span class="n">3</span>Raise service, claim warranty, order parts</div>
-            </div>
           </div>
 
           <!-- alerts strip: up to 3 -->
@@ -104,7 +96,7 @@
           <div class="block-error" data-when="cardfail">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
             <span class="grow">Couldn't load your summary.</span>
-            <button class="btn btn-text" type="button" data-busy>Retry</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button>
           </div>
 
           <div class="quick" data-when="ready cardfail notifoff offline">
@@ -170,9 +162,12 @@
   </div>
 </div>
 
-<p class="plate-note">Answers three questions: is everything running, what needs me, what do I want to do. Up to 3 alerts
-with View all, four summary cards, quick actions, the most recent open request, recent activity and the latest notice.
-Every block loads on its own, so one failure shows only that card's Retry. A person with no machines sees one card.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The customer home tab. Shows what needs attention and the main actions for the selected company.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open an alert or View all alerts</li><li>Tap a summary card to open that list</li><li>Use a quick action or Machine down?</li><li>Switch company, search, open notifications</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Cards open C201, C502, C301 and C801</li><li>Quick actions open C503, C303, C602 and C701</li><li>Machine down? opens <a href="C1501-machine-down.html">C1501</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each block loads on its own with its own Try again</li><li>No machines: one Add machine card; offline keeps the last load</li><li>Notifications off: banner (EC-27); count over 99 shows 99+</li><li>Spec: section 8, C101 · C1 Home</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

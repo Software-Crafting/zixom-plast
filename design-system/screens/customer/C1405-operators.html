@@ -82,8 +82,12 @@
   </div>
 </div>
 
-<p class="plate-note">People who run one machine via <code>?serial=</code>, shown to engineers on the job. Tap a person for
-Call, Edit and Remove.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>People who run one machine, so engineers can reach the right person on site.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call an operator straight from the list.</li><li>Tap a person to Call, Edit or Remove.</li><li>Add an operator.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Add and Edit open <a href="C1406-edit-operator.html">C1406</a>.</li><li>Engineers see this list on jobs for the machine.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Remove asks to confirm.</li><li>No operators: empty state.</li><li>Offline: saved list, Call still works (EC-02).</li><li>Spec: section C14, C1405 · EC-02</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -109,7 +113,7 @@ Call, Edit and Remove.</p>
   const tel = (o) => `tel:${o.mobile.replace(/\s/g, '')}`;
   $('ops').innerHTML = OPERATORS.map((o, i) => `<div class="op"><span class="avatar">${o.initials}</span>
     <button class="op-who" type="button" data-open="actions" data-i="${i}"><b>${R.esc(o.name)}</b><span class="sub">${o.shift} shift · ${o.mobile}</span></button>
-    <a class="icon-btn dark" href="${tel(o)}" aria-label="Call ${R.esc(o.name)}">${R.icon('phone')}</a></div>`).join('');
+    <a class="icon-btn" href="${tel(o)}" aria-label="Call ${R.esc(o.name)}">${R.icon('phone')}</a></div>`).join('');
 
   const pick = (i) => {
     const o = OPERATORS[i];

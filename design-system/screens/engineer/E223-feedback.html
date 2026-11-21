@@ -69,7 +69,8 @@
       </div>
 
       <div class="footer-bar">
-        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="ready low offline" data-toast="Acknowledged">Acknowledge</a>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="ready low" data-toast="Acknowledged">Acknowledge</a>
+        <a class="btn btn-primary back-job" href="E202-job-detail.html" data-when="offline" data-toast="Acknowledged. Waiting to sync">Acknowledge</a>
         <a class="btn btn-secondary back-job" href="E202-job-detail.html" data-when="waiting">Back to job</a>
       </div>
     </div>
@@ -77,8 +78,12 @@
   </div>
 </div>
 
-<p class="plate-note">The rating and comment the customer gave after closing. A low rating (2 or less) shows the service
-manager's follow up note; until the customer rates, it shows Waiting for the customer.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The rating and comment the customer gave after the job closed.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the rating, tags and comment</li><li>Acknowledge the feedback</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Acknowledge returns to <a href="E202-job-detail.html">E202</a>; offline it waits to sync</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No rating yet: Waiting for the customer</li><li>Rating of 2 or less shows the service manager's follow up note</li><li>Spec: section E11, E223</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -89,13 +94,11 @@ manager's follow up note; until the customer rates, it shows Waiting for the cus
   const { data } = ZX;
   const $ = (id) => document.getElementById(id);
   const DEFAULT_TICKET = 'TKT-2026-0129';
-  const RATING_WINDOW_DAYS = 7;
   /* sample feedback, not in data.js. The rating itself is ticket.rating */
   const FEEDBACK = { at: '2026-10-30T15:20', liked: ['On time', 'Explained well', 'Clean work'],
     comment: 'Quick visit and a clear explanation of the vacuum readings.' };
   const LOW = { rating: 2, liked: [], comment: 'Engineer came 2 hours late and did not call ahead.',
     managerNote: 'Spoke to the customer. Please send a Running late update when you are delayed.', noteAt: '2026-10-31T10:05' };
-  const CLOSED_ON = '2026-11-20';
 
   const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;
   const t = data.tickets.find((x) => x.number === number);
@@ -121,8 +124,7 @@ manager's follow up note; until the customer rates, it shows Waiting for the cus
   $('good').innerHTML = view(t.rating || 5, FEEDBACK);
   $('low').innerHTML = view(LOW.rating, LOW) + `<div class="banner amber">${R.icon('users')}
       <div><b>Note from ${R.esc(data.support.manager)}</b>${R.esc(LOW.managerNote)}</div></div>`;
-  const closes = new Date(new Date(CLOSED_ON).getTime() + RATING_WINDOW_DAYS * 86400000).toISOString();
-  $('window').textContent = `${by} can rate until ${R.dayDate(closes)}.`;
+  $('window').textContent = `${by} has not rated this visit yet.`;
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

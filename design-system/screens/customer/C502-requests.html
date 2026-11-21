@@ -62,10 +62,10 @@
             <div id="tab-open"></div>
             <div id="tab-closed" hidden></div>
           </div>
-          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button></div>
 
           <div data-when="filtered">
-            <p class="count-line"><span id="filtered-count"></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+            <p class="count-line"><span id="filtered-count"></span><button class="btn btn-soft btn-sm" type="button">Clear filters</button></p>
             <div class="stack-sm" id="filtered" style="margin-top:10px"></div>
           </div>
 
@@ -124,8 +124,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every request of the company, Open and Closed. Requests that need you are pinned on top. Search by
-ticket number; 20 load at a time.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every service request of the company, Open and Closed, with requests that need you pinned on top.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch Open or Closed</li><li>Search by ticket number</li><li>Filter by machine, status, type and date</li><li>New request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A card opens <a href="C508-request-detail.html">C508</a></li><li>New request opens <a href="C503-raise-machine.html">C503</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>20 load at a time; a failed load shows Try again inline</li><li>No results: Clear search; empty: Raise a request</li><li>Offline shows the last load</li><li>Spec: C502</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

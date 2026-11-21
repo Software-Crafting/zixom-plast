@@ -12,7 +12,7 @@
 .hero .thumb .ic{width:40px; height:40px}
 .hero h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900); line-height:1.2}
 .hero .serial{margin:6px 0 0; font-size:var(--fs-13); color:var(--slate-700)}
-.mcard{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); box-shadow:var(--shadow-lift)}
+.mcard{padding:16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); box-shadow:var(--shadow-soft)}
 .mcard .top{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center}
 .mcard h4{margin:0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .mcard .mono{display:block; margin-top:3px; font-size:var(--fs-12); color:var(--slate-600)}
@@ -56,7 +56,7 @@
         <div class="banner grey" style="margin-bottom:12px" data-when="unsaved"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg><div><b>Sharing needs the internet</b>This machine is not saved on the phone yet.</div></div>
         <div class="body">
           <div class="mcard" id="card" data-when="ready pdf offline"></div>
-          <span class="skeleton" style="display:block; height:190px; border-radius:var(--r-lg)" data-when="loading unsaved"></span>
+          <span class="skeleton" style="display:block; height:190px; border-radius:var(--r-lg)" data-when="loading"></span>
           <div class="segment" role="tablist" aria-label="Format" style="margin-top:14px">
             <button role="tab" aria-selected="true" id="fmt-image">Image</button><button role="tab" aria-selected="false" id="fmt-pdf">PDF</button>
           </div>
@@ -73,8 +73,12 @@
   </div>
 </div>
 
-<p class="plate-note">Sheet from More on <a href="C202-machine-detail.html">C202</a>: model, serial, warranty, AMC and site
-as an image or PDF, for colleagues or a service provider.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Sheet from More on Machine detail that shares a machine card with colleagues or a service provider.</p></div>
+  <div><h3>What you can do</h3><ul><li>Preview the card: model, serial, warranty, AMC, site.</li><li>Pick image or PDF.</li><li>Share, or copy the details as text.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Share opens the phone share sheet.</li><li>Copy puts the details on the clipboard.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Offline with saved data: shares the saved card.</li><li>Offline and not saved: Share off.</li><li>Share fails: <a href="../system/S17-share-failed.html">S17</a>.</li><li>Spec: section C14, C1412 · EC-02</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

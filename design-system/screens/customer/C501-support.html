@@ -12,10 +12,13 @@
 .segment [aria-selected="true"] .n{background:var(--slate-800); color:#fff}
 .segment a, .segment button{display:flex; align-items:center; justify-content:center}
 .summary{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-.summary a{display:flex; flex-direction:column; gap:6px; padding:14px; border-radius:var(--r-lg); background:var(--field); color:inherit; text-decoration:none}
+.summary a{display:flex; flex-direction:column; gap:6px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line); color:inherit; text-decoration:none}
 .summary b{font:400 var(--fs-28) var(--font-display); color:var(--slate-900); line-height:1}
 .summary span{font-size:var(--fs-12); color:var(--text-muted)}
 .summary .warn b{color:var(--amber)}
+.section-head{align-items:center}
+.section-head a{min-height:34px}
+.scroll.with-tabbar{padding-bottom:calc(var(--tabbar-space) + 64px)}
 </style>
 </head>
 <body class="plate">
@@ -94,7 +97,7 @@
         </div>
       </div>
     </div>
-    <a class="fab" href="C503-raise-machine.html" data-when="ready empty offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New request</a>
+    <a class="fab" href="C503-raise-machine.html" data-when="ready offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>New request</a>
     <nav class="tabbar" data-tabs="customer" data-active="support"></nav>
     <span class="home-indicator"></span>
 
@@ -134,8 +137,12 @@
   </div>
 </div>
 
-<p class="plate-note">Support tab root. Service shows open requests, the saved draft and what waits for you; Warranty
-opens <a href="C301-warranty.html">C301</a>, Questions <a href="C601-questions.html">C601</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The Support tab: Service, Warranty and Questions, each with its open count.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter and sort service requests</li><li>Continue the saved draft</li><li>Open what waits for you</li><li>New request, or call or email support</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Cards open <a href="C508-request-detail.html">C508</a>; All requests opens C502</li><li>New request opens <a href="C503-raise-machine.html">C503</a></li><li>Warranty opens C301, Questions C601</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each segment has its own empty state</li><li>Offline shows the last load with its time</li><li>Error with Try again</li><li>Spec: C5 Service, C501</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

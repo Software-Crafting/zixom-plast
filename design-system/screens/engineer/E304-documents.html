@@ -86,8 +86,12 @@
   </div>
 </div>
 
-<p class="plate-note">Manuals, wiring diagrams, parts lists and checklists for the machine. Each can be saved for offline
-use; files over 25 MB on mobile data ask first. Offline only the saved copies open.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Manuals, wiring and pneumatic diagrams, parts lists and checklists for one machine model.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a document.</li><li>Download it for offline use.</li><li>Share it.</li><li>Cancel or retry a download.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Saved files get an Offline copy badge and open without internet.</li><li>Files over 25 MB on mobile data ask first: Wait for Wi-Fi or Download now.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Download failed shows Retry on the row.</li><li>Offline: only saved copies open. Missing file: <a href="../system/S05-not-found.html">S05</a>.</li><li>Spec: section 9, E3, E304</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -122,7 +126,7 @@ use; files over 25 MB on mobile data ask first. Offline only the saved copies op
           <span class="sub">Downloading 64% of ${mb} MB</span><span class="meter"><i style="width:64%"></i></span>
           <span class="end"><button class="icon-btn sm" type="button" aria-label="Cancel download" data-toast="Download cancelled">${R.icon('x', 'ic-18')}</button></span></div>
         <div class="list-item failed" data-when="failed"><span class="disc">${R.icon('warning-circle')}</span><b>${R.esc(title)}</b>
-          <span class="sub">Download failed</span><span class="end"><button class="btn btn-text" type="button" style="min-height:0; padding:0" onclick="document.querySelector('[data-state=downloading]').click()">Retry</button></span></div>`;
+          <span class="sub">Download failed</span><span class="end"><button class="btn btn-secondary btn-sm" type="button" onclick="document.querySelector('[data-state=downloading]').click()">Retry</button></span></div>`;
     }
     return `<a class="list-item${saved ? '' : ' online-only'}" href="#" data-open="doc" data-title="${R.esc(title)}" data-saved="${saved}">
       <span class="disc">${R.icon(iconName)}</span><b>${R.esc(title)}</b><span class="sub">${size}${offline}</span><span class="end">${R.icon('caret-right')}</span></a>`;

@@ -32,7 +32,7 @@
 .pline b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .pline .sub{font-size:var(--fs-12); color:var(--text-muted)}
 .pline .tags{grid-column:1 / span 2; display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
-.pline a{grid-column:2; grid-row:1; font-size:var(--fs-14); font-weight:600; color:var(--blue); text-decoration:none}
+.pline .btn{grid-column:2; grid-row:1; align-self:center}
 .read{padding:14px 16px; border-radius:var(--r-lg); background:var(--field); border:1px solid var(--line)}
 .read p{margin:8px 0 0; font-size:var(--fs-14); line-height:1.5; color:var(--slate-900)}
 .btn-row{display:flex; gap:8px}
@@ -69,6 +69,7 @@ a.select{text-decoration:none}
   <button type="button" data-state="chargeable" aria-pressed="false">chargeable job</button>
   <button type="button" data-state="old" aria-pressed="false">draft 30+ days</button>
   <button type="button" data-state="device" aria-pressed="false">other device</button>
+  <button type="button" data-state="s4" data-toast="We restored your draft" aria-pressed="false">app reopened</button>
   <button type="button" data-state="s3" data-open="sections" aria-pressed="false">section list</button>
 </div>
 
@@ -91,7 +92,7 @@ a.select{text-decoration:none}
           <div class="banner amber" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>
             <div><b>Working offline</b>Everything is saved on this phone.</div></div>
           <div class="banner amber" data-when="old"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg>
-            <div><b>Draft started 32 days ago</b>Submit it soon. Old drafts are deleted after 60 days.</div></div>
+            <div><b>Draft started 32 days ago</b>Submit it now. Your manager is told.</div></div>
           <div class="banner" data-when="general"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
             <div><b>No checklist for this model</b>Showing the general checklist.</div></div>
 
@@ -120,7 +121,7 @@ a.select{text-decoration:none}
           <section data-when="s3 offline general safety">
             <h2 class="sec-title">Checklist</h2>
             <div class="row-flex" style="justify-content:space-between; margin:-6px 2px 12px; font-size:var(--fs-13)">
-              <span id="ck-count"></span><a class="link accent" href="E410-checklist-template.html"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-book-open"/></svg>Guidance</a>
+              <span id="ck-count"></span><a class="btn btn-secondary btn-sm" href="E410-checklist-template.html"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-book-open"/></svg>Guidance</a>
             </div>
             <div id="checklist"></div>
           </section>
@@ -148,13 +149,13 @@ a.select{text-decoration:none}
               <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-car-profile"/></svg></span><b>Travel</b><span class="sub" id="t-travel"></span><span class="end" id="t-travel-h"></span></div>
               <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-wrench"/></svg></span><b>Labour</b><span class="sub" id="t-work"></span><span class="end" id="t-labour"></span></div>
               <div class="list-item" style="cursor:default"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-map-pin"/></svg></span><b>On site</b><span class="sub" id="t-site"></span><span class="end">Check out on submit</span></div>
+              <a class="list-item" href="E408-estimate.html" data-when="chargeable">
+                <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span><b>Chargeable <span id="charge-total"></span></b>
+                <span class="sub">Your estimate, incl. GST</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
               <a class="list-item" href="E413-time-log.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg></span><b>Edit time log</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
             </div>
             <div class="banner green" style="margin-top:12px" data-when="s6"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg>
-              <div><b>No charge</b>Covered by warranty. <a href="E408-estimate.html">Estimate extra work</a></div></div>
-            <div class="list" style="margin-top:12px" data-when="chargeable"><a class="list-item" href="E408-estimate.html">
-              <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-currency-inr"/></svg></span><b>Chargeable amount <span id="charge-total"></span></b>
-              <span class="sub">From your estimate, incl. GST</span><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a></div>
+              <div><b>No charge</b>Covered by warranty.<a class="btn btn-secondary btn-sm" style="margin-top:10px" href="E408-estimate.html">Estimate extra work</a></div></div>
           </section>
 
           <!-- 7 Photos and videos -->
@@ -242,8 +243,12 @@ a.select{text-decoration:none}
   </div>
 </div>
 
-<p class="plate-note">One section per page; the switch above jumps between the 10 sections. Saved after every field and
-works fully offline. Red dot marks a required section that is not done yet.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's visit report for one job, ten sections, one per page. Replaces the paper report.</p></div>
+  <div><h3>What you can do</h3><ul><li>Move with Next and Previous, or jump from the section list.</li><li>Fill findings, checklist, work done, parts, photos, status, advice, remarks.</li><li>Open the parts picker, time log, estimate, status sheet and recommendations.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Every field saves on the phone at once, online or not.</li><li>Review opens <a href="E404-report-review.html">E404</a> to check, sign and submit.</li><li>A failed safety item offers <a href="E211-escalate.html">E211</a> or <a href="E903-incident.html">E903</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Offline banner; missing template falls back to the general checklist (<a href="E410-checklist-template.html">E410</a>).</li><li>Photo limit 10, at least 2. Draft over 30 days is flagged. Job bound to one phone.</li><li>App reopened: back on the same section with a toast (EC-36, EC-37).</li><li>Spec: section E4, E401 · EC-55</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -330,7 +335,7 @@ works fully offline. Red dot marks a required section that is not done yet.</p>
   $('parts').innerHTML = DRAFT.parts.map((line) => {
     const part = data.parts.find((p) => p.number === line.number);
     return `<div class="pline"><span><b>${R.esc(part.name)}</b><br><span class="sub"><span class="mono">${part.number}</span> · Qty ${line.qty}</span></span>
-      <a href="E402-parts-used.html?ticket=${ticket.number}">Edit</a>
+      <a class="btn btn-secondary btn-sm" href="E402-parts-used.html?ticket=${ticket.number}">Edit</a>
       <span class="tags">${R.tag(line.source)}${R.tag(line.oldReturned ? 'Old part returned' : 'Old part kept', '')}${line.warranty ? R.tag('Warranty part', 'green') : ''}</span></div>`;
   }).join('');
 

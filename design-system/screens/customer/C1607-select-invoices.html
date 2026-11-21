@@ -16,7 +16,6 @@
 .pick .main .bad{color:var(--red); font-weight:600}
 .pick .amt{font:400 var(--fs-16) var(--font-display); color:var(--slate-900); white-space:nowrap}
 .top-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
-.top-line .btn-text{min-height:0; padding:0}
 </style>
 </head>
 <body class="plate">
@@ -43,7 +42,7 @@
       <div class="scroll with-footer">
         <div class="stack-sm" data-when="ready offline">
           <div class="offline-strip" style="margin:0 0 6px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to pay.</div>
-          <p class="top-line"><span id="count"></span><button class="btn btn-text" type="button" id="all">Select all</button></p>
+          <p class="top-line"><span id="count"></span><button class="btn btn-soft btn-sm" type="button" id="all">Select all</button></p>
           <div class="stack-sm" id="list"></div>
         </div>
 
@@ -85,8 +84,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every payable invoice, overdue ones ticked; types can be mixed. One Razorpay payment covers the
-selection (<a href="C803-pay-method.html">C803</a>).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Pick several due invoices and pay them in one payment.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tick or untick invoices; overdue ones start ticked.</li><li>Select all or clear all. Types can be mixed.</li><li>See the running total, then Pay.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Pay opens <a href="C803-pay-method.html">C803</a> with the selection, one Razorpay payment.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>An invoice changed while selected: list refreshes and a sheet says so (EC-22).</li><li>Nothing selected: Pay is disabled.</li><li>Offline: Pay disabled (EC-02).</li><li>Spec: section C16, C1607 · EC-22, EC-44</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

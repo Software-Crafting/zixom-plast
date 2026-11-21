@@ -55,7 +55,7 @@
             <div data-when="ready offline"><dt>Travel</dt><dd id="travel"></dd></div>
             <div data-when="onsite"><dt>Checked in</dt><dd>12:34 PM</dd></div>
           </dl>
-          <a class="btn btn-danger call-mgr" href="#" data-when="onsite"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call service manager</a>
+          <a class="btn btn-secondary call-mgr" href="#" data-when="onsite"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call service manager</a>
           <div data-when="ready moved offline">
             <h2 class="sec-title">Next job</h2>
             <a class="list-item list" id="next"></a>
@@ -85,8 +85,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opens from the push when Zixom cancels or moves a job. Acknowledge removes it from Today and Jobs.
-Travel already started is kept for the log; on site, the engineer is told to call the service manager.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Opens from the push when Zixom cancels a job or moves it to another engineer: the reason and what to do next.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the reason and when Zixom changed it.</li><li>Open the next job.</li><li>On site: call the service manager.</li><li>Acknowledge.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Acknowledge removes the job from <a href="E101-today.html">Today</a> and <a href="E201-jobs.html">Jobs</a>.</li><li>Travel already started stays in the log.</li><li>Offline: the acknowledgement waits to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cancelled while travelling or after check in each get their own message.</li><li>Spec: E2, E215 · EC-50 · flow: cancelled while travelling.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

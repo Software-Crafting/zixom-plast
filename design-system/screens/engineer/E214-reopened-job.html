@@ -126,8 +126,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown when the customer reopens a closed job within 7 days. Zixom offers it to the same engineer
-where possible, with the customer's reason and the previous report.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A closed job the customer reopened within 7 days, offered back to the engineer with the reason and the previous report.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the customer's reason and the last visit's findings.</li><li>Open the previous report (<a href="E405-report-submitted.html">E405</a>).</li><li>Accept, or Decline with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Accept: the job goes back to Assigned and onto Today; Open job leads to <a href="E202-job-detail.html">E202</a>.</li><li>Decline: Zixom assigns another engineer.</li><li>Offline: the answer waits to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Zixom offers it to the same engineer where possible; the last visit may be someone else's.</li><li>Spec: E2, E214 · status model: Reopened goes back to Assigned.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -140,7 +144,7 @@ where possible, with the customer's reason and the previous report.</p>
   const DEFAULT_TICKET = 'TKT-2026-0132';
   /* sample reopen details and the previous visit report, not in data.js */
   const REOPENED = { by: 'rakesh', at: '2026-11-22T09:15' };
-  const PREVIOUS = { number: 'SR-2026-0132', date: '2026-11-12', otherEngineer: 'anita',
+  const PREVIOUS = { number: 'SR-2026-0132', date: '2026-11-19', otherEngineer: 'anita',
     found: 'Cooling fan bearing dry and noisy.', work: 'Cleaned and greased the bearing. Ran 1 hour with no noise.' };
 
   const number = new URLSearchParams(location.search).get('ticket') || DEFAULT_TICKET;

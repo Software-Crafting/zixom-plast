@@ -86,8 +86,12 @@
   </div>
 </div>
 
-<p class="plate-note">Reports that are not sent yet: failed ones first with the reason, then waiting to sync, then drafts.
-Drafts older than 30 days are flagged; delete asks first.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every report on this phone that has not reached Zixom: failed, waiting to sync and drafts.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a draft on the section where it stopped.</li><li>Retry or review a failed item.</li><li>Delete a draft after confirming.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Open goes to <a href="E401-report.html">E401</a>; Review opens the conflict screen <a href="E1007-sync-conflict.html">E1007</a>.</li><li>Waiting items send by themselves when online.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty: "No drafts". Drafts older than 30 days are flagged.</li><li>Submitted reports cannot be deleted here.</li><li>Spec: section E4, E406 · EC-56, EC-57</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -115,8 +119,9 @@ Drafts older than 30 days are flagged; delete asks first.</p>
     return `<div class="drow"><a class="main" href="E401-report.html?ticket=${t.number}&section=${d.section}">
       <span class="top"><span class="num mono">${t.number}</span>${old ? R.tag(`${age} days old`, 'amber', 'clock') : R.tag('Draft')}</span>
       <h3>${R.esc(machineName(t))}</h3>
-      <span class="sub">Section ${d.section} of 10 · Saved ${R.ago(saved)}${old ? ` · Deleted after ${DRAFT_DAYS * 2 - age} more days` : ''}</span></a>
-      <div class="acts"><button class="btn btn-text danger" type="button" data-open="confirm" data-ticket="${t.number}">${R.icon('trash', 'ic-16')}Delete</button></div></div>`;
+      <span class="sub">Section ${d.section} of 10 · Saved ${R.ago(saved)}${old ? ' · Submit it soon' : ''}</span></a>
+      <div class="acts"><button class="btn btn-text danger" type="button" data-open="confirm" data-ticket="${t.number}">${R.icon('trash', 'ic-16')}Delete</button>
+        <a class="btn btn-text" href="E401-report.html?ticket=${t.number}&section=${d.section}">Open</a></div></div>`;
   };
   const failedRow = (item) => {
     const t = ticketOf(item.ticket);

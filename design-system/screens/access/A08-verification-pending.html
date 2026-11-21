@@ -7,6 +7,7 @@
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
+.refresh{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; font-size:var(--fs-13); color:var(--text-muted)}
 .hero-wait{display:flex; flex-direction:column; align-items:center; text-align:center; padding:8px 8px 4px}
 .hero-wait .ring{position:relative; width:96px; height:96px; display:grid; place-items:center; border-radius:50%; background:var(--blue-50); color:var(--blue)}
 .hero-wait .ring::after{content:""; position:absolute; inset:-8px; border-radius:50%; border:2px dashed var(--blue-100)}
@@ -40,8 +41,8 @@
         </div>
         <div class="hero-wait" data-when="company">
           <span class="ring"><svg class="ic ic-32" aria-hidden="true"><use href="#ph-users"/></svg></span>
-          <h1>Waiting for approval from your company</h1>
-          <p>Rakesh Mehta, your primary contact, needs to approve you.</p>
+          <h1>Waiting for your company</h1>
+          <p>Your company's primary contact needs to approve you.</p>
         </div>
         <div class="hero-wait" data-when="approved">
           <span class="ring green"><svg class="ic ic-32" aria-hidden="true"><use href="#ph-seal-check"/></svg></span>
@@ -62,6 +63,10 @@
             <div><dt>Machine serial</dt><dd class="mono">ZP-TF-2501</dd></div>
             <div><dt>GSTIN</dt><dd class="mono">24AAAAA0000A1Z5</dd></div>
           </dl>
+        </div>
+        <div class="refresh" data-when="ready company slow">
+          <span>Checked just now</span>
+          <button class="btn btn-soft btn-sm" type="button" data-busy data-toast="Still pending"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Refresh status</button>
         </div>
       </div>
 
@@ -93,9 +98,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown after A07, or after A06 when the company must approve, and at every launch while the request is
-open. Edit details reopens A07 filled and keeps the same request number. Approval arrives as a push and this screen turns
-into Continue. Rejected opens <a href="A09-verification-rejected.html">A09</a>. The VER number format is a placeholder (spec Q7).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Status of a verification request while Zixom checks it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Refresh status (or pull to refresh)</li><li>Edit details, Contact support, Sign out</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Approved: push notification, then Continue to terms</li><li>Rejected: <a href="A09-verification-rejected.html">A09</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Over 2 working days: Call support banner</li><li>Edit keeps the same request number; VER format is a placeholder (spec Q7)</li><li>Spec: section 10, A08</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

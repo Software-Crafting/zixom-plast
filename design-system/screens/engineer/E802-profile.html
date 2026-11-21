@@ -13,7 +13,7 @@
 .me .photo .icon-btn .ic{width:16px; height:16px}
 .me h2{margin:0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
 .me p{margin:0; font-size:var(--fs-13); color:var(--text-muted)}
-.me .kv{grid-column:1 / -1; margin-top:10px}
+.me .kv{grid-column:1 / -1; margin:10px 0 0}
 .me .row-flex{grid-column:1 / -1; flex-wrap:wrap; margin-top:4px}
 .list-item:not(:has(.sub)) > b{grid-row:1 / span 2}
 .lock{display:inline-flex; align-items:center; gap:4px; margin:10px 4px 0; font-size:var(--fs-12); color:var(--text-muted)}
@@ -46,8 +46,8 @@
       <div class="scroll with-tabbar">
         <div class="stack" style="margin-top:16px">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
-          <div class="banner red" data-when="photofail"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-            <div><b>Photo not uploaded</b><button class="link-btn" type="button" data-busy>Try again</button></div></div>
+          <div class="banner red" data-when="photofail" style="align-items:center"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
+            <div class="grow"><b>Photo not uploaded</b>Your old photo stays.</div><button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button></div>
 
           <div data-when="ready photofail offline">
             <div class="card me">
@@ -81,6 +81,7 @@
 
             <p class="list-title">App</p>
             <div class="list">
+              <a class="list-item" href="E809-change-phone.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg></span><b>Change phone number</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
               <a class="list-item" href="E804-settings.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-gear-six"/></svg></span><b>Settings</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
               <a class="list-item" href="E805-help.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-book-open"/></svg></span><b>Help and training</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
               <a class="list-item" href="E806-report-problem.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Report a problem</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
@@ -112,8 +113,12 @@
   </div>
 </div>
 
-<p class="plate-note">The engineer's own card and everything outside a job. Only the photo can be changed here; the phone
-number goes through a request to Zixom (<a href="E809-change-phone.html">E809</a>).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's own card and the way to everything outside a job.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change or remove the profile photo</li><li>Ask to change the phone number</li><li>Open schedule, leave, parts, drafts, performance, settings, help</li><li>Log out</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Phone change goes to Zixom for checking (<a href="E809-change-phone.html">E809</a>)</li><li>Log out checks for unsynced work first (<a href="E807-log-out.html">E807</a>)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Photo upload failed keeps the old photo with Try again</li><li>Code, region and skills are set by Zixom, read only</li><li>Spec: E8, E802</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -133,7 +138,7 @@ number goes through a request to Zixom (<a href="E809-change-phone.html">E809</a
   document.getElementById('facts').innerHTML = `
     <div><dt>Employee code</dt><dd class="mono">${R.esc(me.code)}</dd></div>
     <div><dt>Region</dt><dd>${R.esc(me.region)}</dd></div>
-    <div><dt>Phone</dt><dd><a href="E809-change-phone.html" style="color:inherit; text-decoration:none">${R.esc(me.phone)}</a></dd></div>
+    <div><dt>Phone</dt><dd>${R.esc(me.phone)}</dd></div>
     <div><dt>Skills</dt><dd>${me.skills.map(R.esc).join(', ')}</dd></div>`;
 
   const pending = day.leave.filter((l) => l.status === 'Pending').length;

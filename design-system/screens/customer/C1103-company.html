@@ -87,8 +87,12 @@
   </div>
 </div>
 
-<p class="plate-note">Read only company record set by Zixom. A change goes to Zixom as a request; while one is pending
-it shows here and a second request waits.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The company record set by Zixom: name, code, GSTIN, PAN, billing address and industry. Read only.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the company details.</li><li>Request a change to one field with the new value and a note.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send to Zixom shows a toast; the request shows as pending here.</li><li>Zixom confirms and the record updates.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A change is pending: banner shows it and Request a change is off until Zixom answers.</li><li>Offline: details from the last load, requests off.</li><li>Spec: section C11, C1103</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -100,8 +104,7 @@ it shows here and a second request waits.</p>
   /* not in data.js: billing address and industry of this company */
   const EXTRA = { billing: 'Plot 214, Phase II, GIDC Vatva, Ahmedabad, Gujarat 382445', industry: 'Plastic packaging', requested: '2026-11-21' };
   const pan = company.gstin.slice(2, 12); /* the PAN is characters 3 to 12 of the GSTIN */
-  const rows = [['Company name', R.esc(company.name)], ['Customer code', `<span class="mono">${company.code}</span>`],
-    ['GSTIN', `<span class="mono">${company.gstin}</span>`], ['PAN', `<span class="mono">${pan}</span>`],
+  const rows = [['GSTIN', `<span class="mono">${company.gstin}</span>`], ['PAN', `<span class="mono">${pan}</span>`],
     ['Billing address', R.esc(EXTRA.billing)], ['Industry', R.esc(EXTRA.industry)]];
   document.getElementById('details').innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
   document.getElementById('co-name').textContent = company.name;

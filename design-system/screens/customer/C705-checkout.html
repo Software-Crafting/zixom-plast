@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../assets/css/zixom.css">
 <style>
 .sec h2{margin:0 2px 10px; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
-.sec h2 a{float:right; font:500 var(--fs-14) var(--font-body); color:var(--blue); text-decoration:none}
+.sec h2.with-action{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .addr{display:grid; grid-template-columns:auto 1fr auto; gap:4px 12px; align-items:center; width:100%; padding:14px; border-radius:var(--r-lg);
   background:#fff; border:1px solid var(--line); font:inherit; text-align:left; cursor:pointer}
 .addr > .ic:first-child{grid-row:1 / span 2; color:var(--slate-500)}
@@ -17,7 +17,8 @@
 .addr > .ic:last-child{grid-row:1 / span 2; grid-column:3; width:16px; height:16px; color:var(--slate-400)}
 .ok{display:flex; align-items:center; gap:6px; margin:8px 2px 0; font-size:var(--fs-13); color:var(--green)}
 .ok .ic{width:16px; height:16px}
-.two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
+.two > .field{margin-top:0}
 .money small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .change{display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); font-size:var(--fs-14)}
 .change b{font-weight:600; color:var(--slate-900)}
@@ -74,11 +75,12 @@
               </div>
             </div>
             <div class="banner red" data-when="pincode" style="margin-top:10px"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
-              <div><b>We do not deliver here yet</b>Call support to arrange delivery. <a id="call" href="#">Call support</a></div></div>
+              <div><b>We do not deliver here yet</b>Call support to arrange delivery.</div></div>
+            <a class="btn btn-secondary btn-sm" id="call" href="#" data-when="pincode" style="margin-top:10px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-phone"/></svg>Call support</a>
           </div>
 
           <div class="sec">
-            <h2>Billing details <a href="C811-billing-details.html">Change</a></h2>
+            <h2 class="with-action">Billing details <a class="btn btn-soft btn-sm" href="C811-billing-details.html">Change</a></h2>
             <div class="card-fill" style="padding:2px 16px" data-when="ready newaddress pincode placing offline"><dl class="kv" style="margin:0" id="billing"></dl></div>
             <div data-when="errors">
               <div class="field has-error"><label for="gst-bad">GSTIN<span class="counter">For input credit</span></label>
@@ -162,14 +164,15 @@ order stays Pending payment in <a href="C708-order-detail.html">C708</a>. Pay on
   const { data } = ZX;
   const $ = (id) => document.getElementById(id);
   /* sample only: the cart from C704 (part, quantity), delivery charge to the chosen site and the relay's new price */
-  const CART = [['ZP-SP-001', 2], ['ZP-SP-002', 1]];
+  const DIGITAL_GAUGE = { number: 'ZP-SP-006', name: 'Digital vacuum gauge', price: 1450 };
+  const CART = [['ZP-SP-001', 2], ['ZP-SP-002', 1], ['ZP-SP-006', 1]];
   const DELIVERY = 360;
   const NEW_RELAY_PRICE = 1310;
 
   const company = data.companies.find((c) => c.id === 'shree');
   const site = company.sites[0];
   const me = data.users.find((u) => u.id === 'rakesh');
-  const part = (n) => data.parts.find((p) => p.number === n);
+  const part = (n) => (n === DIGITAL_GAUGE.number ? DIGITAL_GAUGE : data.parts.find((p) => p.number === n));
 
   $('site-name').textContent = site.name;
   $('site-addr').textContent = `${site.address} ${site.pincode}`;

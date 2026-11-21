@@ -86,7 +86,7 @@
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Sending...</button>
         <button class="btn btn-primary" type="button" disabled data-when="offline">Submit appeal</button>
         <a class="btn btn-primary" id="convert-main" href="C503-raise-machine.html" data-when="expired appealed">Convert to paid service request</a>
-        <a class="btn btn-text" id="convert" href="C503-raise-machine.html" data-when="ready errors submitting offline">Convert to paid service request</a>
+        <a class="btn btn-soft" style="margin-top:10px" id="convert" href="C503-raise-machine.html" data-when="ready errors submitting offline">Convert to paid service request</a>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -113,8 +113,12 @@
   </div>
 </div>
 
-<p class="plate-note">Appeal a rejected claim once, within 7 days of the decision, with an explanation and extra
-evidence. After the window or a used appeal only the paid service request is left.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Appeal a rejected warranty claim, once, within 7 days of the decision.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the rejection reason.</li><li>Explain why Zixom should look again (20 to 1000 characters).</li><li>Add up to 5 files of extra evidence.</li><li>Convert to a paid service request instead.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Submit appeal sends it; the claim goes back to Under review in <a href="C308-claim.html">C308</a>.</li><li>Convert opens <a href="C503-raise-machine.html">C503</a> with the machine.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Window expired or already appealed: only the paid service request is left.</li><li>Offline: Submit disabled.</li><li>Spec: section C3, C310 · business rules (appeal once in 7 days)</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -146,7 +150,7 @@ evidence. After the window or a used appeal only the paid service request is lef
   $('reason').textContent = CLAIM.reason;
   $('decided').textContent = `Rejected ${R.dayDate(CLAIM.decided)} by Zixom service manager`;
   $('window').innerHTML = `<b>Appeal by ${R.dayDate(deadline)}, ${left} days left</b>You can appeal once.`;
-  $('expired').innerHTML = `<b>The appeal window closed on ${R.dayDate(deadline)}</b>You can still raise a paid service request.`;
+  $('expired').innerHTML = `<b>The 7 day appeal window has closed</b>You can still raise a paid service request.`;
 
   const why = $('why');
   const count = () => { $('count').textContent = `${why.value.trim().length} / 1000`; };

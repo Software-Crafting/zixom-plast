@@ -146,6 +146,7 @@ Approve, Pay (<a href="C803-pay-method.html">C803</a>), Cancel (<a href="C709-ca
   const refund = data.refunds.find((r) => r.order === o.number);
   const site = data.companies.find((c) => c.id === 'shree').sites[0];
   const expired = variant === 'expired';
+  const QUOTE_EXPIRED_ON = '2026-11-22'; /* sample only: the expired variant shows a quote that ended before today */
   const [statusLabel, tone] = expired ? ['Quote expired', 'red'] : STATUS[o.status];
 
   $('title').textContent = o.number;
@@ -162,7 +163,7 @@ Approve, Pay (<a href="C803-pay-method.html">C803</a>), Cancel (<a href="C709-ca
   const banner = (cls, icon, title, text) => `<div class="banner ${cls}">${R.icon(icon)}<div><b>${title}</b>${text}</div></div>`;
   const banners = [
     o.status === 'quoted' && !expired ? banner('amber', 'clock', `Quote valid until ${R.date(o.validUntil)}`, 'Approve to keep this price.') : '',
-    expired ? banner('red', 'clock', 'Quote expired', `It ended on ${R.date(o.validUntil)}. Ask Zixom for a new price.`) : '',
+    expired ? banner('red', 'clock', 'Quote expired', `It ended on ${R.date(QUOTE_EXPIRED_ON)}. Ask Zixom for a new price.`) : '',
     invoice && invoice.lastAttempt === 'failed' && o.status === 'approved' ? banner('amber', 'warning', 'Last payment failed', 'Your order stays pending until it is paid.') : '',
     o.status === 'return' ? banner('', 'arrows-clockwise', 'Return requested', `${R.esc(o.returnReason)}. Zixom replies within 1 working day.`) : '',
   ].join('');

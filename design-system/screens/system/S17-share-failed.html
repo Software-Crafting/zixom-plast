@@ -57,7 +57,12 @@
   </div>
 </div>
 
-<p class="plate-note">Alert when a PDF, receipt or ticket summary cannot be created or shared. Errors never use a toast.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A PDF, receipt or summary cannot be created or shared.</p></div>
+  <div><h3>What you can do</h3><ul><li>Retry</li><li>Cancel</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Retry opens the share sheet when it works</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Offline and not downloaded: explains and OK</li><li>Errors never use a toast</li><li>Spec: section 7, S17</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

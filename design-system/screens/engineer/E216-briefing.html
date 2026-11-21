@@ -109,8 +109,12 @@
   </div>
 </div>
 
-<p class="plate-note">Read before travel: last 3 visits, repeated faults, open parts, coverage, hazards, access and contacts.
-Saved with the next 7 days of jobs, so it opens offline.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A short read before travel: last 3 visits, repeated faults, open parts, coverage, hazards, site access and contacts.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check coverage and whether a warranty claim is approved.</li><li>Call the site contact or operator.</li><li>Open the full machine history.</li><li>Start travel.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Start travel opens <a href="E205-start-travel.html">E205</a>; the customer then sees the engineer on the way.</li><li>History opens <a href="E301-machine-history.html">E301</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>New machine with no history: First visit on record.</li><li>Saved with the next jobs, so it opens offline; not downloaded yet shows Try again.</li><li>Spec: E11, E216.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -123,7 +127,7 @@ Saved with the next 7 days of jobs, so it opens offline.</p>
   const DEFAULT_TICKET = 'TKT-2026-0132';
   /* sample briefing details not in data.js: older visits, hazard, line operator */
   const OLDER_VISITS = [
-    { ticket: 'TKT-2026-0132', date: '2026-11-12', title: 'Cooling fan bearing greased', outcome: ['Reopened', 'amber'] },
+    { ticket: 'TKT-2026-0132', date: '2026-11-19', title: 'Cooling fan bearing greased', outcome: ['Reopened', 'amber'] },
     { ticket: 'TKT-2026-0098', date: '2026-10-02', title: 'Preventive maintenance', outcome: ['Fixed', 'green'] },
   ];
   const HAZARD = 'Heater platens stay hot. Allow 30 minutes to cool.';
@@ -162,7 +166,7 @@ Saved with the next 7 days of jobs, so it opens offline.</p>
   $('parts').innerHTML = open.length ? open.map((p) => `<a class="list-item" href="E502-parts-requests.html?request=${p.number}">
       <span class="disc">${R.icon('package')}</span><b>${R.esc(data.parts.find((x) => x.number === p.part).name)}</b>
       <span class="sub"><span class="mono">${p.number}</span> · ${p.status}</span><span class="end">${R.icon('caret-right')}</span></a>`).join('')
-    : `<div class="list-item"><span class="disc" style="grid-row:auto">${R.icon('package')}</span><b>None open</b></div>`;
+    : `<div class="list-item"><span class="disc">${R.icon('package')}</span><b style="grid-row:1 / span 2">None open</b></div>`;
 
   $('hazard').textContent = HAZARD;
   $('site-name').textContent = site.name;

@@ -15,6 +15,7 @@
 .body .banner{margin-top:14px}
 .affected{margin-top:12px}
 .affected .list-item{min-height:52px}
+.banner .btn-sm{align-self:center; flex:none}
 </style>
 </head>
 <body class="plate">
@@ -24,6 +25,7 @@
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="request">request leave</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="overlap">overlaps jobs</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="baddates">errors</button>
   <button type="button" data-state="sent" aria-pressed="false">approval pending</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
   <button type="button" data-state="empty" aria-pressed="false">empty</button>
@@ -42,15 +44,16 @@
       </div>
       <div class="scroll with-footer">
         <div class="stack" data-when="ready sent empty offline">
-          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Requests are sent when you are back online.</div>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Requests send when you are online.</div>
           <div class="banner" data-when="sent"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
-            <div><b id="sent-title"></b>Waiting for <span class="approver"></span>. <button class="link-btn" type="button" data-open="cancel">Cancel request</button></div></div>
+            <div class="grow"><b id="sent-title"></b>Waiting for <span class="approver"></span>.</div>
+            <button class="btn btn-secondary btn-sm" type="button" data-open="cancel">Cancel</button></div>
 
           <div>
             <p class="list-title" style="margin-top:0">Working days</p>
             <div class="list">
               <a class="list-item" href="E707-working-hours.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-clock"/></svg></span>
-                <b id="hours"></b><span class="sub" id="days"></span><span class="end">Change<svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
+                <b id="hours"></b><span class="sub" id="days"></span><span class="end"><span class="btn btn-soft btn-sm">Change</span></span></a>
             </div>
           </div>
 
@@ -120,6 +123,24 @@
       </div>
     </div>
 
+    <div class="overlay bottom" id="baddates" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="bd-title">
+        <span class="grabber"></span>
+        <div class="head"><h3 id="bd-title">Request leave</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="body">
+          <div class="two">
+            <div class="field"><label for="from3">From<span class="req">*</span></label><input class="input" id="from3" type="date" value="2026-12-22"></div>
+            <div class="field has-error"><label for="to3">To<span class="req">*</span></label><input class="input" id="to3" type="date" value="2026-12-21" aria-describedby="to3-err">
+              <span class="error-text" id="to3-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Must be on or after From</span></div>
+          </div>
+          <div class="field has-error"><label for="reason3">Reason<span class="req">*</span><span class="counter">0 / 200</span></label>
+            <textarea class="textarea" id="reason3" rows="2" aria-describedby="reason3-err"></textarea>
+            <span class="error-text" id="reason3-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Add a reason</span></div>
+        </div>
+        <button class="btn btn-primary" type="button" style="margin-top:16px">Send to manager</button>
+      </div>
+    </div>
+
     <div class="overlay bottom" id="cancel" hidden>
       <div class="action-sheet" role="dialog" aria-label="Cancel leave request">
         <div class="group"><div class="title" id="cancel-title"></div>
@@ -130,8 +151,12 @@
   </div>
 </div>
 
-<p class="plate-note">Usual working days and every leave request. Dates that fall on assigned jobs list those jobs before the
-request is sent, so the manager can reassign them.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The engineer's usual working hours and every leave request with its status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Request leave with dates and a reason</li><li>Cancel a pending request</li><li>Ask to change working hours</li><li>Open a request for details</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The manager approves or rejects; a push arrives (Leave decision)</li><li>Details in <a href="E706-leave-detail.html">E706</a>, hours in <a href="E707-working-hours.html">E707</a></li><li>Offline: request waits to sync</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Dates on assigned jobs list the jobs that need reassigning</li><li>To before From, or no reason: field errors</li><li>Spec: section E7, E702 · Notifications: Leave decision</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -173,6 +198,12 @@ request is sent, so the manager can reassign them.</p>
     return `<a class="list-item" href="E202-job-detail.html?ticket=${t.number}"><span class="disc">${R.icon('wrench')}</span>
       <b>${R.esc(m.nickname || m.model)}</b><span class="sub">${R.dayDate(t.window.date)}, ${t.window.slot} · <span class="mono">${t.number}</span></span>
       <span class="end">${R.icon('caret-right')}</span></a>`; }).join('');
+
+  /* offline: a sent request is kept on the phone until it syncs */
+  document.addEventListener('click', (event) => {
+    const send = event.target.closest('[data-toast="Leave request sent"], [data-toast="Saved. Waiting to sync"]');
+    if (send) send.dataset.toast = document.querySelector('.screen').dataset.state === 'offline' ? 'Saved. Waiting to sync' : 'Leave request sent';
+  }, true);
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

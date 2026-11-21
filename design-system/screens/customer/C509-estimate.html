@@ -16,7 +16,7 @@
 .est-head .sum s{font-size:var(--fs-14); color:var(--text-muted)}
 .est-head .sum span{font-size:var(--fs-12); color:var(--text-muted)}
 .est-head .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
-.lines{list-style:none; margin:0; padding:0 4px}
+.lines{list-style:none; margin:0; padding:0 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
 .lines li{display:grid; grid-template-columns:1fr auto; column-gap:12px; padding:12px 0}
 .lines li + li{border-top:1px solid var(--line)}
 .lines b{font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
@@ -94,7 +94,7 @@
 
           <div class="note" id="note"></div>
 
-          <a class="link accent" href="C602-ask.html" style="align-self:flex-start; margin-left:4px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
+          <a class="btn btn-soft btn-sm" href="C602-ask.html" style="align-self:flex-start"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
         </div>
 
         <div class="stack" data-when="loading">

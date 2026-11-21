@@ -134,7 +134,7 @@
       <div class="alert" role="alertdialog" aria-labelledby="partial-t">
         <h3 id="partial-t">Send without the document?</h3><p>It did not upload. Zixom may ask for it.</p>
         <div class="actions"><button class="btn btn-primary" type="button" data-close onclick="document.querySelector('[data-state=submitting]').click()">Send without it</button>
-          <button class="btn btn-text" type="button" style="width:100%" data-close>Retry upload</button></div>
+          <button class="btn btn-secondary" type="button" data-close>Retry upload</button></div>
       </div>
     </div>
     <div class="overlay bottom" id="cancel" hidden>
@@ -147,8 +147,12 @@
   </div>
 </div>
 
-<p class="plate-note">For a machine sold, moved to another company or scrapped. Open requests or dues block it with links
-to each. Once sent, the request shows as pending on <a href="C202-machine-detail.html">C202</a> until Zixom confirms.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Request to transfer or remove a machine that was sold, moved or scrapped.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason</li><li>Enter new owner details if sold</li><li>Add a supporting document</li><li>Cancel a pending request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The request shows as pending on <a href="C202-machine-detail.html">C202</a> until Zixom confirms</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open requests or dues block it, with links to each</li><li>Upload fails: retry or send without it (EC-31)</li><li>Offline keeps the form (EC-03)</li><li>Spec: C2, C209</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

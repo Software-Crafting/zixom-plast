@@ -34,6 +34,7 @@
 .part-row span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
 .part-row .price{font:400 var(--fs-14) var(--font-display); color:var(--slate-900); text-align:right}
 .part-row .price .tag{margin-top:4px}
+.screen[data-state="segerror"] #p-overview{display:none}
 </style>
 </head>
 <body class="plate">
@@ -43,6 +44,8 @@
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
+  <button type="button" data-state="segerror" aria-pressed="false">section error</button>
+  <button type="button" data-state="transfer" aria-pressed="false">transfer pending</button>
   <button type="button" data-state="decommissioned" aria-pressed="false">decommissioned</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
 </div>
@@ -58,10 +61,12 @@
       </div>
 
       <div class="scroll">
-        <div class="stack" data-when="ready decommissioned offline" id="body">
+        <div class="stack" data-when="ready segerror transfer decommissioned offline" id="body">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved copy from 11:42 AM.</div>
           <div class="banner grey" data-when="decommissioned"><svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
             <div><b>Decommissioned on 18 Nov 2026</b>Service actions are off for this machine. History and documents stay available.</div></div>
+          <div class="banner" data-when="transfer"><svg class="ic" aria-hidden="true"><use href="#ph-hourglass"/></svg>
+            <div><b>Transfer request pending</b>Zixom is reviewing it. <a href="C209-transfer-machine.html">View request</a></div></div>
           <div id="pending-banner"></div>
 
           <div class="hero" id="hero"></div>
@@ -77,6 +82,11 @@
           </div>
 
           <section id="p-overview" class="stack"></section>
+          <div class="state" data-when="segerror" style="padding-top:24px">
+            <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
+            <h3>Couldn't load this section</h3><p>The rest of the page still works.</p>
+            <button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button>
+          </div>
           <section id="p-history" hidden></section>
           <section id="p-cover" class="stack" hidden></section>
           <section id="p-docs" hidden></section>
@@ -107,10 +117,12 @@
   </div>
 </div>
 
-<p class="plate-note">One page for everything about a machine. Each section loads when first opened, with its own error
-and Retry. Expired warranty swaps Claim warranty for Raise paid service. A machine waiting for verification shows limited
-data. Not found opens <a href="../system/S05-not-found.html">S05</a>, another company's machine opens
-<a href="../system/S06-no-access.html">S06</a>. Offline keeps the saved overview and disables actions that need the server.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One page for everything about a machine: overview, history, warranty and AMC, documents and parts.</p></div>
+  <div><h3>What you can do</h3><ul><li>Raise service, claim warranty, order parts, ask a question</li><li>Switch sections</li><li>More: edit, share card, update status, transfer</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Actions open C503, C303, C702 and C602</li><li>More opens C206, C1412, C1411 or C209</li><li>Links open C207, C1401, C1403, C1405, C1407, C1408</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each section has its own error and Try again</li><li>Expired warranty: Raise paid service; decommissioned and pending limit actions</li><li>Not found <a href="../system/S05-not-found.html">S05</a> (EC-20), other company <a href="../system/S06-no-access.html">S06</a> (EC-21)</li><li>Spec: section 8, C202</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -173,7 +185,7 @@ data. Not found opens <a href="../system/S05-not-found.html">S05</a>, another co
     <div class="card-fill">${kv([
       ['Installed on', R.date(m.installed)], ['Commissioned on', R.date(m.commissioned)],
       ['Site', `<a class="link accent" href="#" style="font-size:inherit">${R.esc(site.name)} ${R.icon('map-pin', 'ic-16')}</a>`],
-      ['Contact', `${R.esc(site.contact.name)}`],
+      ['Contact', `${R.esc(site.contact.name)}<br><a class="link accent" style="font-size:inherit" href="tel:${site.contact.phone.replace(/ /g, '')}">${R.esc(site.contact.phone)}</a>`],
       ['Running hours', `${m.runningHours.toLocaleString('en-IN')} h`],
       ['Last service', lastService ? R.date(lastService.created) : 'None on record'],
       ['Next AMC visit', contract && NEXT_VISIT[contract.number] ? R.date(NEXT_VISIT[contract.number]) : 'No visit planned'],
@@ -182,7 +194,7 @@ data. Not found opens <a href="../system/S05-not-found.html">S05</a>, another co
     ${open.length ? `<div><h3 class="panel-title">Open requests</h3><div class="stack-sm">${open.slice(0, 3)
       .map((t) => R.ticketCard(t, `C508-request-detail.html?ticket=${t.number}`)).join('')}</div></div>` : ''}
     <div class="list">
-      <a class="list-item" href="C1405-operators.html"><span class="disc">${R.icon('users')}</span><b>Operators</b><span class="sub">2 on shift</span><span class="end">${R.icon('caret-right')}</span></a>
+      <a class="list-item" href="C1405-operators.html"><span class="disc">${R.icon('users')}</span><b>Operators</b><span class="sub">3 operators</span><span class="end">${R.icon('caret-right')}</span></a>
       <a class="list-item" href="C1401-running-hours.html"><span class="disc">${R.icon('gauge')}</span><b>Running hours log</b><span class="sub">Last entry 20 Nov</span><span class="end">${R.icon('caret-right')}</span></a>
       <a class="list-item" href="C1403-machine-notes.html"><span class="disc">${R.icon('note-pencil')}</span><b>Notes</b><span class="sub">3 notes</span><span class="end">${R.icon('caret-right')}</span></a>
       <a class="list-item" href="C1407-machine-photos.html"><span class="disc">${R.icon('image')}</span><b>Photos</b><span class="sub">Installation and your uploads</span><span class="end">${R.icon('caret-right')}</span></a>

@@ -18,6 +18,7 @@
 .wrap{flex-wrap:wrap; overflow:visible}
 .mic{display:flex; justify-content:flex-end; margin-top:8px}
 .field-block{margin-top:20px}
+.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -124,8 +125,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 2. Category, part from the machine's parts list or free text, what happened, start date (not
-in the future), machine stopped and error code. The same problem claimed in the last 30 days links to that claim.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 2 of the warranty claim wizard: describe the problem.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a category and the affected part, or type a part not in the list.</li><li>Describe what happened (20 to 1000 characters) or use Speak.</li><li>Set the start date (not in the future), machine stopped and error code.</li><li>Save a draft; it also saves automatically.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next checks the fields and opens <a href="C305-claim-evidence.html">C305</a>.</li><li>Errors show in a summary on top and under each field.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Same problem claimed in the last 30 days: banner with a link (EC-41).</li><li>Offline: steps work, only Submit needs the network.</li><li>Spec: section C3, C304 · EC-41</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -186,7 +191,7 @@ in the future), machine stopped and error code. The same problem claimed in the 
     $('code').value = DRAFT.code;
     const same = duplicate && sameProblem(duplicate.category);
     $('dup').innerHTML = same ? `${R.icon('warning')}<div><b>You claimed this problem on ${R.dayDate(same.submitted)}</b>
-      <a href="C308-claim.html?claim=${same.number}">View ${same.number}</a> or continue if it is new.</div>` : '';
+      Continue only if this is a new problem.<a class="btn btn-secondary btn-sm" style="margin-top:8px" href="C308-claim.html?claim=${same.number}">View ${same.number}</a></div>` : '';
     count();
   };
   document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => fill(b.dataset.state)));

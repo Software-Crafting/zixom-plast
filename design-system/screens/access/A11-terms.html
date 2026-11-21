@@ -25,12 +25,10 @@
     <div class="sheet">
       <div class="navbar"><span></span><h1>Terms and privacy</h1><span></span></div>
       <div class="scroll with-footer">
-        <h1 class="large-title" data-when="ready">Before you start</h1>
-        <h1 class="large-title" data-when="changed">We updated our privacy policy</h1>
-        <p class="lede" data-when="ready">Read how Zixom Connect works and how we use your data. You accept once; we ask again only when they change.</p>
-        <div class="banner" style="margin-top:12px" data-when="changed">
+        <p class="lede" style="margin-top:0" data-when="ready">Read and accept to continue.</p>
+        <div class="banner" data-when="changed">
           <svg class="ic" aria-hidden="true"><use href="#ph-info"/></svg>
-          <div><b>What changed on 21 Nov 2026</b>
+          <div><b>Privacy policy updated 21 Nov 2026</b>
             <ul class="changed"><li>Engineer photos keep a time stamp but no exact location.</li><li>Photos and reports are kept for the life of the machine record.</li></ul></div>
         </div>
 
@@ -77,8 +75,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown once after sign up, and again at the next launch whenever a policy changes, before Home.
-Accept and continue stays off until the box is ticked. Policy text is a placeholder template for Zixom to review.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Terms of use and privacy policy, accepted once.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read both documents</li><li>Tick the box to enable Accept and continue</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Accept opens <a href="A10-complete-profile.html">A10</a> (or Home when only a policy changed)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Policy changed: shown at next launch before Home with what changed</li><li>Text is a placeholder for Zixom to review</li><li>Spec: section 7, A11</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -23,6 +23,7 @@
   <button type="button" data-state="lower" aria-pressed="false">lower than previous</button>
   <button type="button" data-state="duplicate" aria-pressed="false" data-open="replace">same day, replace</button>
   <button type="button" data-state="uploading" aria-pressed="false">photo uploading, failed</button>
+  <button type="button" data-state="toolarge" aria-pressed="false">photo too large</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="date">date picker</button>
   <button type="button" data-state="saving" aria-pressed="false">saving</button>
   <button type="button" data-state="offline" aria-pressed="false">offline</button>
@@ -40,7 +41,7 @@
         <div class="offline-strip" style="margin:0 0 14px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Saved when you are back online.</div>
         <p class="card-sub" style="margin:0 0 16px" id="machine-line"></p>
 
-        <div class="field" data-when="ready duplicate uploading saving offline">
+        <div class="field" data-when="ready duplicate uploading toolarge saving offline">
           <label for="hours">Hour meter reading<span class="req">*</span></label>
           <div class="input-group"><input class="input" id="hours" inputmode="numeric"><span class="suffix">hours</span></div>
           <span class="hint" id="last-hint"></span>
@@ -76,10 +77,15 @@
               <div class="file-body"><b>hour-meter-2.jpg</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Upload failed</span></div>
               <span class="actions"><button class="icon-btn" type="button" data-file="retry" aria-label="Retry"><svg class="ic" aria-hidden="true"><use href="#ph-rotate-ccw"/></svg></button><button class="icon-btn" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
           </div>
+          <div class="files" data-when="toolarge">
+            <div class="file" data-status="too-large"><span class="file-thumb"><svg class="ic" aria-hidden="true"><use href="#ph-file-x"/></svg></span>
+              <div class="file-body"><b>meter-raw.png</b><span class="file-meta"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Larger than 10 MB. Choose a smaller file</span></div>
+              <span class="actions"><button class="icon-btn danger" type="button" data-file="remove" aria-label="Remove"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></button></span></div>
+          </div>
         </div>
       </div>
       <div class="footer-bar">
-        <button class="btn btn-primary" type="button" data-when="ready offline" id="save">Save</button>
+        <button class="btn btn-primary" type="button" data-when="ready toolarge offline" id="save">Save</button>
         <button class="btn btn-primary" type="button" data-when="lower uploading" disabled>Save</button>
         <button class="btn btn-primary" type="button" data-when="duplicate" data-open="replace">Save</button>
         <button class="btn btn-primary" type="button" data-when="saving" aria-busy="true">Save</button>
@@ -109,14 +115,18 @@
       <div class="alert" role="alertdialog" aria-labelledby="replace-t">
         <h3 id="replace-t"></h3><p id="replace-p"></p>
         <div class="actions"><a class="btn btn-primary" id="replace-yes" href="C1401-running-hours.html">Replace</a>
-          <button class="btn btn-text" type="button" style="width:100%" data-close>Keep both</button></div>
+          <button class="btn btn-text" type="button" style="width:100%" data-close>Cancel</button></div>
       </div>
     </div>
   </div>
 </div>
 
-<p class="plate-note">A reading cannot be lower than the entry before it, and future dates are not offered. A second entry
-on the same day asks to replace the first.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Form to add an hour meter reading for one machine.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the reading and pick the date (no future dates).</li><li>Add an optional note and a meter photo.</li><li>Save, also offline.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="C1401-running-hours.html">C1401</a> with the new entry.</li><li>A second reading on the same day asks to replace the first.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Lower than the last reading: inline error, Save off.</li><li>Photo over 10 MB or failed upload: per file Remove or Retry (EC-29, EC-31).</li><li>Offline: saved and sent when back online (EC-03).</li><li>Spec: section C14, C1402 · EC-29, EC-31, EC-40</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

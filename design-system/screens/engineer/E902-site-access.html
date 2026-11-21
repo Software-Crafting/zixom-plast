@@ -57,7 +57,7 @@
             <h3 class="panel-title">Contacts</h3>
             <div class="card" id="contacts" data-when="ready offline"></div>
             <div class="card" id="copies" data-when="nocall"></div>
-            <a class="link" style="margin:10px 4px 0" id="unreachable" href="E209-customer-unavailable.html">Contact not reachable? <svg class="ic ic-16" aria-hidden="true"><use href="#ph-arrow-right"/></svg></a>
+            <a class="btn btn-secondary btn-sm" style="margin-top:10px" id="unreachable" href="E209-customer-unavailable.html"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-phone"/></svg>Contact not reachable</a>
           </div>
 
           <div class="card-fill"><dl class="kv" style="margin:0" id="facts"></dl></div>
@@ -81,8 +81,12 @@
   </div>
 </div>
 
-<p class="plate-note">How to get in and who to call at the job's site. Missing access notes say so; a contact who does not
-answer leads to Customer not available. A phone that cannot call shows numbers to copy.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>How the engineer gets into the job's site and who to call there.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the address in Maps or copy it.</li><li>Call the site contact or the operator on the machine.</li><li>Check working hours, parking and whether an induction is needed.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Contact not reachable opens <a href="E209-customer-unavailable.html">E209 Customer not available</a>.</li><li>Induction needed leads to <a href="E906-induction.html">E906</a> before the safety checklist.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No access notes: "Not provided. Call the customer."</li><li>Phone cannot call: numbers show with Copy.</li><li>Offline: saved copy. Spec: section E9, E902.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -130,7 +134,7 @@ answer leads to Customer not available. A phone that cannot call shows numbers t
     <button class="btn btn-secondary btn-sm" type="button" data-toast="Number copied">${R.icon('copy', 'ic-16')}Copy</button></div>`).join('');
 
   $('facts').innerHTML = [['Working hours', facts.hours], ['Parking', facts.parking],
-    ['Safety induction', facts.induction ? '<a class="link accent" style="font-size:inherit" href="E906-induction.html">Needed</a>' : 'Not needed']]
+    ['Safety induction', facts.induction ? `<a class="btn btn-secondary btn-sm" href="E906-induction.html?ticket=${ticketNo}">Needed, confirm</a>` : 'Not needed']]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 })();
 </script>

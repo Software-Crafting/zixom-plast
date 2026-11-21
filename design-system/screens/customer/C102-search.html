@@ -9,7 +9,7 @@
 <style>
 .search .clear{width:30px; height:30px; display:grid; place-items:center; border:0; border-radius:50%; background:var(--slate-200); color:var(--slate-700); cursor:pointer}
 .search .clear .ic{width:14px; height:14px}
-.group-head{display:flex; justify-content:space-between; margin:4px 4px 8px; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
+.group-head{display:flex; align-items:center; justify-content:space-between; margin:4px 4px 8px; font-size:var(--fs-13); font-weight:600; color:var(--slate-700)}
 .group-head span{font-weight:500; color:var(--text-muted)}
 mark{background:var(--blue-50); color:var(--blue); border-radius:4px; padding:0 1px}
 .recent .list-item{min-height:50px}
@@ -47,7 +47,7 @@ mark{background:var(--blue-50); color:var(--blue); border-radius:4px; padding:0 
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Searching saved data only.</div>
 
           <div class="recent" data-when="ready">
-            <div class="group-head">Recent searches<button class="btn btn-text" type="button" id="clear-recent" style="min-height:0; padding:0">Clear</button></div>
+            <div class="group-head">Recent searches<button class="btn btn-soft btn-sm" type="button" id="clear-recent" style="min-height:34px">Clear</button></div>
             <div class="list" id="recent"></div>
           </div>
 
@@ -83,8 +83,12 @@ mark{background:var(--blue-50); color:var(--blue); border-radius:4px; padding:0 
   </div>
 </div>
 
-<p class="plate-note">One box across machines, request numbers, parts and documents, grouped by type. Starts at 2
-characters; offline searches saved data only. Type in the box to try it.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One search across machines, request numbers, parts and documents.</p></div>
+  <div><h3>What you can do</h3><ul><li>Type 2 or more characters</li><li>Open a result, grouped by type</li><li>Reuse or clear recent searches</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A result opens its detail screen</li><li>No results suggests <a href="C602-ask.html">Ask a question</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>One character: hint only</li><li>Offline searches saved data only (EC-02)</li><li>Error with Try again (EC-07)</li><li>Spec: C1, C102</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

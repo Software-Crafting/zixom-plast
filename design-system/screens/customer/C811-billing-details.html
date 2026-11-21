@@ -11,7 +11,8 @@
 .addr .disc{width:38px; height:38px; display:grid; place-items:center; border-radius:var(--r-pill); background:var(--slate-100); color:var(--slate-800)}
 .addr b{font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .addr p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
-.addr .tag{margin-top:8px}
+.addr .tags{grid-column:2 / -1; display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.addr .tags:empty{display:none}
 .addr .acts{display:flex; gap:6px; align-self:start}
 .kv dd.mono{font-size:var(--fs-13)}
 </style>
@@ -79,7 +80,7 @@
     <div class="overlay bottom" id="edit" hidden>
       <div class="bottom-sheet" role="dialog" aria-labelledby="e-title">
         <span class="grabber"></span>
-        <div class="head"><h3 id="e-title">Edit billing address</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="head"><h3 id="e-title">Billing address</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
         <div class="body">
           <div class="field"><label for="a-line">Address<span class="req">*</span></label><input class="input" id="a-line"></div>
           <div class="field"><label for="a-pin">Pincode<span class="req">*</span></label><input class="input" id="a-pin" inputmode="numeric" maxlength="6"></div>
@@ -114,8 +115,12 @@
   </div>
 </div>
 
-<p class="plate-note">Company name, GSTIN and addresses printed on invoices. Changing an issued invoice goes through
-<a href="C1604-invoice-correction.html">C1604</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Company name, GSTIN, state, invoice contact and the billing addresses printed on invoices.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit an address</li><li>Delete an address not used by an open order</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>New invoices use the saved details</li><li>Fixing an issued invoice goes through <a href="C1604-invoice-correction.html">C1604</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>GSTIN must be 15 characters; optional but needed for input credit</li><li>Address used by an open order cannot be deleted</li><li>Spec: section 8, C811 · rules Payments</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -140,11 +145,12 @@
     const inUse = s.id === OPEN_ORDER.site;
     return `<div class="addr"><span class="disc">${R.icon('buildings')}</span>
       <span><b>${R.esc(s.name)}</b><p>${R.esc(s.address)}, ${s.pincode}</p>
-        ${n === 0 ? R.tag('Default') : ''}${inUse ? R.tag('Used by an open order', 'outline') : ''}</span>
+      </span>
       <span class="acts">
         <button class="icon-btn sm" type="button" data-open="edit" data-fill="${s.id}" aria-label="Edit ${R.esc(s.name)}">${R.icon('pencil-simple', 'ic-18')}</button>
         <button class="icon-btn sm" type="button" data-open="${inUse ? 'inuse' : 'delete'}" aria-label="Delete ${R.esc(s.name)}">${R.icon('trash', 'ic-18')}</button>
-      </span></div>`;
+      </span>
+      <span class="tags">${n === 0 ? R.tag('Default') : ''}${inUse ? R.tag('Used by an open order', 'outline') : ''}</span></div>`;
   }).join('');
   $('iu-order').textContent = OPEN_ORDER.number;
 

@@ -108,8 +108,12 @@
   </div>
 </div>
 
-<p class="plate-note">Log out is blocked while items wait to sync, so a report is never lost silently. Sync now sends them;
-discarding needs a second, explicit confirmation.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The log out check over Profile. It makes sure no report is lost silently.</p></div>
+  <div><h3>What you can do</h3><ul><li>Sync now, then log out</li><li>Cancel and stay signed in</li><li>Discard unsent items and log out, after a second confirmation</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Log out goes to sign in (<a href="../access/A03-sign-in.html">A03</a>); signing in again needs an OTP</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Items Waiting to sync block log out until sent or discarded</li><li>Offline: items cannot be sent, only discarded</li><li>Spec: E8, E807</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

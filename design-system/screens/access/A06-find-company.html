@@ -50,9 +50,9 @@
           </div>
           <div class="banner amber" style="margin-top:14px" data-when="nothrice">
             <svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>
-            <div><b>Not finding the right company?</b>Our team can link you by hand. Call
-              <a href="tel:+919991910097">+91 99919 10097</a>, 24x7.</div>
+            <div><b>Not finding the right company?</b>Our team can link you by hand, 24x7.</div>
           </div>
+          <a class="btn btn-secondary btn-sm" style="margin-top:10px" href="tel:+919991910097" data-when="nothrice"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call support</a>
         </div>
 
         <div data-when="several">
@@ -80,7 +80,7 @@
         <div class="state" style="margin-top:40px" data-when="error">
           <span class="disc red"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg></span>
           <h3>Something went wrong</h3>
-          <p>We could not look up your company. Please try again in a moment.</p>
+          <p>We could not look up your company.</p>
           <button class="btn btn-secondary" type="button" data-busy><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Try again</button>
           <span class="code mono">ZC-500</span>
         </div>
@@ -103,10 +103,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown after the OTP when Zixom finds a customer record for the number or email. Yes links the
-person to the company and opens the terms (A11). When the company's primary contact must approve, Yes opens
-<a href="A08-verification-pending.html">A08</a> with "Waiting for approval from your company". No opens A07. A
-deactivated company opens <a href="A16-account-suspended.html">A16</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>After the OTP Zixom shows the company that matches the number or email.</p></div>
+  <div><h3>What you can do</h3><ul><li>Confirm the company, or pick one of several</li><li>Say it is not yours</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Yes: terms <a href="A11-terms.html">A11</a>, or <a href="A08-verification-pending.html">A08</a> when the primary contact must approve</li><li>No: <a href="A07-verify-machine.html">A07</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No three times: Call support banner</li><li>Company deactivated <a href="A16-account-suspended.html">A16</a></li><li>Spec: section 10, A06</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -95,8 +95,12 @@
   </div>
 </div>
 
-<p class="plate-note">Preventive visits planned by Zixom for every AMC contract. Confirm or ask to reschedule a planned
-visit; a missed visit says why and offers a new date. Reminders arrive 7 days and 1 day before.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Preventive visits Zixom planned for every AMC contract, as a list or a calendar.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch List or Calendar; filter by machine</li><li>Confirm a planned visit</li><li>Ask to reschedule, or ask for a new date after a miss</li><li>Open the report of a done visit</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Confirm marks the visit Confirmed for Zixom and the engineer</li><li>Reschedule opens <a href="C407-reschedule-amc-visit.html">C407</a></li><li>Open report opens the service report (C512)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Statuses: Planned, Confirmed, Done, Missed with the reason</li><li>No visits yet: empty state</li><li>Reminders 7 days and 1 day before (push and email)</li><li>Spec: C406 · C4 rules</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

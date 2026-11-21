@@ -70,18 +70,23 @@
         <span class="grabber"></span>
         <div class="head"><h3 id="note-t">Add note</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
         <div class="body stack-sm">
-          <div class="field"><label for="f-tried">What was tried</label><textarea class="textarea" id="f-tried" rows="2"></textarea></div>
-          <div class="field"><label for="f-remains">What remains</label><textarea class="textarea" id="f-remains" rows="2"></textarea></div>
-          <div class="field"><label for="f-tips">Site tips</label><textarea class="textarea" id="f-tips" rows="2"></textarea></div>
+          <div class="field"><label for="f-tried">What was tried</label><textarea class="textarea" id="f-tried" rows="2" maxlength="500" placeholder="For example, re tensioned the chain"></textarea></div>
+          <div class="field"><label for="f-remains">What remains</label><textarea class="textarea" id="f-remains" rows="2" maxlength="500" placeholder="For example, replace the sprocket"></textarea></div>
+          <div class="field"><label for="f-tips">Site tips</label><textarea class="textarea" id="f-tips" rows="2" maxlength="500" placeholder="For example, gate 2, ask for the ticket"></textarea></div>
+          <span class="error-text" id="f-err" hidden><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Fill in at least one field</span>
         </div>
-        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close data-toast="Saved on this phone">Save</button>
+        <button class="btn btn-primary" type="button" style="margin-top:16px" id="save">Save</button>
       </div>
     </div>
   </div>
 </div>
 
-<p class="plate-note">Notes left for the next engineer on a machine: what was tried, what remains, site tips. Engineers assigned
-to the machine later see them; the customer never does. Your own notes can be edited.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Notes left for the next engineer on a machine: what was tried, what remains, site tips.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read notes from earlier visits.</li><li>Add a note, or edit your own.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Engineers assigned to this machine later see the note.</li><li>Offline it is saved on the phone, Waiting to sync.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Never visible to the customer.</li><li>Save needs at least one field filled.</li><li>Spec: section E10, E1012.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -139,6 +144,15 @@ to the machine later see them; the customer never does. Your own notes can be ed
     $('f-tried').value = note.tried || '';
     $('f-remains').value = note.remains || '';
     $('f-tips').value = note.tips || '';
+    $('f-err').hidden = true;
+  });
+  $('save').addEventListener('click', () => {
+    const filled = ['f-tried', 'f-remains', 'f-tips'].some((id) => $(id).value.trim());
+    $('f-err').hidden = filled;
+    /* ui.js shows the toast from data-toast when the click bubbles up */
+    if (!filled) { delete $('save').dataset.toast; return; }
+    $('save').dataset.toast = document.querySelector('.screen').dataset.state === 'offline' ? 'Saved on this phone. Waiting to sync' : 'Note saved';
+    $('note-sheet').querySelector('[data-close]').click();
   });
 })();
 </script>

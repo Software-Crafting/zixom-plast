@@ -52,9 +52,9 @@
     <div class="overlay bottom" id="logout" data-initial>
       <div class="action-sheet" role="dialog" aria-labelledby="lo-title">
         <div class="group">
-          <div class="title" id="lo-title" data-when="ready">Sign out?<small>You will need an OTP to sign in again.</small></div>
+          <div class="title" id="lo-title" data-when="ready">Log out?<small>You will need an OTP to sign in again.</small></div>
           <div class="title" data-when="drafts">You have 2 unsent drafts<small>They stay on this phone for 30 days.</small></div>
-          <button class="destructive" type="button" data-href="../access/A03-sign-in.html">Sign out</button>
+          <button class="destructive" type="button" data-href="../access/A03-sign-in.html">Log out</button>
         </div>
         <button class="cancel" type="button" data-href="C1101-more.html">Cancel</button>
       </div>
@@ -62,8 +62,12 @@
   </div>
 </div>
 
-<p class="plate-note">Confirmation sheet from Log out in <a href="C1101-more.html">More</a>. Unsent drafts are named before
-signing out; they stay on the phone for 30 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Confirmation sheet from Log out in <a href="C1101-more.html">More</a>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Log out</li><li>Cancel and stay signed in</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Log out goes to <a href="../access/A03-sign-in.html">Sign in</a>; signing in again needs an OTP</li><li>Filters and saved searches reset</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unsent drafts are named first; they stay on the phone for 30 days</li><li>Spec: C11, C1111</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

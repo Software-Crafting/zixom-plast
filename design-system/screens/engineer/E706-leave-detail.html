@@ -38,7 +38,7 @@
       </div>
       <div class="scroll with-footer">
         <div class="stack" data-when="ready offline">
-          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Changes are sent when you are back online.</div>
+          <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Changes send when you are online.</div>
           <div class="leave-head" id="head"></div>
           <div id="banner"></div>
           <div class="card-fill" style="padding:2px 16px"><dl class="kv" style="margin:0" id="facts"></dl></div>
@@ -97,8 +97,12 @@
   </div>
 </div>
 
-<p class="plate-note">One leave request via <code>?from=</code>. Pending requests can be edited or cancelled; approved leave
-is fixed. Jobs on those days are listed for reassigning.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One leave request: dates, reason, status, approver, the manager's comment and jobs affected.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pending: edit or cancel the request</li><li>Approved and in the future: cancel it</li><li>Open a job that falls on these days</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The manager is told of any edit or cancel</li><li>Back to <a href="E702-leave.html">E702 Leave</a> with the new status</li><li>Offline: changes wait to sync</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Approved leave cannot be edited</li><li>Jobs on these days need reassigning</li><li>Missing leave: not found state</li><li>Spec: section E13, E706</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -150,15 +154,23 @@ is fixed. Jobs on those days are listed for reassigning.</p>
   $('ed-to').value = leave.to;
   $('ed-reason').value = leave.reason;
   if (leave.status === 'Pending') {
-    $('footer').innerHTML = `<div class="btn-pair"><button class="btn btn-secondary" type="button" data-open="cancel">Cancel request</button>
+    $('footer').innerHTML = `<div class="btn-pair"><button class="btn btn-secondary" type="button" data-open="cancel" style="color:var(--red)">Cancel request</button>
       <button class="btn btn-primary" type="button" data-open="edit">${R.icon('pencil-simple')}Edit</button></div>`;
   } else if (leave.status === 'Approved' && R.daysFromToday(leave.from) > 0) {
-    $('footer').innerHTML = `<button class="btn btn-secondary" type="button" data-open="cancel">Cancel leave</button>`;
+    $('footer').innerHTML = `<button class="btn btn-secondary" type="button" data-open="cancel" style="color:var(--red)">Cancel leave</button>`;
     $('cancel-title').textContent = `Cancel approved leave on ${span}? ${leave.approver} will be told.`;
     $('cancel-do').textContent = 'Cancel leave';
   } else {
     $('footer').remove();
   }
+
+  /* offline: cancel and edit are kept on the phone until they sync */
+  document.addEventListener('click', (event) => {
+    const done = event.target.closest('#cancel-do, #edit .btn-primary');
+    if (!done) return;
+    if (!done.dataset.online) done.dataset.online = done.dataset.toast;
+    done.dataset.toast = document.querySelector('.screen').dataset.state === 'offline' ? 'Saved. Waiting to sync' : done.dataset.online;
+  }, true);
 })();
 </script>
 <script src="../../assets/js/ui.js"></script>

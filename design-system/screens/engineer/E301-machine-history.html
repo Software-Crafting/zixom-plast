@@ -54,20 +54,22 @@
         <div data-when="ready more moreerror offline">
           <div class="offline-strip" style="margin:12px 0 0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline. Saved history from 11:42 AM.</div>
           <div id="repeat"></div>
-          <div class="chips" style="margin-top:12px">
-            <button class="chip outline" type="button" data-open="range"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span id="range-label">All time</span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button>
+          <div class="tools two" style="margin-top:12px">
+            <div class="search" data-search="own"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
+              <input class="input" id="q" placeholder="Job, part or fault" aria-label="Search history"></div>
+            <button class="icon-btn" type="button" data-open="range" aria-label="Date range"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg></button>
           </div>
-          <div class="chips" id="kinds" style="margin-top:6px"></div>
+          <div class="chips" id="kinds" style="margin-top:10px"></div>
           <div id="list"></div>
           <div class="state" id="noresults" hidden>
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-funnel"/></svg></span>
-            <h3>No matching results</h3><p>Try a different type or date range.</p>
+            <h3>No matching results</h3><p>Try a different word, type or date range.</p>
             <button class="btn btn-secondary" type="button" id="clear">Clear filters</button>
           </div>
           <div style="margin-top:14px" id="older">
             <button class="btn btn-secondary" type="button" data-when="ready" onclick="document.querySelector('[data-state=more]').click()">Load older</button>
             <button class="btn btn-secondary" type="button" aria-busy="true" data-when="more">Load older</button>
-            <div class="inline-retry" data-when="moreerror">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+            <div class="inline-retry" data-when="moreerror">Couldn't load more.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
             <p class="hint" style="text-align:center" data-when="offline">Older entries need internet.</p>
           </div>
         </div>
@@ -113,8 +115,12 @@
   </div>
 </div>
 
-<p class="plate-note">Past visits, faults, parts, notes, claims and AMC visits for one machine. Three or more of the same
-fault raise a repeated fault banner. Offline opens entries from the saved copy; older pages need internet.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Timeline of one machine: visits, faults, parts, notes, warranty claims and AMC visits. Used by the engineer before and during a visit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by job, part or fault.</li><li>Filter by type and date range.</li><li>Open an entry for its details.</li><li>Load older entries.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Open job goes to <a href="E202-job-detail.html">E202</a> when the job is his own.</li><li>Back returns to <a href="E302-machine-detail.html">E302</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Same fault 3 or more times shows a repeated fault banner.</li><li>Offline opens saved entries; older pages need internet, with Retry on failure.</li><li>Spec: section 9, E3, E301</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -196,7 +202,9 @@ fault raise a repeated fault banner. Offline opens entries from the saved copy; 
   const row = (e) => `<li${e.fault ? ' class="fault"' : ''}><span class="disc">${R.icon(KINDS[e.kind][1])}</span>
     <button type="button" data-entry="${events.indexOf(e)}"><b>${R.esc(e.title)}</b><time>${R.dayDate(e.when)}</time><span>${R.esc(e.sub)}</span>${e.tag || ''}</button></li>`;
   const render = () => {
-    const shown = events.filter((e) => (kind === 'all' || e.kind === kind) && (days === null || -R.daysFromToday(e.when) <= days));
+    const query = $('q').value.trim().toLowerCase();
+    const shown = events.filter((e) => (kind === 'all' || e.kind === kind) && (days === null || -R.daysFromToday(e.when) <= days)
+      && (query.length < 2 || `${e.title} ${e.sub}`.toLowerCase().includes(query)));
     const months = [...new Set(shown.map((e) => e.when.slice(0, 7)))];
     $('list').innerHTML = months.map((ym) => `<h3 class="month">${MONTHS[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}</h3>
       <ol class="hist">${shown.filter((e) => e.when.startsWith(ym)).map(row).join('')}</ol>`).join('');
@@ -204,6 +212,7 @@ fault raise a repeated fault banner. Offline opens entries from the saved copy; 
     $('older').hidden = shown.length === 0;
   };
   render();
+  $('q').addEventListener('input', render);
 
   const openEntry = (e) => {
     $('entry-t').textContent = e.title;
@@ -230,11 +239,11 @@ fault raise a repeated fault banner. Offline opens entries from the saved copy; 
     if (range) {
       days = range.dataset.days ? Number(range.dataset.days) : null;
       range.parentElement.querySelectorAll('[role=radio]').forEach((b) => b.setAttribute('aria-checked', String(b === range)));
-      $('range-label').textContent = range.textContent;
       render();
     }
     if (event.target.closest('#clear')) {
       kind = 'all';
+      $('q').value = '';
       document.querySelectorAll('[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === 'all')));
       document.querySelector('[data-days=""]').click();
     }

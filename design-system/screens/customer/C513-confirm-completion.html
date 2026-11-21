@@ -14,12 +14,12 @@
 .ask .disc .ic{width:34px; height:34px}
 .ask h2{margin:16px 0 0; font:400 var(--fs-22) var(--font-display); color:var(--slate-900)}
 .ask p{margin:6px 0 0; font-size:var(--fs-14); color:var(--text)}
-.summary{padding:16px; border-radius:24px; background:var(--field)}
+.summary{padding:16px; border-radius:24px; background:#fff; border:1px solid var(--line)}
 .summary .top{display:flex; justify-content:space-between; font-size:var(--fs-12); color:var(--text-muted)}
 .summary h3{margin:10px 0 0; font:400 var(--fs-16) var(--font-display); color:var(--slate-900)}
 .summary p{margin:6px 0 0; font-size:var(--fs-13); line-height:1.5; color:var(--text)}
 .summary .foot{display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1.5px dashed var(--slate-300); font-size:var(--fs-12); color:var(--text-muted)}
-.summary .foot a{display:inline-flex; align-items:center; gap:4px; color:var(--blue); font-weight:600; text-decoration:none}
+.summary .foot .btn{min-height:36px; padding:0 14px}
 </style>
 </head>
 <body class="plate">
@@ -89,7 +89,7 @@
         </div>
         <div class="stack-sm" data-when="confirmed">
           <a class="btn btn-primary" href="C514-rate-service.html"><svg class="ic" aria-hidden="true"><use href="#ph-star"/></svg>Rate the service</a>
-          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%">Later</a>
+          <a class="btn btn-soft" href="C508-request-detail.html" style="margin-top:10px">Later</a>
         </div>
         <div class="stack-sm" data-when="auto">
           <a class="btn btn-primary" href="C514-rate-service.html">Rate the service</a>
@@ -128,7 +128,7 @@ ticket closes 3 days after completion and can be reopened for 7 days.</p>
     <h3>${R.esc(machine.nickname || machine.model)}</h3>
     <p>${R.esc(report.work)}</p>
     <div class="foot"><span>${R.esc(engineer.name)} · ${R.esc(report.timeOnSite)}</span>
-      <a href="C512-service-report.html">Report ${R.icon('caret-right', 'ic-16')}</a></div>`;
+      <a class="btn btn-soft btn-sm" href="C512-service-report.html">View report</a></div>`;
 
   /* prototype only: a button inside the phone that moves the screen to another state */
   document.addEventListener('click', (event) => {

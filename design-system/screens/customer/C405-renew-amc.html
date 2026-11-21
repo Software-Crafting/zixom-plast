@@ -22,7 +22,10 @@
 .footer-bar .total span{display:flex; flex-direction:column}
 .footer-bar .total small{font-size:var(--fs-12); color:var(--text-faint)}
 .sub-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
-.sub-actions .btn{min-height:40px}
+.sub-actions .btn{width:100%}
+.sub-actions .no-renew{color:var(--red)}
+.footer-bar{background:linear-gradient(180deg, rgba(236,236,238,0), var(--surface-bottom) 14px)}
+.scroll.with-footer{padding-bottom:250px}
 </style>
 </head>
 <body class="plate">
@@ -50,7 +53,7 @@
       <div class="scroll with-footer">
         <div class="stack" data-when="ready notopen lapsed offline">
           <div class="offline-strip" style="margin:0" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Connect to renew.</div>
-          <div class="card prev" id="prev"></div>
+          <div id="prev"></div>
           <div data-when="ready offline" id="window-banner"></div>
           <div class="banner grey" data-when="notopen"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg>
             <div><b class="open-title"></b>We will remind you 60, 30 and 7 days before the end.</div></div>
@@ -102,8 +105,8 @@
           <a class="btn btn-primary pay-btn" href="C803-pay-method.html?invoice=INV-2026-0990" data-when="ready"></a>
           <button class="btn btn-primary pay-btn" type="button" disabled data-when="offline"></button>
           <div class="sub-actions">
-            <button class="btn btn-text" type="button" data-open="quoted">Request quote</button>
-            <a class="btn btn-text" href="C408-do-not-renew.html" id="no-renew">Do not renew</a>
+            <button class="btn btn-secondary btn-sm" type="button" data-open="quoted">Request quote</button>
+            <a class="btn btn-secondary btn-sm no-renew" href="C408-do-not-renew.html" id="no-renew">Do not renew</a>
           </div>
         </div>
         <a class="btn btn-secondary" href="C402-amc-contract.html" data-when="notopen" id="view">View contract</a>
@@ -123,8 +126,12 @@
   </div>
 </div>
 
-<p class="plate-note">Renew with the same or another plan and add or remove machines. Renewal opens 60 days before the end;
-within 7 days after expiry it keeps the same contract with no gap, after that it needs a new AMC (F5).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Renews an AMC contract: same or another plan, add or remove machines, pick the term.</p></div>
+  <div><h3>What you can do</h3><ul><li>Untick or add machines</li><li>Change the plan and the 1, 2 or 3 year term</li><li>Pay now, Request quote or Do not renew</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Pay opens <a href="C803-pay-method.html">C803</a>; the new term starts the day after the end</li><li>Request quote: confirmation, quote by notification and email</li><li>Do not renew opens <a href="C408-do-not-renew.html">C408</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Window opens 60 days before the end; earlier shows the opening date</li><li>Up to 7 days after expiry: same contract, no gap; after that Buy AMC</li><li>Price increase is noted against last year's price</li><li>Spec: C405 · AMC reminders 60, 30, 7, 0 days</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -159,12 +166,16 @@ within 7 days after expiry it keeps the same contract with no gap, after that it
   document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === screen.dataset.state && !b.dataset.open)));
 
   const status = c.status === 'expired' ? R.tag(`Expired ${-left} days ago`, 'red') : c.status === 'expiring' ? R.tag(`Ends in ${left} days`, 'amber') : R.tag('Active', 'green');
-  $('prev').innerHTML = `<div><h2>${R.esc(c.plan)}</h2><span class="mono">${c.number}</span>
-    <p>${R.date(c.start)} to ${R.date(c.end)}</p></div>${status}`;
+  /* window not open needs a contract more than 60 days from its end; borrow AMC-2026-0010 when this one is not */
+  const notOpen = left > WINDOW_DAYS ? c : R.amc('AMC-2026-0010');
+  const prevCard = (x, tag, when) => `<div class="card prev" data-when="${when}"><div><h2>${R.esc(x.plan)}</h2><span class="mono">${x.number}</span>
+    <p>${R.date(x.start)} to ${R.date(x.end)}</p></div>${tag}</div>`;
+  $('prev').innerHTML = prevCard(c, status, 'ready offline') + prevCard(c, R.tag('Expired', 'red'), 'lapsed') + prevCard(notOpen, R.tag('Active', 'green'), 'notopen');
+  $('view').href = `C402-amc-contract.html?amc=${notOpen.number}`;
   $('window-banner').innerHTML = c.status === 'expired'
     ? `<div class="banner red">${R.icon('clock')}<div><b>Renew within ${graceLeft} days to keep your AMC</b>Same contract, no gap in cover.</div></div>`
     : `<div class="banner amber">${R.icon('clock')}<div><b>Ends on ${R.date(c.end)}</b>Renew now; the new term starts the next day.</div></div>`;
-  const opens = new Date(`${c.end}T00:00:00`);
+  const opens = new Date(`${notOpen.end}T00:00:00`);
   opens.setDate(opens.getDate() - WINDOW_DAYS);
   document.querySelector('.open-title').textContent = `Renewal opens on ${opens.getDate()} ${opens.toLocaleString('en-GB', { month: 'short' })} ${opens.getFullYear()}`;
 

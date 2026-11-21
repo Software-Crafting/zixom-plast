@@ -18,6 +18,7 @@
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="filtered" aria-pressed="false">filtered</button>
   <button type="button" data-state="noresults" aria-pressed="false">no results</button>
+  <button type="button" data-state="moreerror" aria-pressed="false">next page failed</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
   <button type="button" data-state="empty" aria-pressed="false">empty</button>
   <button type="button" data-state="error" aria-pressed="false">error</button>
@@ -41,7 +42,7 @@
             <a role="tab" aria-selected="false" href="C401-amc.html">AMC</a>
           </nav>
 
-          <div class="tools" data-when="ready filtered noresults loading error">
+          <div class="tools" data-when="ready moreerror filtered noresults loading error">
             <div class="search"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>
               <input class="input" id="q" placeholder="Model, serial or site" aria-label="Search machines"></div>
             <button class="icon-btn" type="button" data-open="filter" aria-label="Filter"><svg class="ic" aria-hidden="true"><use href="#ph-sliders-horizontal"/></svg></button>
@@ -53,20 +54,21 @@
             <button class="chip outline" type="button" aria-pressed="false">Vatva plant <svg class="ic ic-16 x" aria-hidden="true"><use href="#ph-x"/></svg></button>
           </div>
 
-          <div data-when="ready">
-            <p class="count-line"><span><b>6 machines</b> · 2 sites</span><span>Sorted by name</span></p>
+          <div data-when="ready moreerror">
+            <p class="count-line"><span><b id="count-all"></b> · <span id="count-sites"></span></span><span>Sorted by name</span></p>
             <div class="stack-sm" id="all" style="margin-top:10px"></div>
+            <div class="inline-retry" style="margin-top:10px" data-when="moreerror">Couldn't load more machines.<button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button></div>
           </div>
           <div data-when="filtered">
-            <p class="count-line"><span><b>2 of 6 machines</b></span><button class="btn btn-text" type="button" style="min-height:0; padding:0">Clear filters</button></p>
+            <p class="count-line"><span><b id="count-filtered"></b></span><button class="btn btn-soft btn-sm" type="button" style="min-height:34px">Clear filters</button></p>
             <div class="stack-sm" id="filtered" style="margin-top:10px"></div>
           </div>
 
           <div class="state" data-when="noresults">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg></span>
             <h3>No matching results</h3>
-            <p>Nothing matches "AFM-2000". Try a different word or clear the filters.</p>
-            <button class="btn btn-secondary" type="button">Clear search</button>
+            <p>Nothing matches "AFM-2000".</p>
+            <button class="btn btn-secondary" type="button">Clear filters</button>
           </div>
 
           <div class="state" data-when="empty" style="padding-top:48px">
@@ -92,7 +94,7 @@
         </div>
       </div>
     </div>
-    <a class="fab" href="C203-add-machine.html" data-when="ready filtered noresults"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a></div>
+    <a class="fab" href="C203-add-machine.html" data-when="ready moreerror filtered noresults"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a></div>
 
     <nav class="tabbar" data-tabs="customer" data-active="machines"></nav>
     <span class="home-indicator"></span>
@@ -134,9 +136,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every machine the company owns. Search across model, serial and site; filters show as removable
-chips. 200 machines load 20 at a time. A machine waiting for verification shows a grey Pending chip and opens a limited
-detail. Long press a card for quick actions. AMC opens the AMC segment (C401).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The Machines tab: every machine the company owns with warranty, AMC and open requests.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by model, serial or site</li><li>Filter and sort; remove filter chips</li><li>Long press a card for quick actions</li><li>Add machine</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A card opens <a href="C202-machine-detail.html">C202</a></li><li>Add machine opens <a href="C203-add-machine.html">C203</a></li><li>AMC opens the AMC segment, C401</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pages of 20; a failed page shows an inline Try again</li><li>Pending machines show a grey chip and a limited detail</li><li>Spec: section 8, C201 · C2 rules</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -148,8 +153,13 @@ detail. Long press a card for quick actions. AMC opens the AMC segment (C401).</
   const byName = [...ZX.data.machines].sort((a, b) => (a.nickname || a.model).localeCompare(b.nickname || b.model));
   const card = (m) => R.machineCard(m, `C202-machine-detail.html?serial=${m.serial}`);
   document.getElementById('all').innerHTML = byName.map(card).join('');
-  document.getElementById('filtered').innerHTML = byName
-    .filter((m) => m.site === 'vatva' && m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0).map(card).join('');
+  const filtered = byName.filter((m) => m.site === 'vatva' && m.warrantyEnd && R.daysFromToday(m.warrantyEnd) >= 0);
+  document.getElementById('filtered').innerHTML = filtered.map(card).join('');
+  const total = byName.length;
+  const sites = new Set(byName.map((m) => m.site)).size;
+  document.getElementById('count-all').textContent = `${total} machines`;
+  document.getElementById('count-sites').textContent = `${sites} ${sites === 1 ? 'site' : 'sites'}`;
+  document.getElementById('count-filtered').textContent = `${filtered.length} of ${total} machines`;
 
   /* long press a card: quick actions sheet */
   let timer;

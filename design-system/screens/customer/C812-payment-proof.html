@@ -14,7 +14,6 @@
 .file span.sub{grid-column:2; font-size:var(--fs-12); color:var(--text-muted)}
 .add-file{display:flex; align-items:center; justify-content:center; gap:8px; min-height:64px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
   background:#fff; font:500 var(--fs-14) var(--font-body); color:var(--slate-700); cursor:pointer; width:100%}
-.error-text a{color:inherit}
 .hero{display:flex; flex-direction:column; align-items:center; text-align:center; padding:40px 8px 4px}
 .hero .ring{position:relative; width:96px; height:96px; display:grid; place-items:center; border-radius:50%; background:var(--green-50); color:var(--green)}
 .hero .ring::after{content:""; position:absolute; inset:-8px; border-radius:50%; border:2px dashed var(--green-50)}
@@ -66,7 +65,8 @@
             <span class="error-text" id="utr-e-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>Enter 8 to 30 letters or digits</span></div>
           <div class="field has-error" data-when="utrdup"><label for="utr-d">UTR or cheque number<span class="req">*</span></label>
             <input class="input mono" id="utr-d" aria-invalid="true" aria-describedby="utr-d-err">
-            <span class="error-text" id="utr-d-err"></span></div>
+            <span class="error-text" id="utr-d-err"></span>
+            <a class="btn btn-soft btn-sm" id="utr-d-link" style="align-self:flex-start; margin-top:8px" href="C809-receipt.html">View receipt</a></div>
 
           <div class="field"><span class="field-label">Payment date<span class="req">*</span></span>
             <button class="select" type="button"><svg class="ic" aria-hidden="true"><use href="#ph-calendar-blank"/></svg><span class="value" id="paid-on"></span><svg class="ic ic-16" aria-hidden="true"><use href="#ph-caret-down"/></svg></button></div>
@@ -92,7 +92,7 @@
       <div class="footer-bar">
         <button class="btn btn-primary" type="button" data-state-to="sent" data-when="ready">Submit proof</button>
         <button class="btn btn-primary" type="button" data-when="errors utrdup rejected">Submit proof</button>
-        <button class="btn btn-primary" type="button" aria-busy="true" data-when="saving">Saving...</button>
+        <button class="btn btn-primary" type="button" aria-busy="true" data-when="saving">Submitting</button>
         <button class="btn btn-primary" type="button" disabled data-when="offline">Submit proof</button>
         <a class="btn btn-primary back" href="C802-invoice-detail.html" data-when="sent">View invoice</a>
       </div>
@@ -110,8 +110,12 @@
   </div>
 </div>
 
-<p class="plate-note">Report a bank transfer, UPI or cheque payment; the invoice shows Awaiting verification until Zixom
-decides. Opened from <a href="C1608-bank-transfer.html">C1608</a> or <a href="C802-invoice-detail.html">C802</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Report a bank transfer, UPI or cheque payment so Zixom can verify it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the invoice, amount and mode</li><li>Enter the UTR or cheque number and date</li><li>Attach a photo or PDF, then submit</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The invoice shows Awaiting verification; Zixom checks within 1 working day</li><li>Then Paid, or Rejected with a reason and the invoice is Due again</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>UTR 8 to 30 characters; amount not zero; date not in the future; proof up to 10 MB</li><li>Amount differs: confirm. UTR already used: link to its receipt. Offline: kept as a draft</li><li>Spec: section 8, C812</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -141,13 +145,19 @@ decides. Opened from <a href="C1608-bank-transfer.html">C1608</a> or <a href="C8
   /* the UTR already used: a bank transfer payment in data.js */
   const used = data.payments.find((p) => p.txn.startsWith('UTR '));
   $('utr-d').value = used.txn.replace('UTR ', '');
-  $('utr-d-err').innerHTML = `${R.icon('warning-circle', 'ic-16')}<span>This reference was already submitted. <a href="C809-receipt.html?receipt=${used.receipt}">View receipt</a></span>`;
+  $('utr-d-err').innerHTML = `${R.icon('warning-circle', 'ic-16')}<span>This reference was already submitted.</span>`;
+  $('utr-d-link').href = `C809-receipt.html?receipt=${used.receipt}`;
 
   $('sent-facts').innerHTML = `<div><dt>Invoice</dt><dd class="mono">${inv.number}</dd></div>
     <div><dt>Amount</dt><dd>${R.money(balance)}</dd></div>
     <div><dt>UTR</dt><dd class="mono">${NEW_UTR}</dd></div>
     <div><dt>Status</dt><dd>${R.invoiceTag('verification')}</dd></div>`;
   document.querySelectorAll('.back').forEach((a) => { a.href = `C802-invoice-detail.html?invoice=${inv.number}`; });
+  /* the amount differs state shows the amount the person typed */
+  document.querySelector('.plate-states').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (b) $('amt').value = (b.dataset.open === 'differs' ? TYPED_AMOUNT : balance).toFixed(2);
+  });
   document.querySelector('[data-state-to]').addEventListener('click', () => document.querySelector('.plate-states [data-state="sent"]').click());
 })();
 </script>

@@ -12,14 +12,14 @@
 .pcard{position:relative; display:flex; flex-direction:column; gap:4px; padding:10px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
 .pcard .thumb{width:100%; height:92px; margin-bottom:6px}
 .pcard > .tag{position:absolute; top:16px; left:16px; background:#fff}
-.pcard a{color:var(--slate-900); text-decoration:none; font-size:var(--fs-14); font-weight:600; line-height:1.3;
+.pcard > a{color:var(--slate-900); text-decoration:none; font-size:var(--fs-14); font-weight:600; line-height:1.3;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
-.pcard a::before{content:""; position:absolute; inset:0; border-radius:inherit}
+.pcard > a::before{content:""; position:absolute; inset:0; border-radius:inherit}
 .pcard .mono{font-size:var(--fs-11); color:var(--text-muted)}
 .pcard .foot{display:flex; align-items:center; justify-content:space-between; gap:6px; min-height:36px; margin-top:auto; padding-top:6px}
 .pcard .price{font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 .pcard .price.ask{font:500 var(--fs-12) var(--font-body); color:var(--text-muted)}
-.pcard .icon-btn{position:relative; z-index:1; width:36px; height:36px}
+.pcard .icon-btn{position:relative; flex:none; z-index:1; width:36px; height:36px}
 </style>
 </head>
 <body class="plate">
@@ -144,6 +144,9 @@ Category chips filter the grid; plus adds to the cart.</p>
     if (p.price && ['in', 'low'].includes(p.stock)) {
       return `<button class="icon-btn dark" type="button" aria-label="Add ${R.esc(p.name)} to cart" data-toast="Added to cart" data-when="ready more">${R.icon('plus')}</button>
         <button class="icon-btn dark" type="button" disabled aria-label="Add to cart" data-when="offline">${R.icon('plus')}</button>`;
+    }
+    if (p.stock === 'request') {
+      return `<a class="icon-btn" href="C706-request-part.html?part=${p.number}" aria-label="Request quote for ${R.esc(p.name)}">${R.icon('note-pencil')}</a>`;
     }
     return '';
   };

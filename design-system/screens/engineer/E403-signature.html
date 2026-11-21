@@ -14,7 +14,7 @@
 .land-bar{grid-column:1 / span 2; display:flex; align-items:center; gap:12px}
 .land-bar h1{margin:0; font:400 var(--fs-18) var(--font-display); color:var(--slate-900)}
 .land-bar .tag{margin-left:4px}
-.land-bar .btn-text{margin-left:auto}
+.land-bar .btn-sm{margin-left:auto}
 .side{display:flex; flex-direction:column; gap:8px; min-height:0}
 .summary{padding:10px 12px; border-radius:var(--r-md); background:#fff; border:1px solid var(--line); font-size:var(--fs-12); color:var(--text)}
 .summary div{display:flex; gap:8px; padding:3px 0}
@@ -71,7 +71,7 @@
         <a class="icon-btn sm review-link" href="E404-report-review.html" aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></a>
         <h1>Customer signature</h1>
         <span class="tag outline" data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>Offline, saved with the report</span>
-        <button class="btn btn-text" type="button" data-open="cannot">Customer cannot sign</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-open="cannot">Customer cannot sign</button>
       </div>
 
       <div class="side">
@@ -158,8 +158,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shown turned: the pad opens in landscape and stays there until closed. Draw on the pad. Customer
-cannot sign offers an OTP to a chosen contact or a refusal with a reason (EC-59, EC-60).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Full screen signature pad, shown turned to landscape. The customer confirms the work on the engineer's phone.</p></div>
+  <div><h3>What you can do</h3><ul><li>Draw a signature, enter name (required) and designation.</li><li>Clear the pad or save the signature.</li><li>Customer cannot sign: send an OTP to a site contact, or mark as refused with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Save returns to <a href="E404-report-review.html">E404</a>; signature is stored with name and time.</li><li>The report shows Signed, Confirmed by OTP, Pending confirmation or Refused.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Signature too small: "Please sign inside the box". Name 2 to 60 characters.</li><li>OTP not entered in 24 hours: submitted unconfirmed, manager told.</li><li>Offline: signature saved with the report.</li><li>Spec: section E4, E403 · EC-59, EC-60</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -203,7 +207,7 @@ cannot sign offers an OTP to a chosen contact or a refusal with a reason (EC-59,
     const [title, text] = b.hasAttribute('data-otp') ? ['Confirmed by OTP', 'The report shows Confirmed by OTP.']
       : b.hasAttribute('data-pending') ? ['Pending confirmation', 'If not confirmed in 24 hours, the report goes as unconfirmed.']
       : b.hasAttribute('data-refused') ? ['Marked as refused', 'Zixom will review the reason.']
-      : ['Signature saved', `Signed by ${$('name').value || signer.name}.`];
+      : ['Signature saved', `Signed by ${$('name').value || signer.name} at 11:52 AM.`];
     $('saved-title').textContent = title;
     $('saved-text').textContent = text;
   });
@@ -232,7 +236,7 @@ cannot sign offers an OTP to a chosen contact or a refusal with a reason (EC-59,
     if (!$('name').value.trim()) { $('name-field').classList.add('has-error'); return; }
     if (strokeLength < MIN_STROKE_PX) { $('small-error').hidden = false; $('pad').classList.add('has-error'); return; }
     $('saved-title').textContent = 'Signature saved';
-    $('saved-text').textContent = `Signed by ${$('name').value}.`;
+    $('saved-text').textContent = `Signed by ${$('name').value} at 11:52 AM.`;
     $('saved').hidden = false;
   });
 

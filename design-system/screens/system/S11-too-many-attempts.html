@@ -61,7 +61,12 @@
   </div>
 </div>
 
-<p class="plate-note">OTP, sign in and server rate limits (EC-08, EC-13). The countdown uses server time; Try again stays disabled until 0:00.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Lock with a countdown after too many attempts.</p></div>
+  <div><h3>What you can do</h3><ul><li>Wait for the timer</li><li>Contact support</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>At 0:00 Try again unlocks</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Wrong OTP 5 times (15 min), OTP requests per hour, server rate limit</li><li>Timer uses server time and survives closing the app</li><li>Spec: section 7, S11 · EC-08, EC-13</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

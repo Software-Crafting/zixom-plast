@@ -21,6 +21,7 @@
   background:#fff; font:inherit; text-align:left; cursor:pointer}
 .add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .field.has-error .add-file{border-color:var(--red); background:var(--red-50)}
+.choice:not(:has(p)) b{grid-row:1 / span 2}
 </style>
 </head>
 <body class="plate">
@@ -172,8 +173,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from Job detail or Check in when no one answers. Mark visit failed unlocks after 2 call
-attempts and a 20 minute wait, with a gate photo. Offline, it is saved and synced later.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The attempt log when no one answers at the site: wait timer, calls, a gate photo and notes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call the site contact; each call is logged with its time and result.</li><li>Say what happened and add a photo at the gate.</li><li>Mark visit failed, or propose another time (<a href="E204-propose-time.html">E204</a>).</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Visit failed: Zixom and the customer are told, Zixom reschedules.</li><li>The customer sees the attempt log on the request (C508).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Mark visit failed unlocks after 2 calls and a 20 minute wait.</li><li>No gate photo: error. Offline: saved with Waiting to sync.</li><li>Spec: module E2, E209 · EC-51.</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -71,6 +71,7 @@
           </div>
           <div class="block"><h3>Signed by</h3><div class="sig" id="sig"></div></div>
           <div class="block cost"><h3>Cost</h3><div id="cost"></div></div>
+          <a class="btn btn-secondary raise" href="C503-raise-machine.html">Raise a related request</a>
         </div>
 
         <div class="stack" data-when="ready photo" id="note" hidden>
@@ -106,7 +107,6 @@
             <button class="icon-btn" type="button" aria-label="Share" data-toast="Report shared"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg></button>
             <button class="btn btn-primary" type="button" data-toast="Report saved to Files"><svg class="ic" aria-hidden="true"><use href="#ph-download-simple"/></svg>Download report</button>
           </div>
-          <a class="btn btn-text raise" href="C503-raise-machine.html" style="width:100%; margin-top:6px">Raise a related request</a>
         </div>
         <div data-when="ready photo" id="note-actions" hidden>
           <a class="btn btn-primary" href="C1404-edit-note.html"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg>Edit note</a>
@@ -118,8 +118,12 @@
   </div>
 </div>
 
-<p class="plate-note">One history entry. A service visit shows the engineer's report, signature and cost with its
-invoice; a note shows its text and author. Until the report is sent it shows Report not ready.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One history entry: a service visit report or a note.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download or share the report</li><li>View the invoice of a chargeable visit</li><li>Raise a related request</li><li>Edit a note</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Invoice opens <a href="C802-invoice-detail.html">C802</a></li><li>Raise opens <a href="C503-raise-machine.html">C503</a> for this machine</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Photo fails to load: Retry tile</li><li>Report not ready: link to the request</li><li>Spec: C2, C208</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -199,7 +203,7 @@ invoice; a note shows its text and author. Until the report is sent it shows Rep
       ${invoice.lines.map(([label, qty, rate]) => `<div><span>${R.esc(label)}${qty !== 1 ? `, ${qty}` : ''}</span><span>${R.money(qty * rate)}</span></div>`).join('')}
       <div><span>Subtotal</span><span>${R.money(subtotal)}</span></div><div><span>GST 18%</span><span>${R.money(gst)}</span></div>
       <div class="total"><span>Total</span><span>${R.money(total)}</span></div></div>
-      <a class="link accent" href="C802-invoice-detail.html?invoice=${invoice.number}">View invoice <span class="mono">${invoice.number}</span>${R.icon('caret-right', 'ic-16')}</a>`;
+      <a class="btn btn-secondary btn-sm" style="margin-top:12px" href="C802-invoice-detail.html?invoice=${invoice.number}">View invoice ${invoice.number}</a>`;
   } else {
     $('cost').innerHTML = `<div class="banner green"><svg class="ic" aria-hidden="true"><use href="#ph-shield-check"/></svg>
       <div><b>No charge</b>Covered by ${ticket.coverage === 'amc' ? 'AMC' : 'warranty'}.</div></div>`;
