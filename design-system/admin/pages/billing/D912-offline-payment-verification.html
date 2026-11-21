@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D912 Offline payment verification</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-billing.css">
+</head>
+<body class="adm" data-page="D912">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Offline verification</span></nav>
+      <h1>Offline payment verification</h1><p id="head-sub"></p>
+    </div>
+    <div class="row wrap" data-single id="queue" aria-label="Proofs waiting"></div>
+  </div>
+
+  <div data-when="ready utr-used amount-mismatch double-payment verified rejected">
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner red" data-when="utr-used"><svg class="ic"><use href="#ph-ban"/></svg><span class="grow"><b>UTR already used.</b> UTR HDFC0026117745 paid INV-2026-0986 on 5 Nov. You cannot verify this proof.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D911?p=UTR%20HDFC0026117745">Open payment</a></span></div>
+      <div class="banner amber" data-when="amount-mismatch"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Amount differs from the invoice.</b> Customer entered ₹3,500.00; the balance is ₹3,540.00. Confirm the amount received.</span></div>
+      <div class="banner amber" data-when="double-payment"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Paid online while this proof was pending.</b> Razorpay captured ₹3,540.00 at 11:42. Verifying would record a double payment; reject this proof instead.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D910">Open payments</a></span></div>
+      <div class="banner green" data-when="verified"><svg class="ic"><use href="#ph-check-circle"/></svg><span class="grow"><b>Verified by Rajesh Goyal at 12:04.</b> Invoice marked paid, receipt RCP-2026-0653 sent. Read only.</span></div>
+      <div class="banner grey" data-when="rejected"><svg class="ic"><use href="#ph-x"/></svg><span class="grow"><b>Rejected at 12:04: Amount not received.</b> The customer sees the reason in the app. Read only.</span></div>
+    </div>
+
+    <div class="split">
+      <section class="card flush">
+        <div class="preview-wrap"><div class="preview" id="preview"><div class="proof" id="proof"></div></div>
+          <div class="preview-tools"><button class="icon-btn white sm" type="button" data-zoom="-1" aria-label="Zoom out"><svg class="ic"><use href="#ph-minus"/></svg></button>
+            <button class="icon-btn white sm" type="button" data-zoom="1" aria-label="Zoom in"><svg class="ic"><use href="#ph-plus"/></svg></button>
+            <button class="icon-btn white sm" type="button" data-toast="Proof downloaded" aria-label="Download proof"><svg class="ic"><use href="#ph-download-simple"/></svg></button></div></div>
+        <div class="card-foot row"><svg class="ic"><use href="#ph-paperclip"/></svg><span class="grow mono" id="file"></span><span class="muted" id="file-meta"></span></div>
+      </section>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Invoice</h2></div><a class="card-link" id="inv-link" href="#D903">Open</a></div>
+          <div class="card-body"><dl class="dl" id="invoice"></dl></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>What the customer entered</h2></div></div>
+          <div class="card-body"><dl class="dl" id="entered"></dl></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Checks</h2></div></div>
+          <ul class="mini" id="checks"></ul>
+        </section>
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Earlier proofs for this invoice</h2></div></div>
+          <ul class="mini" id="history"></ul>
+        </section>
+      </div>
+    </div>
+
+    <div class="decision-bar" data-when="ready amount-mismatch double-payment utr-used" id="bar"></div>
+    <div class="decision-bar" data-when="verified"><span class="grow">Verified by mistake? Reverse within 24 hours.</span>
+      <button class="btn btn-secondary" type="button" data-open="reverse">Reverse</button><a class="btn btn-primary" href="#D915">Open receipt</a></div>
+  </div>
+
+  <div data-when="loading">
+    <div class="split"><div class="card pad"><span class="sk sk-block" style="height:520px"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:90px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:140px"></span></div></div></div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>No proofs to verify</h3><p>Bank transfer, UPI and cheque proofs from the app appear here.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D910">Back to payments</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="verify" hidden>
+  <div class="modal" role="dialog" aria-labelledby="v-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="v-title"></h2><p>The invoice is updated and the customer gets a receipt in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="v-amount">Amount received</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="v-amount" inputmode="decimal"></div>
+        <span class="hint">Less than the balance records a partial payment.</span></div>
+      <div class="field"><label for="v-reason">Reason for a different amount <span class="opt">only if changed</span></label>
+        <select class="select" id="v-reason"><option>Not changed</option><option>Bank charges deducted</option><option>Customer paid part</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="v-go">Verify and mark paid</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rj-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="rj-title">Reject this proof?</h2><p>The customer sees your reason in the app and can upload a new proof.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="rj-reason">Reason</label><select class="select" id="rj-reason"><option>Amount not received</option><option>Wrong reference</option><option>Unreadable proof</option><option>Other</option></select></div>
+      <div class="field"><label for="rj-note">Message to the customer <span class="opt">optional</span></label><textarea class="textarea" id="rj-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" id="rj-go">Reject proof</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="ask" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ask-title">
+    <div class="modal-head"><div class="grow"><h2 id="ask-title">Ask for another proof</h2><p>The proof stays pending until the customer uploads again.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="ask-note">What do you need?</label><textarea class="textarea" id="ask-note" maxlength="300">Please upload the bank advice that shows the UTR and the beneficiary name.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Request sent to the customer">Send request</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="reverse" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rv-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span>
+      <div class="grow"><h2 id="rv-title">Reverse this verification?</h2><p>The receipt is voided and the invoice goes back to Awaiting verification. The customer is told.</p></div></div>
+    <div class="modal-body stack" id="rv-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Verification reversed">Reverse</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty utr-used amount-mismatch double-payment verified rejected error" data-mobile="../../../screens/customer/C812-payment-proof.html">
+  <div><h3>What it is</h3><p>Bank transfer, UPI and cheque proofs the customer uploaded. Proof on the left, facts and decision on the right.</p></div>
+  <div><h3>What you can do</h3><ul><li>Zoom the proof; switch between waiting proofs at the top.</li><li>Verify and mark paid (amount can change with a reason), reject with a reason, or ask for another proof.</li><li>Cheque: mark cleared or bounced.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer sees the result in the app (C812). Verified: invoice paid and a receipt (D915). Opens Invoice detail (D903).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>UTR already used blocks with a link; amount differs asks to confirm.</li><li>Cheque not cleared: Awaiting clearance; invoice stays Awaiting verification.</li><li>Paid online meanwhile: double payment warning. Reverse within 24 hours needs the password.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const $ = (id) => document.getElementById(id);
+  const waiting = B.payments.filter((p) => p.status === 'verification').reverse(); /* oldest first */
+  const current = new URLSearchParams(location.search).get('p') || waiting[0].txn;
+  const p = waiting.find((x) => x.txn === current) || waiting[0];
+  const i = B.invoice(p.invoice);
+  const c = r.company(p.company);
+  const by = r.person(p.by);
+  const cheque = p.kind === 'Cheque';
+  const ref = p.txn.replace(/^(UTR|Cheque) /, '');
+
+  $('head-sub').textContent = `${waiting.length} proofs waiting · verify within 1 working day`;
+  $('queue').innerHTML = waiting.map((x) => `<button class="chip" type="button" aria-pressed="${x === p}" data-go="${x.txn}">${x.invoice.slice(-4)} · ${x.kind}</button>`).join('');
+  $('queue').addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-go]');
+    if (chip) location.search = `?p=${encodeURIComponent(chip.dataset.go)}`;
+  });
+
+  $('proof').innerHTML = cheque
+    ? `<div class="row"><b>HDFC Bank</b><span class="muted">${r.date(p.paidOn)}</span></div><p style="margin-top:14px">Pay <b>Zixom Plast</b></p>
+       <p>Rupees fourteen thousand one hundred sixty only</p><dl><dt>Amount</dt><dd><b>${r.money(p.amount)}</b></dd><dt>Cheque no.</dt><dd class="mono">${ref}</dd><dt>Drawer</dt><dd>${c.name}</dd></dl>`
+    : `<div class="row"><b>HDFC Bank · NEFT advice</b><span class="muted">${r.date(p.paidOn)}</span></div>
+       <dl><dt>Beneficiary</dt><dd>Zixom Plast</dd><dt>Account</dt><dd class="mono">000000000000</dd><dt>IFSC</dt><dd class="mono">SAMP0000000</dd>
+       <dt>Amount</dt><dd><b>${r.money(p.amount)}</b></dd><dt>UTR</dt><dd class="mono">${ref}</dd><dt>Status</dt><dd>Success</dd><dt>Remitter</dt><dd>${c.name}</dd></dl>`;
+  $('file').textContent = p.proof;
+  $('file-meta').textContent = `JPG · 1.2 MB · ${r.ago(p.when)}`;
+  let zoom = 1;
+  document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
+    zoom = Math.min(2, Math.max(0.6, zoom + Number(b.dataset.zoom) * 0.2));
+    $('proof').style.transform = `scale(${zoom})`;
+  }));
+
+  $('inv-link').href = `#D903?inv=${i.number}`;
+  $('invoice').innerHTML = `<dt>Number</dt><dd class="mono">${i.number}</dd><dt>Customer</dt><dd>${c.name}</dd><dt>Status</dt><dd>${B.invoiceTag(i.status)}</dd>
+    <dt>Amount</dt><dd>${r.money(i.amount)}</dd><dt>Balance</dt><dd class="strong">${r.money(B.balance(i))}</dd><dt>Due</dt><dd>${r.date(i.due)}</dd>`;
+  $('entered').innerHTML = `<dt>Amount</dt><dd class="strong" id="entered-amount">${r.money(p.amount)}</dd><dt>Mode</dt><dd>${p.method}</dd>
+    <dt>${cheque ? 'Cheque number' : 'UTR'}</dt><dd class="mono">${ref}</dd><dt>${cheque ? 'Cheque date' : 'Paid on'}</dt><dd>${r.date(p.paidOn)}</dd>
+    <dt>Uploaded by</dt><dd>${by.name}, ${r.dayDate(p.when)} ${r.time(p.when)}</dd>${cheque ? `<dt>Clearance</dt><dd>${r.tag(p.cheque, 'amber')}</dd>` : ''}`;
+  const check = (ok, title, sub) => `<li><span class="ic-disc ${ok ? 'green' : 'red'}">${r.icon(ok ? 'check' : 'x')}</span><span class="grow"><b>${title}</b><small>${sub}</small></span></li>`;
+  const drawChecks = (utrOk, amountOk) => {
+    $('checks').innerHTML = check(utrOk, utrOk ? `${cheque ? 'Cheque number' : 'UTR'} not used before` : 'UTR already used', utrOk ? 'Checked against every payment' : 'Paid INV-2026-0986, RCP-2026-0651')
+      + check(amountOk, amountOk ? 'Amount matches the balance' : 'Amount differs by ₹40.00', amountOk ? r.money(B.balance(i)) : 'Customer entered ₹3,500.00')
+      + check(true, 'Account matches Zixom', 'Sample Bank, 000000000000');
+  };
+  drawChecks(true, p.amount === B.balance(i));
+  $('history').innerHTML = i.number === 'INV-2026-0985'
+    ? `<li><span class="ic-disc">${r.icon('image')}</span><span class="grow"><b>NEFT-screenshot.png</b><small>Rejected 20 Nov · Unreadable proof</small></span>${r.tag('Rejected')}</li>`
+    : `<li><span class="ic-disc green">${r.icon('bank')}</span><span class="grow"><b>UTR HDFC0026117745</b><small>Verified 6 Nov · ₹14,160.00</small></span>${r.tag('Verified', 'green')}</li>`;
+
+  $('bar').innerHTML = `<span class="grow">${cheque ? 'Cheque deposited 22 Nov. Clears in 2 to 3 working days.' : 'Check the UTR in the bank statement before you verify.'}</span>
+    <button class="btn btn-ghost" type="button" data-open="ask">Ask for another proof</button>
+    <button class="btn btn-secondary" type="button" ${cheque ? 'data-toast="Cheque bounced. Customer told; invoice back to Partly paid"' : 'data-open="reject"'}>${cheque ? 'Mark bounced' : 'Reject'}</button>
+    <button class="btn btn-primary" type="button" id="verify-btn" ${cheque ? 'data-toast="Cheque cleared. Receipt sent"' : 'data-open="verify"'}>${cheque ? 'Mark cheque cleared' : 'Verify and mark paid'}</button>`;
+  $('v-title').textContent = `Verify ${r.money(p.amount)} for ${i.number}?`;
+  $('v-amount').value = p.amount.toFixed(2);
+  $('rv-fields').innerHTML = B.passwordFields('rv', ['Verified by mistake', 'Money not in the bank', 'Wrong invoice']);
+  $('v-go').addEventListener('click', () => { ZXA.ui.closeOverlay($('verify')); ZXA.ui.setState('verified'); ZXA.ui.toast('Verified. Receipt sent to the customer'); });
+  $('rj-go').addEventListener('click', () => { ZXA.ui.closeOverlay($('reject')); ZXA.ui.setState('rejected'); ZXA.ui.toast('Proof rejected. Customer told'); });
+
+  /* state specific facts: UTR used blocks verify, mismatch changes the entered amount */
+  ZXA.onBillingState = (state) => {
+    const mismatch = state === 'amount-mismatch';
+    $('entered-amount').textContent = r.money(mismatch ? 3500 : p.amount);
+    $('v-amount').value = (mismatch ? 3500 : p.amount).toFixed(2);
+    drawChecks(state !== 'utr-used', !mismatch && p.amount === B.balance(i));
+    $('verify-btn').disabled = ['utr-used', 'double-payment'].includes(state);
+  };
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+new MutationObserver(() => ZXA.onBillingState?.(document.body.dataset.state))
+  .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D905 Create credit note</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-billing.css">
+</head>
+<body class="adm" data-page="D905" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D904">Credit notes</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>New credit note</span></nav>
+      <h1>New credit note</h1><p>Number CN-2026-0013 is assigned at issue</p></div>
+  </div>
+
+  <div class="banner green" data-when="issued" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg>
+    <span class="grow"><b>CN-2026-0013 issued.</b> <span id="issued-text"></span></span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D904">Credit notes</a><a class="btn btn-sm btn-primary" id="issued-inv" href="#D903">Open invoice</a></span></div>
+
+  <div class="grid side-right" data-when="ready over-limit issued">
+    <div class="stack">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Invoice</h2></div></div>
+        <div class="card-body"><div class="form-grid">
+          <div class="field"><label for="inv">Invoice</label><select class="select mono" id="inv"></select></div>
+          <div class="field"><label for="reason">Reason</label><select class="select" id="reason"><option>Billing error</option><option>Discount</option><option>Return</option><option>Other</option></select></div>
+          <div class="field full" id="dispute-row"></div>
+        </div></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>What to credit</h2><p>Pick lines and quantities, or enter an amount</p></div>
+          <div class="segment" role="tablist" aria-label="Credit by"><button role="tab" aria-selected="true" aria-controls="by-lines">Lines</button><button role="tab" aria-selected="false" aria-controls="by-amount">Amount</button></div></div>
+        <div id="by-lines" role="tabpanel"><div class="table-wrap" style="max-height:none"><table class="table lines-table" id="lines">
+          <thead><tr><th class="cb"></th><th>Line</th><th class="num">Billed</th><th class="num">Credit qty</th><th class="num">Rate</th><th class="num">Credit</th></tr></thead><tbody></tbody></table></div></div>
+        <div id="by-amount" role="tabpanel" hidden><div class="card-body"><div class="form-grid">
+          <div class="field"><label for="amount">Amount before GST</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="amount" inputmode="decimal" value="400.00"></div></div>
+          <div class="field"><label for="amount-desc">Line on the credit note</label><input class="input" id="amount-desc" value="Labour billed in excess"></div></div></div></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Settle it</h2></div></div>
+        <div class="card-body stack">
+          <div class="choices" style="grid-template-columns:repeat(2,1fr)">
+            <label class="choice"><input type="radio" name="apply" class="sr-only" checked><span><b>Reduce the balance</b><small>For an unpaid invoice</small></span></label>
+            <label class="choice"><input type="radio" name="apply" class="sr-only"><span><b>Refund the customer</b><small>Opens a refund after issue</small></span></label></div>
+          <div class="field"><label for="note">Note to customer</label><textarea class="textarea" id="note" maxlength="300">Engineer was on site 2 hours. We credited 0.5 hour of labour.</textarea></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="stack side-sticky">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Credit note</h2></div></div>
+        <div class="card-body stack-sm"><dl class="totals" id="totals"></dl>
+          <span class="error" data-when="over-limit"><svg class="ic"><use href="#ph-warning-circle"/></svg><span id="limit-text"></span></span></div>
+      </section>
+      <section class="card"><div class="card-head"><div class="grow"><h2>Invoice now</h2></div></div><div class="card-body"><dl class="dl" id="inv-sum"></dl></div></section>
+    </aside>
+  </div>
+
+  <div class="form-bar" data-when="ready over-limit">
+    <span class="grow">Cannot exceed the invoice amount</span>
+    <a class="btn btn-ghost" href="#D904">Cancel</a>
+    <button class="btn btn-primary" type="button" data-open="issue" id="issue-btn">Issue credit note</button>
+  </div>
+</main>
+
+<div class="overlay center" id="issue" hidden>
+  <div class="modal" role="dialog" aria-labelledby="is-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-file-minus"/></svg></span>
+      <div class="grow"><h2 id="is-title"></h2><p>The customer sees it in the app. Credit notes cannot be deleted.</p></div></div>
+    <div class="modal-body stack" id="is-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="is-go">Issue credit note</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready over-limit issued error" data-mobile="../../../screens/customer/C1603-credit-notes.html">
+  <div><h3>What it is</h3><p>Credit part or all of an invoice. Opens with <code>?inv=</code>; default INV-2026-0980, disputed in DSP-2026-0009.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick lines and quantities, or switch to a plain amount.</li><li>Choose to reduce the balance or refund.</li><li>Issue with your password and a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>The note shows in Credit notes (D904) and the app (C1603). Refund choice opens Create refund (D922).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cannot exceed the invoice (Over limit state).</li><li>Paid invoices are corrected only with a credit note (EC-A42).</li><li>Money action: password and reason (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const $ = (id) => document.getElementById(id);
+  const issued = B.invoices.filter((i) => !['draft', 'cancelled'].includes(i.status));
+  let inv = B.invoice(new URLSearchParams(location.search).get('inv')) || B.invoice('INV-2026-0980');
+  let credit = [];
+
+  const draw = () => {
+    const dispute = ZXA.data.billing.disputes.find((d) => d.invoice === inv.number && ['open', 'review'].includes(d.status));
+    credit = inv.lines.map((l, n) => (dispute && n === dispute.line ? (inv.number === 'INV-2026-0980' ? 0.5 : l[1]) : 0));
+    $('dispute-row').innerHTML = dispute ? `<div class="banner amber"><svg class="ic"><use href="#ph-scale"/></svg><span class="grow"><b>Linked to ${dispute.number}.</b> ${dispute.text}</span></div>` : '';
+    $('lines').tBodies[0].innerHTML = inv.lines.map(([d, q, rate], n) => `<tr data-n="${n}"><td class="cb"><label class="check"><input type="checkbox" ${credit[n] ? 'checked' : ''} aria-label="Credit ${d}"></label></td>
+      <td>${d}<span class="sub mono">${B.hsn(d)}</span></td><td class="num">${q}</td>
+      <td class="num"><input class="input num w-sm" value="${credit[n]}" inputmode="decimal" aria-label="Credit quantity for ${d}"></td><td class="num">${r.money(rate)}</td><td class="num" data-amount>${r.money(credit[n] * rate)}</td></tr>`).join('');
+    $('inv-sum').innerHTML = `<dt>Customer</dt><dd>${r.company(inv.company).name}</dd><dt>Status</dt><dd>${B.invoiceTag(inv.status)}</dd><dt>Amount</dt><dd>${r.money(inv.amount)}</dd><dt>Balance</dt><dd class="strong">${r.money(B.balance(inv))}</dd>`;
+    totals();
+  };
+  const totals = () => {
+    const lines = inv.lines.map(([d, , rate], n) => [d, credit[n], rate]).filter(([, q]) => q > 0);
+    const t = B.tax(lines, B.billing(inv.company).stateCode);
+    $('totals').innerHTML = `<dt>Taxable</dt><dd>${r.money(t.taxable)}</dd><dt>IGST 18%</dt><dd>${r.money(t.igst + t.cgst + t.sgst)}</dd><dt class="grand">Credit total</dt><dd class="grand">${r.money(t.total)}</dd>`;
+    $('is-title').textContent = `Issue ${r.money(t.total)} credit note?`;
+    $('limit-text').textContent = `More than the invoice. Maximum ${r.money(inv.amount)}.`;
+    $('issued-text').textContent = `${r.money(t.total)} against ${inv.number}. ${r.company(inv.company).name} sees it in the app.`;
+    $('issued-inv').setAttribute('href', `#D903?inv=${inv.number}`);
+  };
+
+  $('inv').innerHTML = issued.map((i) => `<option value="${i.number}"${i === inv ? ' selected' : ''}>${i.number} · ${r.company(i.company).name.split(' ')[0]} · ${r.money(i.amount)}</option>`).join('');
+  $('inv').addEventListener('change', () => { inv = B.invoice($('inv').value); draw(); });
+  $('lines').addEventListener('input', (event) => {
+    const row = event.target.closest('tr');
+    const n = Number(row.dataset.n);
+    credit[n] = Math.min(Number(event.target.value) || 0, inv.lines[n][1]);
+    row.querySelector('.cb input').checked = credit[n] > 0;
+    row.querySelector('[data-amount]').textContent = r.money(credit[n] * inv.lines[n][2]);
+    totals();
+  });
+  $('lines').addEventListener('change', (event) => {
+    if (!event.target.closest('.cb')) return;
+    const row = event.target.closest('tr');
+    const n = Number(row.dataset.n);
+    credit[n] = event.target.checked ? inv.lines[n][1] : 0;
+    row.querySelector('.num input').value = credit[n];
+    row.querySelector('[data-amount]').textContent = r.money(credit[n] * inv.lines[n][2]);
+    totals();
+  });
+  $('is-fields').innerHTML = B.passwordFields('is', ['Billing error', 'Discount agreed', 'Goods returned', 'Dispute accepted', 'Other']);
+  $('is-go').addEventListener('click', () => { ZXA.ui.closeOverlay($('issue')); ZXA.ui.setState('issued'); ZXA.ui.toast('Credit note issued'); });
+  draw();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+new MutationObserver(() => {
+  const state = document.body.dataset.state;
+  document.getElementById('issue-btn').disabled = state === 'over-limit';
+  document.querySelectorAll('.grid.side-right .input, .grid.side-right .select, .grid.side-right .textarea, .grid.side-right input').forEach((el) => { el.disabled = state === 'issued'; });
+}).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+</script>
+</body>
+</html>

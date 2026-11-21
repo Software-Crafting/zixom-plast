@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D922 Create refund</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D922" data-nav="D910">
+<main class="content">
+  <div data-when="ready submitting initiated gateway-error over-limit not-captured">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Payment sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-timeline">Timeline</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-webhooks">Webhook log</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-timeline" role="tabpanel" hidden></div>
+          <div id="tab-webhooks" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D910">Back to payments</a></div></div></div>
+  </div>
+</main>
+
+<!-- create refund: modal 480, open on load over the payment it refunds -->
+<div class="overlay center" id="refund" data-static>
+  <div class="modal" role="dialog" aria-labelledby="rf-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span>
+      <div class="grow"><h2 id="rf-title"></h2><p>Money returns to the original method in 5 to 7 working days. Enter your password to continue.</p></div></div>
+    <div class="modal-body stack" data-when="ready submitting gateway-error over-limit">
+      <dl class="dl" id="rf-summary"></dl>
+      <div class="banner red" data-when="gateway-error"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow"><b>Razorpay did not respond.</b> Nothing was recorded. Try again.</span></div>
+      <div class="field"><label for="rf-amount">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="rf-amount" inputmode="decimal"></div>
+        <span class="hint" data-when="ready submitting gateway-error">Partial refunds can repeat up to the paid amount.</span>
+        <span class="error" data-when="over-limit"><svg class="ic"><use href="#ph-warning-circle"/></svg><span id="rf-max"></span></span></div>
+      <div id="rf-pw" class="stack"></div>
+      <div class="field"><label for="rf-dest">Destination</label><select class="select" id="rf-dest"></select></div>
+      <div class="field" id="rf-ref"><label for="rf-bankref">Bank reference</label><input class="input mono" id="rf-bankref" placeholder="UTR of your transfer"></div>
+      <div class="field"><label for="rf-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="rf-note" maxlength="300"></textarea></div>
+      <label class="check"><input type="checkbox" checked> Create a credit note for this refund</label>
+    </div>
+    <div class="modal-body" data-when="initiated"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>Refund initiated</h3><p>RFD-2026-005 · the customer sees it in the app. Expected by 2 Dec.</p></div></div>
+    <div class="modal-body" data-when="not-captured"><div class="banner red"><svg class="ic"><use href="#ph-ban"/></svg><span class="grow"><b>This payment is not captured.</b> Only captured payments can be refunded. Re-check the status first.</span></div></div>
+    <div class="modal-foot" data-when="ready submitting gateway-error over-limit"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" id="rf-go">Refund</button></div>
+    <div class="modal-foot" data-when="initiated not-captured"><a class="btn btn-secondary" href="#D923">Open refunds</a><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<!-- mark as paid manually: needs a reason and the password -->
+<div class="overlay center" id="manual" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="mp-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="mp-title">Mark as paid manually?</h2><p>The invoice is marked paid and a receipt is sent. Use only when the money is in the bank.</p></div></div>
+    <div class="modal-body stack" id="mp-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked as paid. Receipt sent">Mark as paid</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready submitting initiated gateway-error over-limit not-captured error" data-mobile="../../../screens/customer/C810-refunds.html">
+  <div><h3>What it is</h3><p>Refund modal over the payment it returns. RCP-2026-0652 already has ₹236.00 refunded for DSP-2026-0004, so ₹944.00 is left.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change the amount (default all that is refundable), pick a reason, add a note.</li><li>Enter your password; Refund calls Razorpay.</li><li>Offline payments record your bank reference instead.</li></ul></div>
+  <div><h3>What happens next</h3><p>Initiated, then Processed from the webhook; the customer sees the 5 to 7 working day timeline (C810). Refunds list (D923).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Above refundable is blocked with the maximum (EC-A40).</li><li>Payment not captured is blocked (EC-A41).</li><li>Gateway error: nothing recorded, Retry. Failed later: D923 with Retry.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+ZXA.bill.renderPayment('RCP-2026-0652');
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* refund: submitting, then initiated (D922 states) */
+document.getElementById('rf-go').addEventListener('click', () => {
+  if (document.body.dataset.state === 'over-limit') return;
+  ZXA.ui.setState('submitting');
+  window.setTimeout(() => ZXA.ui.setState('initiated'), 1000);
+});
+new MutationObserver(() => document.getElementById('rf-go').toggleAttribute('aria-busy', document.body.dataset.state === 'submitting'))
+  .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+/* the modal belongs to this page: reopen it when a demo state changes; over limit shows a typed amount above the maximum */
+new MutationObserver(() => {
+  const state = document.body.dataset.state;
+  document.getElementById('refund').hidden = false;
+  document.getElementById('rf-amount').setAttribute('aria-invalid', String(state === 'over-limit'));
+  if (state === 'over-limit') document.getElementById('rf-amount').value = '1,180.00';
+}).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+</script>
+</body>
+</html>

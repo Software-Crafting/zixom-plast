@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D903 Invoice detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-billing.css">
+</head>
+<body class="adm" data-page="D903">
+<main class="content">
+  <div data-when="ready pdf-failed">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 class="mono" id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="edge-banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Invoice sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-lines">Lines</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-payments">Payments <span class="n" id="n-pay"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-credits">Credit notes <span class="n" id="n-cn"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-reminders">Reminders <span class="n" id="n-rem"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-pdf" id="pdf-tab">PDF</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-lines" role="tabpanel"></div>
+          <div id="tab-payments" role="tabpanel" hidden></div>
+          <div id="tab-credits" role="tabpanel" hidden></div>
+          <div id="tab-reminders" role="tabpanel" hidden></div>
+          <div id="tab-pdf" role="tabpanel" hidden>
+            <div data-when="ready"><div class="doc-sheet" id="pdf"></div></div>
+            <div data-when="pdf-failed"><div class="inline-error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not create the PDF. The invoice is saved.<button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="PDF created">Retry</button></div></div>
+          </div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D901">Back to invoices</a></div></div></div>
+  </div>
+</main>
+
+<!-- record offline payment -->
+<div class="overlay right" id="record" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="rec-title">
+    <div class="drawer-head"><div class="grow"><h2 id="rec-title">Record offline payment</h2><p id="rec-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="rec-mode">Mode</label><select class="select" id="rec-mode"><option>Bank transfer</option><option>UPI</option><option>Cheque</option></select></div>
+        <div class="field"><label for="rec-date">Received on</label><input class="input" id="rec-date" type="date" value="2026-11-23" max="2026-11-23"></div>
+        <div class="field"><label for="rec-amount">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="rec-amount" inputmode="decimal"></div><span class="hint">Partial payment is allowed.</span></div>
+        <div class="field"><label for="rec-ref">UTR or cheque number</label><input class="input mono" id="rec-ref" placeholder="8 to 30 characters" maxlength="30"></div>
+        <div class="field full"><label for="rec-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="rec-note" maxlength="300"></textarea></div>
+      </div>
+      <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Attach the bank advice</b>JPG, PNG or PDF up to 10 MB</div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Payment recorded. Receipt sent to the customer">Record payment</button></div>
+  </div>
+</div>
+
+<!-- cancel: only before payment -->
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Raised by mistake</option><option>Wrong customer</option><option>Customer will pay on a new invoice</option><option>Other</option></select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep invoice</button><button class="btn btn-danger" type="button" data-close data-toast="Invoice cancelled. The customer is told">Cancel invoice</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden></div>
+
+<aside class="proto" data-states="ready loading not-found pdf-failed error" data-mobile="../../../screens/customer/C802-invoice-detail.html">
+  <div><h3>What it is</h3><p>One issued invoice: lines, payments, credit notes, reminders and the PDF. Opens with <code>?inv=INV-2026-0981</code>; try 0985, 0986, 0987, 0983.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show (section 11).</li><li>Record an offline payment, send a reminder, download the PDF.</li><li>Create a credit note; cancel only while unpaid.</li></ul></div>
+  <div><h3>What happens next</h3><p>Credit note (D905), Verify proof (D912), Refund (D922), Follow up (D925), Suspend AMC (D610).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Edits after payment are blocked; use a credit note and a new invoice (EC-A42).</li><li>PDF failure shows Retry; the invoice stays saved (EC-A30).</li><li>Open dispute and amount mismatch show banners (EC-A21).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const data = ZXA.data.billing;
+  const ic = r.icon;
+  const number = new URLSearchParams(location.search).get('inv') || 'INV-2026-0981';
+  const i = B.invoice(number);
+  if (!i || i.status === 'draft') { ZXA.initialState = 'not-found'; return; }
+  const c = r.company(i.company);
+  const bill = B.billing(i.company);
+  const contact = r.person(i.company === 'nova' ? 'imran' : 'rakesh');
+  const q = `?inv=${i.number}`;
+  const bal = B.balance(i);
+  const pays = B.payments.filter((p) => p.invoice === i.number);
+  const notes = data.creditNotes.filter((x) => x.invoice === i.number);
+  const rems = data.reminders.filter((x) => x.invoice === i.number);
+  const disputes = data.disputes.filter((x) => x.invoice === i.number);
+  const openDispute = disputes.find((x) => ['open', 'review'].includes(x.status));
+  const amc = i.for?.startsWith('AMC-');
+
+  document.title = `Zixom Admin - ${i.number}`;
+  document.getElementById('crumb').textContent = i.number;
+  document.getElementById('number').textContent = i.number;
+  document.getElementById('chips').innerHTML = `${B.invoiceTag(i.status)}<span class="tag outline">${i.type}</span>`;
+  document.getElementById('meta').innerHTML = `<span>${ic('buildings')}${c.name}</span><span>${ic('calendar-blank')}Issued ${r.date(i.issued)}</span>
+    <span>${ic('clock')}Due ${r.date(i.due)}${B.daysOverdue(i) ? `<b class="red-text">· ${B.daysOverdue(i)} days overdue</b>` : ''}</span>${i.for ? `<span>${ic('link')}${B.recordLink(i.for)}</span>` : ''}`;
+
+  /* actions by status (section 11); the first is primary, the rest of the list goes in the more menu */
+  const A = {
+    remind: ['Send reminder', 'toast:Reminder sent by push and email'], record: ['Record offline payment', '#record'], call: ['Log a call', `D925`],
+    recheck: ['Re-check status', 'toast:Still processing at the bank. Checked again 12:00'], verify: ['Verify proof', 'D912'],
+    payment: ['Record payment', '#record'], receipt: ['Download receipt', 'toast:Receipt downloaded'], refund: ['Refund', 'D922'],
+    pdf: ['Download PDF', 'toast:PDF downloaded'], credit: ['Create credit note', `D905${q}`], duplicate: ['Duplicate as new', 'D902'],
+    cancel: ['Cancel invoice', '#cancel'], suspend: ['Suspend AMC', 'D610'],
+  };
+  const BY_STATUS = {
+    due: [['remind', 'record'], ['pdf', 'credit', 'duplicate', 'cancel']],
+    overdue: [['call', 'remind', 'record'], ['pdf', 'credit', ...(amc ? ['suspend'] : []), 'duplicate', 'cancel']],
+    processing: [['recheck', 'pdf'], ['duplicate']],
+    verification: [['verify', 'pdf'], ['record', 'duplicate']],
+    partly: [['payment', 'remind'], ['pdf', 'credit', 'duplicate']],
+    paid: [['receipt', 'credit'], ['refund', 'pdf', 'duplicate']],
+    cancelled: [['duplicate'], ['pdf']],
+  };
+  const button = (key, cls) => {
+    const [label, target] = A[key];
+    if (target.startsWith('#')) return `<button class="${cls}" type="button" data-open="${target.slice(1)}">${label}</button>`;
+    if (target.startsWith('toast:')) return `<button class="${cls}" type="button" data-toast="${target.slice(6)}">${label}</button>`;
+    return `<a class="${cls}" href="#${target}">${label}</a>`;
+  };
+  const [bar, more] = BY_STATUS[i.status];
+  document.getElementById('actions').innerHTML = `${bar.slice(1).map((k) => button(k, 'btn btn-secondary')).join('')}${button(bar[0], 'btn btn-primary')}
+    <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  const MENU_ICON = { pdf: 'file-pdf', credit: 'file-minus', duplicate: 'copy', cancel: 'x', suspend: 'pause', refund: 'rotate-ccw', record: 'banknote' };
+  document.getElementById('more-menu').innerHTML = `${more.filter((k) => k !== 'cancel').map((k) => button(k, '').replace('>', `>${ic(MENU_ICON[k])}`)).join('')}
+    <button type="button" data-toast="Link copied">${ic('link')}Copy link</button><button type="button" data-toast="Print view opened">${ic('printer')}Print</button>
+    ${more.includes('cancel') ? `<hr><button class="danger" type="button" data-open="cancel">${ic('x')}Cancel invoice</button>` : ''}`;
+  document.getElementById('cancel-title').textContent = `Cancel ${i.number}?`;
+  document.getElementById('cancel-text').textContent = `${c.name} will be told. The number stays in the series and the invoice is kept as Cancelled.`;
+  document.getElementById('rec-sub').textContent = `${i.number} · balance ${r.money(bal)}`;
+  document.getElementById('rec-amount').value = bal.toFixed(2);
+
+  /* edge banners */
+  const banners = [];
+  const banner = (tone, icon, text, btn = '') => `<div class="banner ${tone}">${ic(icon)}<span class="grow">${text}</span>${btn ? `<span class="btns">${btn}</span>` : ''}</div>`;
+  if (openDispute) banners.push(banner('amber', 'scale', `<b>Line disputed by the customer.</b> ${openDispute.number}: ${openDispute.reason}.`, `<a class="btn btn-sm btn-secondary" href="#D921?d=${openDispute.number}">Open dispute</a>`));
+  if (i.status === 'processing') banners.push(banner('amber', 'warning', '<b>Amount mismatch.</b> Razorpay captured ₹2,300.00, the invoice is ₹2,360.00. The invoice stays Processing until you review it.', `<a class="btn btn-sm btn-secondary" href="#D911?p=pay_Oa9TyHn2Jw6C">Open payment</a>`));
+  if (i.lastAttempt === 'failed') banners.push(banner('red', 'warning-circle', '<b>Last payment failed.</b> Your bank declined the payment. The customer can try again in the app.', `<a class="btn btn-sm btn-secondary" href="#D914">Failed payments</a>`));
+  if (i.status === 'verification') banners.push(banner('', 'bank', '<b>Bank transfer proof uploaded.</b> Verify within 1 working day.', `<a class="btn btn-sm btn-primary" href="#D912">Verify proof</a>`));
+  if (['paid', 'partly'].includes(i.status)) banners.push(banner('grey', 'lock-simple', '<b>Lines are locked.</b> A payment is recorded, so changes need a credit note and a new invoice.'));
+  if (i.status === 'cancelled') banners.push(banner('grey', 'ban', `<b>Cancelled.</b> ${i.cancelReason}. Read only.`));
+  document.getElementById('edge-banners').innerHTML = banners.join('');
+
+  /* lines */
+  document.getElementById('tab-lines').innerHTML = `<div class="stack">
+    <div class="grid cols-2" style="gap:20px"><dl class="dl stack"><dt>Bill to</dt><dd><b>${c.name}</b><br>${bill.address}<br><span class="mono">GSTIN ${c.gstin}</span></dd></dl>
+      <dl class="dl stack"><dt>Place of supply</dt><dd>${bill.state} (${bill.stateCode})</dd><dt>Tax</dt><dd>IGST, supplier in ${data.supplier.state} (${data.supplier.stateCode})</dd></dl></div>
+    ${B.linesTable(i.lines, i.company, openDispute ? openDispute.line : -1)}</div>`;
+
+  /* payments */
+  document.getElementById('n-pay').textContent = pays.length;
+  document.getElementById('tab-payments').innerHTML = pays.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Payment</th><th>Method</th><th>Date</th><th class="num">Amount</th><th>Status</th></tr></thead><tbody>
+    ${pays.map((p) => `<tr data-href="${p.status === 'verification' ? 'D912' : `D911?p=${B.paymentId(p)}`}"><td><span class="mono">${B.paymentId(p)}</span></td><td>${p.method}</td><td class="nowrap">${r.date(p.when)}, ${r.time(p.when)}</td>
+      <td class="num">${r.money(p.amount)}</td><td>${B.paymentTag(p.status)}${p.flag ? `<span class="sub red-text">${p.flag}</span>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+    : `<div class="state"><span class="disc">${ic('credit-card')}</span><h3>No payments yet</h3><p>Online and offline payments for this invoice appear here.</p></div>`;
+
+  document.getElementById('n-cn').textContent = notes.length;
+  document.getElementById('tab-credits').innerHTML = notes.length ? `<ul class="mini">${notes.map((n) => `<li data-href="D904"><span class="ic-disc green">${ic('file-minus')}</span>
+      <span class="grow"><b class="mono">${n.number}</b><small>${n.reason} · ${n.note}</small></span><span class="end"><b>${r.money(n.amount)}</b><br>${n.applied}</span></li>`).join('')}</ul>`
+    : `<div class="state"><span class="disc">${ic('file-minus')}</span><h3>No credit notes</h3><p>Credit notes against this invoice appear here.</p></div>`;
+
+  document.getElementById('n-rem').textContent = rems.length;
+  document.getElementById('tab-reminders').innerHTML = rems.length ? `<ol class="timeline">${rems.map((x) => `<li><span class="node ${x.status === 'sent' ? 'green' : ''}">${ic(x.status === 'sent' ? 'bell-ring' : 'clock')}</span>
+      <div><b>${x.rule}</b><p>${x.status === 'sent' ? 'Sent' : x.status === 'paused' ? 'Paused' : 'Planned'} · ${x.channels}${x.note ? ` · ${x.note}` : ''}</p></div><small>${r.dayDate(x.when)}, ${r.time(x.when)}</small></li>`).join('')}</ol>`
+    : `<div class="state"><span class="disc">${ic('bell-ring')}</span><h3>No reminders</h3><p>Reminders go 3 days before, on the due date, then every 7 days.</p></div>`;
+
+  /* PDF preview: same layout as the customer copy */
+  const s = data.supplier;
+  document.getElementById('pdf').innerHTML = `<div class="row" style="align-items:flex-start"><div class="grow"><b>${s.name}</b><p class="muted">${s.address}<br>GSTIN ${s.gstin} · PAN ${s.pan}</p></div>
+      <div style="text-align:right"><b>Tax invoice</b><p class="mono">${i.number}</p><p class="muted">${r.date(i.issued)} · due ${r.date(i.due)}</p></div></div>
+    <hr class="divider"><p><b>${c.name}</b><br><span class="muted">${bill.address} · GSTIN ${c.gstin} · Place of supply ${bill.state} (${bill.stateCode})</span></p>
+    ${B.linesTable(i.lines, i.company)}
+    <p class="muted" style="font-size:12px">Pay to ${s.bank.name}, account ${s.bank.account}, IFSC ${s.bank.ifsc}. ${s.footer}</p>`;
+
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${rems.filter((x) => x.status === 'sent').slice(0, 2).map((x) => `<tr><td class="nowrap">${r.date(x.when)}, ${r.time(x.when)}</td><td>System</td><td>Reminder sent: ${x.rule}</td></tr>`).join('')}
+    <tr><td class="nowrap">${r.date(i.issued)}, 11:05</td><td>Rajesh Goyal</td><td>Issued, number ${i.number} assigned; customer notified</td></tr>
+    <tr><td class="nowrap">${r.date(i.issued)}, 10:48</td><td>Rajesh Goyal</td><td>Draft created${i.for ? ` from ${i.for}` : ''}</td></tr></tbody></table>`;
+
+  /* side cards */
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Balance</h3></div>
+      <div class="card-body stack-sm"><span class="kpi-big ${i.status === 'overdue' ? 'red-text' : ''}">${r.money(bal)}</span>
+        <dl class="dl"><dt>Invoice total</dt><dd>${r.money(i.amount)}</dd><dt>Received</dt><dd>${r.money(i.paid || 0)}</dd>
+          <dt>Credit notes</dt><dd>${r.money(notes.reduce((x, n) => x + n.amount, 0))}</dd><dt>Due date</dt><dd>${r.date(i.due)}</dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="#D202">Open</a></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar blue">${contact.initials}</span><span><b>${c.name}</b><small>${c.code} · ${contact.name}</small></span></div>
+        <dl class="dl"><dt>GSTIN</dt><dd class="mono">${c.gstin}</dd><dt>Terms</dt><dd>${bill.terms} days</dd><dt>Email</dt><dd>${bill.email}</dd></dl>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${contact.mobile.replace(/\s/g, '')}">${ic('phone')}${contact.mobile}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Related</h3></div>
+      <ul class="mini">
+        ${i.for ? `<li data-href="${B.linkOf(i.for) || 'D901'}"><span class="ic-disc">${ic(i.for.startsWith('AMC') ? 'seal-check' : i.for.startsWith('ORD') ? 'shopping-cart' : 'wrench')}</span><span class="grow"><b class="mono">${i.for}</b><small>Linked record</small></span></li>` : ''}
+        ${disputes.map((x) => `<li data-href="D921?d=${x.number}"><span class="ic-disc amber">${ic('scale')}</span><span class="grow"><b class="mono">${x.number}</b><small>Dispute · ${x.reason}</small></span>${B.disputeTag(x.status)}</li>`).join('')}
+        ${i.receipt ? `<li data-href="D915"><span class="ic-disc green">${ic('receipt-text')}</span><span class="grow"><b class="mono">${i.receipt}</b><small>Receipt</small></span></li>` : ''}
+        ${!i.for && !disputes.length && !i.receipt ? '<li><span class="muted">Nothing linked</span></li>' : ''}</ul></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

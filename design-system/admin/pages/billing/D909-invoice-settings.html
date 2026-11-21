@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D909 Invoice settings</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-billing.css">
+</head>
+<body class="adm" data-page="D909" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Invoice settings</span></nav>
+      <h1>Invoice settings</h1><p>Printed on every invoice, credit note and receipt</p></div>
+    <button class="btn btn-secondary" type="button" data-open="preview"><svg class="ic"><use href="#ph-eye"/></svg>Preview</button>
+  </div>
+
+  <div class="banner" style="margin-bottom:16px" data-when="ready errors"><svg class="ic"><use href="#ph-info"/></svg><span class="grow">Changes apply to new invoices only. Issued invoices keep their details.</span></div>
+  <div class="banner red" style="margin-bottom:16px" data-when="errors"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow"><b>Fix 1 thing to save.</b> <a href="#gstin">GSTIN</a></span></div>
+
+  <div class="grid side-right" data-when="ready errors">
+    <div class="stack">
+      <section class="card"><div class="card-head"><div class="grow"><h2>Legal details</h2></div></div>
+        <div class="card-body"><div class="form-grid">
+          <div class="field"><label for="name">Legal name</label><input class="input" id="name"></div>
+          <div class="field"><label for="state">State</label><select class="select" id="state"><option>Haryana (06)</option></select><span class="hint">Decides CGST and SGST or IGST</span></div>
+          <div class="field full"><label for="addr">Address</label><input class="input" id="addr"></div>
+          <div class="field"><label for="gstin">GSTIN</label><input class="input mono" id="gstin" maxlength="15">
+            <span class="hint" data-when="ready">15 characters, starts with 06</span>
+            <span class="error" data-when="errors"><svg class="ic"><use href="#ph-warning-circle"/></svg>GSTIN has 15 characters</span></div>
+          <div class="field"><label for="pan">PAN</label><input class="input mono" id="pan" maxlength="10"></div>
+          <div class="field full"><span class="label">Logo</span><div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-image"/></svg></span><span class="grow"><b>zixom-logo.png</b><br><span class="muted">PNG · 48 KB</span></span>
+            <button class="btn btn-sm btn-secondary" type="button" data-toast="Choose a PNG or SVG up to 1 MB">Replace</button></div></div>
+        </div></div></section>
+
+      <section class="card"><div class="card-head"><div class="grow"><h2>Bank details</h2><p>Shown on invoices and in the app for bank transfer (C1608)</p></div></div>
+        <div class="card-body"><div class="form-grid">
+          <div class="field"><label for="bank">Bank</label><input class="input" id="bank"></div>
+          <div class="field"><label for="branch">Branch</label><input class="input" id="branch"></div>
+          <div class="field"><label for="acct">Account number</label><input class="input mono" id="acct"></div>
+          <div class="field"><label for="ifsc">IFSC</label><input class="input mono" id="ifsc" maxlength="11"></div>
+        </div></div></section>
+
+      <section class="card"><div class="card-head"><div class="grow"><h2>Terms and footer</h2></div></div>
+        <div class="card-body"><div class="form-grid">
+          <div class="field"><label for="days">Default credit terms</label><div class="input-wrap"><input class="input" id="days" inputmode="numeric"><span class="suffix">days</span></div><span class="hint">Each company can override this</span></div>
+          <div class="field"><label for="pw">Ask for the password above</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="pw" inputmode="numeric"></div></div>
+          <div class="field full"><label for="terms">Terms</label><textarea class="textarea" id="terms" maxlength="500">Payment within 15 days. Pay in the Zixom Connect app or by bank transfer. Engineers never collect payment.</textarea></div>
+          <div class="field full"><label for="footer">Footer</label><input class="input" id="footer" maxlength="200"></div>
+        </div></div></section>
+
+      <section class="card"><div class="card-head"><div class="grow"><h2>Number series</h2><p>Assigned by the server at issue, in order, April to March</p></div><a class="card-link" href="#D1611">All series</a></div>
+        <div class="card-body"><div class="form-grid three">
+          <div class="field"><label for="prefix">Invoice prefix</label><input class="input mono" id="prefix" value="INV-2026-" readonly></div>
+          <div class="field"><label for="next">Next number</label><input class="input mono" id="next" readonly></div>
+          <div class="field"><label for="cn">Credit note prefix</label><input class="input mono" id="cn" value="CN-2026-" readonly></div>
+        </div></div></section>
+    </div>
+
+    <aside class="stack side-sticky">
+      <section class="card"><div class="card-head"><div class="grow"><h2>History</h2></div></div>
+        <ul class="mini">
+          <li><span class="ic-disc"><svg class="ic"><use href="#ph-pencil-simple"/></svg></span><span class="grow"><b>Terms changed</b><small>Rajesh Goyal · 2 Oct 2026</small></span></li>
+          <li><span class="ic-disc"><svg class="ic"><use href="#ph-bank"/></svg></span><span class="grow"><b>Bank details set</b><small>Rajesh Goyal · 1 Apr 2026</small></span></li>
+          <li><span class="ic-disc"><svg class="ic"><use href="#ph-tag"/></svg></span><span class="grow"><b>Series reset to INV-2026-</b><small>System · 1 Apr 2026</small></span></li></ul></section>
+    </aside>
+  </div>
+
+  <div class="form-bar" data-when="ready errors"><span class="grow" id="bar-text">No changes yet</span>
+    <button class="btn btn-ghost" type="button" data-toast="Changes discarded">Discard</button><button class="btn btn-primary" type="button" id="save" disabled data-busy data-toast="Saved">Save</button></div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+</main>
+
+<div class="overlay right" id="preview" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="pv-title">
+    <div class="drawer-head"><div class="grow"><h2 id="pv-title">Invoice preview</h2><p>Sample invoice with these settings</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body"><div class="doc-sheet" id="pv"></div></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading errors error">
+  <div><h3>What it is</h3><p>Zixom's legal name, address, GSTIN, PAN, logo, bank, terms, footer and number series.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit and save; Save stays off until something changes.</li><li>Preview a sample invoice.</li></ul></div>
+  <div><h3>What happens next</h3><p>New invoices (D902) and the bank transfer screen in the app (C1608) use these details.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Changes apply to new invoices only.</li><li>Number series is server assigned, cannot be edited here (EC-A43).</li><li>Sample business profile from section 17.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const s = ZXA.data.billing.supplier;
+  const $ = (id) => document.getElementById(id);
+  const fill = { name: s.name, addr: s.address, gstin: s.gstin, pan: s.pan, bank: s.bank.name, branch: s.bank.branch, acct: s.bank.account, ifsc: s.bank.ifsc,
+    days: s.terms, pw: '1,00,000', footer: s.footer, next: s.next };
+  Object.entries(fill).forEach(([id, v]) => { $(id).value = v; });
+  document.querySelector('.content').addEventListener('input', () => { $('save').disabled = false; $('bar-text').textContent = 'Unsaved changes'; });
+  $('pv').innerHTML = `<div class="row" style="align-items:flex-start"><div class="grow"><b>${s.name}</b><p class="muted">${s.address}<br>GSTIN ${s.gstin} · PAN ${s.pan}</p></div>
+    <div style="text-align:right"><b>Tax invoice</b><p class="mono">${s.next}</p></div></div>
+    <p><b>Sample customer</b><br><span class="muted">Ahmedabad, Gujarat · GSTIN 24AAAAA0000A1Z5</span></p>
+    ${ZXA.bill.linesTable([['Labour, hours', 2, 800], ['Ceramic heater element 650 W', 1, 2850]], 'shree')}
+    <p class="muted" style="font-size:12px">Pay to ${s.bank.name}, account ${s.bank.account}, IFSC ${s.bank.ifsc}. ${s.footer}</p>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+new MutationObserver(() => document.getElementById('gstin').setAttribute('aria-invalid', String(document.body.dataset.state === 'errors')))
+  .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+</script>
+</body>
+</html>

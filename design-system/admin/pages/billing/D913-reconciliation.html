@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D913 Reconciliation</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D913">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reconciliation</span></nav>
+      <h1>Reconciliation</h1><p>Razorpay settlements against payments</p></div>
+    <label class="row"><input class="input" type="date" value="2026-10-01" aria-label="From"><span class="muted">to</span><input class="input" type="date" value="2026-11-23" aria-label="To"></label>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="kpis" id="sums" data-when="ready"></section>
+
+    <section class="card" style="margin-top:16px" data-when="ready">
+      <div class="card-head"><div class="grow"><h2>Not in any settlement</h2><p>Captured or flagged payments Razorpay has not settled yet</p></div></div>
+      <ul class="mini" id="unmatched"></ul>
+    </section>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head" data-when="ready"><div class="grow"><h2>Settlements</h2><p id="set-sub"></p></div></div>
+      <div class="table-wrap" data-when="ready">
+        <table class="table" id="settlements">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Settlement</th><th>Payments</th><th class="sortable num">Expected</th><th class="sortable num">Fees</th><th class="sortable num">Received</th><th class="num">Difference</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-git-compare"/></svg></span><h3>No settlements in this range</h3><p>Razorpay settlements for the dates you pick appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="kpis"><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div>
+    <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div></section>
+    <section class="card list-card" style="margin-top:16px"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Settlement</th><th>Payments</th><th>Expected</th><th>Fees</th><th>Received</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="settlements" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Marked reconciled">Mark reconciled</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="menu" id="export-menu" hidden><button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button><button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button></div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>What Razorpay paid into the bank against the payments it captured, for a date range.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change the range; export to Excel or CSV.</li><li>Mark a matched settlement reconciled, one or in bulk.</li><li>Open any payment from the list.</li></ul></div>
+  <div><h3>What happens next</h3><p>Reconciled settlements are locked. Unmatched payments link to Payment detail (D911).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unmatched payments are listed at the top.</li><li>Fees include 18 percent GST on the fee.</li><li>Amount mismatch payments stay unmatched until reviewed (EC-A21).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = ZXA.data.billing.settlements;
+  const sum = (k) => list.reduce((s, x) => s + x[k], 0);
+  const settled = new Set(list.flatMap((x) => x.payments));
+  const unmatched = B.payments.filter((p) => p.txn.startsWith('pay_') && !settled.has(p.txn) && p.status !== 'failed' && p.when >= '2026-10-01');
+  document.getElementById('sums').innerHTML = [['Expected', sum('expected'), `${list.length} settlements`], ['Fees', sum('fees'), 'with GST on fees'],
+    ['Received', sum('received'), 'in the bank'], ['Unmatched', unmatched.reduce((s, p) => s + p.amount, 0), `${unmatched.length} payment`]]
+    .map(([label, v, foot], n) => `<div class="card kpi${n === 3 && unmatched.length ? ' alert' : ''}"><span class="label">${label}</span><span class="value">${r.money(v).replace('.00', '')}</span><span class="foot">${foot}</span></div>`).join('');
+  document.getElementById('unmatched').innerHTML = unmatched.length ? unmatched.map((p) => `<li data-href="D911?p=${p.txn}"><span class="ic-disc amber">${r.icon('warning')}</span>
+    <span class="grow"><b class="mono">${p.txn}</b><small>${p.invoice} · ${p.method} · ${r.dayDate(p.when)} ${r.time(p.when)}${p.flag ? ` · ${p.flag}` : ''}</small></span>
+    <span class="end"><b>${r.money(p.amount)}</b><br>${B.PAYMENT[p.status][0]}</span></li>`).join('') : '<li><span class="muted">Every payment is in a settlement</span></li>';
+  document.getElementById('set-sub').textContent = `${list.filter((x) => x.status === 'reconciled').length} reconciled · ${list.filter((x) => x.status === 'matched').length} to mark`;
+  document.querySelector('#settlements tbody').innerHTML = list.map((x) => {
+    const diff = x.received + x.fees - x.expected;
+    return `<tr><td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.id}"${x.status === 'reconciled' ? ' disabled' : ''}></label></td>
+      <td><span class="mono strong">${x.id}</span><span class="sub">${r.date(x.date)}</span></td>
+      <td>${x.payments.map((id) => `<a class="mono" href="#D911?p=${id}">${id}</a>`).join('<br>')}</td>
+      <td class="num">${r.money(x.expected)}</td><td class="num">${r.money(x.fees)}</td><td class="num">${r.money(x.received)}</td>
+      <td class="num ${Math.abs(diff) > 0.001 ? 'red-text strong' : 'faint'}">${r.money(diff)}</td>
+      <td>${x.status === 'reconciled' ? r.tag('Reconciled', 'green') : r.tag('Matched', 'blue')}</td>
+      <td class="actions">${x.status === 'matched' ? '<button class="btn btn-sm btn-secondary" type="button" data-toast="Marked reconciled">Mark reconciled</button>' : ''}</td></tr>`;
+  }).join('');
+  B.skeleton('sk-rows');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

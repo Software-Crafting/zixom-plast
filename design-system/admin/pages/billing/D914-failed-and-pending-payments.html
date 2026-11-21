@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D914 Failed and pending payments</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D914">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Failed and pending</span></nav>
+      <h1>Failed and pending payments</h1><p>Failed, or still processing after 30 minutes</p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="All pending payments re-checked with Razorpay">Re-check all</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="failed">Failed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="processing">Pending <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#issues"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Invoice, customer or gateway id" aria-label="Search payments"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="issues">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Payment</th><th class="sortable">Invoice</th><th class="sortable">Customer</th><th>Method</th><th class="sortable num">Amount</th><th>Status and reason</th><th class="sortable">Age</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No failed or pending payments</h3><p>Payments that fail or stay processing over 30 minutes appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Payment</th><th>Invoice</th><th>Customer</th><th>Amount</th><th>Status</th><th>Age</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="issues" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Re-checked with Razorpay">Re-check</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="overlay right" id="contact" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ct-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ct-title">Contact customer</h2><p id="ct-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="btns" id="ct-call"></div>
+      <div class="field"><label for="ct-msg">Message in the app</label><textarea class="textarea" id="ct-msg" maxlength="500"></textarea><span class="hint">Any debit is returned by the bank in 5 to 7 working days.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Message sent in the app">Send</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><span class="label">Method</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">UPI</button>
+      <button class="chip" type="button" aria-pressed="false">Card</button><button class="chip" type="button" aria-pressed="false">Net banking</button><button class="chip" type="button" aria-pressed="false">Wallet</button></div></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show payments</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C806-payment-failed.html">
+  <div><h3>What it is</h3><p>Online payments that failed or are still processing after 30 minutes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Re-check one, several or all with Razorpay.</li><li>Contact the customer by phone or in the app.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer sees C806 (failed) or C807 (pending) in the app. Payment detail (D911).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pending payments are re-checked automatically for 24 hours.</li><li>Failed: debit returns in 5 to 7 working days.</li><li>A late webhook moves a row out of this list (EC-A18).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = B.payments.filter((p) => ['failed', 'processing'].includes(p.status));
+  const age = (p) => { const min = Math.round((new Date(ZX.data.now) - new Date(p.when)) / 60000); return min < 60 ? `${min} min` : min < 1440 ? `${Math.round(min / 60)} h` : `${Math.round(min / 1440)} d`; };
+  document.querySelector('#issues tbody').innerHTML = list.map((p, n) => `<tr data-n="${n}" data-href="D911?p=${p.txn}" class="${p.status === 'failed' ? 'urgent' : ''}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.txn}"></label></td>
+    <td><a class="rec" href="#D911?p=${p.txn}">${p.txn}</a><span class="sub">${r.dayDate(p.when)}, ${r.time(p.when)}</span></td>
+    <td><a class="mono" href="#D903?inv=${p.invoice}">${p.invoice}</a></td><td><b class="clip">${r.company(p.company).name}</b></td>
+    <td class="nowrap">${p.method}</td><td class="num">${r.money(p.amount)}</td>
+    <td>${B.paymentTag(p.status)}<span class="sub ${p.status === 'failed' ? 'red-text' : ''}">${p.reason || p.flag || 'Waiting for the bank'}</span></td>
+    <td class="nowrap" data-sort="${p.when}">${age(p)}</td>
+    <td class="actions nowrap"><button class="btn btn-sm btn-secondary" type="button" data-n="${n}" data-open="contact">Contact</button></td></tr>`).join('');
+  B.listViews('issues', list, { all: () => true, failed: (p) => p.status === 'failed', processing: (p) => p.status === 'processing' });
+  B.skeleton('sk-rows');
+  document.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-open="contact"]');
+    if (!btn) return;
+    const p = list[btn.dataset.n];
+    const person = r.person(p.company === 'nova' ? 'imran' : 'rakesh');
+    document.getElementById('ct-sub').textContent = `${person.name} · ${p.invoice} · ${r.money(p.amount)}`;
+    document.getElementById('ct-call').innerHTML = `<a class="btn btn-secondary" href="tel:${person.mobile.replace(/\s/g, '')}">${r.icon('phone')}Call ${person.mobile}</a>`;
+    document.getElementById('ct-msg').value = p.status === 'failed'
+      ? `Your payment of ${r.money(p.amount)} for ${p.invoice} did not go through. Please try again in the app or pay by bank transfer.`
+      : `Your payment of ${r.money(p.amount)} for ${p.invoice} is still processing at the bank. No need to pay again.`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

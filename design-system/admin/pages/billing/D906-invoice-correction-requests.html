@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D906 Invoice correction requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D906" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Correction requests</span></nav>
+      <h1>Invoice correction requests</h1><p id="head-sub"></p></div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#requests"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Invoice, customer or field" aria-label="Search requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="requests">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Invoice</th><th class="sortable">Customer</th><th class="sortable">Field</th><th>Change asked</th><th class="sortable">Requested</th><th class="sortable">Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No correction requests</h3><p>Requests to fix a GSTIN, name or address from the app appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Invoice</th><th>Customer</th><th>Field</th><th>Change</th><th>Requested</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+<div class="overlay center" id="reissue" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ri-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-file-diff"/></svg></span>
+      <div class="grow"><h2 id="ri-title"></h2><p>A credit note cancels the old invoice in full and a new invoice is issued with the corrected details. The customer is told.</p></div></div>
+    <div class="modal-body stack" id="ri-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Credit note CN-2026-0013 and invoice INV-2026-0992 issued">Correct and reissue</button></div>
+  </div>
+</div>
+<div class="overlay center" id="decline" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="dc-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="dc-title">Decline this request?</h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="dc-reason">Reason</label><select class="select" id="dc-reason"><option>GST return already filed for that month</option><option>Details match the GST registration</option><option>Needs proof of the new details</option><option>Other</option></select></div>
+      <div class="field"><label for="dc-note">Message <span class="opt">optional</span></label><textarea class="textarea" id="dc-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Request declined. Customer told">Decline</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><span class="label">Field</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">GSTIN</button>
+      <button class="chip" type="button" aria-pressed="false">Company name</button><button class="chip" type="button" aria-pressed="false">Billing address</button></div></div>
+      <div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1604-invoice-correction.html">
+  <div><h3>What it is</h3><p>Requests from the app to fix a GSTIN, company name or billing address on an invoice.</p></div>
+  <div><h3>What you can do</h3><ul><li>Row click shows the old and new details side by side.</li><li>Correct and reissue: credit note plus a new invoice (password and reason).</li><li>Decline with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer is notified in the app. The new invoice opens in Invoice detail (D903); the note in Credit notes (D904).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Amounts, items and dates cannot be changed this way (C1604).</li><li>After the month's GST return is filed, decline is the usual answer.</li><li>Invoice numbers are never reused (EC-A43).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = ZXA.data.billing.corrections;
+  document.getElementById('head-sub').textContent = `${list.filter((x) => x.status === 'open').length} open · answer within 2 working days`;
+  document.querySelector('#requests tbody').innerHTML = list.map((x, n) => {
+    const i = B.invoice(x.invoice);
+    return `<tr data-drawer="quick" data-n="${n}"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select request ${n + 1}"></label></td>
+      <td><a class="rec" href="#D903?inv=${x.invoice}">${x.invoice}</a><span class="sub">${r.money(i.amount)}</span></td>
+      <td><b class="clip">${r.company(i.company).name}</b><span class="sub">${r.person(x.by).name}</span></td>
+      <td>${x.field}</td><td><span class="clip ${x.field === 'GSTIN' ? 'mono' : ''}">${x.to}</span></td>
+      <td class="nowrap" data-sort="${x.requested}">${r.date(x.requested)}</td><td>${B.correctionTag(x.status)}</td></tr>`;
+  }).join('');
+  B.listViews('requests', list, { open: (x) => x.status === 'open', closed: (x) => x.status !== 'open', all: () => true }, 'open');
+  B.skeleton('sk-rows');
+  document.getElementById('ri-fields').innerHTML = B.passwordFields('ri', ['Customer details were wrong on the invoice', 'GSTIN changed', 'Other']);
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.n];
+    const open = x.status === 'open';
+    document.getElementById('quick-title').textContent = `${x.field} on ${x.invoice}`;
+    document.getElementById('quick-sub').textContent = `${r.person(x.by).name} · ${r.date(x.requested)}, ${r.time(x.requested)}`;
+    document.getElementById('ri-title').textContent = `Correct and reissue ${x.invoice}?`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${B.correctionTag(x.status)}</div>
+      <div class="diff"><span class="old ${x.field === 'GSTIN' ? 'mono' : ''}">${x.from}</span><span class="new ${x.field === 'GSTIN' ? 'mono' : ''}">${x.to}</span></div>
+      ${x.note ? `<p>"${x.note}"</p>` : ''}${x.reply ? `<div class="banner grey"><svg class="ic"><use href="#ph-chat-text"/></svg><span class="grow">${x.reply}</span></div>` : ''}
+      <dl class="dl"><dt>Invoice</dt><dd><a class="mono" href="#D903?inv=${x.invoice}">${x.invoice}</a></dd><dt>Invoice status</dt><dd>${B.invoiceTag(B.invoice(x.invoice).status)}</dd></dl>`;
+    document.getElementById('quick-foot').innerHTML = open ? `<button class="btn btn-ghost" type="button" data-open="decline">Decline</button><span class="grow"></span><button class="btn btn-primary" type="button" data-open="reissue">Correct and reissue</button>`
+      : '<span class="grow"></span><button class="btn btn-secondary" type="button" data-close>Close</button>';
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

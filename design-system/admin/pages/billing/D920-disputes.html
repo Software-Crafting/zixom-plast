@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D920 Disputes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D920">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Disputes</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="active">Needs decision <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="accepted">Accepted <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="rejected">Rejected <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#disputes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Dispute, invoice or customer" aria-label="Search disputes"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="disputes">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Dispute</th><th class="sortable">Invoice and line</th><th class="sortable">Customer</th><th>Reason</th><th class="sortable num">Line amount</th><th class="sortable">Raised</th><th>Decide by</th><th class="sortable">Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No disputes</h3><p>Charges customers dispute in the app appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Dispute</th><th>Invoice</th><th>Customer</th><th>Reason</th><th>Amount</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="menu" id="export-menu" hidden><button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button><button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button></div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><span class="label">Reason</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">Wrong amount</button>
+      <button class="chip" type="button" aria-pressed="false">Already paid</button><button class="chip" type="button" aria-pressed="false">Work not done</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
+      <div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show disputes</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1602-dispute-status.html">
+  <div><h3>What it is</h3><p>Charges customers disputed in the app (C1601), one line per dispute.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, saved views.</li><li>Click a row to open the dispute and decide.</li></ul></div>
+  <div><h3>What happens next</h3><p>Dispute detail (D921): accept with a credit note, partly accept, reject or ask for more.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Decide within 3 working days; older turns red.</li><li>One open dispute per line (the app links to it).</li><li>Same numbers as the app (DSP-2026-0009, 0007, 0005, 0004).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = ZXA.data.billing.disputes;
+  const active = (x) => ['open', 'review'].includes(x.status);
+  document.getElementById('head-sub').textContent = `${list.filter(active).length} need a decision · decide within 3 working days`;
+  document.querySelector('#disputes tbody').innerHTML = list.map((x, n) => {
+    const i = B.invoice(x.invoice);
+    const [desc, q, rate] = i.lines[x.line];
+    return `<tr data-n="${n}" data-href="D921?d=${x.number}"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+      <td><a class="rec" href="#D921?d=${x.number}">${x.number}</a></td>
+      <td><span class="mono">${x.invoice}</span><span class="sub">${desc}</span></td><td><b class="clip">${r.company(i.company).name}</b><span class="sub">${r.person(x.by).name}</span></td>
+      <td>${x.reason}</td><td class="num" data-sort="${q * rate}">${r.money(r.totals([[desc, q, rate]]).total)}</td>
+      <td class="nowrap" data-sort="${x.raised}">${r.date(x.raised)}</td><td class="nowrap">${B.disputeDue(x)}</td><td>${B.disputeTag(x.status)}</td></tr>`;
+  }).join('');
+  B.listViews('disputes', list, { active, accepted: (x) => x.status === 'accepted', rejected: (x) => x.status === 'rejected', all: () => true }, 'active');
+  B.skeleton('sk-rows');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

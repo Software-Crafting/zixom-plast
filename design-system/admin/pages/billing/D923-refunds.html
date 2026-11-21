@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D923 Refunds</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D923" data-nav="D910">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Refunds</span></nav>
+      <h1>Refunds</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D922"><svg class="ic"><use href="#ph-plus"/></svg>Create refund</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="initiated">Initiated <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="failed">Failed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="processed">Processed <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#refunds"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Refund, payment or customer" aria-label="Search refunds"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="refunds">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Refund</th><th class="sortable">Payment</th><th class="sortable">Customer</th><th>Reason</th><th class="sortable num">Amount</th><th class="sortable">Started</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span><h3>No refunds yet</h3><p>Refunds you start from a payment, order or dispute appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Refund</th><th>Payment</th><th>Customer</th><th>Reason</th><th>Amount</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-pay" href="#D911">Open payment</a><span class="grow"></span><span id="quick-action"></span></div>
+  </div>
+</div>
+<div class="overlay center" id="retry" hidden>
+  <div class="modal" role="dialog" aria-labelledby="rt-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span>
+      <div class="grow"><h2 id="rt-title">Retry RFD-2026-004?</h2><p>The UPI id is no longer active. Send ₹5,900.00 to the bank account Nova Cups shared instead.</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid"><div class="field"><label for="rt-acct">Account number</label><input class="input mono" id="rt-acct" value="000111222333"></div>
+        <div class="field"><label for="rt-ifsc">IFSC</label><input class="input mono" id="rt-ifsc" value="SAMP0000001"></div></div>
+      <div class="field"><label for="rt-pw">Your password</label><input class="input" id="rt-pw" type="password" value="demo-password"><span class="hint">Money actions ask for your password again.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-busy data-toast="Refund sent again. Status Initiated">Retry refund</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden><button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button><button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button></div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">Started from</label><input class="input" id="f-from" type="date" value="2026-04-01"></div><div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show refunds</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C810-refunds.html">
+  <div><h3>What it is</h3><p>Every refund with its gateway status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Row click for the refund timeline the customer sees.</li><li>Retry a failed refund with new bank details and your password.</li><li>Create a refund from a payment (D922).</li></ul></div>
+  <div><h3>What happens next</h3><p>Initiated becomes Processed from the Razorpay webhook; the app shows each step (C810).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Money returns in 5 to 7 working days.</li><li>Failed refunds stay here with Retry; nothing is retried silently.</li><li>Refunds after a dispute link to the dispute and credit note.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = ZXA.data.billing.refunds;
+  document.getElementById('head-sub').textContent = `${list.length} refunds · ${list.filter((x) => x.status === 'failed').length} failed · ${list.filter((x) => x.status === 'initiated').length} in progress`;
+  document.querySelector('#refunds tbody').innerHTML = list.map((x, n) => {
+    const p = B.payment(x.payment);
+    return `<tr data-drawer="quick" data-n="${n}" class="${x.status === 'failed' ? 'urgent' : ''}"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+      <td><span class="mono strong">${x.number}</span><span class="sub mono">${x.gateway}</span></td>
+      <td><a class="rec" href="#D911?p=${x.payment}">${B.paymentId(p)}</a><span class="sub">${p.invoice || p.order}</span></td>
+      <td><b class="clip">${r.company(x.company).name}</b></td><td>${x.reason}${x.dispute ? `<span class="sub mono">${x.dispute}</span>` : ''}</td>
+      <td class="num" data-sort="${x.amount}">${r.money(x.amount)}</td><td class="nowrap" data-sort="${x.started}">${r.date(x.started)}</td>
+      <td>${B.refundTag(x.status)}${x.status === 'failed' ? '<span class="sub red-text">UPI id inactive</span>' : x.expected ? `<span class="sub">By ${r.dayDate(x.expected)}</span>` : ''}</td>
+      <td class="actions">${x.status === 'failed' ? '<button class="btn btn-sm btn-primary" type="button" data-open="retry">Retry</button>' : ''}</td></tr>`;
+  }).join('');
+  B.listViews('refunds', list, { all: () => true, initiated: (x) => x.status === 'initiated', failed: (x) => x.status === 'failed', processed: (x) => x.status === 'processed' });
+  B.skeleton('sk-rows');
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.n];
+    const p = B.payment(x.payment);
+    document.getElementById('quick-title').textContent = x.number;
+    document.getElementById('quick-sub').textContent = `${x.reason} · ${r.money(x.amount)}`;
+    document.getElementById('quick-pay').setAttribute('href', `#D911?p=${x.payment}`);
+    document.getElementById('quick-action').innerHTML = x.status === 'failed' ? '<button class="btn btn-primary" type="button" data-open="retry">Retry</button>' : '';
+    const steps = [['Refund initiated', x.started, 'blue', 'rotate-ccw'],
+      x.status === 'failed' ? ['Failed', x.started, 'red', 'x'] : x.status === 'processed' ? ['Refunded to the account', x.processed, 'green', 'check'] : ['Expected in the account', x.expected, '', 'clock']];
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${B.refundTag(x.status)}</div>
+      ${x.status === 'failed' ? `<div class="banner red"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow">${x.failure}</span></div>` : ''}
+      <dl class="dl"><dt>Customer</dt><dd>${r.company(x.company).name}</dd><dt>To</dt><dd>${p.method}</dd><dt>Gateway id</dt><dd class="mono">${x.gateway}</dd>
+        ${x.creditNote ? `<dt>Credit note</dt><dd class="mono">${x.creditNote}</dd>` : ''}${x.dispute ? `<dt>Dispute</dt><dd><a class="mono" href="#D921?d=${x.dispute}">${x.dispute}</a></dd>` : ''}
+        ${x.order ? `<dt>Order</dt><dd class="mono">${x.order}</dd>` : ''}</dl>
+      <ol class="timeline">${steps.map(([label, day, tone, ic]) => `<li><span class="node ${tone}">${r.icon(ic)}</span><div><b>${label}</b><p>${r.date(day)}</p></div></li>`).join('')}</ol>
+      <p class="muted" style="font-size:13px">The customer sees this timeline in the app. Banks take 5 to 7 working days.</p>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

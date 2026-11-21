@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D910 Payments</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D910">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Payments</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="more-pages">Payments<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D912"><svg class="ic"><use href="#ph-bank"/></svg>Verify proofs</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="verification">Awaiting verification <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="processing">Processing <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="failed">Failed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="flagged">Flagged <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="paid">Paid <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="refund">Refunds <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#payments"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Receipt, invoice, customer or gateway id" aria-label="Search payments"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="payments">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Payment</th><th class="sortable">Invoice or order</th><th class="sortable">Customer</th><th class="sortable">Method</th>
+            <th>Gateway reference</th><th class="sortable num">Amount</th><th class="sortable">Status</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-credit-card"/></svg></span>
+        <h3>No payments yet</h3><p>Payments from the app and offline proofs will appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Payment</th><th>Invoice</th><th>Customer</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="payments" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Status re-checked with Razorpay">Re-check status</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-primary" id="quick-open" href="#D911">Open payment</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Method</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">UPI</button><button class="chip" type="button" aria-pressed="false">Card</button>
+        <button class="chip" type="button" aria-pressed="false">Net banking</button><button class="chip" type="button" aria-pressed="false">Wallet</button>
+        <button class="chip" type="button" aria-pressed="false">Bank transfer</button><button class="chip" type="button" aria-pressed="false">Cheque</button></div></div>
+      <div class="form-grid">
+        <div class="field full"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Amount mismatch only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show payments</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="payments"> Method</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="payments"> Gateway reference</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="more-pages" hidden>
+  <a href="#D914"><svg class="ic"><use href="#ph-warning-circle"/></svg>Failed and pending</a>
+  <a href="#D913"><svg class="ic"><use href="#ph-git-compare"/></svg>Reconciliation</a>
+  <a href="#D915"><svg class="ic"><use href="#ph-receipt-text"/></svg>Receipts</a>
+  <a href="#D923"><svg class="ic"><use href="#ph-rotate-ccw"/></svg>Refunds</a>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D911"><svg class="ic"><use href="#ph-external-link"/></svg>Open payment</a>
+  <button type="button" data-toast="Status re-checked with Razorpay"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Re-check status</button>
+  <button type="button" data-toast="Receipt downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download receipt</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C808-payment-history.html">
+  <div><h3>What it is</h3><p>Every payment: Razorpay online payments, bank transfer, UPI and cheque proofs.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by method and date, saved views.</li><li>Row click for the quick view; the payment id opens the detail.</li><li>Payments menu: failed and pending, reconciliation, receipts, refunds.</li></ul></div>
+  <div><h3>What happens next</h3><p>Payment detail (D911), Offline verification (D912), Refund (D922).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Amount mismatch is flagged; the invoice stays Processing (EC-A21).</li><li>Failed payments show the gateway reason.</li><li>Duplicate and late webhooks never create a second row (EC-A18, EC-A19).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const all = B.payments;
+  const target = (p) => (p.status === 'verification' ? `D912?p=${encodeURIComponent(p.txn)}` : `D911?p=${encodeURIComponent(B.paymentId(p))}`);
+  document.getElementById('head-sub').textContent = `${all.length} payments · ${all.filter((p) => p.status === 'verification').length} proofs to verify · 1 failed today`;
+
+  document.querySelector('#payments tbody').innerHTML = all.map((p, n) => {
+    const c = r.company(p.company);
+    const record = p.invoice ? `<a class="mono" href="#D903?inv=${p.invoice}">${p.invoice}</a>` : B.recordLink(p.order);
+    return `<tr data-drawer="quick" data-n="${n}" class="${p.status === 'failed' || p.flag ? 'urgent' : ''}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select payment ${n + 1}"></label></td>
+      <td><a class="rec" href="#${target(p)}">${p.receipt || (p.status === 'verification' ? 'Proof' : 'No receipt')}</a><span class="sub">${r.date(p.when)}, ${r.time(p.when)}</span></td>
+      <td class="nowrap">${record}</td>
+      <td><b class="clip">${c.name}</b></td>
+      <td class="nowrap"><span class="who">${r.icon(B.METHOD_ICON[p.kind])}<span>${p.kind}</span></span><span class="sub">${p.method.split(', ')[1] || ''}</span></td>
+      <td class="mono nowrap">${p.txn}</td>
+      <td class="num" data-sort="${p.amount}">${r.money(p.amount)}</td>
+      <td>${B.paymentTag(p.status)}${p.flag ? `<span class="sub red-text strong">${p.flag}</span>` : ''}${p.reason ? `<span class="sub red-text">${p.reason}</span>` : ''}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, verification: (p) => p.status === 'verification', processing: (p) => p.status === 'processing', failed: (p) => p.status === 'failed',
+    flagged: (p) => Boolean(p.flag), paid: (p) => p.status === 'paid', refund: (p) => ['refund-initiated', 'refunded'].includes(p.status) || Boolean(p.refund) };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#payments tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](all[row.dataset.n]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = all.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 10 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = all[event.detail.dataset.n];
+    const c = r.company(p.company);
+    const verify = p.status === 'verification';
+    document.getElementById('quick-title').textContent = p.receipt || p.txn;
+    document.getElementById('quick-sub').textContent = `${p.method} · ${r.date(p.when)}, ${r.time(p.when)}`;
+    const open = document.getElementById('quick-open');
+    open.setAttribute('href', `#${target(p)}`);
+    open.textContent = verify ? 'Verify proof' : 'Open payment';
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${B.paymentTag(p.status)}${p.flag ? r.tag(p.flag, 'red') : ''}</div>
+      <dl class="dl"><dt>Amount</dt><dd class="strong">${r.money(p.amount)}</dd>${p.captured ? `<dt>Captured</dt><dd class="red-text">${r.money(p.captured)}</dd>` : ''}
+        <dt>Customer</dt><dd>${c.name}</dd><dt>For</dt><dd>${p.invoice ? `<span class="mono">${p.invoice}</span>` : `<span class="mono">${p.order}</span>`}</dd>
+        <dt>Reference</dt><dd class="mono">${p.txn}</dd><dt>Gateway fee</dt><dd>${p.fee === undefined ? '<span class="faint">None, offline</span>' : r.money(p.fee)}</dd>
+        ${p.reason ? `<dt>Reason</dt><dd class="red-text">${p.reason}</dd>` : ''}${p.refund ? `<dt>Refund</dt><dd class="mono">${p.refund}</dd>` : ''}${p.note ? `<dt>Note</dt><dd>${p.note}</dd>` : ''}</dl>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

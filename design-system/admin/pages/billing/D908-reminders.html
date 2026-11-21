@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D908 Reminders</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D908" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reminders</span></nav>
+      <h1>Reminders</h1><p>Payment reminders by push and email</p></div>
+    <a class="btn btn-secondary" href="#D1609"><svg class="ic"><use href="#ph-gear-six"/></svg>Edit schedule</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <div class="grid cols-3" data-when="ready no-results">
+      <div class="card pad stack-sm"><span class="tag blue" style="align-self:flex-start">Before</span><b>3 days before the due date</b><p class="muted">Push and email to the person who raised the job and the primary contact</p></div>
+      <div class="card pad stack-sm"><span class="tag amber" style="align-self:flex-start">On the day</span><b>On the due date, 10 AM</b><p class="muted">Push and email. Quiet hours 9 PM to 7 AM respected</p></div>
+      <div class="card pad stack-sm"><span class="tag red" style="align-self:flex-start">Overdue</span><b>Every 7 days while overdue</b><p class="muted">Stops when paid, disputed or paused</p></div>
+    </div>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="planned">Upcoming <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="sent">Sent <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="paused">Paused <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#reminders"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Invoice or customer" aria-label="Search reminders"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="reminders">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">When</th><th class="sortable">Invoice</th><th class="sortable">Customer</th><th>Rule</th><th>Channels</th><th class="sortable num">Balance</th><th>Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-bell-ring"/></svg></span><h3>No reminders yet</h3><p>Reminders for issued invoices will appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>When</th><th>Invoice</th><th>Customer</th><th>Rule</th><th>Balance</th><th>Status</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="reminders" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Reminders sent now">Send now</button>
+    <button class="btn" type="button" data-toast="Reminders paused">Pause</button><button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="overlay center" id="pause" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pause-title">
+    <div class="modal-head"><div class="grow"><h2 id="pause-title">Pause reminders for one customer</h2><p>No reminders go out until the date you pick. Invoices still show as due in the app.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="pause-cust">Customer</label><select class="select" id="pause-cust"><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="field"><label for="pause-until">Until</label><input class="input" id="pause-until" type="date" value="2026-12-07" min="2026-11-24"></div>
+      <div class="field"><label for="pause-why">Reason</label><input class="input" id="pause-why" value="Promised payment after the plant shutdown"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Reminders paused until 7 Dec">Pause reminders</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Reminder sent now"><svg class="ic"><use href="#ph-send-horizontal"/></svg>Send now</button>
+  <button type="button" data-open="pause"><svg class="ic"><use href="#ph-pause"/></svg>Pause for this customer</button>
+  <button type="button" data-toast="Reminder skipped"><svg class="ic"><use href="#ph-bell-off"/></svg>Skip this one</button>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><span class="label">Rule</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">3 days before</button>
+      <button class="chip" type="button" aria-pressed="false">On the due date</button><button class="chip" type="button" aria-pressed="false">Overdue</button></div></div>
+      <div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show reminders</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C801-payments.html">
+  <div><h3>What it is</h3><p>The reminder schedule and every reminder sent or planned.</p></div>
+  <div><h3>What you can do</h3><ul><li>Send a reminder now or skip one.</li><li>Pause reminders for one customer until a date.</li><li>Edit the schedule in Payment rules (D1609).</li></ul></div>
+  <div><h3>What happens next</h3><p>Customers see reminders as notifications in the app.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Paused while an online payment is processing or a proof waits.</li><li>No email on record: push only (EC-A61).</li><li>Quiet hours 9 PM to 7 AM.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = ZXA.data.billing.reminders;
+  const TONE = { sent: ['Sent', 'green'], planned: ['Planned', 'blue'], paused: ['Paused', 'amber'] };
+  document.querySelector('#reminders tbody').innerHTML = list.map((x, n) => {
+    const i = B.invoice(x.invoice);
+    return `<tr data-n="${n}" data-href="D903?inv=${x.invoice}"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select reminder ${n + 1}"></label></td>
+      <td class="nowrap" data-sort="${x.when}">${r.dayDate(x.when)}<span class="sub">${r.time(x.when)}</span></td>
+      <td><a class="rec" href="#D903?inv=${x.invoice}">${x.invoice}</a></td><td><b class="clip">${r.company(i.company).name}</b></td>
+      <td>${x.rule}</td><td>${x.channels}${x.note ? `<span class="sub">${x.note}</span>` : ''}</td>
+      <td class="num" data-sort="${B.balance(i)}">${r.money(B.balance(i))}</td><td>${r.tag(...TONE[x.status])}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+  B.listViews('reminders', list, { planned: (x) => x.status === 'planned', sent: (x) => x.status === 'sent', paused: (x) => x.status === 'paused' }, 'planned');
+  B.skeleton('sk-rows');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

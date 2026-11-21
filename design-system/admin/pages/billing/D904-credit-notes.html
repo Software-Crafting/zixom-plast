@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D904 Credit notes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D904" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Credit notes</span></nav>
+      <h1>Credit notes</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D905"><svg class="ic"><use href="#ph-plus"/></svg>Create credit note</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="refunded">Refunded <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="applied">Applied to balance <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="dispute">From disputes <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#notes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Credit note, invoice or customer" aria-label="Search credit notes"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="notes">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Credit note</th><th class="sortable">Invoice</th><th class="sortable">Customer</th><th>Reason</th><th class="sortable num">Amount</th><th>Applied</th><th class="sortable">Issued</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-file-minus"/></svg></span><h3>No credit notes yet</h3><p>Credit notes you issue will appear here and in the app.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D905">Create credit note</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Credit note</th><th>Invoice</th><th>Customer</th><th>Reason</th><th>Amount</th><th>Issued</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="notes" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="PDFs are being zipped">Download PDFs</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-inv" href="#D903">Open invoice</a><span class="grow"></span><button class="btn btn-primary" type="button" data-toast="PDF downloaded">Download PDF</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Reason</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">Billing error</button><button class="chip" type="button" aria-pressed="false">Discount</button>
+        <button class="chip" type="button" aria-pressed="false">Return</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
+      <div class="form-grid"><div class="field"><label for="f-from">Issued from</label><input class="input" id="f-from" type="date" value="2026-04-01"></div><div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show credit notes</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden><button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button><button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button></div>
+<div class="menu" id="row-menu" hidden><button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button><button type="button" data-toast="Credit note sent again in the app"><svg class="ic"><use href="#ph-send-horizontal"/></svg>Resend</button></div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1603-credit-notes.html">
+  <div><h3>What it is</h3><p>Credit notes issued against invoices, with how each was settled.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search and filter by reason and date.</li><li>Row click for lines; download or resend the PDF.</li></ul></div>
+  <div><h3>What happens next</h3><p>Create credit note (D905); the refund it starts shows in Refunds (D923).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Visible to the customer in the app (C1603).</li><li>Numbers are sequential; credit notes are never deleted.</li><li>Issuing needs the password and a reason (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const notes = ZXA.data.billing.creditNotes;
+  document.getElementById('head-sub').textContent = `${notes.length} credit notes · ${r.money(notes.reduce((s, n) => s + n.amount, 0))} this year`;
+  document.querySelector('#notes tbody').innerHTML = notes.map((n, i) => `<tr data-drawer="quick" data-n="${i}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${n.number}"></label></td>
+    <td><span class="mono strong">${n.number}</span><span class="sub">${n.note}</span></td>
+    <td><a class="rec" href="#D903?inv=${n.invoice}">${n.invoice}</a></td>
+    <td><b class="clip">${r.company(n.company).name}</b></td>
+    <td>${n.reason}${n.dispute ? `<span class="sub mono">${n.dispute}</span>` : ''}</td>
+    <td class="num" data-sort="${n.amount}">${r.money(n.amount)}</td>
+    <td>${r.tag(n.applied, n.applied === 'Refunded' ? 'green' : 'blue')}${n.refund ? `<span class="sub mono">${n.refund}</span>` : ''}</td>
+    <td class="nowrap" data-sort="${n.issued}">${r.date(n.issued)}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`).join('');
+  B.listViews('notes', notes, { all: () => true, refunded: (n) => n.applied === 'Refunded', applied: (n) => n.applied === 'Applied to balance', dispute: (n) => Boolean(n.dispute) });
+  B.skeleton('sk-rows');
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const n = notes[event.detail.dataset.n];
+    document.getElementById('quick-title').textContent = n.number;
+    document.getElementById('quick-sub').textContent = `${n.reason} · issued ${r.date(n.issued)}`;
+    document.getElementById('quick-inv').setAttribute('href', `#D903?inv=${n.invoice}`);
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${r.tag(n.applied, n.applied === 'Refunded' ? 'green' : 'blue')}</div><p>${n.note}</p>
+      <dl class="dl"><dt>Customer</dt><dd>${r.company(n.company).name}</dd><dt>Invoice</dt><dd class="mono">${n.invoice}</dd>${n.dispute ? `<dt>Dispute</dt><dd><a class="mono" href="#D921?d=${n.dispute}">${n.dispute}</a></dd>` : ''}
+        ${n.refund ? `<dt>Refund</dt><dd class="mono">${n.refund}</dd>` : ''}<dt>Issued by</dt><dd>Rajesh Goyal</dd></dl>
+      ${B.linesTable(n.lines, n.company)}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

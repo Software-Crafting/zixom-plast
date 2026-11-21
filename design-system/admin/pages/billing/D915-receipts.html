@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D915 Receipts</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D915">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D910">Payments</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Receipts</span></nav>
+      <h1>Receipts</h1><p>Generated on payment and sent to the customer</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#receipts"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Receipt, invoice or customer" aria-label="Search receipts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="receipts">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Receipt</th><th class="sortable">Invoice</th><th class="sortable">Customer</th><th>Method</th><th class="sortable num">Amount</th><th class="sortable">Paid on</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-receipt-text"/></svg></span><h3>No receipts yet</h3><p>Receipts are created when a payment is received.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Receipt</th><th>Invoice</th><th>Customer</th><th>Method</th><th>Amount</th><th>Paid on</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="receipts" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Receipts are being zipped">Download</button>
+    <button class="btn" type="button" data-toast="Receipts sent again">Resend</button><button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="menu" id="export-menu" hidden><button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button><button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button></div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="field"><label for="f-cust">Customer</label><select class="select" id="f-cust"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">Paid from</label><input class="input" id="f-from" type="date" value="2026-04-01"></div><div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show receipts</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C809-receipt.html">
+  <div><h3>What it is</h3><p>Every receipt, one per received payment.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download or resend one or many.</li><li>Click a row to open the payment.</li></ul></div>
+  <div><h3>What happens next</h3><p>Payment detail (D911); the customer sees the receipt in the app (C809).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Generated on payment: online by webhook, offline on verification.</li><li>Duplicate webhooks never make a second receipt (EC-A19).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const list = B.payments.filter((p) => p.receipt);
+  document.querySelector('#receipts tbody').innerHTML = list.map((p, n) => `<tr data-n="${n}" data-href="D911?p=${p.receipt}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.receipt}"></label></td>
+    <td><a class="rec" href="#D911?p=${p.receipt}">${p.receipt}</a></td><td><a class="mono" href="#D903?inv=${p.invoice}">${p.invoice}</a></td>
+    <td><b class="clip">${r.company(p.company).name}</b></td><td class="nowrap">${p.method}</td><td class="num" data-sort="${p.amount}">${r.money(p.amount)}</td>
+    <td class="nowrap" data-sort="${p.when}">${r.date(p.when)}</td>
+    <td class="actions nowrap"><button class="icon-btn sm" type="button" aria-label="Download ${p.receipt}" data-tip="Download" data-toast="Receipt downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg></button>
+      <button class="icon-btn sm" type="button" aria-label="Resend ${p.receipt}" data-tip="Resend" data-toast="Receipt sent again"><svg class="ic"><use href="#ph-send-horizontal"/></svg></button></td></tr>`).join('');
+  B.listViews('receipts', list, { all: () => true });
+  B.skeleton('sk-rows');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

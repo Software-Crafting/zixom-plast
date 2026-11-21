@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D907 Customer statements</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D907" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Customer statements</span></nav>
+      <h1>Customer statements</h1><p>Opening balance, invoices, payments and closing balance for a date range</p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="Statement PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button>
+    <button class="btn btn-primary" type="button" data-open="send"><svg class="ic"><use href="#ph-envelope-simple"/></svg>Send by email</button>
+  </div>
+
+  <section class="card" style="margin-bottom:16px">
+    <div class="card-body"><div class="form-grid three">
+      <div class="field"><label for="cust">Customer</label><select class="select" id="cust"><option value="shree">Shree Packaging Industries</option><option value="nova">Nova Cups Pvt Ltd</option></select></div>
+      <div class="field"><label for="from">From</label><input class="input" id="from" type="date" value="2026-04-01"></div>
+      <div class="field"><label for="to">To</label><input class="input" id="to" type="date" value="2026-11-23" max="2026-11-23"></div>
+    </div>
+    <div class="row wrap" data-single style="margin-top:12px" id="presets">
+      <button class="chip" type="button" aria-pressed="false" data-from="2026-11-01">This month</button>
+      <button class="chip" type="button" aria-pressed="false" data-from="2026-08-23">Last 3 months</button>
+      <button class="chip" type="button" aria-pressed="true" data-from="2026-04-01">This financial year</button>
+      <button class="chip" type="button" aria-pressed="false" data-from="2025-04-01">Since 1 Apr 2025</button></div></div>
+  </section>
+
+  <div class="banner" data-when="large-range" style="margin-bottom:16px"><svg class="ic"><use href="#ph-hourglass"/></svg>
+    <span class="grow"><b>Large range, over 1 year.</b> The PDF is prepared in the background. You get a notification and it appears in Exports.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1520">Exports</a></span></div>
+
+  <div data-when="ready large-range">
+    <section class="kpis" id="sums"></section>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2 id="st-title"></h2><p id="st-sub"></p></div></div>
+      <div class="table-wrap"><table class="table" id="entries">
+        <thead><tr><th>Date</th><th>Entry</th><th>Reference</th><th class="num">Debit</th><th class="num">Credit</th><th class="num">Balance</th></tr></thead>
+        <tbody></tbody></table></div>
+    </section>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+    <h3>Nothing in this range</h3><p>No invoices or payments between these dates.</p></div></div></div>
+  <div data-when="loading"><section class="kpis">
+    <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div>
+    <div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title"></span></div></section>
+    <div class="card pad stack" style="margin-top:16px"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+</main>
+
+<div class="overlay center" id="send" hidden>
+  <div class="modal" role="dialog" aria-labelledby="send-title">
+    <div class="modal-head"><div class="grow"><h2 id="send-title">Send statement by email</h2><p>The PDF is attached. It also shows in the app (C813).</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="send-to">To</label><input class="input" id="send-to" type="email"></div>
+      <div class="field"><label for="send-msg">Message <span class="opt">optional</span></label><textarea class="textarea" id="send-msg" maxlength="500">Please find your account statement attached.</textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Statement sent">Send</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty large-range error" data-mobile="../../../screens/customer/C813-statement.html">
+  <div><h3>What it is</h3><p>Account statement per customer for a date range.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the customer and a preset or custom range.</li><li>Download the PDF or send it by email.</li></ul></div>
+  <div><h3>What happens next</h3><p>Large ranges run in the background and land in Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed, pending and unverified payments are left out.</li><li>Credit notes reduce the balance; refunds add back.</li><li>Empty range: Nothing in this range.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const data = ZXA.data.billing;
+  const $ = (id) => document.getElementById(id);
+  const COUNTED = ['paid', 'refund-initiated', 'refunded'];
+
+  const entriesOf = (company) => [
+    ...B.invoices.filter((i) => i.company === company && !['draft', 'cancelled'].includes(i.status))
+      .map((i) => ({ date: i.issued, entry: `Invoice · ${i.title}`, ref: i.number, debit: i.amount })),
+    ...B.payments.filter((p) => p.company === company && p.invoice && COUNTED.includes(p.status))
+      .map((p) => ({ date: p.when.slice(0, 10), entry: `Payment · ${p.method}`, ref: p.receipt || p.txn, credit: p.amount })),
+    ...data.creditNotes.filter((n) => n.company === company).map((n) => ({ date: n.issued, entry: `Credit note · ${n.reason}`, ref: n.number, credit: n.amount })),
+    ...data.refunds.filter((x) => x.company === company && x.status === 'processed').map((x) => ({ date: x.processed, entry: 'Refund paid out', ref: x.number, debit: x.amount })),
+  ].sort((a, b) => a.date.localeCompare(b.date));
+
+  const draw = () => {
+    const company = $('cust').value;
+    const from = $('from').value;
+    const to = $('to').value;
+    const all = entriesOf(company);
+    const opening = all.filter((e) => e.date < from).reduce((s, e) => s + (e.debit || 0) - (e.credit || 0), 0);
+    const rows = all.filter((e) => e.date >= from && e.date <= to);
+    const debit = rows.reduce((s, e) => s + (e.debit || 0), 0);
+    const credit = rows.reduce((s, e) => s + (e.credit || 0), 0);
+    let balance = opening;
+    $('entries').tBodies[0].innerHTML = `<tr><td class="nowrap">${r.date(from)}</td><td class="strong">Opening balance</td><td></td><td></td><td></td><td class="num strong">${r.money(opening)}</td></tr>
+      ${rows.map((e) => { balance += (e.debit || 0) - (e.credit || 0); return `<tr><td class="nowrap">${r.date(e.date)}</td><td><span class="clip">${e.entry}</span></td><td class="mono nowrap">${e.ref}</td>
+        <td class="num">${e.debit ? r.money(e.debit) : ''}</td><td class="num green-text">${e.credit ? r.money(e.credit) : ''}</td><td class="num">${r.money(balance)}</td></tr>`; }).join('')}
+      <tr><td class="nowrap">${r.date(to)}</td><td class="strong">Closing balance</td><td></td><td></td><td></td><td class="num strong">${r.money(balance)}</td></tr>`;
+    $('sums').innerHTML = [['Opening balance', opening], ['Invoiced', debit], ['Received and credited', credit], ['Closing balance', balance]]
+      .map(([label, v]) => `<div class="card kpi"><span class="label">${label}</span><span class="value">${r.moneyShort(v)}</span><span class="foot">${r.money(v)}</span></div>`).join('');
+    const c = r.company(company);
+    $('st-title').textContent = c.name;
+    $('st-sub').textContent = `${r.date(from)} to ${r.date(to)} · ${rows.length} entries`;
+    $('send-to').value = B.billing(company).email;
+  };
+  $('presets').addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-from]');
+    if (!chip) return;
+    $('from').value = chip.dataset.from;
+    $('to').value = '2026-11-23';
+    draw();
+    if (chip.dataset.from < '2025-11-23') ZXA.ui.setState('large-range');
+    else if (document.body.dataset.state === 'large-range') ZXA.ui.setState('ready');
+  });
+  ['cust', 'from', 'to'].forEach((id) => $(id).addEventListener('change', draw));
+  draw();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

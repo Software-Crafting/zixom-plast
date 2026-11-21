@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D921 Dispute detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-billing.css">
+</head>
+<body class="adm" data-page="D921">
+<main class="content">
+  <div data-when="ready decided">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D920">Disputes</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar"><button class="btn btn-secondary" type="button" data-tab="tab-messages">Message customer</button></div>
+    </div>
+    <div class="banner green" data-when="decided" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg><span class="grow" id="decided-text"></span></div>
+
+    <div class="detail">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Invoice lines</h2><p id="lines-sub"></p></div><a class="card-link" id="inv-link" href="#D903">Open invoice</a></div>
+          <div class="card-body" id="lines"></div>
+        </section>
+        <section class="card">
+          <div class="tabs" role="tablist" aria-label="Dispute sections" style="padding:0 12px">
+            <button role="tab" aria-selected="true" aria-controls="tab-claim">Customer's reason</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-messages">Messages <span class="n">2</span></button>
+            <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+          </div>
+          <div class="card-body" style="padding-top:20px">
+            <div id="tab-claim" role="tabpanel"></div>
+            <div id="tab-messages" role="tabpanel" hidden></div>
+            <div id="tab-history" role="tabpanel" hidden></div>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="card side-card" id="decision" data-when="ready">
+          <div class="card-head"><h3 class="grow">Decision</h3></div>
+          <div class="card-body stack">
+            <div class="choices" id="choices">
+              <label class="choice"><input type="radio" name="d" value="accept" class="sr-only" checked><span><b>Accept</b><small>Credit note for the full line</small></span></label>
+              <label class="choice"><input type="radio" name="d" value="partly" class="sr-only"><span><b>Partly accept</b><small>Credit note for part of the line</small></span></label>
+              <label class="choice"><input type="radio" name="d" value="reject" class="sr-only"><span><b>Reject</b><small>The customer sees your reason</small></span></label>
+              <label class="choice"><input type="radio" name="d" value="ask" class="sr-only"><span><b>Ask for more</b><small>Customer adds files or a message</small></span></label>
+            </div>
+            <div class="field" id="f-amount" hidden><label for="d-amount">Credit before GST</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="d-amount" inputmode="decimal"></div></div>
+            <div class="field"><label for="d-reply" id="d-reply-label">Reply to the customer</label><textarea class="textarea" id="d-reply" maxlength="500"></textarea></div>
+            <label class="check" id="f-refund"><input type="checkbox"> Refund the credit after issue (invoice is paid)</label>
+            <button class="btn btn-primary btn-block" type="button" data-open="confirm" id="decide">Accept and issue credit note</button>
+          </div>
+        </section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="#D202">Open</a></div>
+          <div class="card-body" id="cust"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Invoice</h3></div><div class="card-body"><dl class="dl" id="inv-sum"></dl></div></section>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-block" style="height:200px"></span></div></div>
+  </div>
+  <div data-when="not-found"><div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+    <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p><div class="btns"><a class="btn btn-secondary" href="#D920">Back to disputes</a></div></div></div></div>
+</main>
+
+<div class="overlay center" id="confirm" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cf-title">
+    <div class="modal-head"><div class="grow"><h2 id="cf-title"></h2><p id="cf-text"></p></div></div>
+    <div class="modal-body stack" id="cf-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="cf-go">Confirm</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading not-found decided error" data-mobile="../../../screens/customer/C1602-dispute-status.html">
+  <div><h3>What it is</h3><p>One disputed charge with the line highlighted. Opens with <code>?d=DSP-2026-0007</code>; try 0009, 0004, 0005.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the reason and evidence; message the customer.</li><li>Accept (credit note), partly accept, reject with a reason, or ask for more.</li><li>Credit notes ask for your password and a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer is notified in the app (C1602). Accepting creates a credit note (D904); a paid invoice can be refunded (D922).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Decide within 3 working days.</li><li>Accepted and rejected disputes are read only.</li><li>Refund after a dispute is linked to it and its credit note.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const $ = (id) => document.getElementById(id);
+  const x = B.dispute(new URLSearchParams(location.search).get('d') || 'DSP-2026-0007');
+  if (!x) { ZXA.initialState = 'not-found'; return; }
+  const i = B.invoice(x.invoice);
+  const c = r.company(i.company);
+  const by = r.person(x.by);
+  const [desc, q, rate] = i.lines[x.line];
+  const lineTotal = r.totals([[desc, q, rate]]).total;
+  const decided = !['open', 'review'].includes(x.status);
+  if (decided) ZXA.initialState = 'decided';
+
+  document.title = `Zixom Admin - ${x.number}`;
+  $('crumb').textContent = x.number;
+  $('number').textContent = x.number;
+  $('chips').innerHTML = `${B.disputeTag(x.status)}${r.tag(x.reason, 'outline')}`;
+  $('meta').innerHTML = `<span>${r.icon('buildings')}${c.name}</span><span>${r.icon('user')}${by.name}</span><span>${r.icon('clock')}Raised ${r.date(x.raised)}, ${r.time(x.raised)}</span><span>${B.disputeDue(x)}</span>`;
+  $('decided-text').innerHTML = x.status === 'accepted' ? `<b>Accepted on ${r.date(x.closed)}.</b> Credit note ${x.creditNote} issued; refund RFD-2026-003 initiated. Read only.`
+    : x.status === 'rejected' ? `<b>Rejected on ${r.date(x.closed)}.</b> ${x.reply} Read only.`
+    : '<b>Accepted just now.</b> Credit note CN-2026-0013 issued and the customer told. Read only.';
+  if (x.status === 'rejected') $('decided-text').closest('.banner').className = 'banner grey';
+  $('inv-link').setAttribute('href', `#D903?inv=${i.number}`);
+  $('lines-sub').textContent = `${i.number} · disputed line ${desc}, ${r.money(lineTotal)} with GST`;
+  $('lines').innerHTML = B.linesTable(i.lines, i.company, x.line);
+
+  $('tab-claim').innerHTML = `<div class="stack"><p style="color:var(--text-strong)">"${x.text}"</p>
+    ${x.files.length ? `<div class="gallery">${x.files.map((f) => `<div class="ph">${r.icon(f.endsWith('.pdf') ? 'file-pdf' : 'image')}<small>${f}</small></div>`).join('')}</div>` : '<p class="muted">No files attached.</p>'}
+    <dl class="dl"><dt>Raised by</dt><dd>${by.name}, ${by.designation}</dd><dt>Line</dt><dd>${desc} · ${q} × ${r.money(rate)}</dd><dt>Visit report</dt><dd>${i.for ? B.recordLink(i.for) : '<span class="faint">None</span>'}</dd></dl></div>`;
+  $('tab-messages').innerHTML = `<div class="card" style="box-shadow:inset 0 0 0 1px var(--line)"><div class="thread"><span class="day-sep">${r.dayDate(x.raised)}</span>
+      <div class="msg">${x.text}<small>${by.name} · ${r.time(x.raised)}</small></div>
+      <div class="msg me">Thank you. We are checking the engineer's report and will reply within 3 working days.<small>Neha, Zixom support · ${r.time(x.raised).replace(/^(\d\d)/, (h) => String(Number(h) + 1).padStart(2, '0'))}</small></div>
+      <div class="msg note">Internal: Sandeep's report shows 2 h 40 min on site. Check the gate time.<small>You · only Admins see this</small></div></div>
+    <div class="composer"><textarea class="textarea" placeholder="Write to the customer" aria-label="Message"></textarea><label class="switch" style="margin-bottom:10px"><input type="checkbox"><span></span>Internal</label>
+      <button class="btn btn-primary" type="button" data-toast="Message sent">Send</button></div></div>`;
+  $('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${x.closed ? `<tr><td class="nowrap">${r.date(x.closed)}</td><td>Rajesh Goyal</td><td>${x.status === 'accepted' ? 'Accepted, credit note issued' : 'Rejected with a reason'}</td></tr>` : ''}
+    ${x.status !== 'open' ? `<tr><td class="nowrap">${r.date(x.raised)}</td><td>Rajesh Goyal</td><td>Status: Open → Under review</td></tr>` : ''}
+    <tr><td class="nowrap">${r.date(x.raised)}, ${r.time(x.raised)}</td><td>${by.name}</td><td>Dispute raised in the app</td></tr></tbody></table>`;
+
+  const contact = r.person(i.company === 'nova' ? 'imran' : 'rakesh');
+  $('cust').innerHTML = `<div class="who"><span class="avatar blue">${by.initials}</span><span><b>${by.name}</b><small>${c.name}</small></span></div>
+    <div class="btns" style="margin-top:12px"><a class="btn btn-sm btn-secondary" href="tel:${by.mobile.replace(/\s/g, '')}">${r.icon('phone')}${by.mobile}</a></div>`;
+  $('inv-sum').innerHTML = `<dt>Number</dt><dd class="mono">${i.number}</dd><dt>Status</dt><dd>${B.invoiceTag(i.status)}</dd><dt>Amount</dt><dd>${r.money(i.amount)}</dd><dt>Balance</dt><dd class="strong">${r.money(B.balance(i))}</dd>`;
+
+  /* decision form: the button and confirm text follow the choice */
+  const paid = i.status === 'paid';
+  $('f-refund').hidden = !paid;
+  $('d-amount').value = x.number === 'DSP-2026-0009' ? '400.00' : (q * rate).toFixed(2);
+  const COPY = {
+    accept: ['Accept and issue credit note', `Accept ${x.number}?`, `A credit note of ${r.money(lineTotal)} is issued against ${i.number}. ${c.name} is told in the app.`, `Credited in full. The balance of ${i.number} is reduced.`],
+    partly: ['Partly accept', `Partly accept ${x.number}?`, `A credit note for the amount you entered plus GST is issued. ${c.name} is told in the app.`, 'Engineer was on site 2 hours. We credited 0.5 hour of labour.'],
+    reject: ['Reject dispute', `Reject ${x.number}?`, 'The customer sees your reason in the app.', 'The signed visit report shows the work and time billed.'],
+    ask: ['Ask for more', `Ask ${by.name} for more?`, 'The dispute stays Under review until the customer replies.', 'Please share the gate register page for the visit day.'],
+  };
+  const sync = () => {
+    const choice = document.querySelector('#choices input:checked').value;
+    const [btn, title, text, reply] = COPY[choice];
+    $('decide').textContent = btn;
+    $('decide').className = `btn btn-block ${choice === 'reject' ? 'btn-danger' : 'btn-primary'}`;
+    $('f-amount').hidden = choice !== 'partly';
+    $('d-reply').value = reply;
+    $('d-reply-label').textContent = choice === 'reject' ? 'Reason the customer sees' : 'Reply to the customer';
+    $('cf-title').textContent = title;
+    $('cf-text').textContent = text;
+    $('cf-fields').innerHTML = ['accept', 'partly'].includes(choice) ? B.passwordFields('cf', ['Dispute accepted', 'Billing error', 'Goodwill']) : '';
+    $('cf-go').className = `btn ${choice === 'reject' ? 'btn-danger' : 'btn-primary'}`;
+    $('cf-go').textContent = btn;
+  };
+  $('choices').addEventListener('change', sync);
+  sync();
+  $('cf-go').addEventListener('click', () => { ZXA.ui.closeOverlay($('confirm')); ZXA.ui.toast('Decision saved. Customer told in the app'); });
+  document.addEventListener('click', (event) => {
+    const jump = event.target.closest('[data-tab]');
+    if (jump) document.querySelector(`[aria-controls="${jump.dataset.tab}"]`).click();
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

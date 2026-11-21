@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D925 Overdue follow up</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D925" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Overdue follow up</span></nav>
+      <h1>Overdue follow up</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-toast="Reminders sent to 1 customer">Remind all</button>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="kpis" id="sums" data-when="ready"></section>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="table-wrap" data-when="ready"><table class="table" id="overdue">
+        <thead><tr><th class="sortable">Invoice</th><th class="sortable">Customer</th><th class="sortable num">Balance</th><th class="sortable">Overdue</th><th>Last contact</th><th>Promise to pay</th><th>Next reminder</th><th class="actions"></th></tr></thead>
+        <tbody></tbody></table></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>Nothing overdue</h3><p>Customers with overdue invoices appear here, largest first.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+</main>
+
+<div class="overlay right" id="call" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="call-title">
+    <div class="drawer-head"><div class="grow"><h2 id="call-title">Log a call</h2><p id="call-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="btns" id="call-btn"></div>
+      <div class="field"><label for="call-out">Outcome</label><select class="select" id="call-out"><option>Promised to pay</option><option>Will pay part</option><option>Disputes the charge</option><option>Did not answer</option><option>Asked to call later</option></select></div>
+      <div class="field"><label for="call-date">Promise date <span class="opt">if promised</span></label><input class="input" id="call-date" type="date" value="2026-11-27" min="2026-11-23"><span class="hint">A promise date adds a work queue item on that day.</span></div>
+      <div class="field"><label for="call-note">Notes</label><textarea class="textarea" id="call-note" maxlength="500">Accounts will release payment on Friday after the plant head signs.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Call logged. Promise date added to the work queue">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Reminder sent"><svg class="ic"><use href="#ph-bell-ring"/></svg>Send reminder</button>
+  <a href="#D903"><svg class="ic"><use href="#ph-receipt"/></svg>Open invoice</a>
+  <a href="#D610"><svg class="ic"><use href="#ph-pause"/></svg>Suspend AMC</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Overdue invoices, largest and oldest first, with the last call and any promise to pay.</p></div>
+  <div><h3>What you can do</h3><ul><li>Log a call with the outcome and a promise date.</li><li>Send a reminder now.</li><li>Suspend the AMC for an unpaid AMC invoice (D610).</li></ul></div>
+  <div><h3>What happens next</h3><p>Promise dates appear in the work queue (D102). Paid invoices leave this list.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Broken promise is red.</li><li>Disputed invoices show the dispute; reminders still follow the schedule.</li><li>AMC-2026-0013 is already suspended for INV-2026-0989.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const data = ZXA.data.billing;
+  const list = B.invoices.filter((i) => i.status === 'overdue').sort((a, b) => B.balance(b) - B.balance(a) || B.daysOverdue(b) - B.daysOverdue(a));
+  const total = list.reduce((s, i) => s + B.balance(i), 0);
+  document.getElementById('head-sub').textContent = `${list.length} invoices · ${new Set(list.map((i) => i.company)).size} customer · ${r.money(total)}`;
+  document.getElementById('sums').innerHTML = [['Overdue', r.moneyShort(total), `${list.length} invoices`, true], ['Oldest', `${Math.max(...list.map(B.daysOverdue))} days`, 'INV-2026-0989'],
+    ['Promises due', '1', 'broken, 20 Nov'], ['Calls this week', '1', 'Rakesh Mehta']]
+    .map(([label, v, foot, alert]) => `<div class="card kpi${alert ? ' alert' : ''}"><span class="label">${label}</span><span class="value">${v}</span><span class="foot">${foot}</span></div>`).join('');
+  const nextRem = (i) => data.reminders.find((x) => x.invoice === i.number && x.status === 'planned');
+  document.querySelector('#overdue tbody').innerHTML = list.map((i, n) => {
+    const f = data.followUps[i.number] || {};
+    const c = r.company(i.company);
+    const next = nextRem(i);
+    return `<tr data-n="${n}" class="urgent"><td><a class="rec" href="#D903?inv=${i.number}">${i.number}</a><span class="sub">${i.title}</span></td>
+      <td><b class="clip">${c.name}</b>${f.amc ? `<span class="sub">${f.amc} · ${f.amcStatus}</span>` : f.dispute ? `<span class="sub">Disputed, ${f.dispute}</span>` : ''}</td>
+      <td class="num strong" data-sort="${B.balance(i)}">${r.money(B.balance(i))}</td>
+      <td class="nowrap" data-sort="${B.daysOverdue(i)}"><span class="red-text strong">${B.daysOverdue(i)} days</span><span class="sub">Due ${r.date(i.due)}</span></td>
+      <td>${f.last ? `${r.dayDate(f.last.when)}<span class="sub">${f.last.outcome}</span>` : '<span class="faint">None</span>'}</td>
+      <td>${f.promise ? `${r.dayDate(f.promise)}${f.broken ? '<span class="sub red-text strong">Broken</span>' : ''}` : '<span class="faint">None</span>'}</td>
+      <td class="nowrap">${next ? r.dayDate(next.when) : '<span class="faint">Weekly</span>'}</td>
+      <td class="actions nowrap"><button class="btn btn-sm btn-secondary" type="button" data-open="call" data-n="${n}">Log a call</button>
+        <button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+  document.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-open="call"]');
+    if (!btn) return;
+    const i = list[btn.dataset.n];
+    const person = r.person(i.company === 'nova' ? 'imran' : 'rakesh');
+    document.getElementById('call-sub').textContent = `${i.number} · ${r.money(B.balance(i))} · ${B.daysOverdue(i)} days overdue`;
+    document.getElementById('call-btn').innerHTML = `<a class="btn btn-secondary" href="tel:${person.mobile.replace(/\s/g, '')}">${r.icon('phone')}Call ${person.name}, ${person.mobile}</a>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

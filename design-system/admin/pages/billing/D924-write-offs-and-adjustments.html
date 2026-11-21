@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D924 Write offs and adjustments</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D924" data-nav="D901">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D901">Invoices</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Write offs and adjustments</span></nav>
+      <h1>Write offs and adjustments</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D1609"><svg class="ic"><use href="#ph-gear-six"/></svg>Change limit</a>
+  </div>
+
+  <div data-when="ready empty">
+    <section class="card list-card">
+      <div class="card-head"><div class="grow"><h2>Small balances</h2><p id="cand-sub"></p></div></div>
+      <div class="table-wrap" data-when="ready"><table class="table" id="candidates">
+        <thead><tr><th>Invoice</th><th>Customer</th><th>Why it is left</th><th class="num">Invoice</th><th class="num">Balance</th><th class="actions"></th></tr></thead><tbody></tbody></table></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No small balances</h3><p>Invoices with a balance under the limit appear here.</p></div>
+    </section>
+
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2>History</h2><p>Shown in reports as write offs</p></div><a class="card-link" href="#D1501">Reports</a></div>
+      <div class="table-wrap"><table class="table" id="history">
+        <thead><tr><th class="sortable">When</th><th>Invoice</th><th>Customer</th><th>Reason</th><th class="sortable num">Amount</th><th>By</th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-block"></span></div></div>
+</main>
+
+<div class="overlay center" id="writeoff" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="wo-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-hand-coins"/></svg></span>
+      <div class="grow"><h2 id="wo-title"></h2><p id="wo-text"></p></div></div>
+    <div class="modal-body stack" id="wo-fields"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Written off. Invoice marked paid">Write off</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Small leftover balances, such as bank charges the customer's bank deducted, and the write off history.</p></div>
+  <div><h3>What you can do</h3><ul><li>Write off a balance under the limit with a reason and your password.</li><li>Change the limit in Payment rules (D1609).</li></ul></div>
+  <div><h3>What happens next</h3><p>The invoice becomes Paid; the write off shows in reports (D1501) and the invoice history.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only balances under the limit (₹500) can be written off here.</li><li>Money action: password and reason (section 14).</li><li>Never deletes the invoice.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/billing.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const B = ZXA.bill;
+  const data = ZXA.data.billing;
+  const limit = data.supplier.writeOffLimit;
+  const candidates = B.invoices.filter((i) => B.balance(i) > 0 && B.balance(i) < limit);
+  document.getElementById('head-sub').textContent = `Limit ${r.money(limit)} per invoice · ${candidates.length} balance under the limit`;
+  document.getElementById('cand-sub').textContent = `Balances under ${r.money(limit)}`;
+  document.querySelector('#candidates tbody').innerHTML = candidates.map((i) => `<tr><td><a class="rec" href="#D903?inv=${i.number}">${i.number}</a></td>
+    <td><b class="clip">${r.company(i.company).name}</b></td><td>${B.payments.find((p) => p.invoice === i.number && p.note)?.note || 'Short payment'}</td>
+    <td class="num">${r.money(i.amount)}</td><td class="num strong">${r.money(B.balance(i))}</td>
+    <td class="actions"><button class="btn btn-sm btn-primary" type="button" data-open="writeoff">Write off</button></td></tr>`).join('');
+  document.querySelector('#history tbody').innerHTML = data.writeOffs.map((w) => `<tr><td class="nowrap" data-sort="${w.when}">${r.date(w.when)}</td><td class="mono">${w.invoice}</td>
+    <td>${r.company(w.company).name}</td><td>${w.reason}</td><td class="num" data-sort="${w.amount}">${r.money(w.amount)}</td><td>${w.by}</td></tr>`).join('');
+  const i = candidates[0];
+  if (i) {
+    document.getElementById('wo-title').textContent = `Write off ${r.money(B.balance(i))} on ${i.number}?`;
+    document.getElementById('wo-text').textContent = `${r.company(i.company).name} owes nothing more on this invoice. It shows in reports as a write off.`;
+  }
+  document.getElementById('wo-fields').innerHTML = B.passwordFields('wo', ['Bank charges deducted', 'Rounding difference', 'Not worth collecting', 'Other']);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>
