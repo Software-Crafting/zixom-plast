@@ -6,6 +6,10 @@
 .banner > .ic{margin-top:1px; color:var(--blue)}
 .banner b{display:block; font-weight:600; color:var(--slate-900)}
 .banner a, .banner button.link-btn{color:inherit; font-weight:600; text-decoration:underline; background:none; border:0; padding:0; font:inherit; cursor:pointer}
+.banner .btn{display:flex; align-items:center; width:fit-content; min-height:36px; margin-top:8px; padding:0 14px; border:1px solid var(--line-strong);
+  background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
+.banner .btns{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+.banner .btns .btn{margin-top:0}
 .banner.green{background:var(--green-50)} .banner.green > .ic{color:var(--green)}
 .banner.amber{background:var(--amber-50)} .banner.amber > .ic{color:var(--amber)}
 .banner.red{background:var(--red-50)} .banner.red > .ic{color:var(--red)}

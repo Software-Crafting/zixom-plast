@@ -67,7 +67,7 @@
           <span class="skeleton sk-circle" style="width:64px; height:64px"></span><span class="skeleton sk-line" style="width:50%"></span>
           <span class="skeleton" style="height:70px; width:100%; border-radius:var(--r-lg)"></span>
         </div>
-        <div class="inline-retry" data-when="error">Couldn't load this profile.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+        <div class="inline-retry" data-when="error">Couldn't load this profile.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
         <div class="actions2" data-when="ready new offline">
           <button class="btn btn-secondary" type="button" data-close>Close</button>
           <button class="btn btn-primary" type="button" data-open="call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call</button>
@@ -88,8 +88,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the engineer card in C508 and <a href="C516-track.html">C516</a>. Initials stand in for the photo;
-rating hides under 5 ratings and Call hides after the job closes. Call opens <a href="C1512-call-engineer.html">C1512</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Who your engineer is.</p></div>
+  <div><h3>What you can do</h3><ul><li>See rating, visits and experience</li><li>Call (<a href="C1512-call-engineer.html">C1512</a>)</li><li>Close</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Close returns to C508 or C516</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No photo: initials</li><li>Under 5 ratings: rating hidden</li><li>Job closed: Call hidden</li><li>Spec: C1511</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

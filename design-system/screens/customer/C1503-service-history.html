@@ -46,7 +46,7 @@
           </div>
           <div class="stack-sm" id="all" data-when="ready more offline"></div>
           <div class="stack-sm" id="filtered" data-when="filtered"></div>
-          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="more">Couldn't load more.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
           <button class="btn btn-secondary" type="button" data-open="export" data-when="ready filtered"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Export as PDF</button>
           <button class="btn btn-secondary" type="button" disabled data-when="offline"><svg class="ic" aria-hidden="true"><use href="#ph-file-pdf"/></svg>Export as PDF</button>
 
@@ -100,8 +100,12 @@
   </div>
 </div>
 
-<p class="plate-note">Open and closed requests across all machines, newest first, 20 at a time. A card opens
-<a href="C508-request-detail.html">C508</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>All service requests across machines, newest first.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by ticket, machine or issue</li><li>Filter by machine and status</li><li>Open a request</li><li>Export the list as PDF</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A card opens <a href="C508-request-detail.html">C508</a></li><li>Loads 20 at a time</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty: No service history</li><li>No results: Clear filters</li><li>Load more failed: Retry; offline: saved list</li><li>Spec: C1503</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

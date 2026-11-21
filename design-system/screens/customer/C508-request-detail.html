@@ -138,9 +138,12 @@
   </div>
 </div>
 
-<p class="plate-note">One ticket from request to closure; pick a ticket above for each status. Open with
-<code>?ticket=TKT-2026-0123</code>. Engineer changed and visit moved apply to tickets with an engineer. Cancel opens
-<a href="C511-cancel-request.html">C511</a>, Reschedule <a href="C510-reschedule.html">C510</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>One service ticket from request to closure: status, engineer, request, messages and actions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the machine or the engineer profile</li><li>Message Zixom or add information</li><li>Actions follow the status: cancel, reschedule, call, track, confirm, rate</li><li>Share or copy the request number</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Cancel opens <a href="C511-cancel-request.html">C511</a>, Reschedule <a href="C510-reschedule.html">C510</a></li><li>Estimate opens <a href="C509-estimate.html">C509</a>, report <a href="C512-service-report.html">C512</a></li><li>A push while open shows the refresh banner</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Engineer changed, visit moved by Zixom, cancelled by Zixom (EC-50)</li><li>Not found <a href="../system/S05-not-found.html">S05</a>, no access <a href="../system/S06-no-access.html">S06</a></li><li>Engineer phone hidden after closure; 12 photos as a gallery</li><li>Open with <code>?ticket=TKT-2026-0123</code>; Spec: C508 detail</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -166,7 +169,7 @@
     'TKT-2026-0131': 'Cancelled by you: no longer needed.',
   };
   const ZIXOM_CANCEL_REASON = 'No reply to our question for 7 days.';
-  const MOVED_TO = { date: '2026-11-25', slot: '9 to 12 AM' };
+  const MOVED_TO = { date: '2026-11-25', slot: '9 AM to 12 PM' };
   const ENGINEER_AFTER_CHANGE = 'anita';
 
   /* a request just submitted in C507 is not in data.js: build it from the query string */
@@ -232,10 +235,10 @@
   /* ---------- banners for changes made while the screen is open ---------- */
   const banners = `
     <div class="offline-strip" style="margin:0" data-when="offline">${R.icon('wifi-slash', 'ic-16')}You are offline. Updated 11:42 AM.</div>
-    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div>This was updated. <button class="link-btn" type="button" data-busy>Refresh</button></div></div>
+    <div class="banner" data-when="refresh">${R.icon('arrows-clockwise')}<div><b>This request was updated</b><div class="btns"><button class="btn btn-sm" type="button" data-busy>Refresh</button></div></div></div>
     ${eng ? `<div class="banner amber" data-when="changed">${R.icon('user')}<div><b>Your engineer was changed</b>${R.esc(R.engineer(ENGINEER_AFTER_CHANGE).name)} will visit instead.</div></div>` : ''}
-    ${visit ? `<div class="banner amber" data-when="moved">${R.icon('calendar-blank')}<div><b>Zixom moved your visit to ${R.dayDate(MOVED_TO.date)}, ${MOVED_TO.slot}</b>
-      <button class="link-btn" type="button" data-toast="New time accepted">Accept</button> · <a href="C510-reschedule.html?ticket=${t.number}">Request another time</a></div></div>` : ''}`;
+    ${visit ? `<div class="banner amber" data-when="moved">${R.icon('calendar-blank')}<div><b>Visit moved to ${R.dayDate(MOVED_TO.date)}, ${MOVED_TO.slot}</b>
+      <div class="btns"><button class="btn btn-sm" type="button" data-toast="New time accepted">Accept</button><a class="btn btn-sm" href="C510-reschedule.html?ticket=${t.number}">Request another time</a></div></div></div>` : ''}`;
 
   /* ---------- header ---------- */
   const header = `<div class="req-card">

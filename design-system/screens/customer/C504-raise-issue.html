@@ -143,8 +143,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 2. Breakdown asks for category, machine state and severity; preventive and installation hide
-severity. Stopped picks Machine down. Draft saves on every change.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 2 of 5 of a service request: what is needed and how serious it is.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the service type</li><li>For a breakdown: category, machine state and severity</li><li>Describe it (or Speak) and add an error code</li><li>Save draft or go Next</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens <a href="C505-raise-media.html">C505</a></li><li>Machine down shows the response target</li><li>Draft saves on every change</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machine down after hours: call sheet first, then Continue</li><li>Preventive and installation hide severity; training asks for people and topics</li><li>Description 20 to 1000 characters; only spaces counts as empty</li><li>Spec: C504 detail · <a href="C1505-response-times.html">C1505</a></li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

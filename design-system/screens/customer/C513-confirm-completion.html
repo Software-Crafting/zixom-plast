@@ -101,8 +101,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from the completion push. Not resolved opens <a href="C515-reopen.html">C515</a>; with no answer the
-ticket closes 3 days after completion and can be reopened for 7 days.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Asks whether the visit fixed the problem.</p></div>
+  <div><h3>What you can do</h3><ul><li>Yes, resolved</li><li>Not resolved (<a href="C515-reopen.html">C515</a>)</li><li>View report (<a href="C512-service-report.html">C512</a>)</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Yes closes the ticket and offers rating (<a href="C514-rate-service.html">C514</a>)</li><li>Any amount due goes to Payments</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No answer: closes 3 days after completion</li><li>Closed by itself: reopen for 7 days</li><li>Offline: answers disabled</li><li>Spec: C513 · status model</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

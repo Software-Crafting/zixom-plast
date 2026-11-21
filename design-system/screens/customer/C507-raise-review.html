@@ -27,7 +27,6 @@
 .next-steps{margin:14px 0 0; padding:0; list-style:none; text-align:left; font-size:var(--fs-13); color:var(--slate-700)}
 .next-steps li{display:flex; gap:10px; align-items:center; padding:6px 0}
 .next-steps .n{width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:var(--slate-100); font:600 var(--fs-11) var(--font-body)}
-.banner .btn{display:flex; width:fit-content; min-height:40px; margin-top:8px; padding:0 16px; border:1px solid var(--line-strong); background:#fff; text-decoration:none; font:400 var(--fs-14) var(--font-display); color:var(--slate-900)}
 </style>
 </head>
 <body class="plate">
@@ -141,8 +140,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 5: check and send. Charges follow the coverage. Offline keeps a draft; a dropped network
-never shows success (EC-03); a duplicate links to the open request (EC-41).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 5 of 5: check everything and send the request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check machine, coverage, issue, media and visit</li><li>Edit any card</li><li>Read the service terms</li><li>Submit request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Success shows the ticket number and next steps</li><li>View request opens <a href="C508-request-detail.html">C508</a></li><li>Zixom reviews and assigns an engineer</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Coverage changed since step 1: new charge shown</li><li>Duplicate links to the open request (EC-41); network drop (EC-03)</li><li>Offline: kept as a draft; urgent goes to <a href="C1502-urgent-request.html">C1502</a></li><li>Spec: C507 detail · EC-40</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

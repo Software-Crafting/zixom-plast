@@ -32,7 +32,7 @@
       </div>
       <div class="scroll with-footer">
         <div class="wizard"><div class="meta"><b>Step 2 of 5</b><span>Service type and issue</span></div><div class="bars"><span class="done"></span><span class="now"></span><span></span><span></span><span></span></div></div>
-        <div class="section-head" style="margin:0 2px 10px"><h2>How serious is it?</h2><button class="btn btn-text" type="button" style="min-height:0" data-open="times">Response times</button></div>
+        <div class="section-head" style="margin:0 2px 10px"><h2>How serious is it?</h2><button class="btn btn-secondary btn-sm" type="button" data-open="times">Response times</button></div>
         <div role="radiogroup" aria-label="Severity">
           <button class="choice" role="radio" aria-checked="true" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-siren"/></svg></span><b>Machine down</b><p>Production stopped</p><span class="mark"></span></button>
           <button class="choice" role="radio" aria-checked="false" type="button"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-warning"/></svg></span><b>Production affected</b><p>Running with a problem</p><span class="mark"></span></button>
@@ -56,14 +56,18 @@
         </div>
         <div class="banner support"><svg class="ic" aria-hidden="true"><use href="#ph-headset"/></svg>
           <div><b>Support <span class="support-hours"></span></b><a class="tel-link support-phone" href="#"></a> · <a class="mail-link support-email" href="#"></a></div></div>
-        <button class="btn btn-primary" type="button" style="margin-top:16px" data-close>Close</button>
+        <button class="btn btn-secondary" type="button" style="margin-top:16px" data-close>Close</button>
       </div>
     </div>
   </div>
 </div>
 
-<p class="plate-note">Targets by severity and support hours, from the backend settings (Confirm). Opened from severity in
-<a href="C504-raise-issue.html">C504</a>, the Machine down sheet and Support.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Response targets by severity and support hours.</p></div>
+  <div><h3>What you can do</h3><ul><li>See targets for Machine down, Production affected, Minor</li><li>Call or email support</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Close returns to severity in C504</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Targets from backend settings</li><li>Offline: saved targets</li><li>Spec: C1505 · <a href="C504-raise-issue.html">C504</a></li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

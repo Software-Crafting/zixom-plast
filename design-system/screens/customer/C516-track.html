@@ -103,8 +103,12 @@
   </div>
 </div>
 
-<p class="plate-note">ETA as text only, no map in the first release. Running late (EC-52) and location unavailable change the
-ETA card; the call sheet is <a href="C1512-call-engineer.html">C1512</a>, the engineer row opens <a href="C1511-engineer-profile.html">C1511</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Where the engineer is: ETA as text, no live map.</p></div>
+  <div><h3>What you can do</h3><ul><li>See the ETA and visit window</li><li>Open the engineer profile (<a href="C1511-engineer-profile.html">C1511</a>)</li><li>Call the engineer (<a href="C1512-call-engineer.html">C1512</a>)</li><li>Share the ETA</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The engineer checks in on arrival</li><li>Status moves to work in progress</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Running late: new ETA and reason (EC-52)</li><li>Location unavailable: expected time only</li><li>Offline: last update time</li><li>Spec: C516 · notifications</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -129,8 +133,7 @@ ETA card; the call sheet is <a href="C1512-call-engineer.html">C1512</a>, the en
   fill('.call-eng', `Call ${engineer.name}`);
   document.getElementById('eng').innerHTML = `<a class="who" href="C1511-engineer-profile.html">
       <span class="avatar">${R.esc(engineer.initials)}</span>
-      <span class="grow"><b>${R.esc(engineer.name)}</b><small>${R.esc(engineer.designation)} · <span class="rating">${R.icon('star')}${engineer.rating}</span></small></span>
-      ${R.icon('caret-right', 'ic-16')}</a>`;
+      <span class="grow"><b>${R.esc(engineer.name)}</b><small>${R.esc(engineer.designation)} · <span class="rating">${R.icon('star')}${engineer.rating}</span></small></span></a>`;
   document.getElementById('kv').innerHTML = `<div><dt>Machine</dt><dd>${R.esc(machine.nickname || machine.model)}</dd></div>
     <div><dt>Work</dt><dd>${R.esc(ticket.type)}</dd></div>
     <div><dt>Site</dt><dd>${R.esc(site.name)}</dd></div>

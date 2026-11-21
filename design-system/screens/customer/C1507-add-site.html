@@ -6,6 +6,8 @@
 <title>Zixom Connect - C1507 Add site</title>
 <link rel="icon" href="../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+</style>
 </head>
 <body class="plate">
 
@@ -44,7 +46,7 @@
         <div class="error-summary" role="alert" style="margin:0 0 14px" data-when="errors"><b>Fix 2 things to continue</b>
           <ul><li><a href="#pin-bad">Enter a 6 digit pincode</a></li><li><a href="#phone-bad">Enter a 10 digit mobile number</a></li></ul></div>
         <div class="banner amber" style="margin:0 0 14px" data-when="duplicate"><svg class="ic" aria-hidden="true"><use href="#ph-copy"/></svg>
-          <div><b id="dup-title"></b>Same address. <a href="C1506-site-picker.html">Use that site</a></div></div>
+          <div><b id="dup-title"></b>Same address.<a class="btn btn-sm" href="C1506-site-picker.html">Use that site</a></div></div>
         <div class="body">
           <div class="field"><label for="name">Site name<span class="req">*</span></label><input class="input" id="name"></div>
           <div class="field"><label for="addr">Address<span class="req">*</span></label><input class="input" id="addr"></div>
@@ -70,8 +72,12 @@
   </div>
 </div>
 
-<p class="plate-note">Quick add from the site picker (<a href="C1506-site-picker.html">C1506</a>), same fields as
-<a href="C1104-sites.html">C1104</a>. Saving selects the new site.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Add a site quickly without leaving the request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter name, address and pincode</li><li>Add the site contact</li><li>Add access notes</li><li>Save site</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The new site is selected in C506</li><li>Also listed in <a href="C1104-sites.html">C1104</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not serviceable (EC-45)</li><li>Duplicate address: use that site</li><li>Pincode and phone errors</li><li>Offline: saved later; Spec: C1507</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

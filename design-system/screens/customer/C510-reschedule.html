@@ -107,8 +107,12 @@
   </div>
 </div>
 
-<p class="plate-note">Up to 2 changes per visit, not within 4 hours and not once the engineer is on the way (business rules).
-Slots come from <a href="C1510-slot-picker.html">C1510</a>; the old visit stays until Zixom confirms.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Ask Zixom to move a scheduled visit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose new slots (<a href="C1510-slot-picker.html">C1510</a>)</li><li>Pick a reason and add a note</li><li>Send request</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Pending until Zixom confirms; the old visit stays</li><li>You get a push when the time changes</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Not allowed once the engineer is on the way</li><li>Not within 4 hours of the visit; up to 2 changes</li><li>Offline: Send disabled</li><li>Spec: C510 · business rules</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -119,7 +123,7 @@ Slots come from <a href="C1510-slot-picker.html">C1510</a>; the old visit stays 
   const ticket = ZX.data.tickets.find((t) => t.number === 'TKT-2026-0124');
   const engineer = R.engineer(ticket.engineer);
   /* sample only: the slots picked in C1510 */
-  const PICKED = [['2026-11-27', '12 to 3 PM'], ['2026-11-28', '9 to 12 AM']];
+  const PICKED = [['2026-11-27', '12 to 3 PM'], ['2026-11-28', '9 AM to 12 PM']];
 
   document.querySelectorAll('.visit-when').forEach((el) => { el.textContent = `${R.dayDate(ticket.window.date)}, ${ticket.window.slot}`; });
   document.querySelectorAll('.visit-meta').forEach((el) => { el.innerHTML = `<span class="mono">${ticket.number}</span> · ${R.esc(engineer.name)}`; });

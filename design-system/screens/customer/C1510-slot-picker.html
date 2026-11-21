@@ -90,9 +90,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shared by <a href="C506-raise-visit.html">C506</a>, <a href="C510-reschedule.html">C510</a> and
-<a href="C407-reschedule-amc-visit.html">C407</a>. Past days, Sundays, Zixom holidays and windows inside the 4 hour notice
-are disabled; Confirm needs at least 1 slot.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Calendar to choose up to 3 visit slots.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a date and a time window</li><li>Remove a chosen slot</li><li>Confirm slots</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Returns to <a href="C506-raise-visit.html">C506</a>, <a href="C510-reschedule.html">C510</a> or <a href="C407-reschedule-amc-visit.html">C407</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Past days, Sundays and holidays disabled</li><li>Windows inside 4 hour notice disabled</li><li>Fewer than 1 slot blocks Confirm; 3 is the limit</li><li>Spec: C1510</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -104,7 +107,7 @@ are disabled; Confirm needs at least 1 slot.</p>
   const MAX_SLOTS = 3;
   const NOTICE_HOURS = 4;
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const WINDOWS = [['9 to 12', '9 to 12 AM', 9], ['12 to 3', '12 to 3 PM', 12], ['3 to 6', '3 to 6 PM', 15]];
+  const WINDOWS = [['9 to 12', '9 AM to 12 PM', 9], ['12 to 3', '12 to 3 PM', 12], ['3 to 6', '3 to 6 PM', 15]];
   /* sample only: Zixom holidays from the back office calendar */
   const HOLIDAYS = { '2026-11-24': 'Guru Nanak Jayanti', '2026-12-25': 'Christmas' };
   const PRESETS = {

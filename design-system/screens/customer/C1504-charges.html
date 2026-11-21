@@ -68,17 +68,18 @@
             <div class="money" id="rates" data-when="ready offline"></div>
           </div>
         </div>
-        <div class="stack-sm" style="margin-top:16px">
-          <a class="btn btn-secondary" href="C602-ask.html"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
-          <button class="btn btn-text" type="button" style="width:100%" data-close>Close</button>
-        </div>
+        <a class="btn btn-secondary" href="C602-ask.html" style="margin-top:16px"><svg class="ic" aria-hidden="true"><use href="#ph-chat-circle-dots"/></svg>Ask a question</a>
       </div>
     </div>
   </div>
 </div>
 
-<p class="plate-note">Sheet from the coverage banner (C503, C507) and the request detail. Rates come from the backend; without
-them the sheet points to the estimate.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>What is free and what you pay for.</p></div>
+  <div><h3>What you can do</h3><ul><li>Compare warranty, AMC and chargeable</li><li>See current rates</li><li>Ask a question (<a href="C602-ask.html">C602</a>)</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Exact charges come in the estimate</li><li>Close returns to the screen behind</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Rates not set: charges shared in the estimate</li><li>Offline: last saved rates</li><li>Spec: C1504</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -58,7 +58,7 @@
           <div class="stack-sm" data-when="loading">
             <span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span><span class="skeleton" style="height:84px; border-radius:var(--r-lg)"></span>
           </div>
-          <div class="inline-retry" data-when="error">Couldn't load your sites.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="error">Couldn't load your sites.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
         </div>
         <a class="btn btn-secondary add-site" href="C1507-add-site.html" data-when="ready noresults error"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
         <a class="btn btn-primary add-site" href="C1507-add-site.html" data-when="empty"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
@@ -68,8 +68,12 @@
   </div>
 </div>
 
-<p class="plate-note">Saved sites of the current company with address and contact, opened from Site in
-<a href="C506-raise-visit.html">C506</a>. No sites yet leads to <a href="C1507-add-site.html">C1507</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Choose the site for the visit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search by name or pincode</li><li>Pick a saved site</li><li>Add a site (<a href="C1507-add-site.html">C1507</a>)</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Select fills the site in <a href="C506-raise-visit.html">C506</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No sites yet: Add site</li><li>No results, load error with Retry</li><li>Offline: saved sites</li><li>Spec: C1506</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

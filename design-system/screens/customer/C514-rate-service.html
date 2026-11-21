@@ -84,6 +84,9 @@
 
           <div class="field" data-when="ready low submitting offline"><label for="comment">Comment<span class="counter">0 / 500</span></label>
             <textarea class="textarea" id="comment" placeholder="Optional" style="min-height:84px"></textarea></div>
+          <div class="uploads" data-when="ready low submitting offline">
+            <button class="upload add" type="button" aria-label="Add a photo, optional"><svg class="ic ic-28" aria-hidden="true"><use href="#ph-camera"/></svg></button>
+          </div>
           <div class="card-fill" data-when="rated" style="font-size:var(--fs-14); color:var(--slate-900)">"Quick and clean. Explained the vacuum settings to our operator."</div>
         </div>
 
@@ -112,12 +115,12 @@
       <div class="footer-bar">
         <div class="stack-sm" data-when="ready low">
           <button class="btn btn-primary" type="button" data-goto="submitting">Submit</button>
-          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%" data-toast="You can rate for 7 days">Skip</a>
+          <a class="btn btn-secondary" href="C508-request-detail.html" data-toast="You can rate for 7 days">Skip</a>
         </div>
         <button class="btn btn-primary" type="button" aria-busy="true" data-when="submitting">Submit</button>
         <div class="stack-sm" data-when="offline">
           <button class="btn btn-primary" type="button" data-toast="Saved. We will send it when you are online">Submit</button>
-          <a class="btn btn-text" href="C508-request-detail.html" style="width:100%">Skip</a>
+          <a class="btn btn-secondary" href="C508-request-detail.html">Skip</a>
         </div>
         <a class="btn btn-primary" href="C508-request-detail.html" data-when="thanks rated">Done</a>
       </div>
@@ -126,8 +129,12 @@
   </div>
 </div>
 
-<p class="plate-note">Rated after closing, within 7 days; Skip is remembered. 1 or 2 stars asks what went wrong, alerts Zixom
-support and offers <a href="C606-complaint.html">C606</a>; a rated ticket is read only.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Rate a finished service visit.</p></div>
+  <div><h3>What you can do</h3><ul><li>Give 1 to 5 stars and quick tags</li><li>Add a comment and a photo</li><li>Submit or Skip</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Thank you, then back to <a href="C508-request-detail.html">C508</a></li><li>Low rating alerts Zixom support</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>1 or 2 stars asks what went wrong and offers <a href="C606-complaint.html">C606</a></li><li>Already rated: read only</li><li>Skip: can rate for 7 days; offline: sent later</li><li>Spec: C514 detail</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

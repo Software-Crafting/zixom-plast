@@ -98,8 +98,8 @@
   const DAYS_SHOWN = 7;
   const CLOSED_DAY = 0; /* sites work Monday to Saturday */
   const REASONS = ['Another job then', 'Travel time', 'Parts not ready', 'Customer asked', 'Other'];
-  const PROPOSED = { date: '2026-11-25', slot: '9 to 12 AM', slotIndex: 0, reason: 'Another job then' };
-  const DECLINED = { date: '2026-11-25', slot: '9 to 12 AM' };
+  const PROPOSED = { date: '2026-11-25', slot: '9 AM to 12 PM', slotIndex: 0, reason: 'Another job then' };
+  const DECLINED = { date: '2026-11-25', slot: '9 AM to 12 PM' };
 
   const params = new URLSearchParams(location.search);
   const t = data.tickets.find((x) => x.number === (params.get('ticket') || DEFAULT_TICKET));

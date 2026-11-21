@@ -106,7 +106,7 @@
         <span class="grabber"></span>
         <div class="head"><h3 id="sites-title">Choose site</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
         <div class="body" role="radiogroup" aria-label="Sites" id="site-list"></div>
-        <a class="btn btn-text" href="C1507-add-site.html" style="margin-top:8px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
+        <a class="btn btn-secondary" href="C1507-add-site.html" style="margin-top:12px"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-plus"/></svg>Add site</a>
         <button class="btn btn-primary" type="button" style="margin-top:8px" data-close id="site-choose">Choose</button>
       </div>
     </div>
@@ -123,8 +123,12 @@
   </div>
 </div>
 
-<p class="plate-note">Step 4: where and when. Up to 3 preferred times; today, Sundays and holidays are disabled. A
-pincode Zixom does not serve stops the form (EC-45).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Step 4 of 5: where the engineer goes, who to meet and when.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a site or add one (<a href="C1506-site-picker.html">C1506</a>)</li><li>Confirm the contact and phone</li><li>Choose up to 3 preferred times</li><li>Add access notes and safety induction</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Next opens <a href="C507-raise-review.html">C507</a></li><li>Zixom confirms one of the times</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not served: call support, Next disabled (EC-45)</li><li>Today, Sundays and holidays disabled</li><li>Phone not 10 digits: inline error; site without contact asks for one</li><li>Spec: C506 detail · <a href="C1510-slot-picker.html">C1510</a></li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -137,7 +141,7 @@ pincode Zixom does not serve stops the form (EC-45).</p>
   const MAX_SLOTS = 3;
   const DAYS_SHOWN = 12;
   /* Sample values not in data.js yet (move there): Zixom holidays, and the times already picked in the draft */
-  const HOLIDAYS = ['2026-11-29', '2026-12-06'];
+  const HOLIDAYS = ['2026-11-24']; /* Guru Nanak Jayanti, as on C1510 */
   const DRAFT_SLOTS = [['2026-11-25', '9 to 12'], ['2026-11-26', '12 to 3']];
   let chosen = DRAFT_SLOTS;
 
@@ -169,13 +173,13 @@ pincode Zixom does not serve stops the form (EC-45).</p>
     fillSite();
   });
 
-  /* date strip: today is inside the minimum notice, holidays are closed */
+  /* date strip: today is inside the minimum notice, Sundays and holidays are closed */
   const day = (offset) => new Date(new Date(`${data.today}T00:00:00`).getTime() + offset * 86400000);
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const firstOpen = 2;
   $('dates').innerHTML = Array.from({ length: DAYS_SHOWN }, (_, i) => {
     const d = day(i);
-    const closed = i === 0 || HOLIDAYS.includes(iso(d));
+    const closed = i === 0 || d.getDay() === 0 || HOLIDAYS.includes(iso(d));
     return `<button class="date" type="button" data-date="${iso(d)}"${closed ? ' disabled' : ` aria-pressed="${i === firstOpen}"`}>
       <span>${R.dayDate(iso(d)).slice(0, 3)}</span><b>${d.getDate()}</b></button>`;
   }).join('');

@@ -9,7 +9,6 @@
 <style>
 .stack > .field{margin-top:0}
 .call-line{display:block; margin-top:10px; text-align:center; font-size:var(--fs-13); color:var(--text-muted)}
-.call-line a{color:var(--blue); font-weight:600; text-decoration:none}
 .photo-row{display:grid; grid-template-columns:repeat(4, 1fr); gap:8px}
 .machine-choice .choice{padding:10px 14px}
 .machine-choice .thumb{grid-row:1 / span 2}
@@ -83,9 +82,9 @@
         <a class="btn btn-primary" href="C508-request-detail.html" data-when="duplicate">View request</a>
         <div class="stack-sm" data-when="sent">
           <a class="btn btn-primary" href="C508-request-detail.html">View request</a>
-          <a class="btn btn-text" href="C101-home.html" style="width:100%">Done</a>
+          <a class="btn btn-secondary" href="C101-home.html">Done</a>
         </div>
-        <span class="call-line" data-when="ready invalid sending duplicate">Faster by phone? <a class="tel-link support-phone" href="#"></a></span>
+        <div class="call-line" data-when="ready invalid sending duplicate"><a class="btn btn-secondary btn-sm tel-link" href="#"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-phone"/></svg><span class="call-label"></span></a></div>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -101,8 +100,12 @@
   </div>
 </div>
 
-<p class="plate-note">Four inputs only; the ticket is created with severity Machine down. Offline the form is kept and sent
-later; an open urgent request on the same machine blocks a second one (F13).</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Quick form that raises a Machine down ticket.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the machine</li><li>Say what happened in one line</li><li>Add a photo; check the phone</li><li>Send now or call</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Ticket created with severity Machine down; View request opens <a href="C508-request-detail.html">C508</a></li><li>Zixom on call is alerted</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Offline: form kept and sent later, number to call</li><li>Open urgent request on the machine blocks a second</li><li>Send failed: try again or call</li><li>Spec: C1502 · EC-41</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -118,6 +121,7 @@ later; an open urgent request on the same machine blocks a second one (F13).</p>
   const chosen = { default: machines[0], duplicate: R.machine(duplicate.machine) };
 
   document.querySelectorAll('.support-phone').forEach((el) => { el.textContent = phone; });
+  document.querySelector('.call-label').textContent = `Call ${phone}`;
   document.querySelectorAll('.tel-link').forEach((el) => { el.href = `tel:${phone.replace(/\s/g, '')}`; });
   document.getElementById('phone').value = me.mobile.replace('+91 ', '');
   document.getElementById('dup').innerHTML = R.ticketCard(duplicate, 'C508-request-detail.html');

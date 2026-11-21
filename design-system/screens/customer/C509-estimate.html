@@ -161,7 +161,12 @@
   </div>
 </div>
 
-<p class="plate-note">Extra charges on a ticket, valid 3 days; anyone in the company can approve. Advance payment continues to <a href="C803-pay-method.html">C803</a>, questions open <a href="C602-ask.html">C602</a>; a second device sees the approved view.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Extra charges on a ticket, to approve before work continues.</p></div>
+  <div><h3>What you can do</h3><ul><li>Read the lines, GST and total</li><li>Approve estimate</li><li>Reject with a reason</li><li>Ask a question (<a href="C602-ask.html">C602</a>)</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Approve: the engineer is told; advance payment opens <a href="C803-pay-method.html">C803</a></li><li>Reject on a breakdown: the visit closes without the extra work</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expired: we send a new one (EC-49)</li><li>Revised: old total struck through</li><li>Offline: Approve disabled; anyone in the company can approve</li><li>Approved on another device shows read only; Spec: C509 detail</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
