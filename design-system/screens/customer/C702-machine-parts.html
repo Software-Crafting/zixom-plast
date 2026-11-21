@@ -94,8 +94,12 @@
   </div>
 </div>
 
-<p class="plate-note">Parts that fit the machine's model, via <code>?serial=</code>, or one category via <code>?category=</code>.
-Category chips filter the grid; plus adds to the cart.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Parts that fit one machine, with price or Price on request and stock.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by category</li><li>Search the list</li><li>Add a priced part to the cart</li><li>Request a quote for the rest</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A part opens <a href="C703-part-detail.html">C703</a></li><li>Request quote opens <a href="C706-request-part.html">C706</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only parts compatible with the model show</li><li>Load more failed with Retry, empty, error, offline</li><li>Spec: section C7, C702</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

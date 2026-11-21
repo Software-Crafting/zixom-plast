@@ -11,8 +11,14 @@
 .inbox .notif.unread .disc{background:var(--blue-50); color:var(--blue)}
 .count-line{display:flex; justify-content:space-between; align-items:center; margin:0 4px; font-size:var(--fs-13); color:var(--text-muted)}
 .count-line b{color:var(--slate-900); font-weight:600}
-.count-line .btn{min-height:0; padding:0}
 .group .list-title{margin:0 4px 8px}
+.inbox{overflow:hidden}
+.swipe-wrap{position:relative; border-top:1px solid var(--line)}
+.swipe-wrap .notif{position:relative; z-index:1; background:#fff}
+.swipe-wrap.swiped .notif{transform:translateX(-88px)}
+.swipe-del{position:absolute; top:8px; bottom:8px; right:0; width:76px; display:none; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  border:0; border-radius:var(--r-md); background:var(--red); color:#fff; font:600 var(--fs-12) var(--font-body); cursor:pointer}
+.swipe-wrap.swiped .swipe-del{display:flex}
 </style>
 </head>
 <body class="plate">
@@ -22,6 +28,7 @@
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
   <button type="button" data-state="ready" aria-pressed="false" id="filtered-state">filtered</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="gone">record deleted</button>
+  <button type="button" data-state="ready" aria-pressed="false" id="swiped-state">swipe to delete</button>
   <button type="button" data-state="morefail" aria-pressed="false">load more failed</button>
   <button type="button" data-state="loading" aria-pressed="false">loading</button>
   <button type="button" data-state="empty" aria-pressed="false">empty</button>
@@ -44,10 +51,10 @@
 
           <div class="chips" data-single id="types" data-when="ready morefail offline"></div>
           <p class="count-line" data-when="ready morefail offline"><span id="unread-line"></span>
-            <button class="btn btn-text" type="button" id="mark-all" data-toast="All marked as read">Mark all as read</button></p>
+            <button class="btn btn-secondary btn-sm" type="button" id="mark-all" data-toast="All marked as read">Mark all as read</button></p>
 
           <div class="stack" id="groups" data-when="ready morefail offline"></div>
-          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-text" type="button" data-busy>Retry</button></div>
+          <div class="inline-retry" data-when="morefail">Couldn't load more.<button class="btn btn-secondary btn-sm" type="button" data-busy>Retry</button></div>
 
           <div class="state" data-when="empty" style="padding-top:100px">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-bell"/></svg></span>
@@ -84,8 +91,12 @@
   </div>
 </div>
 
-<p class="plate-note">Every notification opens the screen it is about; tap one to follow it. Filter by type, or mark all as
-read. Settings opens <a href="C1002-notification-settings.html">C1002</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Every push and in-app message, grouped Today and Earlier, unread first marked.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by type</li><li>Mark all as read</li><li>Swipe left to delete</li><li>Open settings</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A row opens the screen it is about</li><li>Settings opens <a href="C1002-notification-settings.html">C1002</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Record deleted: <a href="../system/S05-not-found.html">S05</a> (EC-61)</li><li>Many at once are grouped (EC-62); load more failed</li><li>Empty, loading, error, offline</li><li>Spec: section C10, C1001</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
@@ -141,6 +152,9 @@ read. Settings opens <a href="C1002-notification-settings.html">C1002</a>.</p>
     $('mark-all').hidden = !n;
   };
   unreadLine();
+  /* swipe left on a row shows Delete; the plate state shows the first Earlier row swiped */
+  const swipeRow = document.querySelector('#groups .group:last-child .notif:nth-child(2)');
+  swipeRow.outerHTML = `<div class="swipe-wrap">${swipeRow.outerHTML}<button class="swipe-del" type="button" data-toast="Notification deleted">${R.icon('trash')}Delete</button></div>`;
   $('mark-all').addEventListener('click', () => {
     document.querySelectorAll('#groups .notif.unread').forEach((el) => el.classList.remove('unread'));
     unreadLine();
@@ -157,6 +171,7 @@ read. Settings opens <a href="C1002-notification-settings.html">C1002</a>.</p>
   });
   document.querySelectorAll('.plate-states [data-state]').forEach((b) => b.addEventListener('click', () => {
     const type = b.id === 'filtered-state' ? 'payments' : 'all';
+    document.querySelector('.swipe-wrap').classList.toggle('swiped', b.id === 'swiped-state');
     $('types').querySelector(`[data-type="${type}"]`).click();
   }));
 })();

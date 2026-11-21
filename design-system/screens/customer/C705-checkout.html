@@ -152,8 +152,12 @@
   </div>
 </div>
 
-<p class="plate-note">Place order opens payment (<a href="C803-pay-method.html">C803</a>); if the payment window closes the
-order stays Pending payment in <a href="C708-order-detail.html">C708</a>. Pay on credit is not offered.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Delivery, billing and contact for the order, then pay or ask for a quote.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick or add a delivery address</li><li>Check billing name and GSTIN</li><li>Add delivery notes</li><li>Choose Pay now or Request quote</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Place order opens payment <a href="C803-pay-method.html">C803</a></li><li>If payment closes, the order stays Pending payment in <a href="C708-order-detail.html">C708</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not served (EC-45); stock changed (EC-44)</li><li>Pay on credit is not offered</li><li>Errors, offline (disabled)</li><li>Spec: section C7, C705</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

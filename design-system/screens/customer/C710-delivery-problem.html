@@ -9,7 +9,7 @@
 <style>
 .choice.one b{grid-row:1 / span 2}
 .sub{margin:0 2px 14px; font-size:var(--fs-13); color:var(--text-muted)}
-.items{display:flex; flex-direction:column; gap:10px}
+.items{display:flex; flex-direction:column; gap:12px; padding:14px 16px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
 .add-file{display:flex; align-items:center; gap:12px; width:100%; margin-top:10px; padding:12px; border:1.5px dashed var(--slate-300); border-radius:var(--r-md);
   background:#fff; font:inherit; text-align:left; cursor:pointer}
 .add-file b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
@@ -126,8 +126,12 @@
   </div>
 </div>
 
-<p class="plate-note">Allowed within 7 days of delivery. Submitting creates a support case and marks the order
-Return requested.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Report a wrong, damaged or missing part from a delivered order.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick what went wrong</li><li>Choose the affected parts</li><li>Add photos</li><li>Submit</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A support case is created; the order shows Return requested</li><li>Zixom replies within 1 working day</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Allowed within 7 days of delivery</li><li>A failed photo shows Retry (EC-31)</li><li>Missing fields, offline</li><li>Spec: section C7, C710</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -103,8 +103,12 @@
   </div>
 </div>
 
-<p class="plate-note">Shared upload step where a flow asks for a file, here the purchase invoice of an unlisted machine
-(<a href="C204-unlisted-machine.html">C204</a>). Every upload state is on the switch.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>The shared upload step where a flow asks for a file, here a purchase invoice.</p></div>
+  <div><h3>What you can do</h3><ul><li>Take a photo or choose a file</li><li>Remove or retry a file</li><li>Done when uploaded</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Done returns to the flow, here <a href="C204-unlisted-machine.html">C204</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Too large (EC-29) or wrong type (EC-30)</li><li>Failed upload with Retry (EC-31)</li><li>Offline</li><li>Spec: section C9, C903</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -81,8 +81,12 @@
   </div>
 </div>
 
-<p class="plate-note">Saved per company. A changed price or stock blocks Checkout until the row is updated (EC-44);
-parts with price on request go to a quote, never the cart.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Parts to buy, with quantities, GST and the total. Saved per company.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change quantity, 1 to 99</li><li>Remove or save for later</li><li>Update a changed row</li><li>Checkout</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Checkout opens <a href="C705-checkout.html">C705</a></li><li>Delivery charge shows once an address is chosen</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Price or stock changed: row highlighted with Update (EC-44)</li><li>Above stock, item removed, cleared after 30 days</li><li>Price on request parts never enter the cart</li><li>Spec: section C7, C704</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -52,7 +52,7 @@
 <div class="device">
   <div class="screen plain" data-state="ready">
     <div class="status"></div>
-    <div class="skip-row"><a class="btn btn-text" href="C101-home.html">Skip</a></div>
+    <div class="skip-row"><a class="btn btn-secondary btn-sm" href="C101-home.html">Skip</a></div>
 
     <div class="stage">
       <div class="deck" id="deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="What you can do in Zixom Connect"></div>
@@ -67,8 +67,12 @@
   </div>
 </div>
 
-<p class="plate-note">Three cards, shown once after the first sign in; Skip or Get started ends it for good. Reopen it from
-<a href="C604-faq.html">Help</a>. Next throws the top card; drag or arrow keys work too.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Three cards shown once after the first sign in.</p></div>
+  <div><h3>What you can do</h3><ul><li>Next through the cards</li><li>Skip at any time</li><li>Get started on the last card</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Opens Home <a href="C101-home.html">C101</a></li><li>Never shown again; reopen from <a href="C604-faq.html">Help</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Large text reflows the cards (EC-65)</li><li>Spec: section C13, C1301</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

@@ -156,7 +156,8 @@
 .notif b{display:block; font-size:var(--fs-14); font-weight:600; color:var(--slate-900)}
 .notif p{margin:3px 0 0; font-size:var(--fs-13); line-height:1.45; color:var(--text)}
 .notif time{font-size:var(--fs-11); color:var(--text-faint); white-space:nowrap}
-.notif.unread b::after{content:""; display:inline-block; width:8px; height:8px; margin-left:6px; border-radius:50%; background:var(--blue); vertical-align:middle}
+.notif.unread time{display:flex; flex-direction:column; align-items:flex-end; gap:10px}
+.notif.unread time::after{content:""; width:8px; height:8px; border-radius:50%; background:var(--blue)}
 
 /* progress meter */
 .meter{height:8px; border-radius:var(--r-pill); background:var(--slate-200); overflow:hidden}

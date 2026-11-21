@@ -79,8 +79,12 @@
   </div>
 </div>
 
-<p class="plate-note">Orders and part requests, newest first, in Open and Closed. A card opens
-<a href="C708-order-detail.html">C708</a>; Reorder puts the same parts in the cart.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>All spare part orders and part requests, newest first.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch Open and Closed</li><li>Search by order number or part</li><li>Open an order</li><li>Reorder a closed order</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>An order opens <a href="C708-order-detail.html">C708</a></li><li>Reorder puts the same parts in the cart</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty: No orders yet; no results</li><li>Loading, error, offline</li><li>Spec: section C7, C707</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

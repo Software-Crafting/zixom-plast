@@ -174,8 +174,12 @@
   </div>
 </div>
 
-<p class="plate-note">Opened from Support, a machine, invoice, estimate, order or FAQ; that record is preselected
-(<code>?machine=</code>, <code>?invoice=</code>, <code>?ticket=</code>). Send opens the new thread in <a href="C603-thread.html">C603</a>.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A form to send a question to Zixom support, linked to a machine, ticket, order or invoice.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a category, write a subject and details</li><li>Attach up to 5 photos, videos or PDFs</li><li>Use a suggested FAQ answer instead</li><li>Send, or save a draft</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send creates the thread and opens <a href="C603-thread.html">C603</a></li><li>A suggested answer opens <a href="C604-faq.html">C604</a></li><li>Back keeps a draft</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Complaint needs a ticket or order and goes to the service manager</li><li>Same subject within 60 seconds is blocked (EC-40)</li><li>Offline keeps a draft; a failed file shows Retry (EC-31)</li><li>Spec: section C6, C602</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>

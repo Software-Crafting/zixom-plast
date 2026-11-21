@@ -135,8 +135,12 @@
   </div>
 </div>
 
-<p class="plate-note">For parts with no price or not in the catalogue; opened from a part with <code>?part=</code>. Leaving
-keeps a draft; the same part asked twice shows the earlier request.</p>
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>A price request for a part with no price or not in the catalogue.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the machine and name the part</li><li>Add a photo of the old part</li><li>Set quantity, urgency and address</li><li>Submit</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Zixom quotes within 1 working day</li><li>The request shows in <a href="C707-orders.html">C707</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Same part asked again links to the earlier request (EC-41)</li><li>Draft saved on back; upload states</li><li>Spec: section C7, C706</li></ul></div>
+</section>
 
 <script src="../../assets/icons/icons.js"></script>
 <script src="../../assets/js/data.js"></script>
