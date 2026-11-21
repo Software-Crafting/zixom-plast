@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D415 Reopen requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D415" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Reopen requests</h1><p>3 pending · customers say the problem is not fixed</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+  <section class="card list-card" data-when="ready empty no-results">
+    <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+      <button role="tab" aria-selected="true" data-view="Pending">Pending <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Accepted">Accepted <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Declined">Declined <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+    </div>
+    <div class="toolbar" data-when="ready no-results">
+      <label class="search" data-filter="#rows"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket, customer or reason" aria-label="Search requests"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+    <div class="table-wrap" data-when="ready no-results">
+      <table class="table" id="rows"><thead><tr><th class="sortable">Ticket</th><th class="sortable">Customer and machine</th><th>Reason</th><th class="sortable">Closed</th><th class="sortable">Asked</th><th>Status</th></tr></thead><tbody></tbody></table>
+      <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+    </div>
+    <div class="table-foot" data-when="ready no-results"><span id="foot"></span><span class="grow"></span>
+      <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button><button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div></div>
+    <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No reopen requests</h3><p>Requests from the app to reopen a closed ticket appear here.</p></div>
+  </section>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"><a class="btn btn-ghost" id="convert" href="#D402">Convert to new ticket</a><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" data-open="decline">Decline</button>
+      <button class="btn btn-primary" type="button" id="accept">Accept and reopen</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="decline" hidden>
+  <div class="modal" role="dialog" aria-labelledby="dc-title">
+    <div class="modal-head"><div class="grow"><h2 id="dc-title">Decline reopen request?</h2><p>The customer sees your reason in the app.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="dc-reason">Reason</label><textarea class="textarea" id="dc-reason">This is a different fault. We have raised a new ticket for it.</textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Request declined. Customer told">Decline</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="f-title">
+    <div class="drawer-head"><div class="grow"><h2 id="f-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-co">Customer</label><select class="select" id="f-co"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready empty no-results error" data-mobile="../../../screens/customer/C515-reopen.html">
+  <div><h3>What it is</h3><p>Requests from customers to reopen a closed ticket (C515), within 7 days.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a request to see the reason and photos.</li><li>Accept and reopen (same engineer by default), decline with a reason, or convert to a new ticket.</li></ul></div>
+  <div><h3>What happens next</h3><p>Accepted tickets show Reopened and go back to Assigned (D403). Convert opens New ticket (D402).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Past 7 days needs an override reason (TKT-2026-0129).</li><li>The customer is told either way.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.service.reopen;
+  const TONE = { Pending: 'amber', Accepted: 'green', Declined: '' };
+  const daysSince = (x) => -r.daysFromToday(x.closed);
+  $('rows').tBodies[0].innerHTML = list.map((x, i) => {
+    const t = r.ticket(x.ticket);
+    const late = daysSince(x) > 7;
+    return `<tr data-drawer="quick" data-i="${i}" data-status="${x.status}">
+      <td><a class="rec" href="#D403?t=${x.ticket}">${x.ticket}</a><span class="sub">${r.person(x.by).name}</span></td>
+      <td><b class="clip">${r.company(t.company).name}</b><span class="sub">${r.machine(t.machine).model}</span></td>
+      <td><span class="clip" style="max-width:320px">${r.esc(x.reason)}</span>${x.photos ? `<span class="sub">${x.photos} photo${x.photos > 1 ? 's' : ''}</span>` : ''}</td>
+      <td data-sort="${x.closed}">${r.date(x.closed)}<span class="sub ${late && x.status === 'Pending' ? 'red-text' : ''}">${daysSince(x)} days ago</span></td>
+      <td data-sort="${x.when}">${r.ago(x.when)}</td>
+      <td>${r.tag(x.status, TONE[x.status])}</td></tr>`;
+  }).join('');
+  const show = (view) => {
+    const rows = [...$('rows').tBodies[0].rows];
+    rows.forEach((row) => { row.hidden = view !== 'all' && row.dataset.status !== view; });
+    $('foot').textContent = `1 to ${rows.filter((x) => !x.hidden).length} of ${rows.filter((x) => !x.hidden).length}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = tab.dataset.view === 'all' ? list.length : list.filter((x) => x.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => show(tab.dataset.view));
+  });
+  show('Pending');
+
+  let current;
+  $('quick').addEventListener('zxa:row', (event) => {
+    current = list[event.detail.dataset.i];
+    const t = r.ticket(current.ticket);
+    const late = daysSince(current) > 7;
+    $('quick-title').textContent = current.ticket;
+    $('quick-sub').textContent = `${r.company(t.company).name} · asked ${r.ago(current.when)}`;
+    $('convert').href = ZXA.href('D402', `?t=${current.ticket}`);
+    $('quick-foot').hidden = current.status !== 'Pending';
+    $('quick-body').innerHTML = `<div class="tags">${r.tag(current.status, TONE[current.status])}${r.coverageTag(t.coverage)}</div>
+      <p style="color:var(--text-strong)">"${r.esc(current.reason)}"</p>
+      ${current.photos ? `<div class="gallery">${Array.from({ length: current.photos }, (_, n) => `<div class="ph">${r.icon('image')}<small>Photo ${n + 1}</small></div>`).join('')}</div>` : ''}
+      <dl class="dl"><dt>Asked by</dt><dd>${r.person(current.by).name}</dd><dt>Closed</dt><dd>${r.date(current.closed)}, ${daysSince(current)} days ago</dd>
+        <dt>Last engineer</dt><dd>${t.engineer ? r.engineer(t.engineer).name : '–'}</dd>${current.decided ? `<dt>Decision</dt><dd>${current.decided}</dd>` : ''}</dl>
+      ${current.status === 'Pending' ? `${late ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Closed more than 7 days ago.</b> Add an override reason to reopen.</span></div>
+        <div class="field"><label for="override">Override reason</label><input class="input" id="override" placeholder="Why reopen after 7 days"><span class="error" id="override-error" hidden>${r.icon('warning-circle')}Add a reason to continue</span></div>` : ''}
+        <div class="field"><label for="re-eng">Assign to</label><select class="select" id="re-eng"><option>${t.engineer ? r.engineer(t.engineer).name : 'Sandeep Yadav'} (same engineer)</option><option>Choose in Assign engineer</option></select></div>` : ''}`;
+  });
+  $('accept').addEventListener('click', () => {
+    const box = $('override');
+    if (box && box.value.trim().length < 3) { $('override-error').hidden = false; box.setAttribute('aria-invalid', 'true'); box.focus(); return; }
+    ZXA.ui.closeOverlay($('quick'));
+    ZXA.ui.toast(`${current.ticket} reopened and assigned`);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

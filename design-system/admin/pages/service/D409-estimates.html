@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D409 Estimates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D409" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Estimates</h1><p>2 waiting for the customer · 1 expires in 24 hours</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <section class="card list-card" data-when="ready empty no-results">
+    <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+      <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Draft">Draft <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Sent">Sent <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Approved">Approved <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Rejected">Rejected <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Expired">Expired <span class="n"></span></button>
+    </div>
+    <div class="toolbar" data-when="ready no-results">
+      <label class="search" data-filter="#rows"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Estimate, ticket or customer" aria-label="Search estimates"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+    <div class="table-wrap" data-when="ready no-results">
+      <table class="table" id="rows">
+        <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th><th class="sortable">Estimate</th><th class="sortable">Status</th>
+          <th class="sortable">Ticket</th><th class="sortable">Customer</th><th class="sortable num">Amount</th><th class="sortable">Valid until</th><th class="actions"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+    </div>
+    <div class="table-foot" data-when="ready no-results"><span id="foot"></span><span class="grow"></span>
+      <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button><button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div></div>
+    <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-currency-inr"/></svg></span><h3>No estimates yet</h3><p>Estimates you send from a ticket appear here.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D401">Open tickets</a></div></div>
+  </section>
+
+  <section class="card list-card" data-when="loading"><div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span></div>
+    <div class="card-body stack-sm" id="sk"></div></section>
+
+  <div class="bulk-bar" data-for="rows" hidden><b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Reminders sent">Send reminder</button><button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-ticket" href="#D403">Open ticket</a><span class="grow"></span><a class="btn btn-primary" id="quick-open" href="#D408">Open estimate</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="f-title">
+    <div class="drawer-head"><div class="grow"><h2 id="f-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-co">Customer</label><select class="select" id="f-co"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">Created from</label><input class="input" id="f-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+      <label class="check"><input type="checkbox"> Expiring in 24 hours only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Reminder sent"><svg class="ic"><use href="#ph-bell"/></svg>Send reminder</button>
+  <a href="#D408"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Revise</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C509-estimate.html">
+  <div><h3>What it is</h3><p>Every service estimate with its status, amount and validity.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by status with the views; search and filter.</li><li>Row click for the lines; number opens the builder.</li><li>Send reminders in bulk; export.</li></ul></div>
+  <div><h3>What happens next</h3><p>Estimate builder (D408) to revise; Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expiring in 24 hours is amber.</li><li>Rejected shows the customer's reason.</li><li>Revised keeps the old version, marked Revised.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.service.estimates;
+  const TONE = { Draft: '', Sent: 'blue', Approved: 'green', Rejected: 'red', Expired: '', Revised: 'outline' };
+  const total = (x) => Math.round(x.lines.reduce((s, [, , q, , rate]) => s + q * rate, 0) * 1.18);
+  const left = (x) => (new Date(`${x.validUntil}T23:59`) - new Date(ZX.data.now)) / 3600000;
+  const validCell = (x) => {
+    if (x.status !== 'Sent') return `<span class="muted">${r.date(x.validUntil)}</span>`;
+    const h = left(x);
+    return h < 24 ? `<span class="sla risk">${r.icon('clock-countdown')}${Math.round(h)} h left</span>` : `${r.date(x.validUntil)}<span class="sub">${Math.round(h / 24)} days left</span>`;
+  };
+  $('rows').tBodies[0].innerHTML = list.map((x) => {
+    const t = r.ticket(x.ticket);
+    return `<tr data-drawer="quick" data-id="${x.number}" data-status="${x.status}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.number}"></label></td>
+      <td><a class="rec" href="#D408?t=${x.ticket}">${x.number}</a><span class="sub">${r.dayDate(x.created)}</span></td>
+      <td>${r.tag(x.status, TONE[x.status])}${x.reason ? `<span class="sub">"${r.esc(x.reason)}"</span>` : ''}</td>
+      <td><span class="mono">${x.ticket}</span><span class="sub">${t.type}</span></td>
+      <td><b class="clip">${r.company(t.company).name}</b><span class="sub">${r.machine(t.machine).model}</span></td>
+      <td class="num" data-sort="${total(x)}">${r.money(total(x))}</td>
+      <td data-sort="${x.validUntil}">${validCell(x)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`;
+  }).join('');
+  const show = (view) => {
+    const rows = [...$('rows').tBodies[0].rows];
+    rows.forEach((row) => { row.hidden = view !== 'all' && row.dataset.status !== view; });
+    const n = rows.filter((row) => !row.hidden).length;
+    $('foot').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = tab.dataset.view === 'all' ? list.length : list.filter((x) => x.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => show(tab.dataset.view));
+  });
+  show('all');
+  $('sk').innerHTML = '<span class="sk sk-line"></span>'.repeat(10);
+
+  $('quick').addEventListener('zxa:row', (event) => {
+    const x = list.find((y) => y.number === event.detail.dataset.id);
+    const t = r.ticket(x.ticket);
+    $('quick-title').textContent = x.number;
+    $('quick-sub').textContent = `${x.ticket} · ${r.company(t.company).name}`;
+    $('quick-ticket').href = ZXA.href('D403', `?t=${x.ticket}`);
+    $('quick-open').href = ZXA.href('D408', `?t=${x.ticket}`);
+    $('quick-body').innerHTML = `<div class="tags">${r.tag(x.status, TONE[x.status])}${r.coverageTag(t.coverage)}</div>
+      ${x.decided ? `<p class="muted">${x.status} by ${x.decided[0]}, ${r.dayDate(x.decided[1])} ${r.time(x.decided[1])}</p>` : ''}
+      ${x.reason ? `<div class="banner red">${r.icon('x')}<span class="grow"><b>Customer's reason:</b> ${r.esc(x.reason)}</span></div>` : ''}
+      <table class="table compact"><thead><tr><th>Line</th><th class="num">Qty</th><th class="num">Amount</th></tr></thead>
+        <tbody>${x.lines.map(([type, desc, q, unit, rate]) => `<tr><td>${desc}<span class="sub">${type}</span></td><td class="num">${q} ${unit}</td><td class="num">${r.money(q * rate)}</td></tr>`).join('')}</tbody>
+        <tfoot><tr><td colspan="2">Total with GST 18%</td><td class="num">${r.money(total(x))}</td></tr></tfoot></table>
+      <dl class="dl"><dt>Valid until</dt><dd>${r.date(x.validUntil)}</dd><dt>Created</dt><dd>${r.dayDate(x.created)}, ${r.time(x.created)}</dd></dl>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

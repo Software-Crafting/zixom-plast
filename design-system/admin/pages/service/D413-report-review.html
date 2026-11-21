@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D413 Report review</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D413" data-nav="D401">
+<main class="content">
+  <div data-when="ready approved amended unsigned arriving conflict">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D401">Service tickets</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-ticket" href="#D403"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Report</span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar">
+        <button class="btn btn-secondary" type="button" data-toast="Report PDF downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download PDF</button>
+        <span data-when="approved"><a class="btn btn-primary" id="to-close" href="#D414">Close ticket</a></span>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px" id="banners">
+      <div class="banner amber" data-when="arriving"><svg class="ic"><use href="#ph-cloud-arrow-up"/></svg><span class="grow"><b>Photos are still arriving.</b> 4 photos are uploading from Sandeep's phone.</span></div>
+      <div class="banner amber" data-when="unsigned"><svg class="ic"><use href="#ph-signature"/></svg><span class="grow"><b>Pending confirmation.</b> The customer has not signed. Confirms on its own in 18 h.</span></div>
+      <div class="banner red" data-when="conflict"><svg class="ic"><use href="#ph-git-compare"/></svg><span class="grow"><b>Needs review.</b> A late sync changed Time on site.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="#D426">Open sync review</a></span></div>
+      <div class="banner amber" id="unmatched-banner"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>1 unmatched part.</b> Match it to the catalogue before approving.</span></div>
+    </div>
+
+    <div class="detail">
+      <div class="stack">
+        <section class="card"><div class="card-head"><h2 class="grow">Reported and found</h2></div><div class="card-body"><dl class="dl" id="found"></dl></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Checklist results</h2><span class="muted" id="check-count" style="font-size:13px"></span></div>
+          <div class="table-wrap" style="margin-top:14px"><table class="table compact"><thead><tr><th>Item</th><th>Result</th><th>Remark</th></tr></thead><tbody id="checklist"></tbody></table></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Work done</h2></div><div class="card-body" id="work"></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Parts used</h2></div>
+          <div class="table-wrap" style="margin-top:14px"><table class="table compact"><thead><tr><th>Part</th><th class="num">Qty</th><th>Source</th><th>Old part returned</th><th>Warranty</th><th>Match</th></tr></thead><tbody id="parts"></tbody></table></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Time and charges</h2></div><div class="card-body"><dl class="dl" id="time"></dl></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Photos and videos</h2></div><div class="card-body"><div class="gallery" id="gallery"></div></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">After the visit</h2></div><div class="card-body"><dl class="dl" id="after"></dl></div></section>
+        <section class="card"><div class="card-head"><h2 class="grow">Confirmation</h2></div><div class="card-body" id="confirm"></div></section>
+      </div>
+
+      <aside>
+        <section class="card side-card">
+          <div class="card-head"><h3 class="grow">Decision</h3></div>
+          <div class="card-body stack-sm" data-when="ready unsigned arriving conflict amended">
+            <p class="muted" style="font-size:13px">The customer sees the report after you approve, or on its own after 24 hours.</p>
+            <button class="btn btn-primary btn-block" type="button" data-open="approve">Approve report</button>
+            <button class="btn btn-secondary btn-block" type="button" data-open="changes">Request changes</button>
+            <button class="btn btn-ghost btn-block" type="button" data-open="amend"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Amend a field</button>
+          </div>
+          <div class="card-body stack-sm" data-when="approved">
+            <div class="who"><span class="avatar dark">RG</span><span><b>Approved by Rajesh Goyal</b><small>Mon 23 Nov, 12:04</small></span></div>
+            <p class="muted" style="font-size:13px">Visible to the customer. Parts issued from stock.</p>
+            <button class="btn btn-secondary btn-block" type="button" data-toast="Report sent to Rakesh Mehta">Send to customer</button>
+          </div>
+        </section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Engineer</h3><a class="card-link" href="#D702">Open</a></div>
+          <div class="card-body" id="engineer"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Machine</h3><a class="card-link" href="#D302">Open</a></div>
+          <div class="card-body" id="machine"></div></section>
+      </aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:180px"></span><span class="sk sk-title" style="width:300px"></span><span class="sk sk-line" style="width:380px"></span></div></div>
+    <div class="detail"><div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span></div></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+
+  <div data-when="empty"><div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-clipboard-text"/></svg></span>
+    <h3>No report yet</h3><p>The engineer's report appears here once it is submitted.</p><div class="btns"><a class="btn btn-secondary" href="#D403">Back to ticket</a></div></div></div></div>
+</main>
+
+<div class="overlay center" id="approve" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ap-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2 id="ap-title">Approve this report?</h2><p>The customer sees it in the app and the parts are issued from stock.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-approve>Approve</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="changes" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ch-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ch-title">Request changes</h2><p>Sent to the engineer's app. The report goes back to draft.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Sections to fix</span><div class="stack-sm" id="sections"></div></div>
+      <div class="field"><label for="ch-msg">Message</label><textarea class="textarea" id="ch-msg">Please add the part number for the thermocouple and a photo of the old element.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Sent to Sandeep Yadav">Send</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="amend" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="am-title">
+    <div class="drawer-head"><div class="grow"><h2 id="am-title">Amend a field</h2><p>Your change shows as a diff with your reason.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="am-field">Field</label><select class="select" id="am-field"><option>Time on site</option><option>Work done</option><option>Recommendations</option><option>Machine status after visit</option></select></div>
+      <div class="field"><label for="am-old">Current</label><input class="input" id="am-old" value="2 h 40 min" disabled></div>
+      <div class="field"><label for="am-new">New value</label><input class="input" id="am-new" value="2 h 25 min"></div>
+      <div class="field"><label for="am-reason">Reason</label><input class="input" id="am-reason" value="Trial run of 15 min was billed twice"><span class="hint">Shown to the engineer and kept in history.</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-amend>Save amendment</button></div>
+  </div>
+</div>
+
+<div class="overlay right" id="match" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="mt-title">
+    <div class="drawer-head"><div class="grow"><h2 id="mt-title">Match part</h2><p>Thermocouple, K type, 1 m · typed by the engineer</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="search-row"><label class="search" data-filter="#match-list"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search the catalogue" aria-label="Search parts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-toast="Filters open"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button></div>
+      <ul class="mini card" id="match-list"></ul>
+      <a class="btn btn-secondary" href="#D803"><svg class="ic"><use href="#ph-plus"/></svg>Add as a new part</a>
+    </div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty approved amended unsigned arriving conflict" data-mobile="../../../screens/customer/C512-service-report.html">
+  <div><h3>What it is</h3><p>The engineer's visit report before the customer sees it. Opens with <code>?t=</code>; default TKT-2026-0128.</p></div>
+  <div><h3>What you can do</h3><ul><li>Approve, request changes or amend a field with a reason.</li><li>Match a part the engineer typed to the catalogue.</li><li>Download the PDF; send it to the customer once approved.</li></ul></div>
+  <div><h3>What happens next</h3><p>Approve issues the parts from stock and shows the report in the app (C512). Then Close ticket (D414).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unmatched part is flagged (EC-A45).</li><li>No signature: Pending confirmation with time left.</li><li>Photos still arriving; sync conflict links to D426 (EC-A17).</li><li>Amended: diff with the reason. Machine status changes only after approval.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0128');
+  const rep = ZX.data.reports.find((x) => x.ticket === t.number);
+  if (!rep) { ZXA.initialState = 'empty'; return; }
+  const x = ZXA.data.service.reportExtra[t.number];
+  const e = r.engineer(rep.engineer);
+  const m = r.machine(t.machine);
+  const tq = `?t=${t.number}`;
+  const ic = r.icon;
+
+  document.title = `Zixom Admin - ${rep.number}`;
+  $('crumb-ticket').textContent = t.number;
+  $('crumb-ticket').href = `#D403${tq}`;
+  $('to-close').href = `#D414${tq}`;
+  $('number').textContent = rep.number;
+  $('meta').innerHTML = `<span>${ic('hard-hat')}${e.name}</span><span>${ic('calendar-blank')}${r.dayDate(rep.date)}</span>
+    <span>${ic('clock')}Checked in ${r.time(x.visit.checkIn)}, out ${r.time(x.visit.checkOut)}</span><span>${ic('timer')}${rep.timeOnSite} on site</span>`;
+
+  const chip = () => ({ approved: r.tag('Approved', 'green'), amended: r.tag('Amended', 'blue'), conflict: r.tag('Needs review', 'red'), unsigned: r.tag('Pending confirmation', 'amber') }[document.body.dataset.state]
+    || r.tag('Waiting for review', 'amber'));
+  const renderChips = () => { $('chips').innerHTML = chip() + r.coverageTag(t.coverage); };
+
+  $('found').innerHTML = `<dt>Reported</dt><dd>${x.reported}</dd><dt>Found</dt><dd>${rep.findings}</dd><dt>Root cause</dt><dd>${x.rootCause}</dd>`;
+  const RES = { Pass: 'green', Fail: 'red', 'N/A': '' };
+  $('checklist').innerHTML = x.checklist.map(([item, res, remark]) => `<tr><td>${item}</td><td>${r.tag(res, RES[res])}</td><td class="muted">${remark || '–'}</td></tr>`).join('');
+  $('check-count').textContent = `${x.checklist.filter(([, s]) => s === 'Pass').length} pass · ${x.checklist.filter(([, s]) => s === 'Fail').length} fail · ${x.checklist.filter(([, s]) => s === 'N/A').length} N/A`;
+  $('work').innerHTML = `<p style="color:var(--text-strong)">${rep.work}</p>`;
+
+  const partRows = () => x.parts.map((p) => {
+    const cat = p.part ? ZX.data.parts.find((y) => y.number === p.part) : null;
+    return `<tr><td>${p.name}<span class="sub mono">${p.part || 'Not in catalogue'}</span></td><td class="num">${p.qty}</td><td>${p.source}</td><td>${p.returned}</td>
+      <td>${p.warranty ? r.tag('Yes', 'green') : r.tag('No')}</td>
+      <td>${cat ? r.tag('Matched', 'green', 'check') : `<span class="row">${r.tag('Unmatched part', 'amber', 'warning')}<button class="btn btn-sm btn-secondary" type="button" data-open="match">Match</button></span>`}</td></tr>`;
+  }).join('');
+  $('parts').innerHTML = partRows();
+  $('time').innerHTML = `${x.timeLog.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Charges</dt><dd>${rep.chargeable ? 'Chargeable' : 'No charge, warranty'}</dd>`;
+  $('gallery').innerHTML = ['Before: zone 4 element', 'After: new element', 'Before: sheet sag', 'After: trial sheet', 'Clamp meter reading', 'Video, 0:18']
+    .map((label, i) => `<div class="ph">${ic(i === 5 ? 'video-camera' : 'image')}<small>${label}</small></div>`).join('');
+
+  const renderAfter = () => {
+    const amended = document.body.dataset.state === 'amended';
+    $('after').innerHTML = `<dt>Machine status</dt><dd>${r.tag(rep.status, 'green')} <span class="muted">changes on the machine after approval</span></dd>
+      <dt>Recommendations</dt><dd>${rep.recommendations}</dd><dt>Customer remarks</dt><dd>${x.customerRemarks}</dd>
+      ${amended ? `<dt>Time on site</dt><dd><div class="diff"><span class="old">2 h 40 min</span><span class="new">2 h 25 min</span></div>
+        <span class="muted" style="font-size:12px">Rajesh Goyal, 12:06 · Trial run of 15 min was billed twice</span></dd>` : ''}`;
+    const unsigned = document.body.dataset.state === 'unsigned';
+    $('confirm').innerHTML = unsigned ? `<div class="row">${ic('hourglass')}<span class="grow"><b>Pending confirmation</b><br><span class="muted">The customer can sign in the app. Confirms on its own in 18 h.</span></span></div>`
+      : `<div class="row" style="align-items:flex-start; gap:16px"><div class="ph" style="width:200px; height:84px; border-radius:12px; background:var(--slate-50); box-shadow:inset 0 0 0 1px var(--line); display:grid; place-items:center; color:var(--slate-500)">${ic('signature')}</div>
+        <dl class="dl stack"><dt>Signed by</dt><dd>${rep.signedBy}</dd><dt>When</dt><dd>${r.dayDate(rep.signedAt)}, ${r.time(rep.signedAt)}</dd></dl></div>`;
+    $('unmatched-banner').hidden = document.body.dataset.state === 'approved';
+    renderChips();
+  };
+
+  $('engineer').innerHTML = `<div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${e.region}</small></span></div>`;
+  $('machine').innerHTML = `<div class="who"><span class="thumb">${ic('factory')}</span><span><b>${m.model}</b><small class="mono">${m.serial}</small></span></div>`;
+  $('sections').innerHTML = ['Reported and found', 'Checklist results', 'Work done', 'Parts used', 'Time and charges', 'Photos and videos', 'Recommendations']
+    .map((s, i) => `<label class="check"><input type="checkbox" ${i === 3 || i === 5 ? 'checked' : ''}> ${s}</label>`).join('');
+  $('match-list').innerHTML = ZX.data.parts.map((p) => `<li data-search-item><span class="ic-disc">${ic('package')}</span><span class="grow"><b>${p.name}</b><small class="mono">${p.number}</small></span>
+    <button class="btn btn-sm btn-secondary" type="button" data-close data-toast="Matched to ${p.number}">Match</button></li>`).join('');
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-approve]')) { ZXA.ui.setState('approved'); renderAfter(); ZXA.ui.toast('Report approved. Customer can see it'); }
+    if (event.target.closest('[data-amend]')) { ZXA.ui.setState('amended'); renderAfter(); ZXA.ui.toast('Amendment saved'); }
+    if (event.target.closest('[data-proto-state]')) window.setTimeout(renderAfter, 0);
+  });
+  renderAfter();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

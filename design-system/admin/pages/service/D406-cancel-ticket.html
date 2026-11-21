@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D406 Cancel ticket</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D406">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay center" id="cancel" data-static>
+  <div class="modal" role="alertdialog" aria-labelledby="cn-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
+      <div class="grow"><h2 id="cn-title"></h2><p id="cn-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><span class="label">Reason</span><div class="stack-sm">
+        <label class="check"><input type="radio" name="why" checked> Customer asked</label>
+        <label class="check"><input type="radio" name="why"> Duplicate</label>
+        <label class="check"><input type="radio" name="why"> Out of scope</label>
+        <label class="check"><input type="radio" name="why"> Not serviceable</label>
+        <label class="check"><input type="radio" name="why"> Other</label></div></div>
+      <div class="field"><label for="cn-note">Note <span class="opt">optional, shown to the customer</span></label><textarea class="textarea" id="cn-note" maxlength="300" style="min-height:72px"></textarea></div>
+      <div class="banner" data-when="paid"><svg class="ic"><use href="#ph-hand-coins"/></svg><span class="grow"><b>Advance of ₹4,000.00 was paid.</b> A refund opens after you cancel (D922).</span></div>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="keep" href="#D403">Keep ticket</a><button class="btn btn-danger" type="button" data-busy data-toast="Ticket cancelled. Customer and engineer told">Cancel ticket</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready paid" data-mobile="../../../screens/customer/C511-cancel-request.html">
+  <div><h3>What it is</h3><p>Modal over the ticket to cancel it. Opens with <code>?t=</code>; default TKT-2026-0123.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a reason and add a note.</li><li>Cancel the ticket, or keep it.</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer and engineer are told. The ticket shows Cancelled; Duplicate as new stays available.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>If a payment exists the refund is shown (Paid state).</li><li>Status moved in the app meanwhile: "This ticket changed. Reloaded." (EC-A14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0123');
+  const c = r.company(t.company);
+  const e = t.engineer ? r.engineer(t.engineer) : null;
+  document.getElementById('backdrop').innerHTML = ZXA.svc.backdrop(t, '<button class="btn btn-danger-soft" type="button" data-open="cancel">Cancel ticket</button>');
+  document.getElementById('cn-title').textContent = `Cancel ${t.number}?`;
+  document.getElementById('cn-text').textContent = `${c.name}${e ? ` and ${e.name}` : ''} will be told. This cannot be undone.`;
+  document.getElementById('keep').href = `#D403?t=${t.number}`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

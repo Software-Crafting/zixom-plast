@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D405 Reschedule</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D405">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay right" id="resched">
+  <div class="drawer" role="dialog" aria-labelledby="rs-title">
+    <div class="drawer-head"><div class="grow"><h2 id="rs-title">Reschedule</h2><p id="rs-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="banner amber" data-when="request"><svg class="ic"><use href="#ph-calendar-check"/></svg><span class="grow" id="request-text"></span></div>
+      <dl class="dl" id="current"></dl>
+      <div class="banner amber" id="limit" hidden><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Customer used 2 of 2 reschedules.</b> You can still move it with a reason.</span></div>
+      <div class="stack-sm">
+        <h3 style="font-size:15px" id="free-title"></h3>
+        <div class="table-wrap no-top" style="border-radius:12px; box-shadow:inset 0 0 0 1px var(--line)"><table class="table compact" id="free"></table></div>
+        <span class="hint" style="font-size:12px; color:var(--text-muted)">Pick a free slot. Starred slots are the customer's choice.</span>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label for="n-date">New date</label><input class="input" id="n-date" type="date" min="2026-11-23"></div>
+        <div class="field"><label for="n-slot">Slot</label><select class="select" id="n-slot"></select></div>
+        <div class="field full"><label for="n-reason">Reason</label><select class="select" id="n-reason"><option>Customer asked</option><option>Engineer not available</option><option>Parts not ready</option><option>Over the customer's limit, Admin override</option><option>Other</option></select></div>
+        <div class="field full"><label for="n-note">Note to customer <span class="opt">optional</span></label><textarea class="textarea" id="n-note" maxlength="300" style="min-height:72px"></textarea></div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><span class="grow"></span>
+      <span data-when="request"><button class="btn btn-secondary" type="button" data-close data-toast="Request declined. Customer told">Decline request</button></span>
+      <span data-when="request"><button class="btn btn-primary" type="button" data-close data-toast="Reschedule approved. Customer and engineer told">Approve request</button></span>
+      <span data-when="ready"><button class="btn btn-primary" type="button" data-close data-toast="New window proposed. Customer and engineer told">Propose new window</button></span>
+    </div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready request" data-mobile="../../../screens/customer/C510-reschedule.html">
+  <div><h3>What it is</h3><p>Drawer over the ticket to move the visit. Opens with <code>?t=</code>; default TKT-2026-0123.</p></div>
+  <div><h3>What you can do</h3><ul><li>See the current window and the engineer's free slots.</li><li>Propose a new window with a reason.</li><li>Approve or decline the customer's request (Request state).</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer and engineer are told. Back to Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Customer limit: 2 reschedules, not within 4 hours of the window.</li><li>After travel started the request waits for you (EC-A49, try <a href="D405-reschedule.html?t=TKT-2026-0125">TKT-2026-0125</a>).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const svc = ZXA.data.service;
+  const { offOn, clashes } = ZXA.svc;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0123');
+  const c = r.company(t.company);
+  const e = r.engineer(t.engineer || 'sandeep');
+  const used = svc.reschedules[t.number] ?? 0;
+  const travelling = t.status === 'on-the-way';
+  const preferred = svc.preferred[t.number] || [];
+  if (travelling) ZXA.initialState = 'request';
+
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, '<button class="btn btn-primary" type="button" data-open="resched">Reschedule</button>');
+  $('rs-sub').textContent = `${t.number} · ${c.name}`;
+  $('current').innerHTML = `<dt>Current window</dt><dd>${t.window ? `${r.dayDate(t.window.date)}, ${t.window.slot}` : 'Not set'}</dd>
+    <dt>Engineer</dt><dd>${e.name}</dd><dt>Customer reschedules</dt><dd>${used} of ${svc.rescheduleLimit} used</dd>`;
+  $('limit').hidden = used < svc.rescheduleLimit;
+  $('request-text').innerHTML = travelling
+    ? `<b>Customer asked to move this after ${e.name.split(' ')[0]} started travel.</b> Wed 25 Nov, 9 AM to 12 PM. ${e.name.split(' ')[0]} has been told.`
+    : '<b>Rakesh Mehta asked to move to Wed 25 Nov, 9 AM to 12 PM.</b> "Line shutdown for cleaning on Tuesday."';
+
+  /* engineer's slots for the next 5 working days */
+  const days = ['2026-11-24', '2026-11-25', '2026-11-26', '2026-11-27', '2026-11-28'];
+  $('free-title').textContent = `${e.name.split(' ')[0]}'s free slots`;
+  $('free').innerHTML = `<thead><tr><th>Day</th>${svc.slots.map(([l]) => `<th>${l}</th>`).join('')}</tr></thead><tbody>${days.map((d) => `<tr><td class="nowrap">${r.dayDate(d)}</td>
+    ${svc.slots.map(([l]) => {
+      if (offOn(e.id, d)) return `<td>${r.tag('Leave')}</td>`;
+      const busy = clashes(e.id, d, l, t.number);
+      if (busy.length) return `<td>${r.tag(busy[0].ticket.slice(-4), 'blue')}</td>`;
+      const pref = preferred.some(([pd, ps]) => pd === d && ps === l);
+      return `<td><button class="chip" type="button" data-pick="${d}|${l}" aria-pressed="false">${pref ? `${r.icon('star')}Free` : 'Free'}</button></td>`;
+    }).join('')}</tr>`).join('')}</tbody>`;
+  $('n-slot').innerHTML = svc.slots.map(([l]) => `<option>${l}</option>`).join('');
+  $('n-date').value = '2026-11-25';
+  $('n-slot').value = '9 AM to 12 PM';
+
+  document.addEventListener('click', (event) => {
+    const pick = event.target.closest('[data-pick]');
+    if (!pick) return;
+    document.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', String(b === pick)));
+    const [d, l] = pick.dataset.pick.split('|');
+    $('n-date').value = d;
+    $('n-slot').value = l;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

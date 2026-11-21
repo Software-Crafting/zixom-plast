@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D402 New ticket</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D402">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head"><div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D401">Service tickets</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>New ticket</span></nav>
+      <h1 style="font-size:var(--fs-28)">New ticket</h1><p class="muted" style="margin-top:4px" id="sub">On behalf of a customer. They are told in the app.</p></div></div>
+
+    <div class="grid side-right">
+      <section class="card"><div class="card-body" style="padding-top:20px">
+        <div class="form-section"><h3>Customer</h3><p>Search the company, then the person who asked.</p>
+          <div class="form-grid">
+            <div class="field"><label for="company">Company</label><select class="select" id="company"></select></div>
+            <div class="field"><label for="person">Person</label><select class="select" id="person"></select></div>
+          </div></div>
+        <div class="form-section"><h3>Machine</h3>
+          <div class="form-grid">
+            <div class="field full"><label for="machine">Serial and model</label><select class="select" id="machine"></select></div>
+            <div class="full" id="open-ticket"></div>
+          </div></div>
+        <div class="form-section"><h3>Problem</h3>
+          <div class="form-grid">
+            <div class="field"><label for="type">Service type</label><select class="select" id="type"><option>Breakdown or repair</option><option>Preventive maintenance</option><option>Installation</option><option>Calibration or trial</option><option>Operator training</option><option>Spare part fitting</option></select></div>
+            <div class="field"><label for="code">Error code <span class="opt">optional</span></label><input class="input mono" id="code" placeholder="E-17"></div>
+            <div class="field full"><span class="label">Severity</span>
+              <div class="choices" style="grid-template-columns:repeat(3, 1fr)">
+                <label class="choice"><input type="radio" name="sev" class="sr-only" value="down"><span><b>Machine down</b><small>Target 4 hours</small></span></label>
+                <label class="choice"><input type="radio" name="sev" class="sr-only" value="production" checked><span><b>Production affected</b><small>1 working day</small></span></label>
+                <label class="choice"><input type="radio" name="sev" class="sr-only" value="minor"><span><b>Minor</b><small>3 working days</small></span></label></div></div>
+            <div class="field full"><label for="desc">Description</label><textarea class="textarea" id="desc" maxlength="1000" placeholder="What happens, since when, what was tried"></textarea>
+              <span class="error" id="desc-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Describe the problem in at least 10 characters</span></div>
+            <div class="drop full"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop photos or a video</b>Up to 10 photos and 1 video of 60 seconds</div>
+          </div></div>
+        <div class="form-section"><h3>Visit</h3>
+          <div class="form-grid">
+            <div class="field"><label for="site">Site</label><select class="select" id="site"></select></div>
+            <div class="field"><label for="contact">Site contact</label><input class="input" id="contact"></div>
+            <div class="field full"><span class="label">Preferred slots <span class="opt">up to 3</span></span><div class="row wrap" id="slots"></div><span class="hint">Minimum notice 4 hours.</span></div>
+            <div class="field"><label for="source">Source</label><select class="select" id="source"><option>Phone</option><option>WhatsApp</option><option>Email</option><option>Walk in</option><option>IndiaMART lead</option><option>Other</option></select></div>
+          </div></div>
+      </div></section>
+
+      <aside class="stack">
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Coverage</h3></div><div class="card-body stack-sm" id="coverage"></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">The customer sees</h3></div>
+          <div class="card-body"><p class="muted" style="font-size:13px">"Zixom raised a service request for you." The ticket shows as Received in the app, with a push to the person.</p></div></section>
+      </aside>
+    </div>
+
+    <div class="form-bar">
+      <span class="grow"></span>
+      <a class="btn btn-ghost" href="#D401">Cancel</a>
+      <button class="btn btn-secondary" type="button" data-create="assign">Create and assign</button>
+      <button class="btn btn-primary" type="button" data-create="plain">Create ticket</button>
+    </div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/customer/C503-raise-machine.html">
+  <div><h3>What it is</h3><p>Create a ticket for a customer who called, wrote or walked in.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick the company, person and machine; coverage is computed at once.</li><li>Set type, severity, description, slots, site and source.</li><li>Create, or create and go straight to Assign.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403) or Assign engineer (D404). The customer is told in the app.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>An open ticket on the machine shows a link.</li><li>Machine pending verification: coverage unknown.</li><li><code>?t=</code> copies a ticket (Duplicate as new).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const from = new URLSearchParams(location.search).get('t');
+  const copy = from ? r.ticket(from) : null;
+  const companies = ZX.data.companies;
+  $('company').innerHTML = companies.map((c) => `<option value="${c.id}">${c.name} · ${c.code}</option>`).join('');
+  if (copy) {
+    $('company').value = copy.company;
+    $('desc').value = copy.summary;
+    $('type').value = copy.type;
+    $('sub').textContent = `Copied from ${copy.number}. Check the details before creating.`;
+  }
+
+  const coverage = (m) => {
+    if (m.status === 'pending') return [r.tag('Unknown', 'amber'), 'Machine is pending verification. Coverage is set once verified.'];
+    if (m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0) return [r.coverageTag('warranty'), `In warranty until ${r.date(m.warrantyEnd)}. No charge for covered parts and labour.`];
+    const amc = m.amc && ZX.data.amc.find((a) => a.number === m.amc);
+    if (amc && amc.status !== 'expired') return [r.coverageTag('amc'), `${amc.number}, ${amc.plan}, to ${r.date(amc.end)}. Labour covered; parts billed.`];
+    if (amc) return [r.coverageTag('chargeable'), `${amc.number} expired ${r.date(amc.end)}; in grace for 7 days. You can override to AMC.`];
+    return [r.coverageTag('chargeable'), `Warranty ended ${r.date(m.warrantyEnd)}. Visit fee ₹1,500, labour ₹750 an hour.`];
+  };
+  const fillCompany = () => {
+    const c = r.company($('company').value);
+    $('person').innerHTML = ZX.data.users.filter((u) => u.companies.some((x) => x.id === c.id)).map((u) => `<option value="${u.id}">${u.name}, ${u.designation}</option>`).join('');
+    $('machine').innerHTML = r.machines.filter((m) => m.company === c.id).map((m) => `<option value="${m.serial}">${m.serial} · ${m.model}${m.nickname ? `, ${m.nickname}` : ''}</option>`).join('');
+    $('site').innerHTML = c.sites.map((s) => `<option value="${s.id}">${s.name}, ${s.pincode}</option>`).join('');
+    if (copy && copy.company === c.id) $('machine').value = copy.machine;
+    fillMachine();
+  };
+  const fillMachine = () => {
+    const m = r.machine($('machine').value);
+    const c = r.company(m.company);
+    $('site').value = m.site;
+    $('contact').value = `${r.site(c.id, m.site).contact.name}, ${r.site(c.id, m.site).contact.phone}`;
+    const [chip, text] = coverage(m);
+    $('coverage').innerHTML = `<div>${chip}</div><p class="muted" style="font-size:13px">${text}</p>`;
+    const open = r.tickets.filter((t) => t.machine === m.serial && r.isOpen(t) && !['rejected', 'visit-failed'].includes(t.status));
+    $('open-ticket').innerHTML = open.length ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Open ticket on this machine.</b> ${open.slice(0, 2).map((t) => `<a class="mono" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a> ${r.ticketLabel(t.status).toLowerCase()}`).join(', ')}${open.length > 2 ? ` and ${open.length - 2} more` : ''}</span></div>` : '';
+  };
+  $('company').addEventListener('change', fillCompany);
+  $('machine').addEventListener('change', fillMachine);
+  fillCompany();
+
+  const SLOTS = [['2026-11-24', '9 AM to 12 PM'], ['2026-11-24', '12 to 3 PM'], ['2026-11-24', '3 to 6 PM'], ['2026-11-25', '9 AM to 12 PM'], ['2026-11-25', '12 to 3 PM'], ['2026-11-25', '3 to 6 PM']];
+  $('slots').innerHTML = SLOTS.map(([d, s], i) => `<button class="chip" type="button" aria-pressed="${i === 0 || i === 3}" data-slot>${r.dayDate(d)}, ${s}</button>`).join('');
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-slot]');
+    if (chip) {
+      const on = chip.getAttribute('aria-pressed') === 'true';
+      if (!on && document.querySelectorAll('[data-slot][aria-pressed="true"]').length >= 3) { ZXA.ui.toast('Up to 3 slots', 'info'); return; }
+      chip.setAttribute('aria-pressed', String(!on));
+    }
+    const create = event.target.closest('[data-create]');
+    if (create) {
+      const bad = $('desc').value.trim().length < 10;
+      $('desc-error').hidden = !bad;
+      $('desc').setAttribute('aria-invalid', String(bad));
+      if (bad) { $('desc').focus(); return; }
+      ZXA.ui.toast('TKT-2026-0135 created. Customer told in the app');
+      if (create.dataset.create === 'assign') window.setTimeout(() => ZXA.ui.go('D404'), 900);
+    }
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

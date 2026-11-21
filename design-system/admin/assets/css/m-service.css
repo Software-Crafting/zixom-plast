@@ -1,0 +1,46 @@
+/* Service module layout that no shared class covers: assign drawer columns, the engineer day strip,
+   schedule with the unassigned panel, month board, stylised map, rating stars. */
+
+/* ---------- assign drawer (D404): engineers left, window picker right ---------- */
+.assign-grid{display:grid; grid-template-columns:minmax(0, 1fr) 220px; gap:20px; align-items:start}
+.eng-facts{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+.choice.off{opacity:.55; cursor:not-allowed}
+.choice .grow{flex:1; min-width:0}
+
+/* ---------- day strip: one engineer's day, 9 AM to 6 PM ---------- */
+.strip{position:relative; height:56px; border-radius:12px; background:var(--slate-50); box-shadow:inset 0 0 0 1px var(--line);
+  background-image:linear-gradient(to right, var(--line) 1px, transparent 1px); background-size:calc(100% / 9) 100%}
+.strip .job{position:absolute; top:0; bottom:0; margin:6px 2px}
+.strip .job.new{background:#fff; border:1.5px dashed var(--blue)}
+.strip-hours{display:grid; grid-template-columns:repeat(9, 1fr); margin-top:4px; font-size:var(--fs-11); color:var(--text-faint)}
+
+/* ---------- schedule (D410): board plus the unassigned panel ---------- */
+.sched{display:grid; grid-template-columns:minmax(0, 1fr) 280px; gap:16px; align-items:start}
+.sched .lane-cells.drop-over{background-color:var(--blue-50)}
+.unassigned .card{padding:12px 14px; cursor:grab; box-shadow:inset 0 0 0 1px var(--line)}
+.unassigned .stack-sm{padding:0 12px 12px}
+.sched .board-grid:not(.month){grid-template-columns:180px repeat(var(--cols), minmax(64px, 1fr)); min-width:0}
+.sched .board-grid:not(.month) > .lane-cells{grid-template-columns:repeat(var(--cols), minmax(64px, 1fr))}
+.board-grid.month{grid-template-columns:220px repeat(28, minmax(38px, 1fr)); min-width:1300px}
+.board-grid.month > .lane-cells{grid-template-columns:repeat(28, minmax(38px, 1fr)); background-size:calc(100% / 28) 100%}
+.board-grid.month .job{margin:6px 2px; padding:6px 0; text-align:center}
+.board-grid > .h.off{color:var(--text-faint)}
+@media (max-width:1100px){.sched{grid-template-columns:minmax(0, 1fr)}}
+
+/* ---------- engineer map (D411): stylised map, no map library ---------- */
+.map{display:block; width:100%; height:auto; border-radius:var(--r-lg); background:#EEF1F4}
+.map .pin{cursor:pointer}
+.map text{font:600 12px var(--font-body); fill:var(--slate-700)}
+
+/* ---------- rating stars (D420) ---------- */
+.stars{display:inline-flex; gap:1px; vertical-align:middle}
+.stars .ic{width:14px; height:14px; color:var(--slate-300)}
+.stars .ic.on{color:var(--amber); fill:currentColor}
+
+@media (max-width:640px){
+  .card-foot{flex-wrap:wrap}
+  .card-foot .grow{display:none}
+  .assign-grid{grid-template-columns:minmax(0, 1fr)}
+  .sched .board-grid:not(.month){grid-template-columns:130px repeat(var(--cols), minmax(64px, 1fr))}
+  .board-grid.month{grid-template-columns:130px repeat(28, minmax(36px, 1fr))}
+}

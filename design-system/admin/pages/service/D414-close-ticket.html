@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D414 Close ticket</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D414" data-nav="D401">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay right" id="close">
+  <div class="drawer" role="dialog" aria-labelledby="cl-title">
+    <div class="drawer-head"><div class="grow"><h2 id="cl-title">Close ticket</h2><p id="cl-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <ul class="mini card" id="checks"></ul>
+      <div class="banner red" data-when="blocked"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow"><b>2 open items block closing.</b> Fix them first.</span></div>
+      <label class="switch"><input type="checkbox" id="auto" checked><span></span>Close on its own if the customer does not answer in 3 days</label>
+      <div class="field"><label for="cl-note">Closing note <span class="opt">optional, internal</span></label><textarea class="textarea" id="cl-note" maxlength="300" style="min-height:72px"></textarea></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><span class="grow"></span>
+      <a class="btn btn-secondary" id="close-invoice" href="#D902">Close and create invoice</a>
+      <button class="btn btn-primary" type="button" id="close-go" data-close data-busy data-toast="Ticket closed. Customer told">Close ticket</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready blocked" data-mobile="../../../screens/customer/C513-confirm-completion.html">
+  <div><h3>What it is</h3><p>Drawer over the ticket with the closing checklist. Opens with <code>?t=</code>; default TKT-2026-0128.</p></div>
+  <div><h3>What you can do</h3><ul><li>Check the report, parts, invoice and sign off.</li><li>Close, or close and create the invoice.</li><li>Leave auto close on.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer can rate the visit and reopen within 7 days. Invoice (D902).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open items block closing and link to the fix (Blocked state).</li><li>Auto close 3 days after Pending sign off.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0128');
+  const tq = `?t=${t.number}`;
+  const warranty = t.coverage === 'warranty';
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, '<button class="btn btn-primary" type="button" data-open="close">Close ticket</button>');
+  $('cl-sub').textContent = `${t.number} · ${r.company(t.company).name}`;
+  $('close-invoice').href = `#D902${tq}`;
+  $('close-invoice').hidden = warranty;
+
+  const row = (ok, title, sub, fix) => `<li><span class="ic-disc ${ok ? 'green' : 'red'}">${r.icon(ok ? 'check' : 'x')}</span>
+    <span class="grow"><b>${title}</b><small>${sub}</small></span>${!ok && fix ? `<a class="btn btn-sm btn-secondary" href="${fix[1]}">${fix[0]}</a>` : ''}</li>`;
+  const render = () => {
+    const blocked = document.body.dataset.state === 'blocked';
+    $('checks').innerHTML = [
+      row(!blocked, 'Report approved', blocked ? 'SR-2026-0128 is waiting for review' : 'SR-2026-0128, today 12:04', ['Review report', ZXA.href('D413', tq)]),
+      row(!blocked, 'Parts reconciled', blocked ? '1 unmatched part' : '2 parts issued from stock', ['Match part', ZXA.href('D413', tq)]),
+      row(true, warranty ? 'Invoice not needed' : 'Invoice', warranty ? 'Warranty job, no charge' : 'Create after closing'),
+      `<li><span class="ic-disc amber">${r.icon('hourglass')}</span><span class="grow"><b>Customer sign off pending</b><small>Closes on its own on Tue 24 Nov, 16:52</small></span></li>`,
+    ].join('');
+    $('close-go').disabled = blocked;
+  };
+  render();
+  document.addEventListener('click', (event) => { if (event.target.closest('[data-proto-state]')) window.setTimeout(render, 0); });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

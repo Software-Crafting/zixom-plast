@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D408 Estimate builder</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D408">
+<main class="content">
+  <div data-when="ready sent approved rejected expired">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D401">Service tickets</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-ticket" href="#D403"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Estimate</span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar">
+        <button class="btn btn-secondary" type="button" data-toast="PDF preview opened"><svg class="ic"><use href="#ph-file-pdf"/></svg>Preview PDF</button>
+        <span data-when="sent"><button class="btn btn-secondary" type="button" data-open="withdraw">Withdraw</button></span>
+        <span data-when="sent expired rejected"><button class="btn btn-primary" type="button" data-toast="New version QT-2026-0041-R2 created. The old one is marked Revised">Revise</button></span>
+      </div>
+    </div>
+
+    <div class="stack" style="margin-bottom:16px">
+      <div class="banner" data-when="sent"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg><span class="grow"><b>Sent 23 Nov, 09:30.</b> Read only. The customer sees a countdown to 26 Nov. Revise to change it.</span></div>
+      <div class="banner green" data-when="approved"><svg class="ic"><use href="#ph-check-circle"/></svg><span class="grow"><b>Approved by Rakesh Mehta</b>, 23 Nov, 14:10 in the app.</span></div>
+      <div class="banner red" data-when="rejected"><svg class="ic"><use href="#ph-x"/></svg><span class="grow"><b>Rejected by Rakesh Mehta</b>, 23 Nov, 15:02: "Please quote with a regrind of the old blades."</span></div>
+      <div class="banner grey" data-when="expired"><svg class="ic"><use href="#ph-hourglass"/></svg><span class="grow"><b>Expired on 26 Nov.</b> The customer did not answer. Revise to send a new one.</span></div>
+    </div>
+
+    <div class="grid side-right">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><div class="grow"><h2>Lines</h2><p>Rates from the rate list. GST 18% on every line.</p></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-menu="add-menu" data-when="ready"><svg class="ic"><use href="#ph-plus"/></svg>Add line<svg class="ic caret"><use href="#ph-caret-down"/></svg></button></div>
+          <div class="table-wrap" style="margin-top:14px">
+            <table class="table compact" id="lines">
+              <thead><tr><th>Type</th><th>Description</th><th class="num">Qty</th><th>Unit</th><th class="num">Rate</th><th class="num">GST</th><th class="num">Amount</th><th class="actions"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-body form-grid" style="padding-top:20px">
+            <div class="field full"><label for="note">Note to customer</label><textarea class="textarea" id="note" maxlength="300"></textarea>
+              <span class="hint" id="note-count"></span></div>
+            <div class="field full"><label for="terms">Terms</label><textarea class="textarea" id="terms" style="min-height:72px">Valid for 3 days. Work starts after approval. Parts carry 6 months warranty from fitting.</textarea></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="card side-card">
+          <div class="card-head"><h3 class="grow">Summary</h3></div>
+          <div class="card-body stack-sm">
+            <dl class="dl" id="sum"></dl>
+            <div class="divider" style="margin:6px 0"></div>
+            <div class="field"><span class="label">Discount</span>
+              <div class="row"><div class="segment" role="tablist" aria-label="Discount type"><button role="tab" aria-selected="true" data-disc="pct">%</button><button role="tab" aria-selected="false" data-disc="amt">₹</button></div>
+                <input class="input sm" id="discount" type="number" min="0" value="0" aria-label="Discount" style="width:110px"></div>
+              <span class="hint">Up to 5 percent.</span><span class="error" id="disc-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Discount is over the 5 percent limit</span></div>
+            <div class="field"><label for="valid">Valid until</label><input class="input" id="valid" type="date" value="2026-11-26"><span class="hint">Default 3 days. Reminder after 24 hours.</span></div>
+            <label class="switch"><input type="checkbox" id="advance"><span></span>Advance required</label>
+            <div class="field" id="advance-field" hidden><label for="advance-amt">Advance amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="advance-amt" value="4,000"></div>
+              <span class="hint">The customer pays after approving (C803).</span></div>
+          </div>
+        </section>
+        <section class="card side-card">
+          <div class="card-head"><h3 class="grow">Ticket</h3><a class="card-link" id="ticket-link" href="#D403">Open</a></div>
+          <div class="card-body" id="ticket-card"></div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="form-bar" data-when="ready">
+      <span class="grow"><span class="autosave"><svg class="ic"><use href="#ph-check-circle"/></svg>Draft saved 12:01</span></span>
+      <button class="btn btn-secondary" type="button" data-busy data-toast="Draft saved">Save draft</button>
+      <button class="btn btn-primary" type="button" data-open="send">Send to customer</button>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:180px"></span><span class="sk sk-title" style="width:300px"></span></div></div>
+    <div class="grid side-right"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+  </div>
+</main>
+
+<div class="menu" id="add-menu" hidden>
+  <button type="button" data-add="Labour"><svg class="ic"><use href="#ph-wrench"/></svg>Labour</button>
+  <button type="button" data-open="parts"><svg class="ic"><use href="#ph-package"/></svg>Part from the catalogue</button>
+  <button type="button" data-add="Travel"><svg class="ic"><use href="#ph-car-profile"/></svg>Travel</button>
+  <button type="button" data-add="Other"><svg class="ic"><use href="#ph-plus"/></svg>Other</button>
+</div>
+
+<!-- part search -->
+<div class="overlay right" id="parts" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="pt-title">
+    <div class="drawer-head"><div class="grow"><h2 id="pt-title">Add a part</h2><p>Search the catalogue by name or part number.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="search-row"><label class="search" data-filter="#part-list"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Heater, chain, ZP-SP-003" aria-label="Search parts"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="part-filter"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button></div>
+      <ul class="mini card" id="part-list"></ul>
+    </div>
+  </div>
+</div>
+<div class="menu" id="part-filter" hidden><div class="label">Stock</div><label class="check"><input type="checkbox" checked> In stock</label><label class="check"><input type="checkbox" checked> Low or out of stock</label></div>
+
+<div class="overlay center" id="send" hidden>
+  <div class="modal" role="dialog" aria-labelledby="sd-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg></span>
+      <div class="grow"><h2 id="sd-title">Send estimate?</h2><p id="sd-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep editing</button><button class="btn btn-primary" type="button" data-close data-toast="Estimate sent by push and email. Status: Estimate shared">Send</button></div>
+  </div>
+</div>
+<div class="overlay center" id="withdraw" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="wd-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-undo"/></svg></span>
+      <div class="grow"><h2 id="wd-title">Withdraw this estimate?</h2><p>The customer can no longer approve it. The ticket goes back to Submitted.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep estimate</button><button class="btn btn-danger" type="button" data-close data-toast="Estimate withdrawn">Withdraw</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading sent approved rejected expired" data-mobile="../../../screens/customer/C509-estimate.html">
+  <div><h3>What it is</h3><p>Estimate for a chargeable job or extra work. Opens with <code>?t=</code>; default TKT-2026-0122.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add labour, parts, travel or other lines; change quantity and rate.</li><li>Set a discount, validity and an advance.</li><li>Save a draft or send it to the customer.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer approves or rejects in the app (C509). Sent estimates are read only; Revise makes a new version.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Warranty lines are zero and locked (try <a href="D408-estimate-builder.html?t=TKT-2026-0126">TKT-2026-0126</a>).</li><li>Out of stock part shows the lead time.</li><li>Saved lines keep their rate when the rate list changes.</li><li>Offline: Save is disabled.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const svc = ZXA.data.service;
+  const rates = svc.rates;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0122');
+  const c = r.company(t.company);
+  const m = r.machine(t.machine);
+  const est = svc.estimates.find((x) => x.ticket === t.number && x.status !== 'Revised');
+  const warranty = t.coverage === 'warranty';
+  const mobile = ZX.data.estimates.find((x) => x.ticket === t.number);
+
+  /* lines: [type, description, qty, unit, rate, locked note] */
+  const lines = est ? est.lines.map((l) => [...l])
+    : [['Labour', 'Labour', 2, 'h', rates.labour], ['Travel', 'Travel, within 25 km', 1, 'trip', 0]];
+  if (warranty) lines.unshift(['Part', `${m.model} warranty parts`, 1, 'set', 0, 'Warranty']);
+  const number = est ? est.number : 'QT-2026-0043';
+
+  document.title = `Zixom Admin - ${number}`;
+  $('crumb-ticket').textContent = t.number;
+  $('crumb-ticket').href = `#D403?t=${t.number}`;
+  $('ticket-link').href = `#D403?t=${t.number}`;
+  $('number').textContent = number;
+  $('meta').innerHTML = `<span>${r.icon('buildings')}${c.name}</span><span>${r.icon('factory')}${m.model}</span><span>${r.icon('user')}${est?.by ? r.engineer(est.by).name : 'Rajesh Goyal'}</span>`;
+  $('note').value = mobile?.note || 'Price for the work found on site. Work continues after you approve.';
+  $('ticket-card').innerHTML = `<div class="tags" style="margin-bottom:10px">${r.ticketTag(t.status)}${r.coverageTag(t.coverage)}</div>
+    <p class="muted" style="font-size:13px">${r.esc(t.summary)}</p>`;
+
+  const STATE_TAG = { ready: ['Draft', ''], sent: ['Sent', 'amber'], approved: ['Approved', 'green'], rejected: ['Rejected', 'red'], expired: ['Expired', ''] };
+  const current = () => document.body.dataset.state || 'ready';
+  const readOnly = () => current() !== 'ready';
+
+  const render = () => {
+    const ro = readOnly();
+    $('chips').innerHTML = r.tag(...(STATE_TAG[current()] || STATE_TAG.ready)) + r.coverageTag(t.coverage);
+    document.querySelector('#lines tbody').innerHTML = lines.map(([type, desc, qty, unit, rate, lock], i) => {
+      const part = type === 'Part' ? ZX.data.parts.find((p) => p.name === desc) : null;
+      const saved = type === 'Labour' && rate !== rates.labour && rate > 0;
+      const off = ro || lock;
+      return `<tr data-i="${i}"><td>${type}${lock ? `<span class="sub">${r.tag(lock, 'green', 'lock-simple')}</span>` : ''}</td>
+        <td><input class="input sm" data-k="1" value="${r.esc(desc)}" minlength="3" maxlength="100" aria-label="Description" ${off ? 'disabled' : ''} style="min-width:200px">
+          ${part && ['out', 'low'].includes(part.stock) ? `<span class="sub amber-text">${part.stock === 'out' ? 'Out of stock, lead time 7 days' : 'Low stock'}</span>` : ''}
+          ${saved ? `<span class="sub">Saved rate. Rate list now ${r.money(rates.labour)}</span>` : ''}</td>
+        <td class="num"><input class="input sm num" data-k="2" type="number" min="1" max="999" step="0.5" value="${qty}" aria-label="Quantity" ${off ? 'disabled' : ''} style="width:72px"></td>
+        <td>${unit}</td>
+        <td class="num"><input class="input sm num" data-k="4" type="number" min="0" value="${rate}" aria-label="Rate" ${off ? 'disabled' : ''} style="width:100px"></td>
+        <td class="num">18%</td><td class="num nowrap">${r.money(qty * rate)}</td>
+        <td class="actions">${off ? '' : `<button class="icon-btn sm" type="button" data-remove="${i}" aria-label="Remove line">${r.icon('trash')}</button>`}</td></tr>`;
+    }).join('');
+    const subtotal = lines.reduce((sum, [, , q, , rate]) => sum + q * rate, 0);
+    const pct = document.querySelector('[data-disc="pct"]').getAttribute('aria-selected') === 'true';
+    const raw = Number($('discount').value) || 0;
+    const discount = pct ? subtotal * raw / 100 : raw;
+    $('disc-error').hidden = discount <= subtotal * rates.discountLimit / 100;
+    const taxable = subtotal - discount;
+    const gst = Math.round(taxable * rates.gst) / 100;
+    const total = Math.round(taxable + gst);
+    $('sum').innerHTML = `<dt>Subtotal</dt><dd class="num">${r.money(subtotal)}</dd><dt>Discount</dt><dd class="num">- ${r.money(discount)}</dd>
+      <dt>GST 18%</dt><dd class="num">${r.money(gst)}</dd><dt>Round off</dt><dd class="num">${r.money(total - taxable - gst)}</dd>
+      <dt><b>Total</b></dt><dd class="num"><b style="font-size:18px">${r.money(total)}</b></dd>`;
+    $('note-count').textContent = `${$('note').value.length} of 300`;
+    $('sd-text').textContent = `${c.name} gets ${r.money(total)} by push and email, valid until ${r.date($('valid').value)}.`;
+    ['note', 'terms', 'discount', 'valid', 'advance'].forEach((id) => { $(id).disabled = ro; });
+  };
+
+  document.addEventListener('input', (event) => {
+    if (['discount', 'note'].includes(event.target.id)) render();
+  });
+  /* re-render on change, not on every key, so the field keeps focus while typing */
+  document.addEventListener('change', (event) => {
+    const input = event.target.closest('#lines input');
+    if (input) {
+      lines[input.closest('tr').dataset.i][input.dataset.k] = input.dataset.k === '1' ? input.value : Number(input.value);
+      render();
+    }
+    if (event.target.id === 'advance') $('advance-field').hidden = !event.target.checked;
+    if (event.target.id === 'valid') render();
+  });
+  document.addEventListener('click', (event) => {
+    const add = event.target.closest('[data-add]');
+    if (add) {
+      const type = add.dataset.add;
+      lines.push(type === 'Labour' ? ['Labour', 'Labour', 1, 'h', rates.labour] : type === 'Travel' ? ['Travel', 'Travel beyond 25 km', 10, 'km', rates.travelPerKm] : ['Other', 'Consumables', 1, 'lot', 0]);
+      render();
+    }
+    const remove = event.target.closest('[data-remove]');
+    if (remove) { lines.splice(Number(remove.dataset.remove), 1); render(); ZXA.ui.toast('Line removed', 'info'); }
+    const pick = event.target.closest('[data-part]');
+    if (pick) {
+      const p = ZX.data.parts.find((x) => x.number === pick.dataset.part);
+      lines.push(['Part', p.name, 1, 'pc', warranty ? 0 : (p.price || 0), warranty ? 'Warranty' : '']);
+      ZXA.ui.closeOverlay($('parts'));
+      render();
+    }
+    if (event.target.closest('[data-disc]')) window.setTimeout(render, 0);
+    if (event.target.closest('[data-proto-state]')) window.setTimeout(render, 0);
+  });
+
+  $('part-list').innerHTML = ZX.data.parts.filter((p) => p.stock !== 'discontinued').map((p) => `<li data-search-item>
+    <span class="ic-disc">${r.icon('package')}</span><span class="grow"><b>${p.name}</b><small class="mono">${p.number} · ${p.price ? r.money(p.price) : 'Price on request'}</small></span>
+    ${r.stockTag(p.stock)}<button class="btn btn-sm btn-secondary" type="button" data-part="${p.number}">Add</button></li>`).join('');
+
+  render();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

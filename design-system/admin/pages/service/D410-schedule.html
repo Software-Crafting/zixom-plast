@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D410 Schedule</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D410">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Schedule</h1><p id="head-sub">Mon 23 Nov 2026 · 2 engineers · times in IST</p></div>
+    <div class="segment" role="tablist" aria-label="View">
+      <button role="tab" aria-selected="true" aria-controls="view-day">Day</button>
+      <button role="tab" aria-selected="false" aria-controls="view-week">Week</button>
+      <button role="tab" aria-selected="false" aria-controls="view-month">Month</button>
+    </div>
+    <a class="btn btn-primary" href="#D402"><svg class="ic"><use href="#ph-plus"/></svg>New ticket</a>
+  </div>
+
+  <div class="sched" data-when="ready empty">
+    <section class="card list-card">
+      <div class="toolbar">
+        <button class="icon-btn" type="button" aria-label="Previous" data-toast="Previous period"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+        <input class="input sm" type="date" value="2026-11-23" aria-label="Date" style="width:150px">
+        <button class="icon-btn" type="button" aria-label="Next" data-toast="Next period"><svg class="ic"><use href="#ph-caret-right"/></svg></button>
+        <button class="btn btn-secondary btn-sm" type="button" data-toast="Showing today">Today</button>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <span class="muted" style="font-size:12px">Live, updated every 30 s</span>
+      </div>
+      <div data-when="ready">
+        <div class="board" id="view-day" role="tabpanel"><div class="board-grid" style="--cols:9" id="day"></div></div>
+        <div class="board" id="view-week" role="tabpanel" hidden><div class="board-grid" style="--cols:7" id="week"></div></div>
+        <div class="board" id="view-month" role="tabpanel" hidden><div class="board-grid month" id="month"></div></div>
+        <div class="table-foot"><span class="legend"><span><i style="--c:var(--blue)"></i>Booked</span><span><i style="--c:var(--green)"></i>Completed</span>
+          <span><i style="--c:var(--amber)"></i>On hold or reopened</span><span><i style="--c:var(--red)"></i>Failed</span><span><i style="--c:var(--slate-300)"></i>Leave or off</span></span></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span><h3>No visits</h3><p>Nothing is booked for this day.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D402">New ticket</a></div></div>
+    </section>
+
+    <aside class="card unassigned">
+      <div class="card-head"><div class="grow"><h2>Unassigned</h2><p>Drag onto an engineer</p></div></div>
+      <div class="card-body stack-sm" id="unassigned" style="padding:12px"></div>
+    </aside>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:320px; height:36px; border-radius:999px"></span></div>
+      <div class="card-body stack"><span class="sk sk-block"></span><span class="sk sk-block"></span><span class="sk sk-block"></span></div></section>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D403">Open ticket</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-move" href="#D405">Reschedule</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="f-title">
+    <div class="drawer-head"><div class="grow"><h2 id="f-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option>All regions</option><option>Ahmedabad</option><option>Pune</option></select></div>
+      <div class="field"><label for="f-skill">Skill</label><select class="select" id="f-skill"><option>Any skill</option><option>Thermoforming</option><option>PLC</option><option>Vacuum</option><option>Cup forming</option><option>Blister sealing</option></select></div>
+      <div class="field"><label for="f-status">Status</label><select class="select" id="f-status"><option>Any status</option><option>Scheduled</option><option>In progress</option><option>On hold</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/engineer/E701-schedule.html">
+  <div><h3>What it is</h3><p>Engineers as rows, time as columns. Day, week and month.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a block for the ticket drawer.</li><li>Drag an unassigned ticket onto an engineer (opens Assign).</li><li>Drag a block to another time (Reschedule) or engineer (Assign).</li><li>Click empty time to create a ticket.</li></ul></div>
+  <div><h3>What happens next</h3><p>Assign engineer (D404), Reschedule (D405), New ticket (D402), Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Overlapping blocks stack with a warning (EC-A47).</li><li>Dropping on leave or a weekly off is refused (EC-A46).</li><li>Red line is now. Refreshes every 30 seconds.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const svc = ZXA.data.service;
+  const { visitsOn, offOn, hours } = ZXA.svc;
+  const $ = (id) => document.getElementById(id);
+  const engineers = ZX.data.engineers;
+  const TONE = { completed: 'green', closed: 'green', 'on-hold': 'amber', reopened: 'amber', 'visit-failed': 'red' };
+  const tone = (t) => TONE[t.status] || '';
+  const addDays = (iso, n) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + n); return d.toLocaleDateString('en-CA'); };
+  const isSunday = (iso) => new Date(`${iso}T00:00:00`).getDay() === 0;
+  const who = (e) => `<div class="who-cell">${r.avatar(e)}<span class="who"><span><b>${e.name}</b><small>${e.region}</small></span></span></div>`;
+  const overlaps = (v) => visitsOn(v.engineer, v.date).some((o) => o !== v && o.from < v.to && o.to > v.from);
+
+  /* ---------- day: 9 AM to 6 PM, one column per hour ---------- */
+  const today = ZX.data.today;
+  $('day').innerHTML = `<div class="h">Engineer</div>${Array.from({ length: 9 }, (_, i) => `<div class="h ${i === 3 ? 'today' : ''}">${hours(9 + i)}</div>`).join('')}
+    ${engineers.map((e) => `${who(e)}<div class="lane-cells" style="--cols:9" data-engineer="${e.id}" data-date="${today}">
+      ${visitsOn(e.id, today).map((v) => { const t = r.ticket(v.ticket); return `<div class="job ${tone(t)}" draggable="true" data-ticket="${v.ticket}" tabindex="0"
+        style="grid-column:${Math.floor(v.from - 9) + 1} / ${Math.ceil(v.to - 9) + 1}"><b>${overlaps(v) ? `${r.icon('warning')} ` : ''}${v.ticket}</b><span>${r.company(t.company).name.split(' ')[0]}, ${r.site(t.company, t.site).name.split(' ')[0]} · ${r.ticketLabel(t.status)}</span></div>`; }).join('')}
+      <span class="now-line" style="left:${(3 / 9) * 100}%"></span></div>`).join('')}`;
+
+  /* ---------- week: Mon 23 to Sun 29 ---------- */
+  const week = Array.from({ length: 7 }, (_, i) => addDays(today, i));
+  $('week').innerHTML = `<div class="h">Engineer</div>${week.map((d, i) => `<div class="h ${i === 0 ? 'today' : ''} ${isSunday(d) ? 'off' : ''}">${r.dayDate(d)}</div>`).join('')}
+    ${engineers.map((e) => `${who(e)}<div class="lane-cells" style="--cols:7" data-engineer="${e.id}">
+      ${week.map((d, i) => (isSunday(d) ? `<div class="job leave" style="grid-column:${i + 1}"><b>Weekly off</b></div>`
+        : visitsOn(e.id, d).map((v) => { const t = r.ticket(v.ticket); return `<div class="job ${tone(t)}" draggable="true" data-ticket="${v.ticket}" tabindex="0" style="grid-column:${i + 1}"><b>${v.ticket}</b><span>${hours(v.from)} · ${r.company(t.company).name.split(' ')[0]}</span></div>`; }).join(''))).join('')}
+      </div>`).join('')}`;
+
+  /* ---------- month: 28 days from today, count of visits per day ---------- */
+  const month = Array.from({ length: 28 }, (_, i) => addDays(today, i));
+  $('month').innerHTML = `<div class="h">Engineer</div>${month.map((d, i) => `<div class="h ${i === 0 ? 'today' : ''} ${isSunday(d) ? 'off' : ''}" style="padding:0 4px; justify-content:center">${Number(d.slice(8))}</div>`).join('')}
+    ${engineers.map((e) => `${who(e)}<div class="lane-cells" data-engineer="${e.id}">
+      ${month.map((d, i) => {
+        const off = offOn(e.id, d);
+        const n = visitsOn(e.id, d).length;
+        if (off || isSunday(d)) return `<div class="job leave" style="grid-column:${i + 1}" data-tip="${off ? `${off.label}, ${off.note} (${off.status})` : 'Weekly off'}"><b>${off ? 'L' : '–'}</b></div>`;
+        return n ? `<div class="job" style="grid-column:${i + 1}" data-tip="${n} visits, ${r.dayDate(d)}"><b>${n}</b></div>` : '';
+      }).join('')}</div>`).join('')}`;
+
+  /* ---------- unassigned panel ---------- */
+  const open = r.tickets.filter((t) => r.isOpen(t) && !t.engineer);
+  $('unassigned').innerHTML = open.map((t) => `<div class="card" draggable="true" data-ticket="${t.number}" data-new>
+    <div class="row"><span class="mono strong">${t.number}</span><span class="grow"></span>${t.severity === 'down' ? r.severityTag('down', true) : r.ticketTag(t.status)}</div>
+    <p class="muted" style="font-size:13px; margin-top:4px">${r.company(t.company).name} · ${r.site(t.company, t.site).name}</p></div>`).join('');
+
+  /* ---------- drag: unassigned or another engineer opens Assign; same engineer opens Reschedule ---------- */
+  let dragged = null;
+  document.addEventListener('dragstart', (event) => {
+    const item = event.target.closest('[draggable][data-ticket]');
+    if (!item) return;
+    dragged = item;
+    event.dataTransfer.setData('text/plain', item.dataset.ticket);
+  });
+  document.addEventListener('dragover', (event) => {
+    const lane = event.target.closest('.lane-cells');
+    if (!lane || !dragged) return;
+    event.preventDefault();
+    document.querySelectorAll('.drop-over').forEach((x) => x.classList.remove('drop-over'));
+    lane.classList.add('drop-over');
+  });
+  document.addEventListener('drop', (event) => {
+    const lane = event.target.closest('.lane-cells');
+    if (!lane || !dragged) return;
+    event.preventDefault();
+    lane.classList.remove('drop-over');
+    const t = r.ticket(dragged.dataset.ticket);
+    if (event.target.closest('.job.leave')) { ZXA.ui.toast('Refused. The engineer is not working that day', 'info'); return; }
+    const same = t.engineer === lane.dataset.engineer && !('new' in dragged.dataset);
+    ZXA.ui.go(`${same ? 'D405' : 'D404'}?t=${t.number}`);
+  });
+  document.addEventListener('dragend', () => { dragged = null; document.querySelectorAll('.drop-over').forEach((x) => x.classList.remove('drop-over')); });
+
+  /* ---------- click a block: quick view; click empty time: new ticket ---------- */
+  const openQuick = (number) => {
+    const t = r.ticket(number);
+    $('quick-title').textContent = t.number;
+    $('quick-sub').textContent = `${t.type} · ${r.company(t.company).name}`;
+    $('quick-open').href = ZXA.href('D403', `?t=${t.number}`);
+    $('quick-move').href = ZXA.href(t.engineer ? 'D405' : 'D404', `?t=${t.number}`);
+    $('quick-move').textContent = t.engineer ? 'Reschedule' : 'Assign';
+    const v = svc.visits.find((x) => x.ticket === number);
+    const clash = v ? visitsOn(v.engineer, v.date).filter((o) => o !== v && o.from < v.to && o.to > v.from) : [];
+    $('quick-body').innerHTML = `${clash.length ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Overlaps ${clash.map((o) => o.ticket).join(', ')}.</b> Move one of them.</span></div>` : ''}${ZXA.svc.quickFacts(t)}`;
+    ZXA.ui.openOverlay('quick');
+  };
+  document.addEventListener('click', (event) => {
+    const job = event.target.closest('.job[data-ticket], .unassigned [data-ticket]');
+    if (job) { openQuick(job.dataset.ticket); return; }
+    const lane = event.target.closest('.lane-cells');
+    if (lane && !event.target.closest('.job')) ZXA.ui.go('D402');
+  });
+  document.addEventListener('keydown', (event) => {
+    const job = event.target.closest?.('.job[data-ticket]');
+    if (job && event.key === 'Enter') openQuick(job.dataset.ticket);
+    if (job && ['ArrowRight', 'ArrowLeft'].includes(event.key)) {
+      const all = [...job.closest('.board-grid').querySelectorAll('.job[data-ticket]')];
+      all[(all.indexOf(job) + (event.key === 'ArrowRight' ? 1 : -1) + all.length) % all.length].focus();
+    }
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

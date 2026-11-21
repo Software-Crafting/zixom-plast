@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D411 Engineer map</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D411">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Engineer map</h1><p>Today's jobs and engineers on the way · last known location only</p></div>
+    <div class="segment" role="tablist" aria-label="Region">
+      <button role="tab" aria-selected="true" aria-controls="map-ahmedabad">Ahmedabad</button>
+      <button role="tab" aria-selected="false" aria-controls="map-pune">Pune</button>
+    </div>
+  </div>
+  <div class="grid side-right" data-when="ready">
+    <section class="card">
+      <div class="card-body" style="padding-top:20px">
+        <div id="map-ahmedabad" role="tabpanel"></div>
+        <div id="map-pune" role="tabpanel" hidden></div>
+        <div class="legend" style="margin-top:12px"><span><i style="--c:var(--blue)"></i>Job today</span><span><i style="--c:var(--red)"></i>Machine down</span><span><i style="--c:var(--slate-800)"></i>Engineer, last known</span></div>
+      </div>
+    </section>
+    <aside class="stack">
+      <section class="card"><div class="card-head"><div class="grow"><h2>Engineers</h2><p>Location shows only on the way and at site</p></div></div><ul class="mini" id="engineers"></ul></section>
+      <section class="card"><div class="card-head"><div class="grow"><h2>Jobs today</h2></div><a class="card-link" href="#D410">Schedule</a></div><ul class="mini" id="jobs"></ul></section>
+    </aside>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-call" href="tel:">Call engineer</a><span class="grow"></span><a class="btn btn-primary" id="quick-open" href="#D403">Open ticket</a></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready error" data-mobile="../../../screens/customer/C516-track.html">
+  <div><h3>What it is</h3><p>A map of today's jobs and where engineers were last seen. Stylised placeholder, not a real map.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch region.</li><li>Click a pin for the ticket drawer; call the engineer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403), Schedule (D410).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Location is shown only during travel and at site (privacy).</li><li>GPS off shows "Location not shared" (Anita).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  /* positions on a 800 x 460 stylised map, per region */
+  const REGIONS = {
+    ahmedabad: { label: 'Ahmedabad', sites: { vatva: [560, 330, 'Vatva GIDC'], sanand: [150, 190, 'Sanand GIDC'] },
+      engineers: [['sandeep', 330, 236, 'On the way to Sanand · 11:48']], river: 'M430 0 C 420 120, 470 220, 440 460' },
+    pune: { label: 'Pune', sites: { chakan: [470, 150, 'Chakan MIDC'] }, engineers: [], river: 'M0 300 C 200 280, 420 360, 800 320' },
+  };
+  const today = r.tickets.filter((t) => ZXA.data.service.visits.some((v) => v.ticket === t.number && v.date === ZX.data.today));
+  const draw = (key) => {
+    const g = REGIONS[key];
+    const jobs = today.filter((t) => g.sites[t.site]);
+    const roads = Array.from({ length: 9 }, (_, i) => `<line x1="${i * 100}" y1="0" x2="${i * 100 + 40}" y2="460" stroke="#fff" stroke-width="${i % 3 ? 3 : 7}"/>`).join('')
+      + Array.from({ length: 5 }, (_, i) => `<line x1="0" y1="${i * 110 + 20}" x2="800" y2="${i * 110 - 10}" stroke="#fff" stroke-width="${i % 2 ? 3 : 7}"/>`).join('');
+    const sitePins = Object.entries(g.sites).map(([id, [x, y, label]]) => {
+      const here = jobs.filter((t) => t.site === id);
+      const down = here.some((t) => t.severity === 'down');
+      return `<g class="pin" data-ticket="${here[0]?.number || ''}" tabindex="0" role="button" aria-label="${label}, ${here.length} jobs">
+        <circle cx="${x}" cy="${y}" r="22" fill="${down ? 'var(--red)' : 'var(--blue)'}" opacity=".18"/><circle cx="${x}" cy="${y}" r="10" fill="${down ? 'var(--red)' : 'var(--blue)'}"/>
+        <text x="${x + 18}" y="${y - 14}">${label} · ${here.length} job${here.length === 1 ? '' : 's'}</text></g>`;
+    }).join('');
+    const engPins = g.engineers.map(([id, x, y, note]) => { const e = r.engineer(id); return `<g class="pin" data-engineer="${id}">
+      <circle cx="${x}" cy="${y}" r="16" fill="var(--slate-800)"/><text x="${x}" y="${y + 4}" text-anchor="middle" style="fill:#fff; font-size:11px">${e.initials}</text>
+      <text x="${x + 22}" y="${y + 30}">${note}</text></g>`; }).join('');
+    return `<svg class="map" viewBox="0 0 800 460" role="img" aria-label="Stylised map of ${g.label}">
+      <path d="${g.river}" stroke="#CFE0EE" stroke-width="22" fill="none"/>${roads}
+      <rect x="20" y="410" width="120" height="30" rx="8" fill="#fff"/><text x="32" y="430">${g.label}</text>${sitePins}${engPins}</svg>`;
+  };
+  $('map-ahmedabad').innerHTML = draw('ahmedabad');
+  $('map-pune').innerHTML = draw('pune');
+
+  $('engineers').innerHTML = `<li><span class="avatar">SY</span><span class="grow"><b>Sandeep Yadav</b><small>On the way to Sanand · seen 12 min ago</small></span>${r.tag('On the way', 'blue')}</li>
+    <li><span class="avatar">AV</span><span class="grow"><b>Anita Verma</b><small>GPS off since 11:40</small></span>${r.tag('Location not shared', 'amber')}</li>`;
+  $('jobs').innerHTML = today.map((t) => `<li data-ticket="${t.number}" style="cursor:pointer"><span class="ic-disc ${t.severity === 'down' ? 'red' : 'blue'}">${r.icon('map-pin')}</span>
+    <span class="grow"><b class="mono">${t.number}</b><small>${r.site(t.company, t.site).name} · ${r.ticketLabel(t.status)}</small></span></li>`).join('');
+
+  const open = (number) => {
+    const t = r.ticket(number);
+    if (!t) return;
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    $('quick-title').textContent = t.number;
+    $('quick-sub').textContent = `${r.company(t.company).name} · ${r.site(t.company, t.site).name}`;
+    $('quick-open').href = ZXA.href('D403', `?t=${t.number}`);
+    $('quick-call').href = e ? `tel:${e.phone.replace(/\s/g, '')}` : '#';
+    $('quick-body').innerHTML = ZXA.svc.quickFacts(t);
+    ZXA.ui.openOverlay('quick');
+  };
+  document.addEventListener('click', (event) => {
+    const pin = event.target.closest('[data-ticket]');
+    if (pin && pin.dataset.ticket) open(pin.dataset.ticket);
+    const eng = event.target.closest('[data-engineer]');
+    if (eng) open('TKT-2026-0125');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

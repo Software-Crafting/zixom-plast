@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D422 Coverage override</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D422" data-nav="D401">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay center" id="coverage">
+  <div class="modal" role="dialog" aria-labelledby="co-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-shield-check"/></svg></span>
+      <div class="grow"><h2 id="co-title">Override coverage</h2><p id="co-sub"></p></div></div>
+    <div class="modal-body stack">
+      <dl class="dl" id="co-current"></dl>
+      <div class="field"><span class="label">New coverage</span>
+        <div class="row wrap" data-single id="co-new">
+          <button class="chip" type="button" aria-pressed="false" data-cov="warranty">Warranty</button>
+          <button class="chip" type="button" aria-pressed="true" data-cov="amc">AMC</button>
+          <button class="chip" type="button" aria-pressed="false" data-cov="chargeable">Chargeable</button></div></div>
+      <div class="banner" id="co-effect"></div>
+      <div class="field"><label for="co-note">Reason</label><textarea class="textarea" id="co-note" maxlength="300" style="min-height:72px">AMC-2026-0014 is in its 7 day grace period and the renewal invoice is raised.</textarea>
+        <span class="hint">Kept in the ticket history. The customer sees the new coverage.</span></div>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="co-cancel" href="#D403">Cancel</a><button class="btn btn-primary" type="button" data-busy data-toast="Coverage saved. Customer told of the new charges">Save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/engineer/E222-coverage.html">
+  <div><h3>What it is</h3><p>Modal over the ticket to change Warranty, AMC or Chargeable. Opens with <code>?t=</code>; default TKT-2026-0122.</p></div>
+  <div><h3>What you can do</h3><ul><li>See why the current coverage was set.</li><li>Pick the new coverage and see the change in charges.</li><li>Save with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Written to history. The customer sees the new coverage and any change in charges; open estimates are revised (D408).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>AMC covers labour and travel, not parts.</li><li>A reason is required.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0122');
+  const m = r.machine(t.machine);
+  const est = ZXA.data.service.estimates.find((x) => x.ticket === t.number && x.status === 'Sent');
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, '<button class="btn btn-secondary" type="button" data-open="coverage">Override coverage</button>');
+  $('co-sub').textContent = `${t.number} · ${m.model}`;
+  $('co-cancel').href = `#D403?t=${t.number}`;
+  const why = { chargeable: `Out of warranty since ${r.date(m.warrantyEnd)}${m.amc ? `; ${m.amc} expired, in grace` : ''}`,
+    warranty: `In warranty until ${m.warrantyEnd ? r.date(m.warrantyEnd) : 'unknown'}`, amc: `Covered by ${m.amc}` };
+  $('co-current').innerHTML = `<dt>Current</dt><dd>${r.coverageTag(t.coverage)}</dd><dt>Why</dt><dd>${why[t.coverage]}</dd>`;
+  /* charge preview from the open estimate: AMC drops labour and travel, warranty drops all */
+  const charge = (cov) => {
+    if (!est) return 0;
+    const keep = est.lines.filter(([type]) => cov === 'chargeable' || (cov === 'amc' && type === 'Part'));
+    return Math.round(keep.reduce((s, [, , q, , rate]) => s + q * rate, 0) * 1.18);
+  };
+  const render = () => {
+    const cov = document.querySelector('#co-new [aria-pressed="true"]').dataset.cov;
+    $('co-effect').innerHTML = est ? `${r.icon('currency-inr')}<span class="grow"><b>${est.number}: ${r.money(charge(t.coverage))} → ${r.money(charge(cov))}</b><br>The estimate is revised and sent again.</span>`
+      : `${r.icon('info')}<span class="grow">No open estimate. Future charges follow the new coverage.</span>`;
+  };
+  document.addEventListener('click', (event) => { if (event.target.closest('[data-cov]')) window.setTimeout(render, 0); });
+  render();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

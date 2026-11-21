@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D419 Visit failed</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D419" data-nav="D401">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay right" id="failed">
+  <div class="drawer" role="dialog" aria-labelledby="vf-title">
+    <div class="drawer-head"><div class="grow"><h2 id="vf-title">Visit failed</h2><p id="vf-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <dl class="dl">
+        <dt>Reason</dt><dd>Customer not available</dd>
+        <dt>Engineer</dt><dd>Sandeep Yadav, at the gate 16:40 to 17:05</dd>
+        <dt>Waited</dt><dd>25 min <span class="muted">(policy 20 min)</span></dd>
+        <dt>Calls to customer</dt><dd>3 calls, no answer<br><span class="muted">16:42, 16:50, 17:01 to Rakesh Mehta</span></dd>
+      </dl>
+      <div class="gallery"><div class="ph"><svg class="ic"><use href="#ph-image"/></svg><small>Gate photo, 17:04</small></div><div class="ph"><svg class="ic"><use href="#ph-map-pin"/></svg><small>40 m from the pin</small></div></div>
+      <div class="field"><span class="label">What next</span>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="next" class="sr-only" value="resched" checked><span><b>Reschedule</b><small>Pick a new window. No charge.</small></span></label>
+          <label class="choice"><input type="radio" name="next" class="sr-only" value="fee"><span><b>Charge visit fee, ₹1,500.00</b><small>Adds a line to the next invoice. Policy allows it after a 20 min wait.</small></span></label>
+          <label class="choice"><input type="radio" name="next" class="sr-only" value="close"><span><b>Close</b><small>The customer no longer needs the visit.</small></span></label>
+        </div></div>
+      <div class="field"><label for="vf-note">Note to customer <span class="opt">optional</span></label><textarea class="textarea" id="vf-note" maxlength="300" style="min-height:72px"></textarea></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" id="vf-go">Continue to reschedule</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/engineer/E209-customer-unavailable.html">
+  <div><h3>What it is</h3><p>Drawer over a ticket whose visit failed. Opens with <code>?t=</code>; default TKT-2026-0130.</p></div>
+  <div><h3>What you can do</h3><ul><li>See the reason, photo, wait time and call attempts.</li><li>Reschedule, charge the visit fee or close.</li></ul></div>
+  <div><h3>What happens next</h3><p>Reschedule (D405). The fee becomes an invoice line (D902). Close ends the ticket.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The fee applies only where the policy says so (Confirm).</li><li>Customer wait is 20 minutes, then Visit failed with a photo.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0130');
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, '<button class="btn btn-primary" type="button" data-open="failed">Visit failed</button>');
+  $('vf-sub').textContent = `${t.number} · ${r.company(t.company).name} · Sun 22 Nov`;
+  const LABEL = { resched: 'Continue to reschedule', fee: 'Charge visit fee', close: 'Close ticket' };
+  document.addEventListener('change', (event) => { if (event.target.name === 'next') $('vf-go').textContent = LABEL[event.target.value]; });
+  $('vf-go').addEventListener('click', () => {
+    const pick = document.querySelector('[name="next"]:checked').value;
+    if (pick === 'resched') { ZXA.ui.go(`D405?t=${t.number}`); return; }
+    ZXA.ui.closeOverlay($('failed'));
+    ZXA.ui.toast(pick === 'fee' ? 'Visit fee of ₹1,500.00 added to the next invoice' : 'Ticket closed. Customer told');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

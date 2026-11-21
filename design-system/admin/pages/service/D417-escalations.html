@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D417 Escalations</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D417" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Escalations</h1><p>2 open · raised by engineers from site</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+  <section class="card list-card" data-when="ready empty no-results">
+    <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+      <button role="tab" aria-selected="true" data-view="Open">Open <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="Resolved">Resolved <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+    </div>
+    <div class="toolbar" data-when="ready no-results">
+      <label class="search" data-filter="#rows"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket, engineer or note" aria-label="Search escalations"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+    <div class="table-wrap" data-when="ready no-results">
+      <table class="table" id="rows"><thead><tr><th class="sortable">Ticket</th><th class="sortable">Level</th><th class="sortable">Engineer</th><th>Notes</th><th class="sortable">Raised</th><th>Status</th></tr></thead><tbody></tbody></table>
+      <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+    </div>
+    <div class="table-foot" data-when="ready no-results"><span id="foot"></span><span class="grow"></span>
+      <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button><button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div></div>
+    <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No escalations</h3><p>When an engineer needs help on site it appears here.</p></div>
+  </section>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"><a class="btn btn-ghost" id="call" href="tel:+919909033114"><svg class="ic"><use href="#ph-phone"/></svg>Join by call</a><span class="grow"></span>
+      <a class="btn btn-secondary" id="second" href="#D404">Assign a second engineer</a>
+      <button class="btn btn-primary" type="button" data-close data-toast="Marked resolved. Engineer told">Mark resolved</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="f-title">
+    <div class="drawer-head"><div class="grow"><h2 id="f-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-co">Customer</label><select class="select" id="f-co"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready empty no-results error" data-mobile="../../../screens/engineer/E211-escalate.html">
+  <div><h3>What it is</h3><p>Help requests from engineers on site (E211): technical help, senior engineer or manager.</p></div>
+  <div><h3>What you can do</h3><ul><li>Reply; the reply is pushed to the engineer's app.</li><li>Join by call, assign a second engineer, mark resolved.</li></ul></div>
+  <div><h3>What happens next</h3><p>Assign engineer (D404) for a second engineer. Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machine down tickets sort first.</li><li>Resolved keeps the outcome note.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.service.escalations;
+  const LEVEL = { 'Technical help': 'blue', 'Senior engineer': 'amber', Manager: 'red' };
+  $('rows').tBodies[0].innerHTML = list.map((x, i) => {
+    const t = r.ticket(x.ticket);
+    const e = r.engineer(x.engineer);
+    return `<tr data-drawer="quick" data-i="${i}" data-status="${x.status}" class="${t.severity === 'down' && x.status === 'Open' ? 'urgent' : ''}">
+      <td><a class="rec" href="#D403?t=${x.ticket}">${x.ticket}</a><span class="sub">${r.company(t.company).name}</span></td>
+      <td>${r.tag(x.level, LEVEL[x.level])}</td>
+      <td><span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span></td>
+      <td><span class="clip" style="max-width:340px">${r.esc(x.notes)}</span>${x.photos ? `<span class="sub">${x.photos} photos</span>` : ''}</td>
+      <td data-sort="${x.when}">${r.ago(x.when)}</td><td>${r.tag(x.status, x.status === 'Open' ? 'amber' : 'green')}</td></tr>`;
+  }).join('');
+  const show = (view) => {
+    const rows = [...$('rows').tBodies[0].rows];
+    rows.forEach((row) => { row.hidden = view !== 'all' && row.dataset.status !== view; });
+    const n = rows.filter((x) => !x.hidden).length;
+    $('foot').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = tab.dataset.view === 'all' ? list.length : list.filter((x) => x.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => show(tab.dataset.view));
+  });
+  show('Open');
+  $('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.i];
+    const t = r.ticket(x.ticket);
+    const e = r.engineer(x.engineer);
+    $('quick-title').textContent = `${x.level}, ${x.ticket}`;
+    $('quick-sub').textContent = `${e.name} · ${r.company(t.company).name} · ${r.ago(x.when)}`;
+    $('call').href = `tel:${e.phone.replace(/\s/g, '')}`;
+    $('second').href = ZXA.href('D404', `?t=${x.ticket}`);
+    $('quick-foot').hidden = x.status !== 'Open';
+    $('quick-body').innerHTML = `<div class="tags">${r.tag(x.level, LEVEL[x.level])}${t.severity ? r.severityTag(t.severity) : ''}${r.ticketTag(t.status)}</div>
+      ${x.photos ? `<div class="gallery">${Array.from({ length: x.photos }, (_, n) => `<div class="ph">${r.icon('image')}<small>Site photo ${n + 1}</small></div>`).join('')}</div>` : ''}
+      <div class="card" style="box-shadow:inset 0 0 0 1px var(--line)"><div class="thread">
+        <div class="msg">${r.esc(x.notes)}<small>${e.name} · ${r.time(x.when)}</small></div>
+        ${x.resolved ? `<div class="msg me">${r.esc(x.resolved)}<small>Resolved</small></div>` : ''}</div>
+        ${x.status === 'Open' ? `<div class="composer"><textarea class="textarea" placeholder="Reply to ${e.name.split(' ')[0]}" aria-label="Reply"></textarea>
+          <button class="btn btn-secondary" type="button" data-toast="Reply pushed to ${e.name.split(' ')[0]}'s app">Send</button></div>` : ''}</div>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

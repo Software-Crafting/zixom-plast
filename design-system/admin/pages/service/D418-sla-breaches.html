@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D418 SLA breaches</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D418" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>SLA breaches</h1><p>Targets from Settings: machine down 4 h, production affected 1 working day, minor 3 working days</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+  <div data-when="ready no-results">
+    <section class="kpis" aria-label="SLA numbers">
+      <a class="card kpi alert" href="#D418"><span class="label">Breached, open</span><span class="value">1</span><span class="foot">TKT-2026-0130, 5 h over</span></a>
+      <a class="card kpi" href="#D418"><span class="label">At risk</span><span class="value">3</span><span class="foot">next due in 18 min</span></a>
+      <a class="card kpi" href="#D1501"><span class="label">Met this month</span><span class="value">94%</span><span class="foot"><span class="trend up">▲ 2%</span>vs October</span></a>
+      <a class="card kpi" href="#D1501"><span class="label">Average response</span><span class="value">3.1 h</span><span class="foot">target 4 h for machine down</span></a>
+    </section>
+  </div>
+  <section class="card list-card" data-when="ready empty no-results" style="margin-top:16px">
+    <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+      <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="breach">Breached <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="risk">At risk <span class="n"></span></button>
+      <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+    </div>
+    <div class="toolbar" data-when="ready no-results">
+      <label class="search" data-filter="#rows"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket, customer or owner" aria-label="Search"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+    <div class="table-wrap" data-when="ready no-results">
+      <table class="table" id="rows"><thead><tr><th class="sortable">Ticket</th><th class="sortable">Severity</th><th class="sortable">Target</th><th class="sortable">Due</th><th class="sortable">State</th><th class="sortable">Owner</th><th>Reason</th></tr></thead><tbody></tbody></table>
+      <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div>
+    </div>
+    <div class="table-foot" data-when="ready no-results"><span id="foot"></span><span class="grow"></span>
+      <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button><button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div></div>
+    <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No breaches</h3><p>Tickets past or near their target appear here.</p></div>
+  </section>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D403">Open ticket</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Reason saved">Save reason</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="f-title">
+    <div class="drawer-head"><div class="grow"><h2 id="f-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-co">Customer</label><select class="select" id="f-co"><option>Any</option><option>Shree Packaging Industries</option><option>Nova Cups Pvt Ltd</option></select></div>
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option>Any</option><option>Sandeep Yadav</option><option>Anita Verma</option></select></div>
+      <div class="form-grid"><div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready empty no-results error" data-mobile="../../../screens/customer/C1505-response-times.html">
+  <div><h3>What it is</h3><p>Tickets past or near their response, accept or resolution target.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the ticket; add a reason note for the breach.</li><li>Export for the monthly review.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403). Reports (D1501) use the reasons.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Targets come from Settings (D1605), by severity.</li><li>Time paused while waiting for the customer is not counted.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.service.breaches;
+  /* closed tickets that are not in the ticket list carry their own company, machine and severity */
+  const info = (x) => r.ticket(x.ticket) || { company: x.company, machine: x.machine, severity: x.severity };
+  $('rows').tBodies[0].innerHTML = list.map((x, i) => {
+    const t = info(x);
+    const e = x.owner ? r.engineer(x.owner) : null;
+    return `<tr data-drawer="quick" data-i="${i}" data-state="${x.closed ? 'closed' : x.state[1]}" class="${x.state[1] === 'breach' && !x.closed ? 'urgent' : ''}">
+      <td><a class="rec" href="#D403?t=${x.ticket}">${x.ticket}</a><span class="sub">${r.company(t.company).name}</span></td>
+      <td>${r.severityTag(t.severity, true)}</td><td>${x.target}</td>
+      <td class="nowrap" data-sort="${x.due}">${r.dayDate(x.due)}, ${r.time(x.due)}</td>
+      <td>${r.sla(x.state)}</td>
+      <td>${e ? `<span class="who">${r.avatar(e, 'sm')}<span>${e.name.split(' ')[0]}</span></span>` : '<span class="red-text strong">Unassigned</span>'}</td>
+      <td>${x.reason ? `<span class="clip" style="max-width:260px">${r.esc(x.reason)}</span>` : '<span class="faint">Add a reason</span>'}</td></tr>`;
+  }).join('');
+  const VIEWS = { open: (row) => row.dataset.state !== 'closed', breach: (row) => row.dataset.state === 'breach', risk: (row) => row.dataset.state === 'risk', all: () => true };
+  const show = (view) => {
+    const rows = [...$('rows').tBodies[0].rows];
+    rows.forEach((row) => { row.hidden = !VIEWS[view](row); });
+    const n = rows.filter((x) => !x.hidden).length;
+    $('foot').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = [...$('rows').tBodies[0].rows].filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => show(tab.dataset.view));
+  });
+  show('open');
+  $('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.i];
+    const t = info(x);
+    $('quick-title').textContent = x.ticket;
+    $('quick-sub').textContent = `${x.target} target · ${r.company(t.company).name}`;
+    $('quick-open').href = ZXA.href('D403', `?t=${x.ticket}`);
+    $('quick-body').innerHTML = `<div class="tags">${r.sla(x.state)}${r.severityTag(t.severity)}</div>
+      <dl class="dl"><dt>Target</dt><dd>${x.target}, due ${r.dayDate(x.due)} ${r.time(x.due)}</dd><dt>Machine</dt><dd>${r.machine(t.machine).model}</dd>
+        <dt>Owner</dt><dd>${x.owner ? r.engineer(x.owner).name : 'Unassigned'}</dd></dl>
+      <div class="field"><label for="why">Reason</label><textarea class="textarea" id="why" maxlength="300" placeholder="What caused the delay">${r.esc(x.reason)}</textarea>
+        <span class="hint">Shown in the SLA report.</span></div>`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

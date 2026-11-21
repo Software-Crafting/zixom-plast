@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D404 Assign engineer</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D404">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<!-- assign drawer, 720 px, open on load -->
+<div class="overlay right" id="assign">
+  <div class="drawer wide" role="dialog" aria-labelledby="as-title">
+    <div class="drawer-head"><div class="grow"><h2 id="as-title">Assign engineer</h2><p id="as-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+
+    <div class="drawer-body stack" data-when="ready no-match taken not-synced pincode">
+      <div class="card pad" id="summary"></div>
+      <div class="banner red" data-when="taken"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>Already assigned to Anita Verma.</b> Another Admin assigned this ticket first. The drawer refreshed.</span></div>
+      <div class="banner amber" data-when="pincode"><svg class="ic"><use href="#ph-map-pin"/></svg>
+        <span class="grow"><b>Pincode not serviceable.</b> You can still assign or call the customer first.</span></div>
+      <div class="banner grey" data-when="no-match"><svg class="ic"><use href="#ph-info"/></svg><span class="grow">No engineer matches. Showing everyone.</span></div>
+      <div class="stack-sm" id="warnings"></div>
+
+      <div class="assign-grid">
+        <div class="stack">
+          <div class="stack-sm" data-when="ready taken not-synced pincode"><h3 style="font-size:15px">Suggested</h3><div class="choices" id="suggested"></div></div>
+          <div class="stack-sm">
+            <h3 style="font-size:15px">All engineers</h3>
+            <div class="search-row"><label class="search" data-filter="#all"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+              <input type="search" placeholder="Name, region or skill" aria-label="Search engineers"></label>
+              <button class="btn btn-secondary filter-btn" type="button" data-menu="eng-filter"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button></div>
+            <div class="choices" id="all"></div>
+            <div class="state" data-noresults hidden><h3>No matching results</h3><div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="field"><label for="w-date">Visit date</label><input class="input" id="w-date" type="date" min="2026-11-23"></div>
+          <div class="field"><span class="label">Slot</span><div class="choices" id="slots"></div><span class="hint">Minimum notice 4 hours. Times in IST.</span></div>
+        </div>
+      </div>
+
+      <div class="stack-sm">
+        <div class="row"><h3 style="font-size:15px" class="grow" id="strip-title"></h3><span class="muted" style="font-size:13px" id="strip-count"></span></div>
+        <div><div class="strip" id="strip"></div><div class="strip-hours"><span>9</span><span>10</span><span>11</span><span>12</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div>
+      </div>
+
+      <div class="field"><label for="reason">Reason <span class="opt" id="reason-opt">optional</span></label>
+        <input class="input" id="reason" maxlength="200" placeholder="For example: machine down, agreed with the customer by phone">
+        <span class="error" id="reason-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Add a reason to continue</span>
+        <span class="hint">Needed for Assign directly, leave or overlapping jobs.</span></div>
+    </div>
+
+    <div class="drawer-body stack" data-when="loading">
+      <div class="card pad stack-sm"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+      <div class="card pad stack-sm"><span class="sk sk-title"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack-sm"><span class="sk sk-title"></span><span class="sk sk-line"></span></div>
+    </div>
+    <div class="drawer-body" data-when="error"><div class="state"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Could not load engineers</h3><p>Check your connection and try again.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Retry</button></div><p class="code mono">Request id 4c1d-77e0</p></div></div>
+
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" id="direct">Assign directly</button>
+      <button class="btn btn-primary" type="button" id="offer">Assign and send offer</button>
+    </div>
+  </div>
+</div>
+
+<!-- confirm, spec section 18 copy -->
+<div class="overlay center" id="confirm" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cf-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-user-plus"/></svg></span>
+      <div class="grow"><h2 id="cf-title"></h2><p id="cf-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="cf-go">Assign</button></div>
+  </div>
+</div>
+
+<div class="menu" id="eng-filter" hidden>
+  <div class="label">Show</div>
+  <label class="check"><input type="checkbox" checked> On duty</label>
+  <label class="check"><input type="checkbox" checked> On leave and off duty</label>
+  <label class="check"><input type="checkbox"> This region only</label>
+</div>
+
+<aside class="proto" data-states="ready loading error no-match taken not-synced pincode" data-mobile="../../../screens/engineer/E203-accept-job.html">
+  <div><h3>What it is</h3><p>Drawer over the ticket to pick an engineer and a visit window. Opens with <code>?t=</code>; default TKT-2026-0133.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a suggested engineer; hover the score for why.</li><li>Pick a date and slot; the customer's slots are marked.</li><li>Assign and send offer, or Assign directly with a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Offer: the engineer has 30 minutes to accept (E203). Direct: the engineer is told. Back to Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Leave blocks without a reason (EC-A46). Overlap warns (EC-A47).</li><li>Pincode not serviceable (EC-A48). Another Admin first (EC-A13).</li><li>Phone not synced in 24 hours: may not receive the offer.</li><li>On the way: reassign blocked (try <a href="D404-assign-engineer.html?t=TKT-2026-0125">TKT-2026-0125</a>).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const svc = ZXA.data.service;
+  const { visitsOn, offOn, clashes, hours, ticketFromQuery } = ZXA.svc;
+  const $ = (id) => document.getElementById(id);
+  const t = ticketFromQuery('TKT-2026-0133');
+  const m = r.machine(t.machine);
+  const c = r.company(t.company);
+  const s = r.site(t.company, t.site);
+  const preferred = svc.preferred[t.number] || (t.window ? [[t.window.date, t.window.slot]] : [['2026-11-24', '9 AM to 12 PM']]);
+  const need = svc.skillFor[m.type];
+  const reassign = Boolean(t.engineer);
+  const blocked = t.status === 'on-the-way';
+  const state = { eng: null, date: t.window?.date || preferred[0][0], slot: t.window?.slot || preferred[0][1] };
+
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, `<button class="btn btn-primary" type="button" data-open="assign">${reassign ? 'Reassign' : 'Assign engineer'}</button>`);
+  $('as-title').textContent = reassign ? 'Reassign engineer' : 'Assign engineer';
+  $('as-sub').textContent = `${t.number} · ${c.name}`;
+  $('summary').innerHTML = `<div class="tags" style="margin-bottom:12px">${t.severity ? r.severityTag(t.severity) : ''}${r.coverageTag(t.coverage)}${r.priorityTag(t.priority)}</div>
+    <dl class="dl"><dt>Customer</dt><dd>${c.name}</dd><dt>Site</dt><dd>${s.name}, ${c.city} <span class="mono muted">${s.pincode}</span></dd>
+      <dt>Machine</dt><dd>${m.model} · ${need}</dd>
+      <dt>Requested slots</dt><dd>${preferred.map(([d, slot]) => `${r.dayDate(d)}, ${slot}`).join('<br>')}</dd></dl>`;
+
+  /* suggestion score (spec D404): region, skills, distance, jobs that day, rating, free in the window */
+  const score = (e) => {
+    const info = svc.engineerInfo[e.id];
+    const km = info.km[t.site];
+    const jobs = visitsOn(e.id, state.date).length;
+    const parts = {
+      Region: e.region === c.city ? 30 : 0, Skills: e.skills.includes(need) ? 25 : 0, Distance: km <= 30 ? 20 : km <= 100 ? 10 : 0,
+      Jobs: Math.max(0, 10 - jobs * 2), Rating: Math.round(e.rating * 2), Free: clashes(e.id, state.date, state.slot, t.number).length ? 0 : 5,
+    };
+    return { total: Object.values(parts).reduce((a, b) => a + b, 0), parts, km, jobs, off: offOn(e.id, state.date) };
+  };
+  const card = (e, sc) => {
+    const info = svc.engineerInfo[e.id];
+    const regionOk = e.region === c.city;
+    return `<label class="choice ${sc.off ? 'off' : ''}" data-search-item><input type="radio" name="eng" class="sr-only" value="${e.id}" ${state.eng === e.id ? 'checked' : ''}>
+      <span class="grow"><span class="row">${r.avatar(e)}<span class="grow"><b>${e.name}</b><small>${e.code} · ${r.icon('star')} ${e.rating} · ${info.duty}</small></span>
+        <span class="tag ${sc.total >= 60 ? 'green' : sc.total >= 30 ? 'amber' : ''}" data-tip="${Object.entries(sc.parts).map(([k, v]) => `${k} ${v}`).join(' · ')}">Score ${sc.total}</span></span>
+        <span class="eng-facts">${r.tag(regionOk ? `${e.region}, region match` : `${e.region}, other region`, regionOk ? 'green' : 'amber')}
+          ${r.tag(need, e.skills.includes(need) ? 'green' : '', e.skills.includes(need) ? 'check' : 'x')}
+          <span class="tag outline">${sc.km} km</span><span class="tag outline">${sc.jobs} jobs that day</span><span class="tag outline">Next free: ${info.nextFree}</span>
+          ${sc.off ? r.tag(`${sc.off.label} ${r.date(sc.off.from)}${sc.off.to !== sc.off.from ? ` to ${r.date(sc.off.to)}` : ''}`, 'red') : ''}</span></span></label>`;
+  };
+
+  const render = () => {
+    const ranked = ZX.data.engineers.map((e) => [e, score(e)]).sort(([, a], [, b]) => Number(Boolean(a.off)) - Number(Boolean(b.off)) || b.total - a.total);
+    if (!state.eng) state.eng = ranked[0][0].id;
+    $('suggested').innerHTML = ranked.filter(([, sc]) => sc.total >= 50 && !sc.off).slice(0, 5).map(([e, sc]) => card(e, sc)).join('')
+      || '<p class="muted">No engineer matches this ticket.</p>';
+    $('all').innerHTML = ranked.map(([e, sc]) => card(e, sc).replace('name="eng"', 'name="eng-all"')).join('');
+    document.querySelectorAll('input[name^="eng"]').forEach((i) => { i.checked = i.value === state.eng; });
+
+    $('slots').innerHTML = svc.slots.map(([label]) => {
+      const pref = preferred.some(([d, sl]) => d === state.date && sl === label);
+      return `<label class="choice" style="padding:10px 12px"><input type="radio" name="slot" class="sr-only" value="${label}" ${label === state.slot ? 'checked' : ''}>
+        <span><b>${label}</b><small>${pref ? 'Customer prefers' : 'Open'}</small></span></label>`;
+    }).join('');
+
+    const e = r.engineer(state.eng);
+    const sc = score(e);
+    const clash = clashes(e.id, state.date, state.slot, t.number);
+    const info = svc.engineerInfo[e.id];
+    const syncHours = (new Date(ZX.data.now) - new Date(info.lastSync)) / 3600000;
+    const warn = [];
+    if (blocked) warn.push(['red', 'ban', '<b>Engineer is on the way.</b> Reassign is blocked. Use Visit failed or ask the engineer to decline.']);
+    if (sc.off) warn.push(['red', 'calendar-blank', `<b>${e.name} is on leave ${r.date(sc.off.from)}${sc.off.to !== sc.off.from ? ` to ${r.date(sc.off.to)}` : ''}.</b> Add a reason to override.`]);
+    clash.forEach((v) => warn.push(['amber', 'warning', `<b>Overlaps ${v.ticket}</b>, ${hours(v.from)} to ${hours(v.to)}. You can continue with a reason.`]));
+    if (e.region !== c.city) warn.push(['amber', 'map-pin', `<b>${e.name} works in ${e.region}.</b> The site is in ${c.city}, ${sc.km} km away.`]);
+    if (syncHours > 24 || document.body.dataset.state === 'not-synced') warn.push(['amber', 'wifi-slash', `<b>May not receive the offer.</b> ${e.name.split(' ')[0]}'s phone has not synced in 24 hours.`]);
+    if (!preferred.some(([d, sl]) => d === state.date && sl === state.slot)) warn.push(['grey', 'info', 'Not a slot the customer chose. They will be asked to approve it.']);
+    $('warnings').innerHTML = warn.map(([tone, ic, text]) => `<div class="banner ${tone}">${r.icon(ic)}<span class="grow">${text}</span></div>`).join('');
+    state.needsReason = Boolean(sc.off || clash.length);
+    $('reason-opt').textContent = state.needsReason ? 'required' : 'optional';
+
+    const day = visitsOn(e.id, state.date).filter((v) => v.ticket !== t.number);
+    const [, from, to] = svc.slots.find(([l]) => l === state.slot);
+    const pos = (a, b) => `left:${((a - 9) / 9) * 100}%; width:calc(${((b - a) / 9) * 100}% - 4px)`;
+    $('strip-title').textContent = `${e.name.split(' ')[0]}'s day, ${r.dayDate(state.date)}`;
+    $('strip-count').textContent = sc.off ? 'On leave' : `${day.length} jobs`;
+    $('strip').innerHTML = sc.off ? `<div class="job leave" style="${pos(9, 18)}"><b>${sc.off.label}</b><span>${sc.off.note}</span></div>`
+      : `${day.map((v) => { const vt = r.ticket(v.ticket); return `<div class="job ${vt.status === 'completed' ? 'green' : vt.status === 'on-hold' ? 'amber' : ''}" style="${pos(v.from, v.to)}" data-tip="${v.ticket}, ${hours(v.from)} to ${hours(v.to)}"><b>${v.ticket.slice(-4)}</b><span>${r.company(vt.company).name.split(' ')[0]}</span></div>`; }).join('')}
+        <div class="job new" style="${pos(from, to)}"><b>${t.number.slice(-4)}</b><span>This visit</span></div>`;
+    const locked = blocked || document.body.dataset.state === 'taken';
+    ['offer', 'direct'].forEach((id) => { $(id).disabled = locked; });
+  };
+
+  document.addEventListener('change', (event) => {
+    const input = event.target;
+    if (input.name === 'eng' || input.name === 'eng-all') { state.eng = input.value; render(); }
+    if (input.name === 'slot') { state.slot = input.value; render(); }
+    if (input.id === 'w-date') { state.date = input.value; render(); }
+  });
+  $('w-date').value = state.date;
+
+  const go = (direct) => {
+    const reason = $('reason').value.trim();
+    const missing = (direct || state.needsReason) && reason.length < 3;
+    $('reason-error').hidden = !missing;
+    $('reason').setAttribute('aria-invalid', String(missing));
+    if (missing) { $('reason').focus(); return; }
+    const e = r.engineer(state.eng);
+    $('cf-title').textContent = `Assign ${e.name}?`;
+    $('cf-text').textContent = direct ? `${e.name} will be told now and does not need to accept. ${c.name} will be told the visit window.`
+      : `${e.name} will have 30 minutes to accept. ${c.name} will be told the visit window.`;
+    $('cf-go').dataset.direct = String(direct);
+    ZXA.ui.openOverlay('confirm');
+  };
+  $('offer').addEventListener('click', () => go(false));
+  $('direct').addEventListener('click', () => go(true));
+  $('cf-go').addEventListener('click', () => {
+    document.querySelectorAll('.overlay:not([hidden])').forEach((o) => ZXA.ui.closeOverlay(o));
+    ZXA.ui.toast($('cf-go').dataset.direct === 'true' ? 'Assigned. Engineer told' : 'Offer sent. 30 minutes to accept');
+  });
+
+  render();
+  document.addEventListener('click', (event) => { if (event.target.closest('[data-proto-state]')) window.setTimeout(render, 0); });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

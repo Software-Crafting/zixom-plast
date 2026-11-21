@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D426 Sync review</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D426" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Sync review</h1><p>Changes from engineers' phones that could not merge</p></div>
+  </div>
+  <div class="grid side-left" data-when="ready">
+    <section class="card list-card">
+      <div class="toolbar"><label class="search" data-filter="#items"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Ticket or field" aria-label="Search items"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="kind-menu" aria-label="Filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg></button></div>
+      <ul class="mini" id="items" data-single></ul>
+      <div class="state" data-noresults hidden><h3>No matching results</h3><div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+    </section>
+    <section class="card" id="detail"></section>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>Everything is in sync</h3><p>Conflicts, rejected fields and late uploads appear here.</p></div></div></div>
+</main>
+
+<div class="menu" id="kind-menu" hidden><div class="label">Kind</div>
+  <label class="check"><input type="checkbox" checked> Conflicts</label><label class="check"><input type="checkbox" checked> Rejected fields</label><label class="check"><input type="checkbox" checked> Late uploads</label></div>
+
+<aside class="proto" data-states="ready empty error" data-mobile="../../../screens/engineer/E1007-sync-conflict.html">
+  <div><h3>What it is</h3><p>Items from engineers that could not merge: conflicts, rejected fields, late uploads.</p></div>
+  <div><h3>What you can do</h3><ul><li>Compare both versions side by side.</li><li>Accept the engineer's, keep the dashboard's, or edit then accept.</li><li>Message the engineer.</li></ul></div>
+  <div><h3>What happens next</h3><p>The ticket (D403) or report (D413) updates; the engineer's app is told (E1007).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Late sync conflicting with an Admin change is queued as Needs review (EC-A17).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const list = ZXA.data.service.sync;
+  const TONE = { Conflict: 'red', 'Rejected field': 'amber', 'Late upload': 'blue' };
+  $('items').innerHTML = list.map((x, i) => `<li data-search-item data-i="${i}" style="cursor:pointer">
+    <span class="ic-disc ${TONE[x.kind]}">${r.icon(x.kind === 'Late upload' ? 'cloud-arrow-up' : 'git-compare')}</span>
+    <span class="grow"><b>${x.field}, ${x.ticket.slice(-4)}</b><small>${x.kind} · ${r.engineer(x.engineer).name.split(' ')[0]} · ${r.ago(x.when)}</small></span></li>`).join('');
+  const show = (i) => {
+    const x = list[i];
+    const t = r.ticket(x.ticket);
+    const e = r.engineer(x.engineer);
+    document.querySelectorAll('#items li').forEach((li) => li.style.background = li.dataset.i === String(i) ? 'var(--slate-50)' : '');
+    $('detail').innerHTML = `<div class="card-head"><div class="grow"><h2>${x.field} on <a class="mono" href="#D403?t=${x.ticket}">${x.ticket}</a></h2>
+        <p>${r.company(t.company).name} · ${x.id}</p></div>${r.tag(x.kind, TONE[x.kind])}</div>
+      <div class="card-body stack">
+        <div class="grid cols-2">
+          <div class="stack-sm" style="padding:16px; border-radius:16px; background:var(--amber-50)"><span class="muted" style="font-size:12px">Engineer's version · ${e.name}, ${r.dayDate(x.when)} ${r.time(x.when)}</span>
+            <b style="font-size:16px">${x.mine[0]}</b><span class="muted">${x.mine[1]}</span></div>
+          <div class="stack-sm" style="padding:16px; border-radius:16px; background:var(--slate-50)"><span class="muted" style="font-size:12px">Dashboard version</span>
+            <b style="font-size:16px">${x.theirs[0]}</b><span class="muted">${x.theirs[1]}</span></div>
+        </div>
+        <div class="field"><label for="edit">Edit then accept <span class="opt">optional</span></label><input class="input" id="edit" value="${r.esc(x.mine[0])}"></div>
+      </div>
+      <div class="card-foot"><button class="btn btn-ghost" type="button" data-toast="Message sent to ${e.name.split(' ')[0]}">${r.icon('chat-text')}Message engineer</button><span class="grow"></span>
+        <button class="btn btn-secondary" type="button" data-toast="Dashboard version kept. ${e.name.split(' ')[0]} told">Keep dashboard version</button>
+        <button class="btn btn-primary" type="button" data-toast="Engineer's version accepted">Accept engineer's version</button></div>`;
+  };
+  $('items').addEventListener('click', (event) => { const li = event.target.closest('li[data-i]'); if (li) show(Number(li.dataset.i)); });
+  show(0);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D423 Duplicate tickets</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D423" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Duplicate tickets</h1><p>Same machine within 10 minutes, or similar text</p></div>
+  </div>
+  <div data-when="ready" class="stack">
+    <div id="pairs" class="stack"></div>
+    <section class="card">
+      <div class="card-head"><div class="grow"><h2>Decided</h2><p>Last 30 days</p></div></div>
+      <ul class="mini">
+        <li><span class="ic-disc green"><svg class="ic"><use href="#ph-merge"/></svg></span><span class="grow"><b>TKT-2026-0113 merged into TKT-2026-0112</b><small>Rajesh Goyal · Tue 20 Oct · both timelines kept</small></span></li>
+        <li><span class="ic-disc"><svg class="ic"><use href="#ph-files"/></svg></span><span class="grow"><b>TKT-2026-0120 and TKT-2026-0124 kept apart</b><small>Rajesh Goyal · Wed 18 Nov · different service types</small></span></li>
+      </ul>
+    </section>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No likely duplicates</h3><p>Tickets for the same machine within 10 minutes appear here.</p></div></div></div>
+</main>
+
+<div class="overlay center" id="merge" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="mg-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-merge"/></svg></span>
+      <div class="grow"><h2 id="mg-title"></h2><p id="mg-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="mg-reason">Reason</label><input class="input" id="mg-reason" value="Same breakdown reported twice by two people"></div>
+      <div class="field"><label for="mg-pass">Your password</label><input class="input" id="mg-pass" type="password" autocomplete="current-password"><span class="hint">Needed for merges (section 14).</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-busy data-toast="Merged. Both timelines kept">Merge</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready empty error" data-mobile="../../../screens/customer/C1502-urgent-request.html">
+  <div><h3>What it is</h3><p>Pairs of tickets that look like the same request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Compare both side by side.</li><li>Merge one into the other with a reason and your password, or keep both.</li></ul></div>
+  <div><h3>What happens next</h3><p>The merged ticket is archived; its timeline and media move to the one you keep (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Merge cannot be undone (section 18 copy).</li><li>Duplicate machine down request in 10 minutes shows as the same (flow F3).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const side = (t, keep) => {
+    const m = r.machine(t.machine);
+    const p = r.person(t.by);
+    return `<div class="stack-sm" style="padding:16px; border-radius:16px; box-shadow:inset 0 0 0 1px var(--line)">
+      <div class="row"><a class="mono strong" href="#D403?t=${t.number}">${t.number}</a><span class="grow"></span>${keep ? r.tag('Keep', 'green') : r.tag('Archive')}</div>
+      <div class="tags">${r.ticketTag(t.status)}${t.severity ? r.severityTag(t.severity) : ''}</div>
+      <p style="color:var(--text-strong)">${r.esc(t.summary)}</p>
+      <dl class="dl"><dt>Raised</dt><dd>${r.dayDate(t.created)}, ${r.time(t.created)}</dd><dt>By</dt><dd>${p.name}</dd><dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd></dl></div>`;
+  };
+  $('pairs').innerHTML = ZXA.data.service.duplicates.map((x, i) => {
+    const a = r.ticket(x.a);
+    const gap = Math.round((new Date(x.b.created) - new Date(a.created)) / 60000);
+    return `<section class="card"><div class="card-head"><div class="grow"><h2>${r.company(a.company).name}</h2><p>${x.kind} · ${gap} min apart</p></div>${r.tag('Likely duplicate', 'amber')}</div>
+      <div class="card-body"><div class="grid cols-2">${side(a, true)}${side(x.b, false)}</div></div>
+      <div class="card-foot"><span class="grow"></span><button class="btn btn-secondary" type="button" data-toast="Kept both">Keep both</button>
+        <button class="btn btn-primary" type="button" data-merge="${i}">Merge ${x.b.number} into ${a.number}</button></div></section>`;
+  }).join('');
+  document.addEventListener('click', (event) => {
+    const b = event.target.closest('[data-merge]');
+    if (!b) return;
+    const x = ZXA.data.service.duplicates[b.dataset.merge];
+    $('mg-title').textContent = `Merge ${x.b.number} into ${x.a}?`;
+    $('mg-text').textContent = `This cannot be undone. ${x.b.number} will be archived.`;
+    ZXA.ui.openOverlay('merge');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

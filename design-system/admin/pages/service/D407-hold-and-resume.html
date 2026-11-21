@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D407 Hold and resume</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D407">
+<main class="content">
+  <div id="backdrop"></div>
+</main>
+
+<div class="overlay right" id="hold">
+  <div class="drawer" role="dialog" aria-labelledby="hd-title">
+    <div class="drawer-head"><div class="grow"><h2 id="hd-title"></h2><p id="hd-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="hold-form" hidden>
+      <div class="field"><span class="label">Reason</span><div class="stack-sm" id="reasons"></div></div>
+      <div class="field"><label for="h-date">Expected resume</label><input class="input" id="h-date" type="date" value="2026-11-25" min="2026-11-23"><span class="hint">The customer sees this date in the app.</span></div>
+      <div class="field"><label for="h-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="h-note" maxlength="300">Waiting for chain set SPR-2026-0031 from Pune.</textarea></div>
+      <div class="banner grey"><svg class="ic"><use href="#ph-circle-pause"/></svg><span class="grow">The resolution time pauses while on hold.</span></div>
+    </div>
+    <div class="drawer-body stack" id="resume-form" hidden>
+      <dl class="dl" id="held"></dl>
+      <div class="field"><span class="label">Visit</span><div class="stack-sm">
+        <label class="check"><input type="radio" name="next" checked> Same engineer, next free slot</label>
+        <label class="check"><input type="radio" name="next"> Choose a new window (opens Reschedule)</label></div></div>
+      <div class="field"><label for="r-note">Note to customer <span class="opt">optional</span></label><textarea class="textarea" id="r-note" maxlength="300">The PID controller has arrived. Sandeep will fit it on Tuesday.</textarea></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" id="go" data-close></button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/engineer/E208-hold.html">
+  <div><h3>What it is</h3><p>Drawer over the ticket. In progress shows Hold; On hold shows Resume. Default TKT-2026-0126.</p></div>
+  <div><h3>What you can do</h3><ul><li>Hold: reason, expected resume date and a note.</li><li>Resume: keep the engineer or pick a new window.</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer and engineer are told. Resume with a new window opens Reschedule (D405).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reasons follow the engineer's list (E208).</li><li>Resume: open <a href="D407-hold-and-resume.html?t=TKT-2026-0127">TKT-2026-0127</a>.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0126');
+  const resume = t.status === 'on-hold';
+  const label = resume ? 'Resume' : 'Hold';
+  $('backdrop').innerHTML = ZXA.svc.backdrop(t, `<button class="btn btn-primary" type="button" data-open="hold">${label}</button>`);
+  $('hd-title').textContent = resume ? 'Resume ticket' : 'Put on hold';
+  $('hd-sub').textContent = `${t.number} · ${r.company(t.company).name}`;
+  $('hold-form').hidden = resume;
+  $('resume-form').hidden = !resume;
+  $('go').textContent = label;
+  $('go').dataset.toast = resume ? 'Ticket resumed. Customer and engineer told' : 'Ticket on hold. Customer and engineer told';
+  $('reasons').innerHTML = ['Waiting for parts', 'Waiting for customer', 'Needs another engineer', 'Safety issue', 'Machine not ready', 'Other']
+    .map((x, i) => `<label class="check"><input type="radio" name="reason" ${i === 0 ? 'checked' : ''}> ${x}</label>`).join('');
+  $('held').innerHTML = `<dt>On hold since</dt><dd>Wed 18 Nov</dd><dt>Reason</dt><dd>${t.holdReason || 'Waiting for parts'}</dd>
+    <dt>Part</dt><dd><span class="mono">SPR-2026-0030</span> · ${r.tag('Approved', 'green')}</dd>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

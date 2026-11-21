@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D425 Machine down requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-service.css">
+</head>
+<body class="adm" data-page="D425" data-nav="D401">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Machine down requests</h1><p>Alerts repeat every 5 minutes until acknowledged</p></div>
+    <a class="btn btn-ghost" href="#D1605"><svg class="ic"><use href="#ph-volume"/></svg>Alert settings</a>
+  </div>
+  <div class="stack" data-when="ready" id="list"></div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No machine down requests</h3><p>Urgent requests from the app appear here at once, with a sound.</p></div></div></div>
+</main>
+
+<div class="overlay right" id="call-log" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="cl-title">
+    <div class="drawer-head"><div class="grow"><h2 id="cl-title">Log a call</h2><p id="cl-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Result</span><div class="stack-sm">
+        <label class="check"><input type="radio" name="res" checked> Spoke to the customer</label>
+        <label class="check"><input type="radio" name="res"> No answer</label>
+        <label class="check"><input type="radio" name="res"> Busy, call back</label>
+        <label class="check"><input type="radio" name="res"> Wrong number</label></div></div>
+      <div class="field"><label for="cl-note">Note</label><textarea class="textarea" id="cl-note" maxlength="300">Imran confirmed the MCB trips at once. Anita can reach by 1 PM.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Call logged">Save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready empty error" data-mobile="../../../screens/customer/C1501-machine-down.html">
+  <div><h3>What it is</h3><p>Machine down requests from the app (C1501, C1502), pinned until handled.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call the customer and log the result.</li><li>Acknowledge to stop the repeat alerts.</li><li>Assign now, directly if needed.</li></ul></div>
+  <div><h3>What happens next</h3><p>Assign engineer (D404); the engineer is told at once on a direct assignment.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Not acknowledged in 15 minutes: email and SMS to the emergency number (Confirm).</li><li>After hours flag (TKT-2026-0126, 07:45).</li><li>Sound is optional in Settings (D1605).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const ic = r.icon;
+  document.getElementById('list').innerHTML = ZXA.data.service.machineDown.map((x) => {
+    const t = r.ticket(x.ticket);
+    const c = r.company(t.company);
+    const s = r.site(t.company, t.site);
+    const p = r.person(t.by);
+    const m = r.machine(t.machine);
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    const open = !x.acknowledged;
+    const mins = Math.round((new Date(ZX.data.now) - new Date(t.created)) / 60000);
+    return `<section class="card">
+      ${open ? `<div class="banner red" style="border-radius:var(--r-lg) var(--r-lg) 0 0">${ic('siren')}<span class="grow"><b>Not acknowledged for ${mins} min.</b> Next alert in 4 min.</span></div>` : ''}
+      <div class="card-head"><div class="grow"><h2><a class="mono" href="#D403?t=${t.number}">${t.number}</a></h2><p>${c.name} · ${s.name}, ${c.city}</p></div></div>
+      <div class="card-body"><div class="tags" style="margin-bottom:14px">${r.ticketTag(t.status)}${x.afterHours ? r.tag('After hours', 'amber', 'clock') : ''}${open ? r.tag('Unacknowledged', 'solid-red') : r.tag(`Acknowledged ${r.time(x.acknowledged)}`, 'green')}</div><div class="grid cols-2" style="gap:20px">
+        <dl class="dl"><dt>Machine</dt><dd>${m.model}<br><span class="mono muted">${m.serial}</span></dd><dt>Problem</dt><dd>${r.esc(t.summary)}</dd>
+          <dt>Since request</dt><dd>${mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)} h ${mins % 60} min`} · ${r.sla(t.sla)}</dd><dt>Engineer</dt><dd>${e ? e.name : '<span class="red-text strong">Unassigned</span>'}</dd></dl>
+        <div class="stack-sm"><div class="who"><span class="avatar blue">${p.initials}</span><span><b>${p.name}</b><small>${p.mobile}</small></span></div>
+          <ul class="mini" style="margin:0 -20px">${x.calls.map(([time, res]) => `<li><span class="ic-disc">${ic('phone')}</span><span class="grow"><b>${res}</b><small>Call at ${time}</small></span></li>`).join('')}</ul></div>
+      </div></div>
+      <div class="card-foot"><a class="btn btn-ghost" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}Call customer</a>
+        <button class="btn btn-ghost" type="button" data-open="call-log">Log call result</button><span class="grow"></span>
+        ${open ? '<button class="btn btn-secondary" type="button" data-toast="Acknowledged. Repeat alerts stopped">Acknowledge</button>' : ''}
+        ${e ? `<a class="btn btn-secondary" href="#D403?t=${t.number}">Open ticket</a>` : `<a class="btn btn-primary" href="#D404?t=${t.number}">Assign now</a>`}</div></section>`;
+  }).join('');
+  document.getElementById('cl-sub').textContent = 'TKT-2026-0133 · Imran Qureshi';
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

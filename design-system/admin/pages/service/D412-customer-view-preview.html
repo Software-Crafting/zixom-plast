@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D412 Customer view preview</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D412" data-nav="D401">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D401">Service tickets</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-ticket" href="#D403"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Preview</span></nav>
+      <div class="record-head"><h1 id="number"></h1><span class="tags"><span class="tag solid-red">Preview</span></span></div>
+      <div class="meta"><span><svg class="ic"><use href="#ph-eye"/></svg>Read only. Nothing here can be changed.</span></div>
+    </div>
+    <div class="segment" role="tablist" aria-label="Whose view">
+      <button role="tab" aria-selected="true" aria-controls="as-customer">Customer</button>
+      <button role="tab" aria-selected="false" aria-controls="as-engineer">Engineer</button>
+    </div>
+  </div>
+  <div class="grid side-right" data-when="ready">
+    <section class="card"><div class="card-body" style="padding:28px 20px">
+      <div id="as-customer" role="tabpanel"><div class="phone-preview"><iframe id="frame-customer" title="Customer app preview" tabindex="-1" style="pointer-events:none"></iframe></div></div>
+      <div id="as-engineer" role="tabpanel" hidden><div id="engineer-frame"></div></div>
+    </div></section>
+    <aside class="stack">
+      <section class="card side-card"><div class="card-head"><h3 class="grow">Status in each app</h3></div><div class="card-body"><dl class="dl" id="status"></dl></div></section>
+      <section class="card side-card"><div class="card-head"><h3 class="grow">What the customer does not see</h3></div>
+        <div class="card-body"><ul class="stack-sm" style="margin:0; padding-left:18px; font-size:13px; color:var(--text)"><li>Internal notes and the History tab</li><li>Draft reports until approved or 24 hours pass</li><li>Draft estimates</li><li>Engineer location outside travel</li></ul></div></section>
+    </aside>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/customer/C508-request-detail.html">
+  <div><h3>What it is</h3><p>How this ticket looks in the customer app (C508) and the engineer app (E202). Opens with <code>?t=</code>; default TKT-2026-0126.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch between Customer and Engineer.</li><li>Compare the status wording in each app.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Ticket detail (D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Clearly labelled Preview; you cannot act here.</li><li>Tickets not yet assigned are not visible to engineers.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const t = ZXA.svc.ticketFromQuery('TKT-2026-0126');
+  /* section 11: what each side sees */
+  const SEES = { submitted: ['Received', 'Not visible'], 'awaiting-info': ['We need more information', 'Not visible'], estimate: ['Estimate ready', 'Not visible'],
+    assigned: ['Engineer assigned', 'New assignment (30 minutes)'], scheduled: ['Visit scheduled', 'Upcoming'], 'on-the-way': ['Engineer on the way with ETA', 'On the way'],
+    'in-progress': ['Work in progress', 'In progress'], 'on-hold': ['On hold with reason', 'On hold'], completed: ['Completed. Please confirm', 'Completed'],
+    closed: ['Resolved', 'Closed'], 'visit-failed': ['Visit could not be completed', 'Visit failed'], cancelled: ['Cancelled', 'Cancelled'],
+    rejected: ['Could not accept, with reason', 'Not visible'], reopened: ['Reopened', 'Reopened'] };
+  const [customer, engineer] = SEES[t.status];
+  $('crumb-ticket').textContent = t.number;
+  $('crumb-ticket').href = `#D403?t=${t.number}`;
+  $('number').textContent = t.number;
+  $('status').innerHTML = `<dt>Dashboard</dt><dd>${r.ticketTag(t.status)}</dd><dt>Customer app</dt><dd>${customer}</dd><dt>Engineer app</dt><dd>${engineer}</dd>`;
+  const inMobile = ZX.data.tickets.some((x) => x.number === t.number);
+  $('frame-customer').src = `../../../screens/customer/C508-request-detail.html${inMobile ? `?ticket=${t.number}` : ''}`;
+  $('engineer-frame').innerHTML = engineer === 'Not visible' || !inMobile
+    ? `<div class="state"><span class="disc">${r.icon('eye-slash')}</span><h3>Not visible to engineers</h3><p>Engineers see a ticket once it is assigned to them.</p></div>`
+    : `<div class="phone-preview"><iframe src="../../../screens/engineer/E202-job-detail.html?ticket=${t.number}" title="Engineer app preview" tabindex="-1" style="pointer-events:none"></iframe></div>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

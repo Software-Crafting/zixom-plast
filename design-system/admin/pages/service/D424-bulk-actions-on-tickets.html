@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D424 Bulk actions on tickets</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D424" data-nav="D401">
+<main class="content">
+  <div class="page-head"><div class="grow"><h1>Service tickets</h1><p>3 selected · bulk assign to Sandeep Yadav</p></div></div>
+  <section class="card list-card">
+    <div class="table-wrap no-top"><table class="table" id="rows"><thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+      <th>Ticket</th><th>Status</th><th>Customer and machine</th><th>Engineer</th></tr></thead><tbody></tbody></table></div>
+  </section>
+</main>
+
+<div class="overlay center" id="result">
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head" data-when="ready"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>Download the list of failures.</p></div></div>
+    <div class="modal-head" data-when="done"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <div class="grow"><h2>3 done, 0 failed</h2><p>Sandeep Yadav has 30 minutes to accept each offer.</p></div></div>
+    <div class="modal-head" data-when="export"><span class="disc"><svg class="ic"><use href="#ph-download-simple"/></svg></span>
+      <div class="grow"><h2>Export runs in the background</h2><p>6,240 rows is over 5,000. You get a notification when the file is ready in Exports.</p></div></div>
+    <div class="modal-body" data-when="ready">
+      <table class="table compact"><thead><tr><th>Ticket</th><th>Result</th></tr></thead><tbody>
+        </tbody></table>
+    </div>
+    <div class="modal-foot" data-when="ready"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><a class="btn btn-primary" href="#D401">Close</a></div>
+    <div class="modal-foot" data-when="done"><a class="btn btn-primary" href="#D401">Close</a></div>
+    <div class="modal-foot" data-when="export"><a class="btn btn-secondary" href="#D1520">Open Exports</a><a class="btn btn-primary" href="#D401">Close</a></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready done export" data-mobile="../../../screens/engineer/E203-accept-job.html">
+  <div><h3>What it is</h3><p>Result of a bulk assign, message or export from the ticket list.</p></div>
+  <div><h3>What you can do</h3><ul><li>See done and failed counts with a reason per failure.</li><li>Download the failures.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Service tickets (D401). Large exports go to Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Partly failed shows both counts (EC-A64).</li><li>Over 5,000 rows exports in the background.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/service.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const picked = ['TKT-2026-0120', 'TKT-2026-0121', 'TKT-2026-0131'];
+  const results = { 'TKT-2026-0120': ['Assigned, offer sent', 'green'], 'TKT-2026-0121': ['Assigned, offer sent', 'green'], 'TKT-2026-0131': ['Failed: ticket is cancelled and cannot change', 'red'] };
+  document.querySelector('#rows tbody').innerHTML = picked.map((n) => {
+    const t = r.ticket(n);
+    return `<tr aria-selected="true"><td class="cb"><label class="check"><input type="checkbox" checked aria-label="Select ${n}"></label></td>
+      <td><span class="mono">${n}</span></td><td>${r.ticketTag(t.status)}</td><td><b class="clip">${r.company(t.company).name}</b><span class="sub">${r.machine(t.machine).model}</span></td>
+      <td>${t.engineer ? r.engineer(t.engineer).name : '<span class="faint">Unassigned</span>'}</td></tr>`;
+  }).join('');
+  document.querySelector('#result .modal-body tbody').innerHTML = picked.map((n) => `<tr><td class="mono">${n}</td><td class="${results[n][1]}-text">${results[n][0]}</td></tr>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
