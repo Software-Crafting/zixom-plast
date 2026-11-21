@@ -22,6 +22,27 @@
     if (screen?.querySelector(':scope > .sheet')) bar.classList.add('on-sheet');
   });
 
+  /* ---------- prototype only: sticky notes beside the phone can be closed and brought back ---------- */
+  document.querySelectorAll('.plate-info').forEach((board) => {
+    const notes = [...board.querySelectorAll(':scope > div')];
+    notes.forEach((note) => {
+      note.querySelector('h3')?.insertAdjacentHTML('beforeend',
+        `<button class="note-close" type="button" aria-label="Close note">${icon('x')}</button>`);
+    });
+    board.insertAdjacentHTML('beforeend', '<button class="notes-restore" type="button" hidden>Show notes</button>');
+    const restore = board.querySelector('.notes-restore');
+    board.addEventListener('click', (event) => {
+      if (event.target.closest('.note-close')) {
+        event.target.closest('div').hidden = true;
+        restore.hidden = false;
+      }
+      if (event.target.closest('.notes-restore')) {
+        notes.forEach((note) => { note.hidden = false; });
+        restore.hidden = true;
+      }
+    });
+  });
+
   /* ---------- tab bars ---------- */
   const TABS = {
     customer: [

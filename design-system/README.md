@@ -50,7 +50,8 @@ Each screen page draws a phone so it can be judged on a laptop. These parts are 
   safe area padding. ui.js picks its look: the page colour on pushed screens, white text over the gradient.
 - The home indicator (`.home-indicator`). Leave bottom safe area padding instead.
 - The device frame (`.device`, 390 by 844, 44 px corners). Build fluid layouts.
-- Everything outside the frame: `.plate-label`, `.plate-note`, `.plate-states`.
+- Everything outside the frame: `.plate-label`, `.plate-states` and the `.plate-info` sticky notes (What it is,
+  What you can do, What happens next, Edge cases and spec) that sit beside the phone and can be closed.
 
 Build only what is inside `.screen`, including the tab bar and the overlays.
 
