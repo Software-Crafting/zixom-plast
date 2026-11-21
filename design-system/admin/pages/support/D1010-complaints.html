@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1010 Complaints</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1010">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Complaints</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="late">Over 1 working day <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="closed">Closed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#complaints"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="QRY number, customer, ticket or order" aria-label="Search complaints"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="complaints">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Complaint</th><th class="sortable">Customer</th><th>Reference</th><th class="sortable">Severity</th>
+            <th class="sortable">Owner</th><th class="sortable">Age</th><th class="sortable">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>No complaints yet</h3><p>Complaints customers raise in the app will appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><section class="card list-card"><div class="table-wrap"><table class="table"><tbody id="sk-rows"></tbody></table></div></section></div>
+
+  <div class="bulk-bar" data-for="complaints" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="assign">Assign owner</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><button class="btn btn-secondary" type="button" data-open="assign">Assign owner</button><span class="grow"></span><a class="btn btn-primary" id="quick-open" href="#D1011">Open complaint</a></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Owner</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">Mr Kapoor</button><button class="chip" type="button" aria-pressed="false">Neha</button></div></div>
+      <div class="field"><span class="label">Severity</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">High</button><button class="chip" type="button" aria-pressed="false">Normal</button></div></div>
+      <div class="field"><span class="label">Reference</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">Ticket</button><button class="chip" type="button" aria-pressed="false">Order</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="overlay center" id="assign" hidden>
+  <div class="modal" role="dialog" aria-labelledby="as-title">
+    <div class="modal-head"><div class="grow"><h2 id="as-title">Assign owner</h2><p>The customer sees the owner's name on replies.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="as-owner">Owner</label><select class="select" id="as-owner"><option>Mr Kapoor, service manager</option><option>Neha, support</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Owner assigned">Assign</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C606-complaint.html">
+  <div><h3>What it is</h3><p>Complaints raised in the app, each tied to a ticket or order.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by owner, severity, reference.</li><li>Assign the owner one by one or in bulk.</li><li>Open a complaint to reply or resolve.</li></ul></div>
+  <div><h3>What happens next</h3><p>Complaint detail (D1011).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open over 1 working day is red.</li><li>Neha and Mr Kapoor are display names on replies, not users.</li><li>One open complaint per ticket.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const s = ZXA.support;
+  const list = ZXA.data.questions.filter((q) => q.complaint);
+  const ageHours = (q) => (new Date(q.status === 'closed' ? q.last : ZX.data.now) - new Date(q.opened)) / 3600000;
+  /* ponytail: 1 working day approximated as 9 working hours from opening; real check uses the working calendar */
+  const late = (q) => q.status !== 'closed' && ageHours(q) > 9;
+  const age = (q) => { const h = ageHours(q); return h < 24 ? `${Math.round(h)} h` : `${Math.round(h / 24)} d`; };
+  const ref = (q) => { const x = s.related(q); return `<a class="rec" href="${ZXA.href(x[2], x[3])}">${x[1]}</a>`; };
+
+  document.getElementById('head-sub').textContent = `${list.filter((q) => q.status !== 'closed').length} open · ${list.filter(late).length} over 1 working day`;
+  document.querySelector('#complaints tbody').innerHTML = list.map((q) => `<tr data-drawer="quick" data-q="${q.number}" class="${late(q) ? 'urgent' : ''}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${q.number}"></label></td>
+    <td><a class="rec" href="${ZXA.href('D1011', `?q=${q.number}`)}">${q.number}</a><span class="sub">${r.esc(q.subject)}</span></td>
+    <td><b class="clip">${r.person(q.by).name}</b><span class="sub">${r.company(q.company).name}</span></td>
+    <td>${ref(q)}</td><td>${r.tag(q.severity, q.severity === 'High' ? 'amber' : '')}</td><td class="nowrap">${q.owner}</td>
+    <td data-sort="${String(Math.round(ageHours(q))).padStart(5, '0')}">${late(q) ? `<span class="sla breach">${r.icon('warning-circle')}${age(q)}</span>` : age(q)}</td>
+    <td>${q.status === 'closed' ? r.tag('Closed', 'green') : r.tag('Open', 'blue')}</td></tr>`).join('');
+
+  const VIEWS = { open: (q) => q.status !== 'closed', late, closed: (q) => q.status === 'closed', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#complaints tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](s.question(row.dataset.q)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const q = s.question(event.detail.dataset.q);
+    document.getElementById('quick-title').textContent = q.number;
+    document.getElementById('quick-sub').textContent = `Opened ${r.ago(q.opened)} · owner ${q.owner}`;
+    document.getElementById('quick-open').href = ZXA.href('D1011', `?q=${q.number}`);
+    document.getElementById('quick-body').innerHTML = `<h3 style="font-size:16px">${r.esc(q.subject)}</h3>
+      <div class="msg">${r.esc(q.messages[0][1])}<small>${r.person(q.by).name} · ${r.dayDate(q.opened)}</small></div>
+      <dl class="dl"><dt>Reference</dt><dd>${ref(q)}</dd><dt>Severity</dt><dd>${q.severity}</dd><dt>Age</dt><dd>${age(q)}</dd>
+        ${q.outcome ? `<dt>Outcome</dt><dd>${q.outcome}</dd>` : ''}</dl>`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+/* Sales module layout no shared class covers: follow up rows with three actions (D1105). */
+@media (max-width:640px){
+  .fu-list li{flex-wrap:wrap}
+  .fu-list li .grow{flex:1 1 calc(100% - 80px); min-width:0}
+  .fu-list li .btns{width:100%; justify-content:flex-end}
+}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1107 Lead sources report</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1107" data-nav="D1101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1101">Leads</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Lead sources report</span></nav>
+      <h1>Lead sources</h1><p>Leads, quotations and wins by source · Jun to Nov 2026</p></div>
+    <div class="segment" role="tablist" aria-label="Period">
+      <button role="tab" aria-selected="false" data-toast="Showing this month">Month</button><button role="tab" aria-selected="false" data-toast="Showing this quarter">Quarter</button>
+      <button role="tab" aria-selected="true">6 months</button><button role="tab" aria-selected="false" data-toast="Showing this financial year">This year</button>
+    </div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready">
+    <section class="kpis" id="kpis"></section>
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Leads by month</h2><p>Stacked by source</p></div></div>
+        <div class="card-body"><div class="chart tall"><canvas id="chart-month" aria-label="Leads by month and source"></canvas></div>
+          <div class="legend" id="legend" style="margin-top:10px"></div></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>IndiaMART and others</h2><p>Share of leads and wins</p></div></div>
+        <div class="card-body stack" id="share"></div>
+      </section>
+    </div>
+    <section class="card list-card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2>By source</h2></div></div>
+      <div class="table-wrap"><table class="table" id="by-source">
+        <thead><tr><th class="sortable">Source</th><th class="sortable num">Leads</th><th class="sortable num">Quotations</th><th class="sortable num">Won</th><th class="sortable num">Lead to win</th><th class="sortable num">Won value</th></tr></thead>
+        <tbody></tbody><tfoot></tfoot></table></div>
+    </section>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-bar-chart"/></svg></span><h3>No leads in this period</h3><p>Pick a longer period.</p></div></div></div>
+  <div data-when="loading"><section class="kpis"><div class="card kpi"><span class="sk sk-line"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line"></span><span class="sk sk-title"></span></div>
+    <div class="card kpi"><span class="sk sk-line"></span><span class="sk sk-title"></span></div><div class="card kpi"><span class="sk sk-line"></span><span class="sk sk-title"></span></div></section>
+    <div class="grid side-right"><div class="card pad"><span class="sk sk-block" style="height:280px"></span></div><div class="card pad"><span class="sk sk-block" style="height:280px"></span></div></div></div>
+</main>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+  <button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>PDF</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Where leads come from and which sources turn into quotations and orders.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change the period, export.</li><li>Click a bar or a source to open Leads filtered by it.</li></ul></div>
+  <div><h3>What happens next</h3><p>Leads (D1101) with the source filter. More reports in Reports (D1501).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>IndiaMART against all other sources is shown on its own.</li><li>A lead counts in the month it was created; wins in the month won.</li><li>Large numbers use lakh grouping; L and Cr in KPI cards only.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script src="../../assets/vendor/chart.umd.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const rep = ZXA.data.leadReport;
+  const c = ZXA.colors;
+  const sum = (i) => rep.totals.reduce((n, row) => n + row[i], 0);
+  const [leads, quotes, won, value] = [sum(1), sum(2), sum(3), sum(4)];
+  const pct = (a, b) => `${Math.round((a / b) * 100)}%`;
+  document.getElementById('kpis').innerHTML = [
+    ['Leads', leads, r.trend(['up', '9%']), 'vs previous 6 months'], ['Quotations sent', quotes, r.trend(['up', '4']), `${pct(quotes, leads)} of leads`],
+    ['Won', won, r.trend(['flat', '0']), `${pct(won, leads)} of leads`], ['Won value', r.moneyShort(value), r.trend(['up', '18%']), 'orders from leads'],
+  ].map(([label, v, t, foot]) => `<a class="card kpi" href="${ZXA.href('D1101')}"><span class="label">${label}</span><span class="value">${v}</span><span class="foot">${t}<span>${foot}</span></span></a>`).join('');
+
+  const COLORS = { IndiaMART: c.slate, Phone: c.blue, Email: c.sky, App: c.green, Referral: c.amber };
+  document.getElementById('legend').innerHTML = Object.entries(COLORS).map(([k, v]) => `<span><i style="--c:${v}"></i>${k}</span>`).join('');
+  ZXA.chart(document.getElementById('chart-month'), {
+    type: 'bar',
+    data: { labels: rep.months, datasets: Object.entries(rep.bySource).map(([k, data]) => ({ label: k, data, backgroundColor: COLORS[k], borderRadius: 4, barThickness: 28 })) },
+    options: { onClick: () => ZXA.ui.go('D1101'), interaction: { mode: 'index', intersect: false },
+      plugins: { tooltip: { displayColors: true } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { stepSize: 5 } } } },
+  });
+
+  const im = rep.totals[0];
+  const bar = (label, a, b) => `<div><div class="row" style="font-size:13px"><span class="grow">${label}</span><b>${pct(a, b)}</b></div>
+    <span class="progress" style="margin-top:6px"><span style="width:${pct(a, b)}"></span></span></div>`;
+  document.getElementById('share').innerHTML = `${bar('IndiaMART share of leads', im[1], leads)}${bar('IndiaMART share of wins', im[3], won)}
+    <dl class="dl"><dt>IndiaMART lead to win</dt><dd>${pct(im[3], im[1])}</dd><dt>Others lead to win</dt><dd>${pct(won - im[3], leads - im[1])}</dd>
+      <dt>Best source</dt><dd>Referral, ${pct(rep.totals[4][3], rep.totals[4][1])} win</dd></dl>
+    <p class="muted" style="font-size:13px">IndiaMART brings most leads; referrals and phone win more often.</p>`;
+
+  document.querySelector('#by-source tbody').innerHTML = rep.totals.map(([s, l, q, w, v]) => `<tr data-href="D1101">
+    <td><span class="row"><span class="dot" style="background:${COLORS[s]}"></span>${s}</span></td><td class="num">${l}</td><td class="num">${q}</td><td class="num">${w}</td>
+    <td class="num" data-sort="${(w / l).toFixed(3)}">${pct(w, l)}</td><td class="num" data-sort="${v}">${r.money(v)}</td></tr>`).join('');
+  document.querySelector('#by-source tfoot').innerHTML = `<tr><td>Total</td><td class="num">${leads}</td><td class="num">${quotes}</td><td class="num">${won}</td><td class="num">${pct(won, leads)}</td><td class="num">${r.money(value)}</td></tr>`;
+})();
+</script>
+</body>
+</html>

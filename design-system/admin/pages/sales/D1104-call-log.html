@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1104 Call log</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1104" data-nav="D1101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1101">Leads</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Call log</span></nav>
+      <h1>Call log</h1><p id="head-sub"></p></div>
+    <button class="btn btn-primary" type="button" data-open="call" data-new><svg class="ic"><use href="#ph-plus"/></svg>Log a call</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Outcome" data-when="ready no-results" id="views"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#calls"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Lead, name or notes" aria-label="Search calls"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-secondary btn-sm" type="button" data-toast="CSV file downloaded">Export</button>
+      </div>
+      <div class="applied-row" id="applied" data-when="ready no-results"></div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="calls">
+          <thead><tr><th class="sortable">When</th><th class="sortable">Lead</th><th class="sortable">Outcome</th><th class="sortable num">Duration</th><th>Notes</th><th>Next step</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-phone"/></svg></span>
+        <h3>No calls yet</h3><p>Calls will appear here and on each lead's activity.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="call">Log a call</button></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div></div>
+</main>
+
+<div class="overlay right" id="call" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="c-title">
+    <div class="drawer-head"><div class="grow"><h2 id="c-title">Log a call</h2><p>Appears in the lead's activity tab.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="c-lead">Lead</label><select class="select" id="c-lead"></select></div>
+      <div class="field"><span class="label">Outcome</span><div class="row wrap" data-single id="c-outcome"></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="c-when">When</label><input class="input" id="c-when" type="datetime-local" value="2026-11-23T12:00"></div>
+        <div class="field"><label for="c-min">Duration</label><div class="input-wrap"><input class="input" id="c-min" inputmode="numeric"><span class="suffix">min</span></div></div>
+      </div>
+      <div class="field"><label for="c-notes">Notes</label><textarea class="textarea" id="c-notes"></textarea></div>
+      <div class="field"><label for="c-next">Next step</label><input class="input" id="c-next"></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div class="form-grid">
+      <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-01"></div>
+      <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div></div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Every call logged on a lead: when, how long, outcome and next step. <code>?l=LD-2026-0049</code> shows one lead.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by outcome, search, export.</li><li>Log a new call or edit one.</li></ul></div>
+  <div><h3>What happens next</h3><p>Each call shows in Lead detail (D1103), Activity tab.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Outcomes: Connected, No answer, Busy, Wrong number.</li><li>No answer and Busy keep duration 0.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.sales;
+  const only = new URLSearchParams(location.search).get('l');
+  const calls = ZXA.data.leadCalls.filter(([n]) => !only || n === only);
+  const OUTCOMES = { 'Connected': 'green', 'No answer': 'amber', 'Busy': 'amber', 'Wrong number': 'red' };
+  document.getElementById('head-sub').textContent = `${calls.length} calls · ${calls.filter((c) => c[3] === 'Connected').length} connected`;
+  if (only) document.getElementById('applied').innerHTML = `<span class="chip applied">Lead: <b>${only}</b><svg class="ic x"><use href="#ph-x"/></svg></span>`;
+  document.querySelector('#calls tbody').innerHTML = calls.map(([n, when, min, outcome, notes, next], i) => {
+    const l = S.lead(n);
+    return `<tr data-drawer="call" data-i="${i}" data-outcome="${outcome}">
+      <td class="nowrap" data-sort="${when}">${r.dayDate(when)}<span class="sub">${r.time(when)}</span></td>
+      <td><a class="rec" href="${ZXA.href('D1103', `?l=${n}`)}">${n}</a><span class="sub">${l.name}, ${l.company}</span></td>
+      <td>${r.tag(outcome, OUTCOMES[outcome])}</td><td class="num">${min ? `${min} min` : '–'}</td>
+      <td><span class="clip" style="max-width:300px">${r.esc(notes)}</span></td><td><span class="clip">${r.esc(next)}</span></td>
+      <td class="actions"><button class="btn btn-ghost btn-sm" type="button" data-edit="${i}">Edit</button></td></tr>`;
+  }).join('');
+  const views = ['All', ...Object.keys(OUTCOMES)];
+  document.getElementById('views').innerHTML = views.map((v, i) => `<button role="tab" aria-selected="${i === 0}" data-outcome-view="${v}">${v} <span class="n">${v === 'All' ? calls.length : calls.filter((c) => c[3] === v).length}</span></button>`).join('');
+  const show = (v) => {
+    const rows = [...document.querySelectorAll('#calls tbody tr')];
+    rows.forEach((row) => { row.hidden = v !== 'All' && row.dataset.outcome !== v; });
+    document.getElementById('foot-count').textContent = `${rows.filter((x) => !x.hidden).length} calls`;
+  };
+  document.getElementById('views').addEventListener('click', (e) => { const t = e.target.closest('[data-outcome-view]'); if (t) show(t.dataset.outcomeView); });
+  show('All');
+
+  const $ = (id) => document.getElementById(id);
+  $('c-lead').innerHTML = ZXA.data.leads.map((l) => `<option value="${l.number}">${l.number} · ${l.name}</option>`).join('');
+  $('c-outcome').innerHTML = Object.keys(OUTCOMES).map((o) => `<button class="chip" type="button" aria-pressed="false" data-o="${o}">${o}</button>`).join('');
+  const load = (c) => {
+    $('c-title').textContent = c ? 'Edit call' : 'Log a call';
+    $('c-lead').value = c?.[0] ?? only ?? 'LD-2026-0049';
+    $('c-min').value = c?.[2] ?? '';
+    $('c-notes').value = c?.[4] ?? '';
+    $('c-next').value = c?.[5] ?? '';
+    $('c-outcome').querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.o === (c?.[3] ?? 'Connected'))));
+  };
+  $('call').addEventListener('zxa:row', (e) => load(calls[e.detail.dataset.i]));
+  document.addEventListener('click', (e) => {
+    const edit = e.target.closest('[data-edit]');
+    if (edit) { load(calls[edit.dataset.edit]); ZXA.ui.openOverlay('call'); }
+    if (e.target.closest('[data-new]')) load(null);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

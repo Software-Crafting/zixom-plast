@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1011 Complaint detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1011" data-nav="D1010">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1010">Complaints</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Complaint sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-thread">Thread</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-linked">Linked record</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div id="tab-thread" role="tabpanel"></div>
+        <div id="tab-linked" role="tabpanel" class="card-body" hidden></div>
+        <div id="tab-history" role="tabpanel" class="card-body" hidden></div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:280px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D1010">Back to complaints</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="resolve" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="rs-title">
+    <div class="drawer-head"><div class="grow"><h2 id="rs-title">Offer a resolution</h2><p>The customer sees the offer in the thread.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="choices">
+        <label class="choice"><input type="radio" name="rs" class="sr-only" value="revisit" checked><span><b>Revisit</b><small>No charge ticket with the same machine</small></span></label>
+        <label class="choice"><input type="radio" name="rs" class="sr-only" value="money"><span><b>Credit note</b><small>Against a later invoice</small></span></label>
+        <label class="choice"><input type="radio" name="rs" class="sr-only" value="money"><span><b>Refund</b><small>To the original payment method</small></span></label>
+      </div>
+      <div class="field" id="rs-amount" hidden><label for="rs-amt">Amount</label><div class="input-wrap prefix"><b>₹</b><input class="input" id="rs-amt" value="1,180.00"></div><span class="hint">Visit fee on INV-2026-0987</span></div>
+      <div class="field"><label for="rs-reason">Reason</label><textarea class="textarea" id="rs-reason">Engineer reached after the site closed. Revisit at no charge.</textarea></div>
+      <div class="field" id="rs-pass" hidden><label for="rs-pw">Your password</label><input class="input" id="rs-pw" type="password" autocomplete="current-password"><span class="hint">Money actions need your password (section 14).</span></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Offer sent to the customer">Send offer</button></div>
+  </div>
+</div>
+<div class="overlay center" id="close-outcome" hidden>
+  <div class="modal" role="dialog" aria-labelledby="co-title">
+    <div class="modal-head"><div class="grow"><h2 id="co-title">Close with outcome</h2><p>The outcome is recorded for reports.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="co-out">Outcome</label><select class="select" id="co-out"><option>Revisit at no charge</option><option>Credit note issued</option><option>Refund issued</option><option>Explained, no action</option><option>Not valid</option></select></div>
+      <div class="field"><label for="co-note">Note to the customer <span class="opt">optional</span></label><textarea class="textarea" id="co-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Complaint closed. Customer told">Close complaint</button></div>
+  </div>
+</div>
+<div class="overlay center" id="escalate" hidden>
+  <div class="modal" role="dialog" aria-labelledby="es-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-flag"/></svg></span><div class="grow"><h2 id="es-title">Escalate to management?</h2><p>The customer is told it went to management. Severity becomes High.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="es-note">Reason</label><textarea class="textarea" id="es-note"></textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Escalated">Escalate</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error" data-mobile="../../../screens/customer/C606-complaint.html">
+  <div><h3>What it is</h3><p>One complaint with its thread and linked ticket or order. Try <code>?q=QRY-2026-0024</code> (closed) or <code>?q=QRY-2026-0028</code> (order).</p></div>
+  <div><h3>What you can do</h3><ul><li>Reply, escalate, offer a revisit, credit note or refund.</li><li>Close with an outcome.</li></ul></div>
+  <div><h3>What happens next</h3><p>Revisit opens New ticket (D402). Credit note and refund follow Money (D922). The customer follows it in C601.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Owner is required before a reply.</li><li>Credit note and refund ask for password and reason.</li><li>Outcome is recorded for reports.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const s = ZXA.support;
+  const ic = r.icon;
+  const q = s.question(new URLSearchParams(location.search).get('q') || 'QRY-2026-0033');
+  if (!q?.complaint) { ZXA.initialState = 'not-found'; return; }
+  const p = r.person(q.by);
+  const c = r.company(q.company);
+  const rel = s.related(q);
+  const closed = q.status === 'closed';
+  const t = q.ticket ? r.ticket(q.ticket) : null;
+
+  document.title = `Zixom Admin - ${q.number}`;
+  document.getElementById('crumb').textContent = q.number;
+  document.getElementById('number').textContent = q.number;
+  document.getElementById('chips').innerHTML = `${closed ? r.tag('Closed', 'green') : r.tag('Open', 'blue')}${r.tag(`${q.severity} severity`, q.severity === 'High' ? 'amber' : '')}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('user')}Owner ${q.owner}</span><span>${ic('clock')}Opened ${r.date(q.opened)}, ${r.time(q.opened)}</span><span>${ic(rel[0])}${rel[1]}</span>`;
+  document.getElementById('actions').innerHTML = closed
+    ? `<button class="btn btn-primary" type="button" data-toast="Complaint reopened">Reopen</button>`
+    : `<button class="btn btn-secondary" type="button" data-open="escalate">Escalate</button><button class="btn btn-secondary" type="button" data-open="resolve">Offer a resolution</button>
+       <button class="btn btn-primary" type="button" data-open="close-outcome">Close with outcome</button>`;
+  document.getElementById('banners').innerHTML = closed
+    ? `<div class="banner green">${ic('check-circle')}<span class="grow"><b>Outcome: ${q.outcome}.</b> Customer rated ${q.rating} of 5.</span></div>`
+    : (new Date(ZX.data.now) - new Date(q.opened)) / 3600000 > 9 ? `<div class="banner red">${ic('warning-circle')}<span class="grow"><b>Open over 1 working day.</b> Reply or offer a resolution.</span></div>` : '';
+
+  document.getElementById('tab-thread').innerHTML = `<div class="thread">${q.messages.map(([from, text, when, x = {}]) => (from === 'note'
+    ? `<div class="msg note">${r.esc(text)}<small>Rajesh Goyal · ${r.dayDate(when)} ${r.time(when)} · internal note</small></div>`
+    : `<div class="msg${from === 'zixom' ? ' me' : ''}">${r.esc(text)}<small>${from === 'zixom' ? x.by : p.name} · ${r.dayDate(when)} ${r.time(when)}</small></div>`)).join('')}</div>
+    ${closed ? '' : `<div class="composer"><textarea class="textarea" placeholder="Reply as ${q.owner}" aria-label="Reply"></textarea>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox"><span></span>Internal</label>
+      <button class="btn btn-secondary" type="button" data-toast="Reply sent">Send</button></div>`}`;
+
+  document.getElementById('tab-linked').innerHTML = t ? `<div class="stack"><div class="row"><a class="mono strong" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a>${r.ticketTag(t.status)}${r.coverageTag(t.coverage)}</div>
+      <p>${r.esc(t.summary)}</p><dl class="dl"><dt>Machine</dt><dd>${r.machine(t.machine).model}</dd><dt>Engineer</dt><dd>${t.engineer ? r.engineer(t.engineer).name : 'Not assigned'}</dd>
+      <dt>Raised</dt><dd>${r.date(t.created)}</dd></dl></div>`
+    : `<div class="stack"><div class="row"><span class="mono strong">${q.order}</span>${r.tag('Delivered', 'green')}</div><p>Parts order to ${c.name}. Open it for lines and delivery proof.</p>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D831')}">Open order</a></div></div>`;
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="nowrap">${r.dayDate(q.opened)}, ${r.time(q.opened)}</td><td>${p.name}</td><td>Complaint raised in the app</td></tr>
+    <tr><td class="nowrap">${r.dayDate(q.opened)}, ${r.time(q.opened)}</td><td>System</td><td>Owner set: ${q.owner}</td></tr>
+    ${closed ? `<tr><td class="nowrap">${r.dayDate(q.last)}, ${r.time(q.last)}</td><td>Rajesh Goyal</td><td>Closed: ${q.outcome}</td></tr>` : ''}</tbody></table>`;
+
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Customer</h3><a class="card-link" href="${ZXA.href('D202')}">Open</a></div>
+      <div class="card-body stack-sm"><div class="who">${r.avatar(p, 'lg')}<span><b>${p.name}</b><small>${p.designation}, ${c.name}</small></span></div>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}${p.mobile}</a></div></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Owner</h3></div>
+      <div class="card-body stack-sm"><select class="select" aria-label="Owner" ${closed ? 'disabled' : ''}><option${q.owner === 'Mr Kapoor' ? ' selected' : ''}>Mr Kapoor, service manager</option><option${q.owner === 'Neha' ? ' selected' : ''}>Neha, support</option></select>
+      <p class="muted" style="font-size:13px">Shown to the customer on replies.</p></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Rating</h3></div>
+      <div class="card-body">${q.rating ? `<b>${ic('star')} ${q.rating} of 5</b>` : '<span class="faint">Asked after closing</span>'}</div></section>`;
+
+  document.getElementById('resolve').addEventListener('change', (event) => {
+    const money = event.target.name === 'rs' && event.target.value === 'money';
+    if (event.target.name !== 'rs') return;
+    document.getElementById('rs-amount').hidden = !money;
+    document.getElementById('rs-pass').hidden = !money;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

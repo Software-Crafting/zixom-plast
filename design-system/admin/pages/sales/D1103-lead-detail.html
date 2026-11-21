@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1103 Lead detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1103" data-nav="D1101">
+<main class="content">
+  <div data-when="ready">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1101">Leads</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+    <div id="banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Lead sections" style="padding:0 12px">
+          <button role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-activity">Activity <span class="n" id="n-activity"></span></button>
+          <button role="tab" aria-selected="false" aria-controls="tab-quotes">Quotations</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-files">Files</button>
+          <button role="tab" aria-selected="false" aria-controls="tab-history">History</button>
+        </div>
+        <div class="card-body" style="padding-top:20px">
+          <div id="tab-overview" role="tabpanel"></div>
+          <div id="tab-activity" role="tabpanel" hidden></div>
+          <div id="tab-quotes" role="tabpanel" hidden></div>
+          <div id="tab-files" role="tabpanel" hidden></div>
+          <div id="tab-history" role="tabpanel" hidden></div>
+        </div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:300px"></span></div></div>
+    <div class="detail"><div class="card pad stack"><span class="sk sk-block"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-block" style="height:80px"></span></div></div>
+  </div>
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D1101">Back to leads</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="log-call" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="lc-title">
+    <div class="drawer-head"><div class="grow"><h2 id="lc-title">Log a call</h2><p id="lc-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Outcome</span><div class="row wrap" data-single>
+        <button class="chip" type="button" aria-pressed="true">Connected</button><button class="chip" type="button" aria-pressed="false">No answer</button>
+        <button class="chip" type="button" aria-pressed="false">Busy</button><button class="chip" type="button" aria-pressed="false">Wrong number</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="lc-when">When</label><input class="input" id="lc-when" type="datetime-local" value="2026-11-23T12:00"></div>
+        <div class="field"><label for="lc-min">Duration</label><div class="input-wrap"><input class="input" id="lc-min" inputmode="numeric" value="6"><span class="suffix">min</span></div></div>
+      </div>
+      <div class="field"><label for="lc-notes">Notes</label><textarea class="textarea" id="lc-notes"></textarea></div>
+      <div class="field"><label for="lc-next">Next step</label><input class="input" id="lc-next" placeholder="Send price and video"></div>
+      <div class="field"><label for="lc-fu">Follow up on</label><input class="input" id="lc-fu" type="datetime-local" value="2026-11-25T11:00"></div>
+      <label class="check"><input type="checkbox" checked> Move stage to Contacted</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Call logged. Follow up set">Save call</button></div>
+  </div>
+</div>
+<div class="overlay center" id="follow-up" hidden>
+  <div class="modal" role="dialog" aria-labelledby="fu-title">
+    <div class="modal-head"><div class="grow"><h2 id="fu-title">Set follow up</h2><p>You get a reminder in the bell at this time.</p></div></div>
+    <div class="modal-body stack"><div class="field"><label for="fu-when">When</label><input class="input" id="fu-when" type="datetime-local" value="2026-11-24T11:00"></div>
+      <div class="field"><label for="fu-what">What to do</label><input class="input" id="fu-what" value="Call about the price"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Follow up set">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="mark-lost" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ml-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span><div class="grow"><h2 id="ml-title">Mark as lost?</h2><p id="ml-text"></p></div></div>
+    <div class="modal-body stack"><div class="field"><label for="ml-reason">Reason</label><select class="select" id="ml-reason"><option>Price</option><option>Chose a competitor</option><option>No budget</option><option>No response</option><option>Not a real enquiry</option><option>Other</option></select></div>
+      <div class="field"><label for="ml-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="ml-note"></textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep lead</button><button class="btn btn-danger" type="button" data-close data-toast="Lead marked lost">Mark lost</button></div>
+  </div>
+</div>
+<div class="overlay center" id="change-stage" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cs-title">
+    <div class="modal-head"><div class="grow"><h2 id="cs-title">Change stage</h2><p>Won needs a quotation, order or note.</p></div></div>
+    <div class="modal-body stack"><div class="field"><label for="cs-stage">Stage</label><select class="select" id="cs-stage"></select></div>
+      <div class="field"><label for="cs-note">Quotation, order or note</label><input class="input" id="cs-note" placeholder="QT-2026-0012 or a note"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Stage changed">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="add-note" hidden>
+  <div class="modal" role="dialog" aria-labelledby="an-title">
+    <div class="modal-head"><div class="grow"><h2 id="an-title">Add note</h2><p>Shows in the activity tab.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="an-text">Note</label><textarea class="textarea" id="an-text"></textarea></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Note added">Add note</button></div>
+  </div>
+</div>
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-open="add-note"><svg class="ic"><use href="#ph-sticky-note"/></svg>Add note</button>
+  <button type="button" data-open="change-stage"><svg class="ic"><use href="#ph-kanban"/></svg>Change stage</button>
+  <button type="button" data-toast="Owner is Rajesh Goyal, the only Admin"><svg class="ic"><use href="#ph-user-plus"/></svg>Assign owner</button>
+  <a href="#D203"><svg class="ic"><use href="#ph-buildings"/></svg>Convert to customer</a>
+  <a href="#D402"><svg class="ic"><use href="#ph-wrench"/></svg>Create ticket</a>
+  <hr><button class="danger" type="button" data-open="mark-lost"><svg class="ic"><use href="#ph-x"/></svg>Mark lost</button>
+</div>
+
+<aside class="proto" data-states="ready loading not-found error">
+  <div><h3>What it is</h3><p>One enquiry from first contact to won or lost. Opens with <code>?l=LD-2026-0049</code>; try 0047 (overdue), 0041 (existing customer), 0043 (won), 0042 (lost).</p></div>
+  <div><h3>What you can do</h3><ul><li>Log a call, add a note, set a follow up.</li><li>Change stage, create a quotation, mark lost.</li><li>Convert to customer or create a ticket.</li></ul></div>
+  <div><h3>What happens next</h3><p>Create quotation (D1202), Add customer prefilled (D203), New ticket (D402), Duplicates (D1106).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Won needs a quotation, order or note; Lost needs a reason.</li><li>Existing customer shows a banner; you can make a ticket instead (EC-A24).</li><li>IndiaMART type shows as a chip; missed calls are flagged.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.sales;
+  const ic = r.icon;
+  const l = S.lead(new URLSearchParams(location.search).get('l') || 'LD-2026-0049');
+  if (!l) { ZXA.initialState = 'not-found'; return; }
+  const stages = ZXA.data.leadStages;
+  const calls = ZXA.data.leadCalls.filter(([n]) => n === l.number);
+  const twin = ZXA.data.leads.find((x) => x !== l && x.mobile === l.mobile);
+  const lq = `?l=${l.number}`;
+
+  document.title = `Zixom Admin - ${l.number}`;
+  document.getElementById('crumb').textContent = l.number;
+  document.getElementById('number').textContent = l.number;
+  document.getElementById('chips').innerHTML = `${S.stageTag(l.stage)}${l.imType ? S.imTypeTag(l.imType) : r.tag(l.source, 'outline')}${r.priorityTag(l.priority)}${l.flag ? r.tag(l.flag, 'red', 'phone-missed') : ''}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('user')}${l.name}, ${l.company}</span><span>${ic('inbox')}${l.source}</span><span>${ic('clock')}Created ${r.date(l.created)}, ${r.time(l.created)}</span><span>${ic('user-circle')}Owner Rajesh Goyal</span>`;
+
+  const more = `<button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.getElementById('actions').innerHTML = {
+    Won: `<a class="btn btn-secondary" href="${ZXA.href('D402')}">Create ticket</a><a class="btn btn-primary" href="${ZXA.href('D203')}">Convert to customer</a>${more}`,
+    Lost: `<button class="btn btn-primary" type="button" data-open="change-stage">Reopen</button>`,
+  }[l.stage] ?? `<button class="btn btn-secondary" type="button" data-open="follow-up">Set follow up</button><a class="btn btn-secondary" href="${ZXA.href('D1202', lq)}">Create quotation</a>
+    <button class="btn btn-primary" type="button" data-open="log-call">Log a call</button>${more}`;
+  document.getElementById('lc-sub').textContent = `${l.name} · ${l.mobile}`;
+  document.getElementById('ml-text').textContent = `${l.number} moves to Lost. It stays in reports by source.`;
+  document.getElementById('cs-stage').innerHTML = stages.map((x) => `<option${x === l.stage ? ' selected' : ''}>${x}</option>`).join('');
+
+  const banners = [];
+  if (S.overdue(l)) banners.push(`<div class="banner red">${ic('warning-circle')}<span class="grow"><b>Follow up overdue since ${r.dayDate(l.followUp)}, ${r.time(l.followUp)}.</b> Call or set a new date.</span><span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-open="follow-up">Reschedule</button></span></div>`);
+  if (l.customer) banners.push(`<div class="banner amber">${ic('buildings')}<span class="grow"><b>Existing customer.</b> ${r.company(l.customer).name}, ${r.company(l.customer).code}. Make a ticket instead if this is service.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D402')}">Create ticket</a></span></div>`);
+  if (twin) banners.push(`<div class="banner amber">${ic('git-compare')}<span class="grow"><b>Possible duplicate.</b> Same mobile as <span class="mono">${twin.number}</span>, ${twin.name}.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1106')}">Review</a></span></div>`);
+  if (l.stage === 'Lost') banners.push(`<div class="banner grey">${ic('x')}<span class="grow"><b>Lost.</b> ${l.lostReason}.</span></div>`);
+  if (l.stage === 'Won') banners.push(`<div class="banner green">${ic('check-circle')}<span class="grow"><b>Won.</b> ${l.wonNote}. Convert to a customer to invite them to the app.</span></div>`);
+  document.getElementById('banners').innerHTML = banners.join('');
+
+  /* overview: stage path and the facts */
+  const at = stages.indexOf(l.stage);
+  document.getElementById('tab-overview').innerHTML = `<div class="stack">
+    <div class="tags" aria-label="Stage path">${stages.slice(0, 6).map((x, i) => (i < at && l.stage !== 'Lost' ? r.tag(x, 'green', 'check')
+      : x === l.stage ? r.tag(x, 'blue', 'circle-dot') : r.tag(x, 'outline'))).join('')}</div>
+    <div><h3 style="font-size:16px">Requirement</h3><p style="margin-top:6px; color:var(--text-strong)">${r.esc(l.requirement)}</p></div>
+    <div class="grid cols-2" style="gap:20px">
+      <dl class="dl stack"><dt>Product of interest</dt><dd>${l.product}</dd><dt>Expected value</dt><dd>${l.value ? r.money(l.value) : '<span class="faint">Not set</span>'}</dd>
+        <dt>Source</dt><dd>${l.source}${l.referredBy ? `<br><span class="muted">Referred by ${l.referredBy}</span>` : ''}</dd></dl>
+      <dl class="dl stack"><dt>Last contact</dt><dd>${l.lastContact ? `${r.dayDate(l.lastContact)}, ${r.time(l.lastContact)}` : '<span class="faint">Not yet</span>'}</dd>
+        <dt>Next follow up</dt><dd>${l.followUp ? `<span class="${S.overdue(l) ? 'red-text strong' : ''}">${r.dayDate(l.followUp)}, ${r.time(l.followUp)}</span>` : '<span class="faint">None</span>'}</dd>
+        <dt>Place</dt><dd>${l.city}, ${l.state}</dd></dl>
+    </div></div>`;
+
+  /* activity: calls and notes, newest first */
+  const items = [
+    ...calls.map(([, when, min, outcome, notes, next]) => [when, `<li><span class="node ${outcome === 'Connected' ? 'green' : 'amber'}">${ic(outcome === 'Connected' ? 'phone' : 'phone-missed')}</span>
+      <div><b>Call, ${outcome}${min ? `, ${min} min` : ''}</b><p>${r.esc(notes)} Next: ${r.esc(next)}.</p></div><small>${r.dayDate(when)}, ${r.time(when)}</small></li>`]),
+    [l.created, `<li><span class="node blue">${ic('inbox')}</span><div><b>Lead created from ${l.source}</b><p>${l.imQuery ? `IndiaMART query <span class="mono">${l.imQuery}</span>` : 'Added by Rajesh Goyal'}</p></div><small>${r.dayDate(l.created)}, ${r.time(l.created)}</small></li>`],
+  ].sort((a, b) => b[0].localeCompare(a[0]));
+  document.getElementById('n-activity').textContent = items.length;
+  document.getElementById('tab-activity').innerHTML = `<div class="row" style="margin-bottom:12px"><span class="grow"></span><button class="btn btn-sm btn-secondary" type="button" data-open="add-note">${ic('sticky-note')}Add note</button>
+    <a class="btn btn-sm btn-secondary" href="${ZXA.href('D1104', lq)}">Call log</a></div><ol class="timeline">${items.map(([, html]) => html).join('')}</ol>`;
+
+  document.getElementById('tab-quotes').innerHTML = l.quotation ? `<table class="table compact"><thead><tr><th>Quotation</th><th>Product</th><th class="num">Value</th></tr></thead><tbody>
+      <tr data-href="D1203"><td><span class="mono">${l.quotation}</span></td><td>${l.product}</td><td class="num">${r.money(l.value)}</td></tr></tbody></table>`
+    : `<div class="state"><span class="disc">${ic('file-text')}</span><h3>No quotations yet</h3><p>Create one when the requirement is clear.</p>
+      <div class="btns"><a class="btn btn-secondary" href="${ZXA.href('D1202', lq)}">Create quotation</a></div></div>`;
+  document.getElementById('tab-files').innerHTML = `<div class="drop">${ic('upload-simple')}<b>Drop drawings or photos here</b>PDF, JPG or PNG, 10 MB each</div>`;
+  document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="nowrap">${r.dayDate(l.created)}, ${r.time(l.created)}</td><td>System</td><td>Created, owner Rajesh Goyal${l.imType ? `, ${S.IM_TYPE[l.imType]} sets priority ${l.priority}` : ''}</td></tr>
+    ${at > 0 && l.lastContact ? `<tr><td class="nowrap">${r.dayDate(l.lastContact)}, ${r.time(l.lastContact)}</td><td>Rajesh Goyal</td><td>Stage: New → ${l.stage}</td></tr>` : ''}</tbody></table>`;
+
+  /* side cards */
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Contact</h3></div>
+      <div class="card-body stack-sm"><div class="who"><span class="avatar lg blue">${l.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</span><span><b>${l.name}</b><small>${l.company}</small></span></div>
+      <dl class="dl"><dt>Mobile</dt><dd>${l.mobile}</dd><dt>Email</dt><dd>${l.email || '<span class="faint">Not given</span>'}</dd><dt>City</dt><dd>${l.city}, ${l.state}</dd></dl>
+      <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${l.mobile.replace(/\s/g, '')}">${ic('phone')}Call</a><a class="btn btn-sm btn-ghost" href="https://wa.me/${l.mobile.replace(/\D/g, '')}">${ic('whatsapp-logo')}WhatsApp</a></div></div></section>
+    ${l.imQuery ? `<section class="card side-card"><div class="card-head"><h3 class="grow">IndiaMART</h3><a class="card-link" href="${ZXA.href('D1110')}">Inbox</a></div>
+      <div class="card-body"><dl class="dl"><dt>Query id</dt><dd class="mono">${l.imQuery}</dd><dt>Type</dt><dd>${S.imTypeTag(l.imType)}</dd><dt>Received</dt><dd>${r.dayDate(l.created)}, ${r.time(l.created)}</dd></dl></div></section>` : ''}
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Linked customer</h3></div>
+      <div class="card-body">${l.customer ? `<div class="who"><span class="thumb">${ic('buildings')}</span><span><b>${r.company(l.customer).name}</b><small class="mono">${r.company(l.customer).code}</small></span></div>`
+        : `<p class="muted" style="font-size:13px">Not a customer yet.</p>${l.stage === 'Won' ? '' : ''}`}</div></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

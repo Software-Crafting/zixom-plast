@@ -1,0 +1,21 @@
+/* Support module layout no shared class covers: the three column question thread (D1002). */
+.qthread{display:grid; grid-template-columns:280px minmax(0, 1fr) 300px; gap:16px; align-items:start}
+.qthread > aside{display:flex; flex-direction:column; gap:16px; position:sticky; top:72px}
+.qthread .conv{display:flex; flex-direction:column; min-height:560px}
+.qthread .conv .thread{flex:1}
+.qthread .composer{flex-direction:column; align-items:stretch}
+.qthread .composer .row{flex-wrap:wrap}
+.qthread .msg.note .ic, .qthread .msg .ic{width:14px; height:14px; vertical-align:-2px}
+.msg .file{display:flex; align-items:center; gap:8px; margin-top:8px; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.6); font-size:var(--fs-12)}
+.msg.me .file{background:rgba(255,255,255,.12)}
+.msg.failed{box-shadow:inset 0 0 0 1px var(--red); background:var(--red-50); color:var(--slate-900)}
+@media (max-width:1280px){
+  .qthread{grid-template-columns:260px minmax(0, 1fr)}
+  .qthread > aside.context{grid-column:1 / -1; position:static; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr))}
+}
+@media (max-width:960px){
+  .qthread{grid-template-columns:minmax(0, 1fr)}
+  .qthread > aside{position:static}
+  .qthread > aside.context{grid-template-columns:minmax(0, 1fr)}
+  .qthread .conv{min-height:0}
+}

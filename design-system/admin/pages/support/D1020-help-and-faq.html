@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1020 Help and FAQ</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1020">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Help and FAQ</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D1022">Unanswered searches <span class="tag amber" id="unanswered-n"></span></a>
+    <a class="btn btn-primary" href="#D1021"><svg class="ic"><use href="#ph-plus"/></svg>Add FAQ</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Topics" id="topics" data-when="ready no-results"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#faq"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Question or answer" aria-label="Search FAQ"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="status-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Status</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="faq">
+          <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th>Order</th><th class="sortable">Question</th><th class="sortable">Topic</th><th class="sortable num">Views</th><th class="sortable num">Helpful</th><th class="sortable">Status</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-book-open"/></svg></span>
+        <h3>No FAQ yet</h3><p>FAQ entries will appear here and in the app.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D1021">Add FAQ</a></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div></div>
+
+  <div class="bulk-bar" data-for="faq" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Published. The app shows them now">Publish</button>
+    <button class="btn" type="button" data-toast="Archived. Hidden in the app">Archive</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="menu" id="status-menu" hidden><div class="label">Status</div>
+  <label class="check"><input type="checkbox" checked> Published</label><label class="check"><input type="checkbox" checked> Draft</label><label class="check"><input type="checkbox"> Archived</label></div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D1021"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</a>
+  <button type="button" data-toast="Preview opened"><svg class="ic"><use href="#ph-eye"/></svg>Preview in the app</button>
+  <hr><button class="danger" type="button" data-toast="Archived. Hidden in the app"><svg class="ic"><use href="#ph-archive"/></svg>Archive</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C604-faq.html">
+  <div><h3>What it is</h3><p>The FAQ customers read in the app, by topic, with views and helpful votes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by topic, search, reorder with the arrows.</li><li>Publish or archive in bulk.</li><li>Click a row to edit.</li></ul></div>
+  <div><h3>What happens next</h3><p>FAQ editor (D1021). Searches with no answer: Unanswered searches (D1022).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Helpful under 75 percent is amber: worth rewriting.</li><li>Archived entries are hidden in the app; links to them show S05.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const faq = ZXA.data.faq;
+  const topics = [...new Set(faq.map(([t]) => t))];
+  document.getElementById('head-sub').textContent = `${faq.filter((f) => f[6]).length} published · ${faq.reduce((n, f) => n + f[3], 0).toLocaleString('en-IN')} views in 30 days`;
+  document.getElementById('unanswered-n').textContent = ZXA.data.unansweredSearches.length;
+  document.getElementById('topics').innerHTML = ['All', ...topics].map((t, i) => `<button role="tab" aria-selected="${i === 0}" data-topic="${t}">${t} <span class="n">${t === 'All' ? faq.length : faq.filter((f) => f[0] === t).length}</span></button>`).join('');
+  document.querySelector('#faq tbody').innerHTML = faq.map(([topic, question, , views, yes, no, published], i) => {
+    const pct = yes + no ? Math.round((yes / (yes + no)) * 100) : null;
+    return `<tr data-href="D1021?f=${i}" data-topic="${topic}">
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select"></label></td>
+      <td class="nowrap"><button class="icon-btn sm" type="button" aria-label="Move up" data-toast="Order changed">${r.icon('arrow-up')}</button><button class="icon-btn sm" type="button" aria-label="Move down" data-toast="Order changed">${r.icon('arrow-down')}</button></td>
+      <td><b class="clip" style="max-width:380px">${r.esc(question)}</b></td><td>${topic}</td><td class="num">${views}</td>
+      <td class="num" data-sort="${pct ?? -1}">${pct === null ? '<span class="faint">–</span>' : `<span class="${pct < 75 ? 'amber-text strong' : ''}">${pct}%</span><span class="sub">${yes} yes · ${no} no</span>`}</td>
+      <td>${published ? r.tag('Published', 'green') : r.tag('Draft')}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${r.icon('dots-three')}</button></td></tr>`;
+  }).join('');
+  const show = (topic) => {
+    const rows = [...document.querySelectorAll('#faq tbody tr')];
+    rows.forEach((row) => { row.hidden = topic !== 'All' && row.dataset.topic !== topic; });
+    document.getElementById('foot-count').textContent = `${rows.filter((x) => !x.hidden).length} entries`;
+  };
+  document.getElementById('topics').addEventListener('click', (event) => { const tab = event.target.closest('[data-topic]'); if (tab) show(tab.dataset.topic); });
+  show('All');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1112 IndiaMART log</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1112" data-nav="D1110">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1110">IndiaMART inbox</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Log</span></nav>
+      <h1>IndiaMART log</h1><p>Every request the webhook received · kept 90 days</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Download<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" id="views" data-when="ready no-results"></div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#log"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Query id or outcome" aria-label="Search log"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="log">
+          <thead><tr><th class="sortable">Time</th><th class="sortable">Response</th><th class="sortable">Query id</th><th class="sortable">Outcome</th><th>Detail</th><th class="actions" style="width:190px"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span></div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+        <h3>No requests yet</h3><p>Requests from IndiaMART will appear here.</p><div class="btns"><a class="btn btn-secondary" href="#D1111">Open setup</a></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div></div>
+</main>
+
+<div class="overlay right" id="payload" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="pl-title">
+    <div class="drawer-head"><div class="grow"><h2 id="pl-title">Payload</h2><p id="pl-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack"><div id="pl-hint"></div>
+      <pre class="mono" id="pl-json" style="margin:0; padding:16px; border-radius:12px; background:var(--slate-100); font-size:12px; overflow:auto; white-space:pre"></pre></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Payload copied">Copy</button><span class="grow"></span><span id="pl-action"></span></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Response</span><div class="row wrap" data-chips><button class="chip" type="button" aria-pressed="false">200</button><button class="chip" type="button" aria-pressed="false">401</button><button class="chip" type="button" aria-pressed="false">500</button></div></div>
+      <div class="form-grid"><div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-08-25"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+  <button type="button" data-toast="JSON file downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Raw payloads (JSON)</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>The raw record of every webhook request, for checking and fixing.</p></div>
+  <div><h3>What you can do</h3><ul><li>View the payload, reprocess a failed request, download.</li><li>Switch to Failed and rejected.</li></ul></div>
+  <div><h3>What happens next</h3><p>Reprocessed items show in IndiaMART inbox (D1110). Key problems are fixed in Setup (D1111).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed and rejected requests are highlighted.</li><li>401 with an old key shows a hint to paste the new key.</li><li>Webhook answers within 2 seconds; processing runs after. Kept 90 days.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const im = ZXA.data.indiamart;
+  const log = im.log;
+  const bad = ([, code, , outcome]) => code !== 200 || outcome === 'Failed';
+  const TONE = { 'Created lead': 'green', 'Matched existing': 'blue', 'Duplicate': '', 'Incomplete': 'amber', 'Failed': 'red', 'Rejected': 'red' };
+  document.querySelector('#log tbody').innerHTML = log.map((x, i) => {
+    const [when, code, id, outcome, detail] = x;
+    return `<tr data-drawer="payload" data-i="${i}" data-bad="${bad(x)}" class="${bad(x) ? 'urgent' : ''}">
+      <td class="nowrap" data-sort="${when}">${r.dayDate(when)}<span class="sub mono">${when.slice(11)}</span></td>
+      <td><span class="mono ${code === 200 ? '' : 'red-text strong'}">${code}</span></td><td><span class="mono">${id}</span></td>
+      <td>${r.tag(outcome, TONE[outcome])}</td><td><span class="clip" style="max-width:280px">${r.esc(detail)}</span></td>
+      <td class="actions nowrap">${outcome === 'Failed' ? '<button class="btn btn-sm btn-secondary" type="button" data-toast="Reprocessed. Lead created">Reprocess</button>' : ''}
+        <button class="btn btn-sm btn-ghost" type="button" data-view-i="${i}">View payload</button></td></tr>`;
+  }).join('');
+  document.getElementById('views').innerHTML = `<button role="tab" aria-selected="true" data-v="all">All <span class="n">${log.length}</span></button>
+    <button role="tab" aria-selected="false" data-v="bad">Failed and rejected <span class="n">${log.filter(bad).length}</span></button>`;
+  const show = (v) => {
+    const trs = [...document.querySelectorAll('#log tbody tr')];
+    trs.forEach((tr) => { tr.hidden = v === 'bad' && tr.dataset.bad !== 'true'; });
+    document.getElementById('foot-count').textContent = `${trs.filter((tr) => !tr.hidden).length} requests`;
+  };
+  document.getElementById('views').addEventListener('click', (e) => { const t = e.target.closest('[data-v]'); if (t) show(t.dataset.v); });
+  show('all');
+
+  const open = (i) => {
+    const [when, code, id, outcome, detail] = log[i];
+    const e = im.inbox.find((x) => x[1] === id);
+    document.getElementById('pl-title').textContent = id;
+    document.getElementById('pl-sub').textContent = `${r.dayDate(when)}, ${when.slice(11)} · ${code} · ${outcome}`;
+    document.getElementById('pl-hint').innerHTML = code === 401 ? `<div class="banner red">${r.icon('key')}<span class="grow"><b>Old key.</b> IndiaMART still sends the key rotated on 21 Nov. Paste the new key in Lead Manager.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1111')}">Open setup</a></span></div>`
+      : outcome === 'Failed' ? `<div class="banner red">${r.icon('warning-circle')}<span class="grow"><b>${r.esc(detail)}.</b> The request is stored; reprocess it.</span></div>` : '';
+    document.getElementById('pl-json').textContent = JSON.stringify({
+      UNIQUE_QUERY_ID: id, QUERY_TYPE: e?.[2] ?? 'W', QUERY_TIME: when.replace('T', ' '), SENDER_NAME: e?.[3] ?? 'Rahul Bansal', SENDER_MOBILE: e?.[4] ?? '+91-9811022345',
+      SENDER_EMAIL: e?.[5] ?? '', SENDER_COMPANY: e?.[6] ?? 'Bansal Packers', SENDER_CITY: e?.[7] ?? 'Delhi', SENDER_COUNTRY_ISO: 'IN',
+      QUERY_PRODUCT_NAME: e?.[8] ?? 'Thermoforming Machine', QUERY_MESSAGE: e?.[9] ?? 'Need price for a 3 station machine.',
+    }, null, 2);
+    document.getElementById('pl-action').innerHTML = outcome === 'Failed' ? '<button class="btn btn-primary" type="button" data-close data-toast="Reprocessed. Lead created">Reprocess</button>' : '';
+  };
+  document.getElementById('payload').addEventListener('zxa:row', (e) => open(e.detail.dataset.i));
+  document.addEventListener('click', (e) => {
+    const v = e.target.closest('[data-view-i]');
+    if (v) { open(v.dataset.viewI); ZXA.ui.openOverlay('payload'); }
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

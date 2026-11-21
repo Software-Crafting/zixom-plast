@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1101 Leads</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Leads</h1><p id="head-sub"></p></div>
+    <div class="segment" role="tablist" aria-label="Layout">
+      <button role="tab" aria-selected="true" aria-controls="view-table">Table</button>
+      <button role="tab" aria-selected="false" aria-controls="view-board">Board</button>
+    </div>
+    <button class="btn btn-secondary" type="button" data-menu="more-menu">More<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1102"><svg class="ic"><use href="#ph-plus"/></svg>New lead</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card" id="view-table" role="tabpanel">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="open">Open <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="new">New <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="overdue">Follow up overdue <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="indiamart">IndiaMART <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="won">Won <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="lost">Lost <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#leads"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Lead, name, company, phone or product" aria-label="Search leads"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" type="button" data-toast="View saved"><svg class="ic"><use href="#ph-bookmark"/></svg>Save view</button>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="leads">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Lead</th><th class="sortable">Name and company</th><th>Phone</th><th class="sortable">Product</th>
+            <th class="sortable">Source</th><th class="sortable">Stage</th><th class="sortable">Owner</th><th class="sortable">Last contact</th>
+            <th class="sortable">Next follow up</th><th class="sortable num">Age</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-chart-line-up"/></svg></span>
+        <h3>No leads yet</h3><p>Leads from IndiaMART, phone, email and the app will appear here.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D1111">Connect IndiaMART</a><a class="btn btn-primary" href="#D1102">New lead</a></div></div>
+    </section>
+
+    <!-- board: one lane per stage; Won and Lost ask for a reason or link -->
+    <section id="view-board" role="tabpanel" hidden><div class="kanban" id="board"></div></section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; max-width:60%; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Lead</th><th>Name</th><th>Product</th><th>Stage</th><th>Next follow up</th></tr></thead><tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="leads" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="bulk-owner">Assign owner</button>
+    <button class="btn" type="button" data-open="bulk-stage">Change stage</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D1103">Open lead</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-call" href="#D1104">Log a call</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Stage</span><div class="row wrap" data-chips id="f-stage"></div></div>
+      <div class="field"><span class="label">Source</span><div class="row wrap" data-chips id="f-source"></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-product">Product</label><select class="select" id="f-product"><option>Any</option></select></div>
+        <div class="field"><label for="f-state">State</label><select class="select" id="f-state"><option>Any</option></select></div>
+        <div class="field"><label for="f-from">Created from</label><input class="input" id="f-from" type="date" value="2026-10-01"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Follow up overdue only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-owner" hidden>
+  <div class="modal" role="dialog" aria-labelledby="bo-title">
+    <div class="modal-head"><div class="grow"><h2 id="bo-title">Assign owner</h2><p>The owner gets follow up reminders.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="bo-owner">Owner</label><select class="select" id="bo-owner"><option>Rajesh Goyal</option></select><span class="hint">Only Admins can own leads.</span></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Owner assigned">Assign</button></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-stage" hidden>
+  <div class="modal" role="dialog" aria-labelledby="bs-title">
+    <div class="modal-head"><div class="grow"><h2 id="bs-title">Change stage</h2><p>Won and Lost need a reason or a link, so they are set one by one.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="bs-stage">Stage</label><select class="select" id="bs-stage"></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-open="bulk-result">Change</button></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>LD-2026-0043 is Won and cannot move back.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+<div class="overlay center" id="won-lost" hidden>
+  <div class="modal" role="dialog" aria-labelledby="wl-title">
+    <div class="modal-head"><div class="grow"><h2 id="wl-title">Mark as lost?</h2><p id="wl-text">A reason is required.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="wl-reason">Reason</label><select class="select" id="wl-reason"><option>Price</option><option>Chose a competitor</option><option>No budget</option><option>No response</option><option>Other</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Stage changed">Save</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="leads"> Phone</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="leads"> Owner</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="leads"> Last contact</label>
+  <label class="check"><input type="checkbox" checked data-col="10" data-table="leads"> Age</label>
+</div>
+<div class="menu" id="more-menu" hidden>
+  <a href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import leads</a>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Export Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>Export CSV</button>
+  <hr><a href="#D1105"><svg class="ic"><use href="#ph-calendar-check"/></svg>Follow ups</a>
+  <a href="#D1106"><svg class="ic"><use href="#ph-git-compare"/></svg>Duplicates</a>
+  <a href="#D1107"><svg class="ic"><use href="#ph-bar-chart"/></svg>Lead sources report</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Every enquiry from IndiaMART, phone, email, referral and the app. Table or board by stage.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, saved views, columns.</li><li>Row click opens a quick view; the number opens the lead.</li><li>Bulk assign owner or change stage; import and export.</li><li>Board: drag a card to the next stage.</li></ul></div>
+  <div><h3>What happens next</h3><p>Lead detail (D1103), New lead (D1102), Follow ups (D1105), Create quotation (D1202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Overdue follow ups are red.</li><li>Won needs a quotation, order or note; Lost needs a reason.</li><li>Bulk with failures shows done and failed (EC-A64).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.sales;
+  const leads = ZXA.data.leads;
+  const owner = ZXA.data.admin;
+  const days = (iso) => Math.max(0, -r.daysFromToday(iso));
+  const followCell = (l) => {
+    if (!l.followUp) return '<span class="faint">–</span>';
+    const when = `${r.dayDate(l.followUp)}<span class="sub">${r.time(l.followUp)}</span>`;
+    return S.overdue(l) ? `<span class="red-text strong">${r.icon('warning-circle')} Overdue</span><span class="sub">${r.dayDate(l.followUp)}</span>` : when;
+  };
+  const sourceCell = (l) => `${l.source}${l.imType ? `<span class="sub">${l.imType} ${S.IM_TYPE[l.imType]}</span>` : ''}`;
+
+  const open = leads.filter(S.open);
+  document.getElementById('head-sub').textContent = `${open.length} open · ${leads.filter(S.overdue).length} follow up overdue · ${r.moneyShort(open.reduce((n, l) => n + l.value, 0))} in the pipeline`;
+  document.querySelector('#leads tbody').innerHTML = leads.map((l) => `<tr data-drawer="quick" data-lead="${l.number}" class="${S.overdue(l) ? 'urgent' : ''}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${l.number}"></label></td>
+    <td><a class="rec" href="${ZXA.href('D1103', `?l=${l.number}`)}">${l.number}</a>${l.flag ? `<span class="sub red-text">${l.flag}</span>` : `<span class="sub">${l.city}</span>`}</td>
+    <td><b class="clip">${l.name}</b><span class="sub">${l.company}</span></td>
+    <td class="nowrap">${l.mobile}</td>
+    <td><span class="clip">${l.product}</span><span class="sub">${l.value ? r.money(l.value) : 'Value not set'}</span></td>
+    <td>${sourceCell(l)}</td>
+    <td data-sort="${ZXA.data.leadStages.indexOf(l.stage)}">${S.stageTag(l.stage)}</td>
+    <td><span class="who">${r.avatar(owner, 'sm')}<span>Rajesh</span></span></td>
+    <td class="nowrap" data-sort="${l.lastContact ?? '0'}">${l.lastContact ? r.ago(l.lastContact) : '<span class="faint">Not yet</span>'}</td>
+    <td class="nowrap" data-sort="${l.followUp ?? '9'}">${followCell(l)}</td>
+    <td class="num" data-sort="${String(days(l.created)).padStart(4, '0')}">${days(l.created)} d</td></tr>`).join('');
+
+  const VIEWS = { open: S.open, new: (l) => l.stage === 'New', overdue: S.overdue, indiamart: (l) => l.source === 'IndiaMART',
+    won: (l) => l.stage === 'Won', lost: (l) => l.stage === 'Lost', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#leads tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](S.lead(row.dataset.lead)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = leads.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('open');
+
+  const chips = (items) => items.map((x) => `<button class="chip" type="button" aria-pressed="false">${x}</button>`).join('');
+  const uniq = (key) => [...new Set(leads.map((l) => l[key]))];
+  document.getElementById('f-stage').innerHTML = chips(ZXA.data.leadStages);
+  document.getElementById('f-source').innerHTML = chips(['IndiaMART', 'Phone', 'Email', 'WhatsApp', 'App', 'Website', 'Walk in', 'Referral', 'Other']);
+  document.getElementById('f-product').innerHTML += uniq('product').map((x) => `<option>${x}</option>`).join('');
+  document.getElementById('f-state').innerHTML += uniq('state').map((x) => `<option>${x}</option>`).join('');
+  document.getElementById('bs-stage').innerHTML = ZXA.data.leadStages.slice(0, 5).map((x) => `<option>${x}</option>`).join('');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr><td class="cb"></td>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const l = S.lead(event.detail.dataset.lead);
+    document.getElementById('quick-title').textContent = l.number;
+    document.getElementById('quick-sub').textContent = `${l.source} · created ${r.ago(l.created)}`;
+    document.getElementById('quick-open').href = ZXA.href('D1103', `?l=${l.number}`);
+    document.getElementById('quick-call').href = ZXA.href('D1104', `?l=${l.number}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${S.stageTag(l.stage)}${l.imType ? S.imTypeTag(l.imType) : ''}${r.priorityTag(l.priority)}${l.flag ? r.tag(l.flag, 'red') : ''}</div>
+      <p>${r.esc(l.requirement)}</p>
+      <dl class="dl"><dt>Contact</dt><dd>${l.name}, ${l.company}<br><a href="tel:${l.mobile.replace(/\s/g, '')}">${l.mobile}</a>${l.email ? `<br><span class="muted">${l.email}</span>` : ''}</dd>
+        <dt>Place</dt><dd>${l.city}, ${l.state}</dd><dt>Product</dt><dd>${l.product}</dd><dt>Expected value</dt><dd>${l.value ? r.money(l.value) : 'Not set'}</dd>
+        <dt>Next follow up</dt><dd>${followCell(l)}</dd>${l.lostReason ? `<dt>Lost reason</dt><dd>${l.lostReason}</dd>` : ''}</dl>`;
+  });
+
+  /* board: drag between lanes; Won and Lost ask for a reason */
+  document.getElementById('board').innerHTML = ZXA.data.leadStages.map((stage) => {
+    const cards = leads.filter((l) => l.stage === stage);
+    return `<div class="lane" data-stage="${stage}"><div class="lane-head">${stage}<span class="n">${cards.length}</span></div>
+      ${cards.map((l) => `<div class="card" draggable="true" data-href="D1103?l=${l.number}" data-lead="${l.number}">
+        <div class="row"><span class="mono strong nowrap">${l.number}</span><span class="grow"></span>${S.overdue(l) ? r.tag('Overdue', 'red') : ''}</div>
+        <p style="margin-top:4px; font-size:13px; color:var(--text-strong)">${l.name} · ${l.city}</p>
+        <p class="muted" style="font-size:13px">${l.product}</p>
+        <div class="row" style="margin-top:10px">${r.tag(l.source, 'outline')}<span class="grow"></span><span class="muted" style="font-size:12px">${l.value ? r.moneyShort(l.value) : ''}</span></div></div>`).join('')}</div>`;
+  }).join('');
+  let dragged = null;
+  const board = document.getElementById('board');
+  board.addEventListener('dragstart', (e) => { dragged = e.target.closest('.card'); dragged?.classList.add('dragging'); });
+  board.addEventListener('dragend', () => { dragged?.classList.remove('dragging'); board.querySelectorAll('.over').forEach((x) => x.classList.remove('over')); });
+  board.addEventListener('dragover', (e) => { const lane = e.target.closest('.lane'); if (lane) { e.preventDefault(); lane.classList.add('over'); } });
+  board.addEventListener('dragleave', (e) => e.target.closest('.lane')?.classList.remove('over'));
+  board.addEventListener('drop', (e) => {
+    const lane = e.target.closest('.lane');
+    if (!lane || !dragged) return;
+    e.preventDefault();
+    lane.append(dragged);
+    board.querySelectorAll('.lane').forEach((x) => { x.classList.remove('over'); x.querySelector('.n').textContent = x.querySelectorAll('.card').length; });
+    const stage = lane.dataset.stage;
+    if (stage === 'Won' || stage === 'Lost') {
+      document.getElementById('wl-title').textContent = `Mark ${dragged.dataset.lead} as ${stage.toLowerCase()}?`;
+      document.getElementById('wl-text').textContent = stage === 'Won' ? 'Link the accepted quotation or order, or add a note.' : 'A reason is required.';
+      document.querySelector('label[for="wl-reason"]').textContent = stage === 'Won' ? 'Quotation, order or note' : 'Reason';
+      document.getElementById('wl-reason').innerHTML = (stage === 'Won' ? ['QT-2026-0012, Accepted', 'Add a note instead'] : ['Price', 'Chose a competitor', 'No budget', 'No response', 'Other'])
+        .map((x) => `<option>${x}</option>`).join('');
+      ZXA.ui.openOverlay('won-lost');
+    } else ZXA.ui.toast(`${dragged.dataset.lead} moved to ${stage}`);
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

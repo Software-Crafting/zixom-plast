@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1113 Product mapping</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1113" data-nav="D1110">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1111">IndiaMART setup</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Product mapping</span></nav>
+      <h1>Product mapping</h1><p>IndiaMART product names to Zixom product ranges</p></div>
+    <a class="btn btn-secondary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+    <button class="btn btn-primary" type="button" data-open="edit" data-name=""><svg class="ic"><use href="#ph-plus"/></svg>Add mapping</button>
+  </div>
+
+  <div data-when="ready no-results">
+    <div class="grid side-right">
+      <section class="card list-card">
+        <div class="toolbar">
+          <label class="search" data-filter="#map"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="IndiaMART name or range" aria-label="Search mapping"></label>
+          <button class="btn btn-secondary filter-btn" type="button" data-menu="range-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Range</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="map"><thead><tr><th class="sortable">IndiaMART product name</th><th class="sortable">Zixom range</th><th class="sortable num">Enquiries, 90 days</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+          <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+            <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Unmapped names <span class="tag amber" id="un-n"></span></h2><p>Leads from these have no range</p></div></div>
+        <ul class="mini" id="unmapped"></ul>
+      </section>
+    </div>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc"><svg class="ic"><use href="#ph-link"/></svg></span><h3>No mappings yet</h3><p>Mappings will appear here as IndiaMART names arrive.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-open="edit">Add mapping</button></div></div></div></div>
+  <div data-when="loading"><div class="grid side-right"><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-line"></span></div></div></div>
+</main>
+
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ed-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ed-title">Mapping</h2><p>New enquiries with this name get the range.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="ed-name">IndiaMART product name</label><input class="input" id="ed-name"><span class="hint">Matched without case; extra spaces ignored.</span></div>
+      <div class="field"><label for="ed-range">Zixom range</label><select class="select" id="ed-range"></select></div>
+      <label class="check"><input type="checkbox" checked> Also update existing leads with this name</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="range-menu" hidden></div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Which Zixom range an IndiaMART product name belongs to, so leads show the right product.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add or edit a mapping; import a list.</li><li>Map an unmapped name in one click.</li></ul></div>
+  <div><h3>What happens next</h3><p>New IndiaMART leads (D1110, D1103) get the range. Import uses Import (D1510).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unmapped names are listed with counts.</li><li>One name maps to one range; many names can share a range.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const im = ZXA.data.indiamart;
+  const ranges = [...new Set([...im.mapping.map((m) => m[1]), 'Crushers and grinders', 'Packaging machines'])];
+  document.querySelector('#map tbody').innerHTML = im.mapping.map(([name, range, n]) => `<tr data-drawer="edit" data-name="${name}" data-range="${range}">
+    <td><b>${name}</b></td><td>${r.tag(range, 'blue')}</td><td class="num">${n}</td>
+    <td class="actions"><button class="btn btn-ghost btn-sm" type="button" data-open="edit" data-name="${name}" data-range="${range}">Edit</button></td></tr>`).join('');
+  document.getElementById('un-n').textContent = im.unmapped.length;
+  document.getElementById('unmapped').innerHTML = im.unmapped.map(([name, n]) => `<li><span class="grow"><b>${name}</b><small>${n} ${n === 1 ? 'enquiry' : 'enquiries'}</small></span>
+    <button class="btn btn-sm btn-secondary" type="button" data-open="edit" data-name="${name}" data-range="">Map</button></li>`).join('');
+  document.getElementById('ed-range').innerHTML = `<option value="">Choose a range</option>${ranges.map((x) => `<option>${x}</option>`).join('')}`;
+  document.getElementById('range-menu').innerHTML = `<div class="label">Range</div>${ranges.map((x) => `<label class="check"><input type="checkbox" checked> ${x}</label>`).join('')}`;
+  const load = (el) => {
+    document.getElementById('ed-title').textContent = el.dataset.name ? (el.dataset.range ? 'Edit mapping' : 'Map name') : 'Add mapping';
+    document.getElementById('ed-name').value = el.dataset.name || '';
+    document.getElementById('ed-range').value = el.dataset.range || '';
+  };
+  document.getElementById('edit').addEventListener('zxa:row', (e) => load(e.detail));
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-open="edit"]'); if (b) load(b); });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

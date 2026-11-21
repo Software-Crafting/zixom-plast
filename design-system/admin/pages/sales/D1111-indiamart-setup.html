@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1111 IndiaMART setup</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1111" data-nav="D1110">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1110">IndiaMART inbox</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Setup</span></nav>
+      <h1>IndiaMART setup</h1><p><span id="state-chip"></span> Connect IndiaMART Lead Manager so enquiries become leads</p></div>
+    <a class="btn btn-secondary" href="#D1112">Log</a>
+  </div>
+
+  <div data-when="ready not-set-up waiting degraded failing paused">
+    <div id="state-banner" class="stack" style="margin-bottom:16px"></div>
+    <div class="grid side-right">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head"><span class="avatar sm dark">1</span><div class="grow"><h2>Copy the webhook address and key</h2><p>IndiaMART sends every enquiry here</p></div></div>
+          <div class="card-body stack">
+            <div class="field"><label for="hook">Webhook address</label><div class="row"><input class="input mono grow" id="hook" readonly>
+              <button class="btn btn-secondary" type="button" data-toast="Address copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy</button></div></div>
+            <div class="field"><label for="key">Key</label><div class="row"><input class="input mono grow" id="key" type="password" readonly>
+              <button class="icon-btn" type="button" aria-label="Show key" id="show-key" data-tip="Show"><svg class="ic"><use href="#ph-eye"/></svg></button>
+              <button class="btn btn-secondary" type="button" data-toast="Key copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy</button>
+              <button class="btn btn-ghost" type="button" data-open="rotate">Rotate key</button></div>
+              <span class="hint">Key rotated 21 Nov, 18:00. The old key stopped working at 19:00.</span></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="avatar sm dark">2</span><div class="grow"><h2>Paste it in IndiaMART</h2><p>In the IndiaMART seller account</p></div></div>
+          <div class="card-body"><ol style="margin:0; padding-left:20px; display:grid; gap:6px; color:var(--text-strong)">
+            <li>Open Lead Manager, then CRM integration (Push API).</li><li>Choose Other and paste the webhook address and key.</li><li>Enter the OTP IndiaMART sends to the registered mobile.</li></ol></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="avatar sm dark">3</span><div class="grow"><h2>Send a test lead</h2><p>Checks the connection end to end</p></div>
+            <button class="btn btn-secondary btn-sm" type="button" data-busy id="test-btn"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Send test lead</button></div>
+          <div class="card-body"><p class="row" style="font-size:13px"><svg class="ic" style="color:var(--green)"><use href="#ph-check-circle"/></svg>Last test 20 Nov, 15:00: received in 0.4 s, lead created and deleted.</p></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="avatar sm dark">4</span><div class="grow"><h2>Owner and assignment</h2><p>Who gets new IndiaMART leads</p></div></div>
+          <div class="card-body form-grid">
+            <div class="field"><label for="owner">Default owner</label><select class="select" id="owner"><option>Rajesh Goyal</option></select><span class="hint">Must be an Admin.</span></div>
+            <div class="field"><span class="label">Assignment rule</span>
+              <label class="check"><input type="radio" name="rule" checked> Default owner</label>
+              <label class="check"><input type="radio" name="rule"> Round robin among selected Admins</label></div>
+            <div class="field full"><label for="spam">Spam words</label><textarea class="textarea" id="spam" rows="2">loan, job, franchise, crypto, sample free</textarea><span class="hint">Marks likely spam for review. Never deletes.</span></div>
+            <div class="field full"><label for="pull">Pull API key <span class="opt">optional</span></label><input class="input mono" id="pull" type="password" value="zxim_pull_2b81c9"><span class="hint">Catches up every 15 minutes if a push was missed (EC-A25).</span></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="avatar sm dark">5</span><div class="grow"><h2>Confirm product mapping</h2><p id="map-sub"></p></div><a class="btn btn-secondary btn-sm" href="#D1113">Open mapping</a></div>
+        </section>
+        <section class="card list-card">
+          <div class="card-head"><div class="grow"><h2>Enquiry types</h2><p>All are accepted; the type is saved on the lead as a chip</p></div></div>
+          <div class="table-wrap"><table class="table compact"><thead><tr><th>Code</th><th>Type</th><th>Becomes</th><th>Priority</th></tr></thead><tbody id="types"></tbody></table></div>
+        </section>
+        <div class="form-bar card"><span class="grow">Changes apply to new enquiries</span><button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+      </div>
+
+      <aside class="stack" style="position:sticky; top:72px">
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Status, last 24 hours</h3></div>
+          <div class="card-body"><dl class="dl" id="status"></dl></div></section>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Intake</h3></div>
+          <div class="card-body stack-sm"><label class="switch"><input type="checkbox" id="pause"><span></span>Pause intake</label>
+            <p class="muted" style="font-size:13px">IndiaMART still gets success; enquiries are held and processed when you resume.</p></div></section>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<div class="overlay center" id="rotate" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rk-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-key"/></svg></span>
+      <div class="grow"><h2 id="rk-title">Rotate the key?</h2><p>The old key works for 1 hour. Paste the new key in IndiaMART before then, or enquiries are rejected.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="New key created. Old key works until 13:00">Rotate key</button></div>
+  </div>
+</div>
+<div class="overlay center" id="pause-confirm" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="pc-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-pause"/></svg></span>
+      <div class="grow"><h2 id="pc-title">Pause intake?</h2><p>New enquiries are stored but no leads are made until you resume.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Intake paused">Pause intake</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready not-set-up waiting degraded failing paused">
+  <div><h3>What it is</h3><p>Connect IndiaMART, choose who gets the leads, and see if the webhook is healthy.</p></div>
+  <div><h3>What you can do</h3><ul><li>Copy the address and key; rotate the key.</li><li>Send a test lead, set owner, rule, spam words and Pull key.</li><li>Pause intake.</li></ul></div>
+  <div><h3>What happens next</h3><p>IndiaMART inbox (D1110), Log (D1112), Product mapping (D1113).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>States: Not set up, Waiting for first lead, Healthy, Degraded, Failing with reason, Paused.</li><li>Old key after rotation: requests rejected and shown in D1112 with a hint.</li><li>No lead for 48 hours: warning. Test leads are marked and can be deleted.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const im = ZXA.data.indiamart;
+  const $ = (id) => document.getElementById(id);
+  $('hook').value = im.webhook;
+  $('key').value = im.key;
+  $('map-sub').textContent = `${im.mapping.length} names mapped · ${im.unmapped.length} unmapped`;
+  $('types').innerHTML = [
+    ['W', 'Direct enquiry', 'Lead in New', 'High'], ['B, BL', 'Buy lead', 'Lead in New, note: consumed buy lead', 'Normal'],
+    ['P', 'Call (PNS)', 'Contacted if the call lasted, else New flagged Missed call', 'High'], ['V, BIZ', 'Catalog view', 'Lead in New', 'Low'],
+    ['WA', 'WhatsApp enquiry', 'Lead in New', 'High'], ['Other', 'Unknown type', 'Saved as received, flagged for review', 'Normal'],
+  ].map(([code, type, becomes, p]) => `<tr><td class="mono strong">${code}</td><td>${type}</td><td>${becomes}</td><td>${r.priorityTag(p)}</td></tr>`).join('');
+  $('show-key').addEventListener('click', () => { $('key').type = $('key').type === 'password' ? 'text' : 'password'; });
+  $('pause').addEventListener('change', (e) => { if (e.target.checked) ZXA.ui.openOverlay('pause-confirm'); });
+
+  const h = im.health;
+  const STATES = {
+    'ready': ['Healthy', 'green', '', [r.ago(h.lastReceived), h.count24, h.success, h.lastError]],
+    'not-set-up': ['Not set up', '', `<div class="banner grey">${r.icon('plug')}<span class="grow"><b>Not set up.</b> Follow steps 1 to 3 to connect IndiaMART.</span></div>`, ['Never', 0, '–', 'None']],
+    'waiting': ['Waiting for first lead', 'blue', `<div class="banner grey">${r.icon('hourglass')}<span class="grow"><b>Connected.</b> Waiting for the first enquiry. Send a test lead to check.</span></div>`, ['Never', 0, '–', 'None']],
+    'degraded': ['Degraded', 'amber', `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>No IndiaMART enquiries in 48 hours.</b> Check that the integration is active in IndiaMART.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1112')}">Open log</a></span></div>`, ['2 days ago', 0, '100%', 'None']],
+    'failing': ['Failing', 'red', `<div class="banner red">${r.icon('warning-circle')}<span class="grow"><b>Requests rejected: old key.</b> IndiaMART still sends the key rotated on 21 Nov. Paste the new key in Lead Manager.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${ZXA.href('D1112')}">Open log</a></span></div>`, ['3 h ago', 2, '0%', '401 Old key, 22 Nov 09:02']],
+    'paused': ['Paused', 'amber', `<div class="banner amber">${r.icon('pause')}<span class="grow"><b>Intake paused.</b> 2 enquiries are held and will be processed when you resume.</span><span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Intake resumed. 2 enquiries processed">Resume</button></span></div>`, [r.ago(h.lastReceived), h.count24, h.success, h.lastError]],
+  };
+  const paint = (state) => {
+    const [label, tone, banner, [last, count, rate, err]] = STATES[state] ?? STATES.ready;
+    $('state-chip').innerHTML = r.tag(label, tone, { green: 'check-circle', amber: 'warning', red: 'warning-circle' }[tone] ?? 'circle-dot');
+    $('state-banner').innerHTML = banner;
+    $('status').innerHTML = `<dt>Last received</dt><dd>${last}</dd><dt>Enquiries</dt><dd>${count}</dd><dt>Success rate</dt><dd>${rate}</dd><dt>Last error</dt><dd>${err}</dd>`;
+    $('pause').checked = state === 'paused';
+  };
+  paint('ready');
+  ZXA.paintSetup = paint;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (button) ZXA.paintSetup(button.dataset.protoState);
+});
+document.getElementById('test-btn').addEventListener('click', () => window.setTimeout(() => ZXA.ui.toast('Test lead received in 0.4 s. Marked as test'), 900));
+</script>
+</body>
+</html>

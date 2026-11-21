@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1003 Canned replies</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1003" data-nav="D1001">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1001">Questions</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Canned replies</span></nav>
+      <h1>Canned replies</h1><p>Saved answers for the question composer</p></div>
+    <button class="btn btn-primary" type="button" data-open="editor" data-new><svg class="ic"><use href="#ph-plus"/></svg>Add reply</button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="archived">Archived <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#replies"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Title or text" aria-label="Search replies"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="cat-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Category</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="replies">
+          <thead><tr><th class="sortable">Title</th><th class="sortable">Category</th><th>Text</th><th class="sortable num">Used</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-messages"/></svg></span>
+        <h3>No canned replies yet</h3><p>Canned replies will appear here.</p>
+        <div class="btns"><button class="btn btn-primary" type="button" data-open="editor">Add reply</button></div></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div></div>
+</main>
+
+<div class="overlay right" id="editor" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ed-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ed-title">Edit reply</h2><p>Variables fill in from the question.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="ed-name">Title</label><input class="input" id="ed-name" maxlength="60"></div>
+      <div class="field"><label for="ed-cat">Category</label><select class="select" id="ed-cat"></select></div>
+      <div class="field"><label for="ed-text">Text</label><textarea class="textarea" id="ed-text" rows="5" maxlength="1000"></textarea>
+        <span class="hint">Variables: {customer_name} {machine} {part} {price} {invoice} {date} {site}</span></div>
+      <div class="field"><span class="label">Preview with QRY-2026-0030</span><div class="msg me" id="ed-preview" style="max-width:100%"></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-close data-toast="Reply archived">Archive</button><span class="grow"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="cat-menu" hidden></div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Saved answers you insert in a question thread.</p></div>
+  <div><h3>What you can do</h3><ul><li>Add, edit or archive a reply.</li><li>Use variables; the preview fills them from a sample question.</li></ul></div>
+  <div><h3>What happens next</h3><p>Replies show under Canned reply in the composer of Question thread (D1002).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Archived replies are hidden from the composer but kept.</li><li>Unknown variables stay as typed so you can see them.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const list = ZXA.data.cannedReplies;
+  const vars = (text) => r.esc(text).replace(/\{[a-z_]+\}/g, (v) => `<span class="mono" style="color:var(--blue)">${v}</span>`);
+  document.querySelector('#replies tbody').innerHTML = list.map((x, i) => `<tr data-drawer="editor" data-i="${i}" data-archived="${Boolean(x.archived)}">
+    <td><b>${r.esc(x.title)}</b></td><td class="nowrap">${x.category}</td><td><span class="clip" style="max-width:420px">${vars(x.text)}</span></td>
+    <td class="num">${x.used}</td>
+    <td class="actions"><button class="btn btn-ghost btn-sm" type="button" data-edit="${i}">Edit</button></td></tr>`).join('');
+
+  const show = (archived) => document.querySelectorAll('#replies tbody tr').forEach((row) => { row.hidden = (row.dataset.archived === 'true') !== archived; });
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    const archived = tab.dataset.view === 'archived';
+    tab.querySelector('.n').textContent = list.filter((x) => Boolean(x.archived) === archived).length;
+    tab.addEventListener('click', () => show(archived));
+  });
+  show(false);
+
+  const cats = ZXA.data.supportCategories.map((c) => c.name);
+  document.getElementById('ed-cat').innerHTML = cats.map((c) => `<option>${c}</option>`).join('');
+  document.getElementById('cat-menu').innerHTML = `<div class="label">Category</div>${cats.map((c) => `<label class="check"><input type="checkbox" checked> ${c}</label>`).join('')}`;
+
+  const SAMPLE = { '{customer_name}': 'Rakesh', '{machine}': 'AFM-760 Single Station', '{date}': 'Tue 24 Nov', '{site}': 'Vatva plant', '{invoice}': 'INV-2026-0980',
+    '{part}': 'Ceramic heater element 650 W', '{price}': '₹2,850.00', '{days}': '3', '{warranty_end}': '21 Jun 2027' };
+  const preview = () => {
+    document.getElementById('ed-preview').textContent = document.getElementById('ed-text').value.replace(/\{[a-z_]+\}/g, (v) => SAMPLE[v] ?? v) || 'Type a reply to see it here.';
+  };
+  const load = (x) => {
+    document.getElementById('ed-title').textContent = x ? 'Edit reply' : 'Add reply';
+    document.getElementById('ed-name').value = x?.title ?? '';
+    document.getElementById('ed-cat').value = x?.category ?? cats[0];
+    document.getElementById('ed-text').value = x?.text ?? '';
+    preview();
+  };
+  document.getElementById('ed-text').addEventListener('input', preview);
+  document.getElementById('editor').addEventListener('zxa:row', (event) => load(list[event.detail.dataset.i]));
+  document.addEventListener('click', (event) => {
+    const edit = event.target.closest('[data-edit]');
+    if (edit) { load(list[edit.dataset.edit]); ZXA.ui.openOverlay('editor'); }
+    if (event.target.closest('[data-new]')) load(null);
+  });
+  load(list[0]);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

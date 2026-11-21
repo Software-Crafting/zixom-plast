@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1022 Unanswered searches</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1022" data-nav="D1020">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1020">Help and FAQ</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Unanswered searches</span></nav>
+      <h1>Unanswered searches</h1><p id="head-sub"></p></div>
+    <div class="segment" role="tablist" aria-label="Period">
+      <button role="tab" aria-selected="false" data-toast="Showing the last 7 days">7 days</button><button role="tab" aria-selected="true">30 days</button><button role="tab" aria-selected="false" data-toast="Showing the last 90 days">90 days</button>
+    </div>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#searches"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Phrase" aria-label="Search phrases"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="searches">
+          <thead><tr><th class="sortable">Phrase</th><th class="sortable num">Searches</th><th></th><th class="sortable">Last searched</th><th class="actions" style="width:220px"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+        <h3>No unanswered searches yet</h3><p>Phrases customers search with no result will appear here.</p></div>
+    </section>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div></div>
+</main>
+
+<div class="menu" id="filter-menu" hidden><div class="label">Show</div>
+  <label class="check"><input type="checkbox" checked> New</label><label class="check"><input type="checkbox"> Dismissed</label><label class="check"><input type="checkbox"> FAQ created</label></div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C604-faq.html">
+  <div><h3>What it is</h3><p>What customers searched in the app FAQ and found nothing, counted by phrase.</p></div>
+  <div><h3>What you can do</h3><ul><li>Create an FAQ that starts from the phrase.</li><li>Dismiss phrases that need no answer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Create FAQ opens the FAQ editor (D1021) with the phrase.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Phrases are lower cased and trimmed before counting.</li><li>Dismissed phrases come back if searched 5 more times.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const list = ZXA.data.unansweredSearches;
+  const max = Math.max(...list.map(([, n]) => n));
+  document.getElementById('head-sub').textContent = `${list.length} phrases · ${list.reduce((n, [, c]) => n + c, 0)} searches with no result`;
+  document.querySelector('#searches tbody').innerHTML = list.map(([phrase, n, when]) => `<tr>
+    <td><b>"${r.esc(phrase)}"</b></td><td class="num">${n}</td>
+    <td style="width:30%"><span class="progress"><span style="width:${Math.round((n / max) * 100)}%"></span></span></td>
+    <td class="nowrap" data-sort="${when}">${r.ago(when)}</td>
+    <td class="actions nowrap"><button class="btn btn-ghost btn-sm" type="button" data-dismiss data-toast="Dismissed">Dismiss</button>
+      <a class="btn btn-secondary btn-sm" href="${ZXA.href('D1021', `?search=${encodeURIComponent(phrase)}`)}">Create FAQ</a></td></tr>`).join('');
+  document.addEventListener('click', (event) => {
+    const dismiss = event.target.closest('[data-dismiss]');
+    if (dismiss) ZXA.ui.leave(dismiss.closest('tr'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

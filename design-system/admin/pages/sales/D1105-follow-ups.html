@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1105 Follow ups</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-sales.css">
+</head>
+<body class="adm" data-page="D1105" data-nav="D1101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1101">Leads</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Follow ups</span></nav>
+      <h1>Follow ups</h1><p id="head-sub"></p></div>
+    <div class="search-row">
+      <label class="search" data-filter="#groups"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Lead or name" aria-label="Search follow ups"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-menu="filter-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+    </div>
+  </div>
+
+  <div data-when="ready no-results">
+    <div class="stack" id="groups"></div>
+    <div class="card" data-noresults hidden><div class="state"><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div></div>
+  </div>
+  <div data-when="empty"><div class="card"><div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span><h3>No follow ups due</h3><p>Follow ups you set on leads will appear here.</p>
+    <div class="btns"><a class="btn btn-secondary" href="#D1101">Open leads</a></div></div></div></div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+</main>
+
+<div class="overlay center" id="reschedule" hidden>
+  <div class="modal" role="dialog" aria-labelledby="rs-title">
+    <div class="modal-head"><div class="grow"><h2 id="rs-title">Reschedule follow up</h2><p id="rs-sub"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="rs-when">New time</label><input class="input" id="rs-when" type="datetime-local" value="2026-11-24T11:00"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Follow up moved">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="snooze-menu" hidden>
+  <button type="button" data-toast="Snoozed for 1 hour">1 hour</button><button type="button" data-toast="Snoozed to 5 PM">Until 5 PM</button><button type="button" data-toast="Snoozed to tomorrow 10 AM">Tomorrow 10 AM</button>
+</div>
+<div class="menu" id="filter-menu" hidden><div class="label">Stage</div>
+  <label class="check"><input type="checkbox" checked> New</label><label class="check"><input type="checkbox" checked> Contacted</label>
+  <label class="check"><input type="checkbox" checked> Requirement understood</label><label class="check"><input type="checkbox" checked> Quotation sent</label><label class="check"><input type="checkbox" checked> Negotiation</label></div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Lead follow ups: overdue, due today and coming up.</p></div>
+  <div><h3>What you can do</h3><ul><li>Mark done, snooze or reschedule.</li><li>Click a row to open the lead.</li></ul></div>
+  <div><h3>What happens next</h3><p>Lead detail (D1103). The bell reminds you at the set time.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Overdue follow ups are red and appear in the work queue (D102).</li><li>Won and Lost leads drop their follow ups.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.sales;
+  const today = ZX.data.today;
+  const due = ZXA.data.leads.filter((l) => l.followUp && S.open(l)).sort((a, b) => a.followUp.localeCompare(b.followUp));
+  const lastStep = (l) => ZXA.data.leadCalls.find(([n]) => n === l.number)?.[5] ?? 'First call';
+  const groups = [
+    ['Overdue', 'red', due.filter(S.overdue)],
+    ['Today', 'blue', due.filter((l) => !S.overdue(l) && l.followUp.startsWith(today))],
+    ['Upcoming', '', due.filter((l) => l.followUp.slice(0, 10) > today)],
+  ];
+  document.getElementById('head-sub').textContent = groups.map(([name, , items]) => `${items.length} ${name.toLowerCase()}`).join(' · ');
+  document.getElementById('groups').innerHTML = groups.map(([name, tone, items]) => `<section class="card">
+    <div class="card-head"><div class="grow"><h2>${name} <span class="tag ${tone}">${items.length}</span></h2></div></div>
+    <ul class="mini fu-list">${items.map((l) => `<li data-href="D1103?l=${l.number}" data-search-item>
+      <span class="time ${tone === 'red' ? 'red-text' : ''}">${name === 'Upcoming' ? r.dayDate(l.followUp).slice(4) : r.time(l.followUp)}</span>
+      <span class="grow"><b>${l.name} · <span class="mono">${l.number}</span></b><small>${r.esc(lastStep(l))} · ${l.product} · ${l.stage}</small></span>
+      <span class="btns"><button class="btn btn-sm btn-ghost" type="button" data-menu="snooze-menu">Snooze</button>
+        <button class="btn btn-sm btn-ghost" type="button" data-open="reschedule" data-lead="${l.number}">Reschedule</button>
+        <button class="btn btn-sm btn-secondary" type="button" data-done>Mark done</button></span></li>`).join('')
+      || '<li><span class="muted">Nothing here</span></li>'}</ul></section>`).join('');
+  document.addEventListener('click', (e) => {
+    const done = e.target.closest('[data-done]');
+    if (done) { ZXA.ui.leave(done.closest('li')); ZXA.ui.toast('Follow up done'); }
+    const rs = e.target.closest('[data-open="reschedule"]');
+    if (rs) document.getElementById('rs-sub').textContent = `${rs.dataset.lead} · ${S.lead(rs.dataset.lead).name}`;
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

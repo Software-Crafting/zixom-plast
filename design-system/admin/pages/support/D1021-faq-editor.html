@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1021 FAQ editor</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1021" data-nav="D1020">
+<main class="content">
+  <div data-when="ready">
+    <div class="page-head">
+      <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1020">Help and FAQ</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb">New FAQ</span></nav>
+        <h1 id="title">New FAQ</h1><p id="sub">Shown in the app under Help and FAQ</p></div>
+    </div>
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-body form-grid">
+          <div class="field full"><label for="f-q">Question</label><input class="input" id="f-q" maxlength="120"><span class="hint">Write it the way a customer would ask.</span></div>
+          <div class="field full"><label for="f-a">Answer</label>
+            <div class="row" style="margin-bottom:6px">
+              <button class="icon-btn sm" type="button" aria-label="Bold" data-tip="Bold"><b>B</b></button>
+              <button class="icon-btn sm" type="button" aria-label="Bulleted list" data-tip="List"><svg class="ic"><use href="#ph-list"/></svg></button>
+              <button class="icon-btn sm" type="button" aria-label="Link" data-tip="Link"><svg class="ic"><use href="#ph-link"/></svg></button>
+              <button class="icon-btn sm" type="button" aria-label="Image" data-tip="Image"><svg class="ic"><use href="#ph-image"/></svg></button></div>
+            <textarea class="textarea" id="f-a" rows="6" maxlength="2000"></textarea><span class="hint" id="f-count"></span></div>
+          <div class="field"><label for="f-topic">Topic</label><select class="select" id="f-topic"></select></div>
+          <div class="field"><label for="f-tags">Tags <span class="opt">optional</span></label><input class="input" id="f-tags" placeholder="heater, sheet, settings"><span class="hint">Help search find this answer.</span></div>
+          <div class="field full"><span class="label">Related machine series <span class="opt">optional</span></span><div class="row wrap" data-chips>
+            <button class="chip" type="button" aria-pressed="true">Thermoforming</button><button class="chip" type="button" aria-pressed="false">Vacuum forming</button>
+            <button class="chip" type="button" aria-pressed="false">Cup forming</button><button class="chip" type="button" aria-pressed="false">Blister sealing</button>
+            <button class="chip" type="button" aria-pressed="false">Crushers</button></div></div>
+          <label class="switch full"><input type="checkbox" id="f-pub"><span></span>Published in the app</label>
+        </div>
+        <div class="form-bar"><span class="grow" id="saved">Not saved yet</span>
+          <button class="btn btn-ghost" type="button" id="archive" hidden data-toast="Archived. Hidden in the app">Archive</button>
+          <button class="btn btn-secondary" type="button" data-busy data-toast="Saved">Save</button>
+          <button class="btn btn-primary" type="button" data-busy data-toast="Published. Customers see it now">Publish</button></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Preview</h2><p>As in the app (C604)</p></div></div>
+        <div class="card-body">
+          <div style="border-radius:20px; background:var(--surface); padding:16px">
+            <p class="muted" style="font-size:12px; font-weight:600; text-transform:uppercase" id="p-topic"></p>
+            <div class="card pad stack-sm" style="margin-top:8px"><b id="p-q" style="color:var(--text-strong)"></b><p id="p-a" style="font-size:14px; white-space:pre-line"></p>
+              <div class="row" style="font-size:13px"><span class="muted grow">Was this helpful?</span><span class="btn btn-secondary btn-sm">Yes</span><span class="btn btn-secondary btn-sm">No</span></div></div>
+          </div>
+          <dl class="dl" style="margin-top:16px" id="stats"></dl>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div data-when="loading"><div class="grid side-right"><div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-block"></span><span class="sk sk-line"></span></div><div class="card pad stack"><span class="sk sk-block"></span></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C604-faq.html">
+  <div><h3>What it is</h3><p>Write or edit one FAQ answer. Opens with <code>?f=1</code> for an existing entry, or empty for a new one. From D1022 it starts with the search phrase.</p></div>
+  <div><h3>What you can do</h3><ul><li>Write the question and answer, pick a topic, tags and machine series.</li><li>Save as draft or Publish.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Help and FAQ (D1020). Published answers show in the app at once.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Leaving with changes asks first (D1808).</li><li>Hindi and special characters are stored as typed (EC-A08).</li><li>Two Admins edit: second save shows the diff (EC-A12).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const entry = ZXA.data.faq[params.get('f')];
+  const phrase = params.get('search');
+  const topics = [...new Set(ZXA.data.faq.map(([t]) => t))];
+  const $ = (id) => document.getElementById(id);
+  $('f-topic').innerHTML = topics.map((t) => `<option>${t}</option>`).join('');
+  if (entry) {
+    const [topic, question, answer, views, yes, no, published] = entry;
+    $('crumb').textContent = 'Edit FAQ';
+    $('title').textContent = 'Edit FAQ';
+    $('f-q').value = question; $('f-a').value = answer; $('f-topic').value = topic; $('f-pub').checked = published;
+    $('archive').hidden = false;
+    $('saved').textContent = 'Last saved 12 Nov by Rajesh Goyal';
+    $('stats').innerHTML = `<dt>Views, 30 days</dt><dd>${views}</dd><dt>Helpful</dt><dd>${yes} yes · ${no} no</dd>`;
+  } else {
+    $('f-q').value = phrase ? `How do I set ${phrase}?` : '';
+    $('stats').innerHTML = phrase ? `<dt>From search</dt><dd>"${ZXA.r.esc(phrase)}"</dd>` : '';
+  }
+  const preview = () => {
+    $('p-topic').textContent = $('f-topic').value;
+    $('p-q').textContent = $('f-q').value || 'Your question';
+    $('p-a').textContent = $('f-a').value || 'Your answer';
+    $('f-count').textContent = `${$('f-a').value.length} / 2000`;
+  };
+  ['f-q', 'f-a', 'f-topic'].forEach((id) => $(id).addEventListener('input', preview));
+  preview();
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

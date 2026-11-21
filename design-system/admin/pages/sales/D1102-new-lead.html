@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1102 New lead</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1102" data-nav="D1101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1101">Leads</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>New lead</span></nav>
+      <h1>New lead</h1><p>Phone, email, walk in or referral enquiry</p></div>
+  </div>
+
+  <div data-when="ready duplicate errors">
+    <div class="banner red" data-when="errors" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg><span class="grow"><b>Fix 2 things to save.</b> Name and mobile or email are required.</span></div>
+    <div class="banner amber" data-when="duplicate" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+      <span class="grow"><b>This mobile is already on a lead.</b> <a href="#D1103?l=LD-2026-0049" class="mono">LD-2026-0049</a> Vikram Joshi, Joshi Polypack, New.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1103?l=LD-2026-0049">Open lead</a></span></div>
+
+    <section class="card">
+      <div class="card-body">
+        <div class="form-section"><h3>Contact</h3><p>We check mobile and email for an existing lead or customer.</p>
+          <div class="form-grid">
+            <div class="field"><label for="n-name">Name</label><input class="input" id="n-name" value="Vikram Joshi" data-err-empty></div>
+            <div class="field"><label for="n-co">Company <span class="opt">optional</span></label><input class="input" id="n-co" value="Joshi Polypack"></div>
+            <div class="field"><label for="n-mob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="n-mob" inputmode="tel" value="98230 41877"></div>
+              <span class="hint">Spaces and dashes are removed; 10 digits.</span></div>
+            <div class="field"><label for="n-mail">Email <span class="opt">optional</span></label><input class="input" id="n-mail" type="email" value=""></div>
+            <div class="field"><label for="n-city">City</label><input class="input" id="n-city" value="Pune"></div>
+            <div class="field"><label for="n-state">State</label><select class="select" id="n-state"><option>Maharashtra</option><option>Gujarat</option><option>Punjab</option><option>Rajasthan</option><option>Telangana</option><option>Madhya Pradesh</option><option>Kerala</option><option>Haryana</option></select></div>
+          </div></div>
+        <div class="form-section"><h3>Requirement</h3>
+          <div class="form-grid">
+            <div class="field"><label for="n-prod">Product of interest</label><select class="select" id="n-prod"><option>Automatic vacuum forming machine</option><option>Thermoforming machine</option><option>Blister sealing machine</option><option>Cup forming machine</option><option>Mineral water plant</option><option>Moulds</option><option>Spare parts</option></select></div>
+            <div class="field"><label for="n-src">Source</label><select class="select" id="n-src"><option>Phone</option><option>Email</option><option>WhatsApp</option><option>Website</option><option>Walk in</option><option>Referral</option><option>Other</option></select>
+              <span class="hint">IndiaMART and app leads arrive on their own.</span></div>
+            <div class="field full"><label for="n-req">Requirement</label><textarea class="textarea" id="n-req" maxlength="2000">Wants a second vacuum forming machine for food trays. Asked for a price and delivery time.</textarea></div>
+            <div class="field"><label for="n-val">Expected value <span class="opt">optional</span></label><div class="input-wrap prefix"><b>₹</b><input class="input" id="n-val" inputmode="decimal" value="18,50,000"></div></div>
+          </div></div>
+        <div class="form-section"><h3>Follow up</h3>
+          <div class="form-grid">
+            <div class="field"><label for="n-owner">Owner</label><select class="select" id="n-owner"><option>Rajesh Goyal</option></select></div>
+            <div class="field"><label for="n-fu">Follow up on</label><input class="input" id="n-fu" type="datetime-local" value="2026-11-24T11:00"></div>
+          </div></div>
+      </div>
+      <div class="form-bar"><span class="grow">Lead number is given on save</span>
+        <a class="btn btn-ghost" href="#D1101">Cancel</a>
+        <a class="btn btn-secondary" href="#D1202">Save and create quotation</a>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Lead LD-2026-0050 created">Save</button></div>
+    </section>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready duplicate errors">
+  <div><h3>What it is</h3><p>Add an enquiry that came by phone, email, walk in or referral.</p></div>
+  <div><h3>What you can do</h3><ul><li>Fill the contact, requirement and follow up.</li><li>Save, or save and go straight to a quotation.</li></ul></div>
+  <div><h3>What happens next</h3><p>Lead detail (D1103) or Create quotation (D1202). The follow up shows in Follow ups (D1105).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Duplicate check by mobile and email links to the existing lead or customer (Duplicate).</li><li>Mobile with +91, spaces or dashes is normalised to 10 digits.</li><li>Double click on Save creates one lead (EC-A09).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* errors state: mark the two invalid fields inline */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  const errors = button.dataset.protoState === 'errors';
+  [['n-name', 'Enter a name'], ['n-mob', 'Enter a 10 digit mobile or an email']].forEach(([id, text]) => {
+    const input = document.getElementById(id);
+    const field = input.closest('.field');
+    input.dataset.value ??= input.value;
+    input.setAttribute('aria-invalid', String(errors));
+    input.value = errors ? '' : input.dataset.value;
+    field.querySelector('.error')?.remove();
+    if (errors) { field.insertAdjacentHTML('beforeend', `<span class="error">${ZXA.r.icon('warning-circle')}${text}</span>`); }
+  });
+});
+</script>
+</body>
+</html>

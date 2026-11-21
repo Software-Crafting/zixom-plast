@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1110 IndiaMART inbox</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1110">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>IndiaMART inbox</h1><p><span id="health"></span> <span id="head-sub"></span></p></div>
+    <a class="btn btn-secondary" href="#D1112">Log</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D1111"><svg class="ic"><use href="#ph-gear-six"/></svg>Setup</a>
+  </div>
+
+  <div class="banner amber center" data-when="silent" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+    <span class="grow"><b>No IndiaMART enquiries in 48 hours.</b> Check that the integration is active in IndiaMART.</span>
+    <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1111">Open setup</a></span></div>
+
+  <div data-when="ready live silent no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Processing state" id="views" data-when="ready live silent no-results"></div>
+      <div class="toolbar">
+        <label class="search" data-filter="#inbox"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Query id, name, mobile, company or product" aria-label="Search enquiries"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <span class="muted row" style="font-size:12px"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Updates every 15 s</span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="inbox">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Received</th><th class="sortable">Query id</th><th class="sortable">Type</th><th class="sortable">Name and mobile</th>
+            <th class="sortable">Company and city</th><th class="sortable">Product</th><th>Message</th><th class="sortable">State</th><th>Lead</th><th>Owner</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+    </section>
+  </div>
+
+  <!-- empty: before the first enquiry, a setup checklist -->
+  <div data-when="empty">
+    <section class="card">
+      <div class="card-head"><div class="grow"><h2>No enquiries yet</h2><p>Connect IndiaMART and enquiries will appear here as they arrive.</p></div></div>
+      <ul class="mini">
+        <li><span class="ic-disc green"><svg class="ic"><use href="#ph-check"/></svg></span><span class="grow"><b>Copy the webhook address and key</b><small>Done</small></span></li>
+        <li><span class="ic-disc"><svg class="ic"><use href="#ph-plug"/></svg></span><span class="grow"><b>Paste it in IndiaMART Lead Manager, Push API</b><small>Confirm the OTP IndiaMART sends</small></span><a class="btn btn-sm btn-secondary" href="#D1111">Open setup</a></li>
+        <li><span class="ic-disc"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg></span><span class="grow"><b>Send a test lead</b><small>Checks the connection end to end</small></span><a class="btn btn-sm btn-secondary" href="#D1111">Send test</a></li>
+      </ul>
+    </section>
+  </div>
+  <div data-when="loading">
+    <section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; max-width:60%; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Received</th><th>Query id</th><th>Name</th><th>Product</th><th>State</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+  </div>
+  <div data-when="error"><div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+    <h3>Something went wrong</h3><p>We could not load the inbox. Request id 4c1e-77ab.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button></div></div></div></div>
+
+  <div class="bulk-bar" data-for="inbox" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Owner assigned">Assign owner</button>
+    <button class="btn" type="button" data-open="bulk-result">Reprocess</button>
+    <button class="btn" type="button" data-toast="Marked as spam. Kept for review">Mark as spam</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">W Direct</button><button class="chip" type="button" aria-pressed="false">B, BL Buy lead</button><button class="chip" type="button" aria-pressed="false">P Call</button>
+        <button class="chip" type="button" aria-pressed="false">V, BIZ Catalog view</button><button class="chip" type="button" aria-pressed="false">WA WhatsApp</button><button class="chip" type="button" aria-pressed="false">Unknown</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-prod">Product</label><select class="select" id="f-prod"><option>Any</option></select></div>
+        <div class="field"><label for="f-state">State</label><select class="select" id="f-state"><option>Any</option><option>Created lead</option><option>Matched existing</option><option>Duplicate</option><option>Incomplete</option><option>Failed</option></select></div>
+        <div class="field"><label for="f-from">Received from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox"> Show likely spam</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">1 done, 1 failed</h2><p>2948311986 still has no mobile or email. Edit it, then reprocess.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Owner assigned"><svg class="ic"><use href="#ph-user-plus"/></svg>Assign owner</button>
+  <a href="#D1112"><svg class="ic"><use href="#ph-file-text"/></svg>View payload</a>
+  <hr><button class="danger" type="button" data-toast="Marked as spam. Kept for review"><svg class="ic"><use href="#ph-ban"/></svg>Mark as spam</button>
+</div>
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="inbox"> Company and city</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="inbox"> Message</label>
+  <label class="check"><input type="checkbox" checked data-col="10" data-table="inbox"> Owner</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready live silent loading empty no-results error">
+  <div><h3>What it is</h3><p>Every enquiry IndiaMART pushed to the webhook and what happened to it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch tabs by state; Incomplete and Failed have counts.</li><li>Open the lead, assign owner, mark spam.</li><li>Fix and reprocess a Failed or Incomplete item.</li></ul></div>
+  <div><h3>What happens next</h3><p>Lead detail (D1103), Setup (D1111), Log with raw payload (D1112).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Live: a new enquiry arrives and its row is highlighted.</li><li>Same query id twice: logged as Duplicate and ignored (EC-A22).</li><li>No mobile or email: Incomplete (EC-A23). Existing customer: Matched (EC-A24).</li><li>Mobiles normalised to 10 digits. Silent 48 hours: banner (Silent).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/sales.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.sales;
+  const im = ZXA.data.indiamart;
+  const rows = im.inbox;
+  const STATES = ['created', 'matched', 'duplicate', 'incomplete', 'failed'];
+  document.getElementById('health').innerHTML = r.tag('Webhook healthy', 'green', 'check-circle');
+  document.getElementById('head-sub').textContent = `Last enquiry ${r.ago(im.health.lastReceived)} · ${im.health.count24} in 24 hours · ${im.health.success} success`;
+
+  const row = ([when, id, type, name, mobile, , company, city, product, message, state, lead, note], i, fresh = false) => `<tr data-drawer="quick" data-i="${i}" data-state="${state}" class="${state === 'failed' ? 'urgent' : ''}${fresh ? ' flash' : ''}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${id}"></label></td>
+    <td class="nowrap" data-sort="${when}">${r.dayDate(when)}<span class="sub">${r.time(when)}</span></td>
+    <td><span class="mono nowrap">${id}</span></td>
+    <td class="nowrap">${S.imTypeTag(type)}</td>
+    <td>${name ? `<b class="clip">${r.esc(name)}</b>` : '<span class="faint">No name</span>'}<span class="sub">${mobile || 'No mobile'}</span></td>
+    <td><span class="clip">${r.esc(company)}</span><span class="sub">${city}</span></td>
+    <td><span class="clip">${r.esc(product)}</span></td>
+    <td><span class="clip muted" style="max-width:220px">${r.esc(message)}</span></td>
+    <td>${S.imStateTag(state)}${note ? `<span class="sub">${r.esc(note)}</span>` : ''}</td>
+    <td>${lead ? `<a class="rec" href="${ZXA.href('D1103', `?l=${lead}`)}">${lead}</a>` : '<span class="faint">–</span>'}</td>
+    <td class="nowrap">${lead || state === 'matched' ? 'Rajesh' : '<span class="faint">–</span>'}</td>
+    <td class="actions">${['failed', 'incomplete'].includes(state) ? `<button class="btn btn-sm btn-secondary" type="button" data-fix="${i}">Fix</button>`
+      : `<button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${r.icon('dots-three')}</button>`}</td></tr>`;
+  const tbody = document.querySelector('#inbox tbody');
+  tbody.innerHTML = rows.map((x, i) => row(x, i)).join('');
+
+  const counts = Object.fromEntries(STATES.map((s) => [s, rows.filter((x) => x[10] === s).length]));
+  document.getElementById('views').innerHTML = `<button role="tab" aria-selected="true" data-st="all">All <span class="n">${rows.length}</span></button>
+    ${STATES.map((s) => `<button role="tab" aria-selected="false" data-st="${s}">${S.IM_STATE[s][0]} <span class="n${['incomplete', 'failed'].includes(s) ? ` tag ${S.IM_STATE[s][1]}` : ''}">${counts[s]}</span></button>`).join('')}`;
+  const show = (st) => {
+    const trs = [...tbody.rows];
+    trs.forEach((tr) => { tr.hidden = st !== 'all' && tr.dataset.state !== st; });
+    document.getElementById('foot-count').textContent = `${trs.filter((tr) => !tr.hidden).length} enquiries · kept 90 days`;
+  };
+  document.getElementById('views').addEventListener('click', (e) => { const t = e.target.closest('[data-st]'); if (t) show(t.dataset.st); });
+  show('all');
+  document.getElementById('f-prod').innerHTML += [...new Set(rows.map((x) => x[8]))].map((p) => `<option>${p}</option>`).join('');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+
+  /* quick view; Failed and Incomplete open as an edit form with Reprocess */
+  const quick = (x, edit) => {
+    const [when, id, type, name, mobile, email, company, city, product, message, state, lead, note] = x;
+    document.getElementById('quick-title').textContent = id;
+    document.getElementById('quick-sub').textContent = `${S.IM_TYPE[type]} · received ${r.dayDate(when)}, ${r.time(when)}`;
+    const field = (label, key, value) => `<div class="field"><label for="q-${key}">${label}</label><input class="input" id="q-${key}" value="${r.esc(value)}" ${!value && key !== 'email' ? 'aria-invalid="true"' : ''}></div>`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${S.imStateTag(state)}${S.imTypeTag(type)}</div>
+      ${note ? `<div class="banner ${state === 'failed' ? 'red' : state === 'incomplete' ? 'amber' : 'grey'}">${r.icon('info')}<span class="grow">${r.esc(note)}</span></div>` : ''}
+      ${edit ? `<div class="form-grid">${field('Name', 'name', name)}${field('Mobile', 'mobile', mobile)}${field('Email', 'email', email)}${field('City', 'city', city)}</div>
+        <span class="hint">Add a mobile or email, then reprocess. Mobiles are normalised to 10 digits.</span>`
+        : `<dl class="dl"><dt>Name</dt><dd>${r.esc(name) || '–'}</dd><dt>Mobile</dt><dd>${mobile || '–'}</dd><dt>Email</dt><dd>${email || '–'}</dd><dt>Company</dt><dd>${r.esc(company)}, ${city}</dd>
+          <dt>Product</dt><dd>${r.esc(product)}</dd><dt>Message</dt><dd>${r.esc(message)}</dd><dt>Lead</dt><dd>${lead ? `<span class="mono">${lead}</span>` : '–'}</dd></dl>`}`;
+    document.getElementById('quick-foot').innerHTML = edit
+      ? `<button class="btn btn-ghost" type="button" data-close data-toast="Marked as spam. Kept for review">Mark as spam</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Reprocessed. Lead created">Reprocess</button>`
+      : `<a class="btn btn-secondary" href="${ZXA.href('D1112')}">View payload</a><span class="grow"></span>${lead ? `<a class="btn btn-primary" href="${ZXA.href('D1103', `?l=${lead}`)}">Open lead</a>` : ''}`;
+  };
+  document.getElementById('quick').addEventListener('zxa:row', (e) => { const x = rows[e.detail.dataset.i]; quick(x, ['failed', 'incomplete'].includes(x[10])); });
+  document.addEventListener('click', (e) => {
+    const fix = e.target.closest('[data-fix]');
+    if (fix) { quick(rows[fix.dataset.fix], true); ZXA.ui.openOverlay('quick'); }
+    const chip = e.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+
+  /* live: a sample enquiry arrives (the demo switch in spec section 17) */
+  ZXA.inboxLive = () => {
+    if (tbody.querySelector('[data-live]')) return;
+    const sample = ['2026-11-23T12:00', '2948840770', 'W', 'Ravi Menon', '+91 98450 61290', 'ravi@menonfoods.example', 'Menon Foods', 'Bengaluru',
+      'Thermoforming Machine', 'Need a thermoforming machine for bakery trays.', 'created', null, 'New lead being created'];
+    tbody.insertAdjacentHTML('afterbegin', row(sample, -1, true).replace('<tr ', '<tr data-live '));
+    tbody.querySelector('[data-live]').removeAttribute('data-drawer');
+    ZXA.ui.toast('New IndiaMART enquiry from Bengaluru', 'info');
+  };
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  if (button.dataset.protoState === 'live') ZXA.inboxLive();
+  const health = document.getElementById('health');
+  const silent = button.dataset.protoState === 'silent';
+  health.innerHTML = silent ? ZXA.r.tag('Webhook silent 48 h', 'amber', 'warning') : ZXA.r.tag('Webhook healthy', 'green', 'check-circle');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1002 Question thread</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-support.css">
+</head>
+<body class="adm" data-page="D1002" data-nav="D1001">
+<main class="content">
+  <div data-when="ready live failed">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D1001">Questions</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div class="qthread">
+      <aside>
+        <section class="card side-card"><div class="card-head"><h3 class="grow">Question</h3></div>
+          <div class="card-body"><dl class="dl stack" id="facts"></dl></div></section>
+      </aside>
+
+      <section class="card conv">
+        <div class="card-head"><div class="grow"><h2 id="subject"></h2><p id="subject-sub"></p></div></div>
+        <div class="thread" id="thread"></div>
+        <div id="composer-slot"></div>
+      </section>
+
+      <aside class="context" id="context"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:280px"></span></div></div>
+    <div class="qthread">
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span><span class="sk sk-line"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-block"></span><span class="sk sk-block" style="height:60px"></span></div>
+      <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-block" style="height:80px"></span></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D1001">Back to questions</a></div></div></div>
+  </div>
+</main>
+
+<div class="menu" id="more-menu" hidden>
+  <a href="#D402"><svg class="ic"><use href="#ph-wrench"/></svg>Convert to ticket</a>
+  <a href="#D1102"><svg class="ic"><use href="#ph-chart-line-up"/></svg>Convert to lead</a>
+  <button type="button" data-open="category"><svg class="ic"><use href="#ph-tag"/></svg>Assign category</button>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+</div>
+<div class="menu" id="canned-menu" hidden></div>
+
+<div class="overlay center" id="category" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cat-title">
+    <div class="modal-head"><div class="grow"><h2 id="cat-title">Assign category</h2><p>The customer sees the new category in the app.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="cat-sel">Category</label><select class="select" id="cat-sel"></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Category changed">Save</button></div>
+  </div>
+</div>
+<div class="overlay center" id="close-q" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="close-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-check-circle"/></svg></span>
+      <div class="grow"><h2 id="close-title">Close this question?</h2><p id="close-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep open</button><button class="btn btn-primary" type="button" data-close data-toast="Question closed. Customer told">Close question</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading live failed not-found error" data-mobile="../../../screens/customer/C603-thread.html">
+  <div><h3>What it is</h3><p>One customer question: facts, the thread and the customer's recent records. Try <code>?q=QRY-2026-0032</code> (closed) or <code>?q=QRY-2026-0033</code> (complaint).</p></div>
+  <div><h3>What you can do</h3><ul><li>Reply, insert a canned reply, attach a file.</li><li>Turn on Internal note: the customer never sees it.</li><li>Mark answered, close, reopen, convert to a ticket or lead.</li></ul></div>
+  <div><h3>What happens next</h3><p>The customer gets a push and sees the reply in C603. Convert opens New ticket (D402) or New lead (D1102).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Live: a new customer message appears and flashes.</li><li>Failed send keeps the text with Retry.</li><li>Complaint: an owner is required before a reply.</li><li>Deleted customer shows 'Deleted user'; a file that fails the virus scan is blocked.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const s = ZXA.support;
+  const ic = r.icon;
+  const q = s.question(new URLSearchParams(location.search).get('q') || 'QRY-2026-0030');
+  if (!q) { ZXA.initialState = 'not-found'; return; }
+  const c = r.company(q.company);
+  const p = r.person(q.by);
+  const link = (id, query = '') => ZXA.href(id, query);
+  const rel = s.related(q);
+
+  document.title = `Zixom Admin - ${q.number}`;
+  document.getElementById('crumb').textContent = q.number;
+  document.getElementById('number').textContent = q.number;
+  document.getElementById('chips').innerHTML = `${s.statusTag(q.status)}${q.complaint ? r.tag('Complaint', 'red') : ''}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('chat-circle-dots')}${q.category}</span><span>${ic('clock')}Opened ${r.date(q.opened)}, ${r.time(q.opened)}</span>`;
+  document.getElementById('subject').textContent = q.subject;
+  document.getElementById('subject-sub').textContent = `${q.messages.length} messages · from the app`;
+
+  /* actions allowed for the status; Send in the composer is the one primary */
+  const more = `<button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.getElementById('actions').innerHTML = {
+    open: `<button class="btn btn-secondary" type="button" data-toast="Marked answered">Mark answered</button><button class="btn btn-secondary" type="button" data-open="close-q">Close</button>${more}`,
+    answered: `<button class="btn btn-secondary" type="button" data-open="close-q">Close</button><button class="btn btn-secondary" type="button" data-toast="Question reopened">Reopen</button>${more}`,
+    closed: `<button class="btn btn-primary" type="button" data-toast="Question reopened">Reopen</button>${more}`,
+  }[q.status];
+  document.getElementById('close-text').textContent = `${p.name} will be told and can reopen it by replying.`;
+
+  /* left: facts */
+  const hours = ((new Date(q.status === 'closed' ? q.last : ZX.data.now) - new Date(q.opened)) / 3600000);
+  document.getElementById('facts').innerHTML = `
+    <dt>Customer</dt><dd><div class="who">${r.avatar(p, 'sm')}<span><b>${p.name}</b><small>${p.mobile}</small></span></div></dd>
+    <dt>Company</dt><dd><a href="${link('D202')}">${c.name}</a><br><span class="muted mono">${c.code}</span></dd>
+    <dt>Category</dt><dd>${q.category}</dd>
+    <dt>Related</dt><dd>${rel ? `<a href="${link(rel[2], rel[3])}" class="${rel[0] === 'factory' ? '' : 'mono'}">${rel[1]}</a>` : '<span class="faint">None</span>'}</dd>
+    ${q.complaint ? `<dt>Owner</dt><dd><select class="select sm" aria-label="Owner"><option${q.owner === 'Mr Kapoor' ? ' selected' : ''}>Mr Kapoor, service manager</option><option${q.owner === 'Neha' ? ' selected' : ''}>Neha, support</option></select></dd>` : ''}
+    <dt>Status</dt><dd>${s.statusTag(q.status)}</dd>
+    <dt>Time open</dt><dd>${hours < 24 ? `${Math.floor(hours)} h ${Math.round((hours % 1) * 60)} min` : `${Math.round(hours / 24)} days`}</dd>
+    ${q.rating ? `<dt>Rating</dt><dd>${ic('star')} ${q.rating} of 5</dd>` : ''}`;
+
+  /* centre: thread with day separators, read ticks, internal notes */
+  const fileChip = ([icon, name, size]) => `<span class="file">${ic(icon)}<span class="grow">${name}</span><span>${size}</span></span>`;
+  let day = '';
+  const bubbles = q.messages.map(([from, text, when, extra = {}]) => {
+    const sep = r.date(when) !== day ? `<span class="day-sep">${(day = r.date(when)) === r.date(ZX.data.now) ? 'Today' : r.dayDate(when)}</span>` : '';
+    if (from === 'note') return `${sep}<div class="msg note">${ic('sticky-note')} ${r.esc(text)}<small>Rajesh Goyal · ${r.time(when)} · internal note, only Admins see this</small></div>`;
+    const me = from === 'zixom';
+    return `${sep}<div class="msg${me ? ' me' : ''}">${r.esc(text)}${extra.file ? fileChip(extra.file) : ''}
+      <small>${me ? `${extra.by} · ${r.time(when)} · ${ic('check')}${ic('check')} Read` : `${p.name} · ${r.time(when)}`}</small></div>`;
+  }).join('');
+  document.getElementById('thread').innerHTML = `${bubbles}
+    <div class="msg" data-when="live" id="live-msg">Polyfab sheet is 0.8 mm, roll width 760 mm.<small>${p.name} · 12:00 · new</small></div>
+    <div class="msg me failed" data-when="failed">Try the top heater at 72 percent and heat time 9.5 seconds.
+      <small>${ic('warning-circle')} Not sent · <button class="btn btn-link btn-sm" type="button" data-toast="Message sent">Retry</button></small></div>`;
+
+  const cannedMenu = document.getElementById('canned-menu');
+  cannedMenu.innerHTML = `<div class="label">Insert canned reply</div>${ZXA.data.cannedReplies.filter((x) => !x.archived)
+    .map((x, i) => `<button type="button" data-canned="${i}">${ic('messages')}${x.title}</button>`).join('')}<hr><a href="${link('D1003')}">${ic('pencil-simple')}Manage replies</a>`;
+  document.getElementById('composer-slot').innerHTML = q.status === 'closed'
+    ? `<div class="banner grey" style="margin:12px">${ic('archive')}<span class="grow"><b>Closed.</b> Reopen to reply.</span></div>`
+    : `<div class="composer">
+        <textarea class="textarea" id="reply" placeholder="Write to ${p.name.split(' ')[0]}" aria-label="Reply"></textarea>
+        <div class="row">
+          <button class="icon-btn" type="button" aria-label="Attach a file" data-tip="Attach" data-toast="File picker opened">${ic('paperclip')}</button>
+          <button class="btn btn-ghost btn-sm" type="button" data-menu="canned-menu">${ic('messages')}Canned reply</button>
+          <label class="switch"><input type="checkbox" id="note-toggle"><span></span>Internal note</label>
+          <span class="grow"></span>
+          <button class="btn btn-primary" type="button" id="send" data-busy>Send</button>
+        </div></div>`;
+  document.addEventListener('click', (event) => {
+    const canned = event.target.closest('[data-canned]');
+    if (canned) {
+      const fill = { '{customer_name}': p.name.split(' ')[0], '{machine}': rel?.[1] ?? 'your machine', '{date}': 'Tue 24 Nov' };
+      document.getElementById('reply').value = ZXA.data.cannedReplies[canned.dataset.canned].text.replace(/\{[a-z_]+\}/g, (v) => fill[v] ?? v);
+    }
+    if (event.target.closest('#send')) ZXA.ui.toast(document.getElementById('note-toggle').checked ? 'Internal note added' : `Sent. ${p.name.split(' ')[0]} gets a push`);
+  });
+  document.addEventListener('change', (event) => {
+    if (event.target.id !== 'note-toggle') return;
+    const box = document.getElementById('reply');
+    box.placeholder = event.target.checked ? 'Internal note, only Admins see this' : `Write to ${p.name.split(' ')[0]}`;
+    box.style.background = event.target.checked ? '#FDF5CC' : '';
+  });
+
+  /* right: customer's recent tickets and invoices */
+  const tickets = r.tickets.filter((t) => t.company === q.company).slice(0, 4);
+  const invoices = q.company === 'shree' ? ZX.data.invoices.slice(0, 3) : [];
+  document.getElementById('context').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Recent tickets</h3><a class="card-link" href="${link('D202')}">All</a></div>
+      <ul class="mini">${tickets.map((t) => `<li data-href="D403?t=${t.number}"><span class="grow"><b class="mono">${t.number}</b><small>${r.machine(t.machine).model}</small></span>${r.ticketTag(t.status)}</li>`).join('')}</ul></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Recent invoices</h3></div>
+      <ul class="mini">${invoices.length ? invoices.map((i) => `<li data-href="D903"><span class="grow"><b class="mono">${i.number}</b><small>${r.money(i.amount)}</small></span>${r.invoiceTag(i.status)}</li>`).join('')
+        : '<li><span class="muted">No invoices yet</span></li>'}</ul></section>`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state="live"]');
+  if (!button) return;
+  const msg = document.getElementById('live-msg');
+  msg.classList.remove('flash'); void msg.offsetWidth; msg.classList.add('flash');
+  ZXA.ui.toast('New message from the customer', 'info');
+});
+</script>
+</body>
+</html>

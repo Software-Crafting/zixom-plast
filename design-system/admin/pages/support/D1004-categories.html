@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1004 Categories</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1004" data-nav="D1001">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1001">Questions</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Categories</span></nav>
+      <h1>Question categories</h1><p>The list customers choose from in Ask a question</p></div>
+  </div>
+
+  <div data-when="ready">
+    <div class="grid side-right">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Categories</h2><p>Use the arrows to change the order in the app</p></div></div>
+        <ul class="mini" id="cats"></ul>
+        <div class="form-bar"><span class="grow" id="dirty">No changes</span><button class="btn btn-ghost" type="button" data-toast="Changes discarded">Discard</button>
+          <button class="btn btn-primary" type="button" data-busy data-toast="Saved. The app shows the new order">Save</button></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>In the app</h2><p>C602 Ask a question</p></div></div>
+        <div class="card-body"><div class="field"><label for="preview">Category</label><select class="select" id="preview"></select>
+          <span class="hint">Complaint needs a ticket or order and goes to the service manager.</span></div></div>
+      </section>
+    </div>
+  </div>
+  <div data-when="loading"><div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div></div>
+</main>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C602-ask.html">
+  <div><h3>What it is</h3><p>The seven question categories and their order in the app form.</p></div>
+  <div><h3>What you can do</h3><ul><li>Rename a category.</li><li>Move it up or down, then Save.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app picks up the new names and order on next open (EC-A62).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Complaint cannot be renamed or removed: it drives the service manager route.</li><li>Renaming keeps the category on old questions.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/support.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const list = document.getElementById('cats');
+  const render = (cats) => {
+    list.innerHTML = cats.map((c, i) => `<li data-name="${c.name}"><span class="time">${i + 1}</span>
+      <span class="grow"><input class="input sm" value="${c.name}" aria-label="Category name" ${c.note ? 'disabled' : ''}>${c.note ? `<small style="margin-top:4px">${c.note}</small>` : ''}</span>
+      <span class="end" style="width:96px">${c.questions} ${c.questions === 1 ? 'question' : 'questions'}</span>
+      <button class="icon-btn sm" type="button" aria-label="Move up" data-move="-1" ${i === 0 ? 'disabled' : ''}>${r.icon('arrow-up')}</button>
+      <button class="icon-btn sm" type="button" aria-label="Move down" data-move="1" ${i === cats.length - 1 ? 'disabled' : ''}>${r.icon('arrow-down')}</button></li>`).join('');
+    document.getElementById('preview').innerHTML = cats.map((c) => `<option>${c.name}</option>`).join('');
+  };
+  let cats = [...ZXA.data.supportCategories];
+  render(cats);
+  list.addEventListener('click', (event) => {
+    const move = event.target.closest('[data-move]');
+    if (!move) return;
+    const i = cats.findIndex((c) => c.name === move.closest('li').dataset.name);
+    const j = i + Number(move.dataset.move);
+    [cats[i], cats[j]] = [cats[j], cats[i]];
+    cats = [...cats];
+    render(cats);
+    document.getElementById('dirty').textContent = 'Order changed, not saved';
+  });
+  list.addEventListener('input', () => { document.getElementById('dirty').textContent = 'Name changed, not saved'; });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
