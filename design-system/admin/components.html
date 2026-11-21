@@ -143,7 +143,7 @@
 <script>
   document.getElementById('ticket-tags').innerHTML = Object.keys(ZXA.r.TICKET).map(ZXA.r.ticketTag).join('');
   document.getElementById('demo-rows').innerHTML = ZX.data.invoices.slice(0, 4).map((i) => `<tr data-drawer="demo-drawer"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select"></label></td>
-    <td><a class="rec" href="#">${i.number}</a></td><td>Shree Packaging Industries</td><td>${ZX.render.invoiceTag(i.status)}</td><td class="num">${ZX.render.money(i.amount)}</td></tr>`).join('');
+    <td><a class="rec" href="#">${i.number}</a></td><td>Shree Packaging Industries</td><td>${ZXA.r.invoiceTag(i.status)}</td><td class="num">${ZX.render.money(i.amount)}</td></tr>`).join('');
 </script>
 <script src="assets/js/admin-ui.js"></script>
 <script src="assets/vendor/chart.umd.js"></script>

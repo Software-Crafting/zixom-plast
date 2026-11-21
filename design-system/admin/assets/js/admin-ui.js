@@ -264,7 +264,7 @@
     if (fallback) document.querySelector('.content').insertAdjacentHTML('beforeend', ZXA.fallbackState(drawn));
     $$('.content .btn-primary').forEach((b) => b.toggleAttribute('aria-disabled', state === 'offline'));
     ZXA.shellBanners?.(state);
-    if (state === 'session') openOverlay('session-expired');
+    if (state === 'session' && document.getElementById('session-expired')) openOverlay('session-expired');
   };
   ZXA.fallbackState = (state) => (state === 'error'
     ? `<div class="card state-fallback"><div class="state page"><span class="disc red">${icon('warning-circle')}</span>

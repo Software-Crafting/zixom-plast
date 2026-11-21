@@ -61,9 +61,17 @@ window.ZXA = window.ZXA || {};
   const TREND_ICON = { up: 'arrow-up', down: 'arrow-down', flat: 'minus' };
   const trend = ([dir, value, sense = '']) => `<span class="trend ${dir} ${sense}">${icon(TREND_ICON[dir])}${esc(value)}</span>`;
 
+  /* invoice, Admin wording (section 11): includes draft and partly paid, which the app never shows */
+  const INVOICE = { draft: ['Draft', 'outline'], due: ['Due', 'amber'], overdue: ['Overdue', 'red'], processing: ['Processing', 'blue'],
+    verification: ['Awaiting verification', 'blue'], partly: ['Partly paid', 'amber'], paid: ['Paid', 'green'], cancelled: ['Cancelled', ''] };
+  const invoiceTag = (status) => {
+    if (!INVOICE[status]) throw new Error(`Unknown invoice status ${status}`);
+    return tag(...INVOICE[status]);
+  };
+
   const avatar = (p, cls = '') => `<span class="avatar ${cls}">${esc(p.initials)}</span>`;
   const time = (iso) => iso.slice(11, 16);
 
   ZXA.r = { ...m, machines, machine, company, site, person, engineer, tickets, ticket, ticketTag, ticketLabel, severityTag, coverageTag,
-    priorityTag, sla, moneyShort, trend, avatar, time, TICKET };
+    priorityTag, sla, moneyShort, trend, avatar, time, TICKET, invoiceTag, INVOICE };
 })();
