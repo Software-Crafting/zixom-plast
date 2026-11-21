@@ -1,6 +1,12 @@
 /* App shell: sidebar 248 px (72 collapsed), top bar 56 px, content max 1440 px with 24 px gutters (spec section 5).
    admin-ui.js draws the sidebar and the top bar from the nav in admin-screens.js. */
 
+/* desktop uses flatter depth than the phone: hairlines carry the edges, shadows stay faint */
+:root{
+  --shadow-soft:0 1px 2px rgba(24,34,45,.03);
+  --shadow-lift:0 12px 28px -18px rgba(24,34,45,.22), 0 2px 6px -4px rgba(24,34,45,.08);
+  --shadow-button:none;
+}
 *{box-sizing:border-box}
 html{background:var(--surface-bottom)}
 body{margin:0; min-height:100vh; font:400 var(--fs-14)/1.5 var(--font-body); color:var(--text);
@@ -49,8 +55,7 @@ body.adm.collapsed{grid-template-columns:72px minmax(0, 1fr); --side:72px}
 .side .item:hover{background:var(--wash); color:var(--slate-900); text-decoration:none}
 .side .item:active{transform:scale(.97); transition-duration:var(--dur-press)}
 .side .item .ic{color:var(--slate-500)}
-.side .item[aria-current="page"]{background:linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color:#fff;
-  box-shadow:var(--shadow-button)}
+.side .item[aria-current="page"]{background:linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color:#fff}
 .side .item[aria-current="page"] .ic{color:#fff}
 .side .item .count{margin-left:auto; min-width:22px; height:20px; padding:0 7px; display:grid; place-items:center;
   border-radius:var(--r-pill); background:var(--slate-200); color:var(--slate-800); font-size:var(--fs-11); font-weight:700}
@@ -101,17 +106,32 @@ kbd{display:inline-grid; place-items:center; min-width:22px; height:22px; paddin
 .sos-bar .btn{margin-left:auto}
 @keyframes sos-pulse{50%{box-shadow:0 0 0 6px rgba(194,59,59,.18)}}
 
-/* ---------- responsive down to 768 px: sidebar becomes a drawer (spec section 5) ---------- */
+/* ---------- responsive: sidebar becomes a drawer under 1100 px; phone layout under 640 px ---------- */
 @media (max-width:1100px){
   body.adm, body.adm.collapsed{grid-template-columns:minmax(0, 1fr)}
-  .side{position:fixed; z-index:70; left:0; top:0; width:264px; background:var(--surface-top); box-shadow:var(--shadow-lift);
+  .side{position:fixed; z-index:70; left:0; top:0; width:272px; max-width:86vw; background:var(--surface-top); box-shadow:var(--shadow-lift);
     transform:translateX(-105%); transition:transform .45s var(--ease)}
   body.side-open .side{transform:none}
-  body.side-open::after{content:""; position:fixed; inset:0; z-index:65; background:rgba(18,24,31,.32)}
-  .collapsed .side .brand > :not(.logo), .collapsed .side .group > span, .collapsed .side .item > span{display:revert}
+  body.side-open::after{content:""; position:fixed; inset:0; z-index:65; background:rgba(18,24,31,.32); animation:fade-in .25s ease-out both}
+  body.side-open{overflow:hidden}
+  .collapsed .side{padding-inline:12px}
+  .collapsed .side .brand > :not(.logo), .collapsed .side .group > span, .collapsed .side .item > span, .collapsed .side .me > :not(.avatar){display:revert}
+  .collapsed .side .item{justify-content:flex-start; padding:0 10px}
+  .collapsed .side .brand{justify-content:flex-start; padding:0 4px 0 6px}
+  .collapsed .side .item .count:not(.red){display:grid}
+  .collapsed .side .item .count{position:static; min-width:22px; height:20px; padding:0 7px; font-size:var(--fs-11)}
   .side .collapse{display:none}
   .top .menu-btn{display:grid}
   .top .health span{display:none}
   .content{padding-inline:16px}
-  .top{padding-inline:16px}
+  .top{padding-inline:16px; gap:6px}
+  .shell-banners{padding-inline:16px}
+}
+@media (max-width:640px){
+  .top .gsearch{flex:1 1 auto; min-width:0}
+  .top .gsearch kbd, .top .help-link, .top .health{display:none}
+  .top .create-btn{width:36px; padding:0}
+  .top .create-btn .label{display:none}
+  .content{padding:4px 16px 96px}
+  .sos-bar{flex-wrap:wrap}
 }

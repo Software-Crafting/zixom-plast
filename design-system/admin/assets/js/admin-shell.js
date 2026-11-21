@@ -34,7 +34,7 @@
     const side = `<aside class="side" aria-label="Main">
       <div class="side-top"><a class="brand" href="${href('D101')}"><span class="logo"><img src="${ZXA.root}../assets/brand/zixom-logo.png" alt=""></span>
         <span><b>Admin</b><small>Zixom Connect</small></span></a>
-      <button class="collapse" type="button" aria-label="Collapse sidebar" data-tip="Collapse">${icon('panel-left')}</button></div>
+      <button class="collapse" type="button" aria-label="Collapse sidebar">${icon('panel-left')}</button></div>
       <nav>${ZXA.nav.map(([group, items]) => `<div class="group"><span>${group}</span>
         ${items.map(([id, label, ic]) => `<a class="item" href="${href(id)}"${id === current ? ' aria-current="page"' : ''} data-tip="${label}">
           ${icon(ic)}<span>${label}</span>${count(id)}</a>`).join('')}</div>`).join('')}</nav>
@@ -50,9 +50,9 @@
         <kbd>/</kbd></label></div>
       <span class="spacer"></span>
       <button class="health" type="button" data-menu="health-pop"><span class="dot ${a.health.state === 'green' ? '' : a.health.state}"></span><span>${a.health.label}</span></button>
-      <a class="icon-btn" href="${href('D1644')}" aria-label="Help" data-tip="Help">${icon('question')}</a>
+      <a class="icon-btn help-link" href="${href('D1644')}" aria-label="Help">${icon('question')}</a>
       <button class="icon-btn" type="button" aria-label="Notifications, ${unread} new" data-menu="bell-pop">${icon('bell')}<span class="badge">${unread}</span></button>
-      <button class="btn btn-primary btn-sm" type="button" data-menu="create-menu">${icon('plus')}Create</button>
+      <button class="btn btn-primary btn-sm create-btn" type="button" data-menu="create-menu" aria-label="Create">${icon('plus')}<span class="label">Create</span></button>
     </header>`;
 
     const content = document.querySelector('main.content');
@@ -131,8 +131,9 @@
         <div class="cmd-foot"><span><kbd>Enter</kbd> all results</span><span><kbd>Esc</kbd> close</span></div>`;
       const box = input.closest('.search').getBoundingClientRect();
       results.style.top = `${box.bottom + 6}px`;
-      results.style.left = `${box.left}px`;
-      results.style.width = `${Math.max(box.width, 420)}px`;
+      const width = Math.min(Math.max(box.width, 420), window.innerWidth - 24);
+      results.style.left = `${Math.max(12, Math.min(box.left, window.innerWidth - width - 12))}px`;
+      results.style.width = `${width}px`;
       results.hidden = false;
     };
     input.addEventListener('focus', renderResults);
@@ -174,7 +175,7 @@
   const initial = body.dataset.state || 'ready';
 
   body.insertAdjacentHTML('beforeend', `
-    <button class="proto-fab" type="button" aria-expanded="false">${icon('sticky-note')}Prototype<span class="state-now">${label(initial)}</span></button>
+    <button class="proto-fab" type="button" aria-expanded="false">${icon('sticky-note')}<span class="lbl">Prototype</span><span class="state-now">${label(initial)}</span></button>
     <section class="proto-panel" hidden aria-label="Prototype panel">
       <header><b>${page ? `${page.id} ${esc(page.name)}` : 'Prototype'}<small>${page ? esc(ZXA.modules.find((m) => m.key === page.module).title) : ''}</small></b>
         <button class="icon-btn sm" type="button" data-proto-close aria-label="Close">${icon('x')}</button></header>

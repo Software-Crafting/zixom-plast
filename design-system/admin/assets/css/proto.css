@@ -42,3 +42,8 @@
 /* the source notes stay in the page for the panel to read */
 aside.proto{display:none}
 @media print{.proto-fab, .proto-panel, .side, .top{display:none !important}}
+@media (max-width:640px){
+  .proto-fab{right:12px; bottom:12px; height:38px; padding:0 12px}
+  .proto-fab .lbl{display:none}
+  .proto-panel{right:8px; left:8px; width:auto; bottom:60px; max-height:calc(100vh - 80px)}
+}
