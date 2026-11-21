@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D212 Merge companies</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
+</head>
+<body class="adm" data-page="D212" data-nav="D201">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-company" href="#D202"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Merge</span></nav>
+      <div class="page-head" style="padding:0"><div class="grow"><h1>Merge companies</h1><p>Everything moves to the company you keep. The other is archived.</p></div></div>
+    </div>
+  </div>
+
+  <div data-when="ready merged">
+    <div class="banner red center" data-when="ready" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+      <span class="grow"><b>This cannot be undone.</b> The merged company is archived and its links open the kept one.</span></div>
+    <div class="banner green center" data-when="merged" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg>
+      <span class="grow" id="merged-text"></span><span class="btns"><a class="btn btn-sm btn-secondary" id="merged-open" href="#D202">Open company</a></span></div>
+
+    <div class="compare">
+      <section class="card">
+        <div class="card-head"><div class="grow"><p>Merge this company</p><h2 id="from-name"></h2></div><span id="from-tag"></span></div>
+        <div class="card-body" id="from"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><p>Into this one, kept</p><h2 id="into-name"></h2></div>
+          <select class="select sm" id="into" aria-label="Company to keep" style="width:auto"></select></div>
+        <div class="card-body" id="into-body"></div>
+      </section>
+    </div>
+
+    <div class="grid cols-2">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>What moves</h2><p>To the kept company</p></div></div>
+        <ul class="mini" id="moves"></ul>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Result</h2><p>Pick the value to keep where they differ</p></div></div>
+        <div class="card-body stack" id="result"></div>
+      </section>
+    </div>
+
+    <div class="form-bar" data-when="ready">
+      <span class="grow" id="bar-note"></span>
+      <a class="btn btn-ghost" id="cancel" href="#D202">Cancel</a>
+      <button class="btn btn-danger" type="button" data-open="confirm">Merge</button>
+    </div>
+  </div>
+</main>
+
+<div class="overlay center" id="confirm" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="cf-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-merge"/></svg></span>
+      <div class="grow"><h2 id="cf-title"></h2><p id="cf-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cf-pass">Your password</label><input class="input" id="cf-pass" type="password" autocomplete="current-password" autofocus><span class="hint" id="cf-msg">Needed for actions that cannot be undone</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" id="cf-go">Merge</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready merged" data-mobile="../../../screens/customer/C1113-companies.html">
+  <div><h3>What it is</h3><p>Join a duplicate company into the real one. Opens with <code>?c=shree-dup</code> (ZP-C-0003, same GSTIN as ZP-C-0001).</p></div>
+  <div><h3>What you can do</h3><ul><li>Choose the company to keep.</li><li>Pick name, GSTIN and address for the result.</li><li>Merge with your password.</li></ul></div>
+  <div><h3>What happens next</h3><p>People, sites, machines, tickets, invoices and AMC move. People see one company in the app. Back to Customer detail (D202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Irreversible warning; password required.</li><li>The same person in both companies keeps one link (Rakesh M and Rakesh Mehta: resolve in D207 first).</li><li>Merged company is archived and redirects to the kept one.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const from = cx.company(new URLSearchParams(location.search).get('c') || 'shree-dup') || cx.company('shree-dup');
+  const candidates = cx.companies.filter((c) => c !== from && c.status !== 'deactivated');
+  const suggested = candidates.find((c) => c.gstin === from.gstin) || candidates[0];
+
+  $('crumb-company').textContent = from.name;
+  $('crumb-company').href = link('D202', `?c=${from.id}`);
+  $('cancel').href = link('D202', `?c=${from.id}`);
+  $('from-name').textContent = from.name;
+  $('from-tag').innerHTML = cx.companyTag(from.status);
+  $('into').innerHTML = candidates.map((c) => `<option value="${c.id}"${c === suggested ? ' selected' : ''}>${c.code}</option>`).join('');
+
+  const facts = (c) => `<dl class="dl"><dt>Code</dt><dd class="mono">${c.code}</dd><dt>GSTIN</dt><dd class="mono">${c.gstin}</dd>
+    <dt>Billing</dt><dd>${r.esc(c.billing)}</dd><dt>Primary</dt><dd>${cx.primaryOf(c.id)?.name ?? '<span class="faint">None</span>'}</dd>
+    <dt>Created</dt><dd>${r.date(c.created)} · ${r.esc(c.createdBy)}</dd></dl>`;
+  $('from').innerHTML = facts(from);
+
+  const render = () => {
+    const into = cx.company($('into').value);
+    $('into-name').textContent = into.name;
+    $('into-body').innerHTML = facts(into);
+    const counts = [['users', 'People', cx.peopleOf(from.id).length, cx.peopleOf(from.id).map((p) => p.name).join(', ')],
+      ['map-pin', 'Sites', from.sites.length, from.sites.map((s) => s.name).join(', ')], ['factory', 'Machines', cx.machineCount(from), ''],
+      ['wrench', 'Tickets', cx.ticketsOf(from.id).length, ''], ['receipt', 'Invoices', cx.invoicesOf(from.id).length, ''], ['seal-check', 'AMC contracts', cx.amcOf(from.id).length, '']];
+    $('moves').innerHTML = counts.map(([i, label, n, sub]) => `<li><span class="ic-disc${n ? ' blue' : ''}">${ic(i)}</span>
+      <span class="grow"><b>${label}</b><small>${sub || (n ? 'Moves with history' : 'Nothing to move')}</small></span><span class="end strong">${n}</span></li>`).join('');
+    const choice = (key, label, a, b) => (a === b ? `<div class="kv"><span>${label}</span><b>${r.esc(a)}</b></div>`
+      : `<div class="field"><span class="label">${label}</span><div class="choices">${[b, a].map((v, i) => `<label class="choice"><input type="radio" class="sr-only" name="${key}"${i === 0 ? ' checked' : ''}><span><b>${r.esc(v)}</b><small>${i === 0 ? into.code : from.code}</small></span></label>`).join('')}</div></div>`);
+    $('result').innerHTML = `${choice('name', 'Name', from.name, into.name)}${choice('gstin', 'GSTIN', from.gstin, into.gstin)}${choice('billing', 'Billing address', from.billing, into.billing)}
+      <div class="kv"><span>Code</span><b class="mono">${into.code}</b></div>
+      ${cx.peopleOf(from.id).some((p) => p.email && cx.peopleOf(into.id).some((q) => q.email === p.email)) ? `<div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Rakesh M and Rakesh Mehta share an email. <a href="${link('D207')}">Resolve the conflict</a> to keep one person.</span></div>` : ''}`;
+    $('bar-note').textContent = `${from.code} will be archived and open ${into.code}.`;
+    $('cf-title').textContent = `Merge ${from.name} into ${into.name}?`;
+    $('cf-text').textContent = `This cannot be undone. ${from.name} (${from.code}) will be archived.`;
+    $('merged-text').innerHTML = `<b>Merged.</b> ${from.code} is archived; its records are now in ${into.code}.`;
+    $('merged-open').href = link('D202', `?c=${into.id}`);
+  };
+  $('into').addEventListener('change', render);
+  render();
+
+  $('cf-go').addEventListener('click', () => {
+    const pass = $('cf-pass');
+    if (!pass.value) { pass.setAttribute('aria-invalid', 'true'); $('cf-msg').className = 'error'; $('cf-msg').innerHTML = `${ic('warning-circle')}<span>Enter your password</span>`; return; }
+    ZXA.ui.closeOverlay($('confirm'));
+    ZXA.ui.setState('merged');
+    ZXA.ui.toast('Companies merged');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

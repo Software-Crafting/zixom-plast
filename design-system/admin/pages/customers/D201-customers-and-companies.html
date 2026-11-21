@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D201 Customers and companies</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Customers</h1><p id="head-sub"></p></div>
+    <a class="btn btn-secondary" href="#D216"><svg class="ic"><use href="#ph-users"/></svg>People</a>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D203"><svg class="ic"><use href="#ph-plus"/></svg>Add customer</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="active">Active <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="pending">Pending <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="suspended">Suspended <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="deactivated">Deactivated <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="dues">Has open dues <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#companies"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Code, company, city, GSTIN or contact" aria-label="Search customers"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <a class="btn btn-ghost btn-sm" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import</a>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="companies">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Code</th><th class="sortable">Company</th><th>GSTIN</th>
+            <th class="sortable">Primary contact</th><th class="sortable num">People</th><th class="sortable num">Machines</th>
+            <th class="sortable num">Open tickets</th><th class="sortable num">Open dues</th><th class="sortable">Status</th><th class="sortable col-hidden">Created</th>
+            <th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-buildings"/></svg></span>
+        <h3>No customers yet</h3><p>Customers will appear here.</p>
+        <div class="btns"><a class="btn btn-secondary" href="#D1510">Import</a><a class="btn btn-primary" href="#D203">Add customer</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Code</th><th>Company</th><th>Primary contact</th><th>Open dues</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="companies" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="btn" type="button" data-toast="Statement emails queued">Send statement</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub" class="mono"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-edit" href="#D204">Edit</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-open" href="#D202">Open customer</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">Pending</button>
+        <button class="chip" type="button" aria-pressed="false">Suspended</button><button class="chip" type="button" aria-pressed="false">Deactivated</button></div></div>
+      <div class="field"><label for="f-state">State</label><select class="select" id="f-state"><option>Any</option><option>Gujarat</option><option>Maharashtra</option><option>Haryana</option></select></div>
+      <label class="check"><input type="checkbox"> Has open dues</label>
+      <label class="check"><input type="checkbox"> Has an active AMC</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show customers</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="3" data-table="companies"> GSTIN</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="companies"> People</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="companies"> Machines</label>
+  <label class="check"><input type="checkbox" data-col="10" data-table="companies"> Created</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <a href="#D202"><svg class="ic"><use href="#ph-external-link"/></svg>Open customer</a>
+  <a href="#D204"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit company</a>
+  <a href="#D205"><svg class="ic"><use href="#ph-user-plus"/></svg>Add person</a>
+  <a href="#D402"><svg class="ic"><use href="#ph-wrench"/></svg>Create ticket</a>
+  <hr><a class="danger" href="#D213"><svg class="ic"><use href="#ph-ban"/></svg>Deactivate</a>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1103-company.html">
+  <div><h3>What it is</h3><p>Every customer company with its people, machines, open tickets and dues.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; the code opens the full record.</li><li>Select rows to export or send statements.</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer detail (D202), Add customer (D203), Edit company (D204), Import (D1510), People (D216).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Companies exist only because Admin created or approved them.</li><li>ZP-C-0003 has the same GSTIN as ZP-C-0001: flagged, merge in D212.</li><li>Deactivated companies are read only and grey.</li><li>Long names truncate with a tooltip (EC-A07).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const companies = cx.companies;
+  const dupOf = (c) => companies.find((o) => o !== c && o.gstin === c.gstin && o.created < c.created);
+
+  document.getElementById('head-sub').textContent = `${companies.length} companies · ${companies.filter((c) => c.status === 'active').length} active · ${r.money(companies.reduce((s, c) => s + cx.dues(c), 0)).replace(/\.00$/, '')} open dues`;
+
+  document.querySelector('#companies tbody').innerHTML = companies.map((c) => {
+    const p = cx.primaryOf(c.id);
+    const dues = cx.dues(c);
+    const over = cx.overdue(c);
+    const dup = dupOf(c);
+    return `<tr data-drawer="quick" data-company="${c.id}"${c.status === 'deactivated' ? ' style="color:var(--text-muted)"' : ''}>
+      <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${c.code}"></label></td>
+      <td><a class="rec" href="${ZXA.href('D202', `?c=${c.id}`)}">${c.code}</a></td>
+      <td><b class="clip" title="${r.esc(c.name)}">${r.esc(c.name)}</b>${dup ? `<span class="sub amber-text">Same GSTIN as ${dup.code}</span>` : `<span class="sub">${c.city}, ${c.state} · ${c.sites.length} ${c.sites.length === 1 ? 'site' : 'sites'}</span>`}</td>
+            <td class="mono nowrap" style="font-size:13px">${c.gstin}</td>
+      <td>${p ? `<span class="who">${r.avatar(p, 'sm')}<span>${p.name}<span class="sub">${p.mobile}</span></span></span>` : '<span class="faint">None</span>'}</td>
+      <td class="num">${cx.peopleOf(c.id).length}</td>
+      <td class="num">${cx.machineCount(c)}</td>
+      <td class="num">${cx.openTicketsOf(c.id).length || '<span class="faint">0</span>'}</td>
+      <td class="num nowrap" data-sort="${String(dues).padStart(9, '0')}">${dues ? `${r.money(dues)}${over ? `<span class="sub red-text">${r.money(over)} overdue</span>` : ''}` : '<span class="faint">–</span>'}</td>
+      <td>${cx.companyTag(c.status)}</td>
+      <td class="nowrap col-hidden" data-sort="${c.created}">${r.date(c.created)}</td>
+      <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+    </tr>`;
+  }).join('');
+
+  const VIEWS = { all: () => true, active: (c) => c.status === 'active', pending: (c) => c.status === 'pending',
+    suspended: (c) => c.status === 'suspended', deactivated: (c) => c.status === 'deactivated', dues: (c) => cx.dues(c) > 0 };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#companies tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](cx.company(row.dataset.company)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = shown ? `1 to ${shown} of ${shown}` : '0 of 0';
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = companies.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* quick view */
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const c = cx.company(event.detail.dataset.company);
+    const p = cx.primaryOf(c.id);
+    const q = `?c=${c.id}`;
+    document.getElementById('quick-title').textContent = c.name;
+    document.getElementById('quick-sub').textContent = `${c.code} · ${c.gstin}`;
+    document.getElementById('quick-open').href = ZXA.href('D202', q);
+    document.getElementById('quick-edit').href = ZXA.isBuilt('D204') ? ZXA.href('D204', q) : `${ZXA.root}index.html#D204`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${cx.companyTag(c.status)}${cx.amcOf(c.id).some((x) => x.status !== 'expired') ? r.tag('AMC', 'blue') : ''}${cx.overdue(c) ? r.tag('Overdue', 'red') : ''}</div>
+      ${c.notes ? `<p>${r.esc(c.notes)}</p>` : ''}
+      <div class="grid cols-3" style="gap:10px">
+        <div class="kv"><span>Machines</span><b>${cx.machineCount(c)}</b></div>
+        <div class="kv"><span>Open tickets</span><b>${cx.openTicketsOf(c.id).length}</b></div>
+        <div class="kv"><span>Open dues</span><b>${r.money(cx.dues(c)).replace(/\.00$/, '')}</b></div></div>
+      <dl class="dl">
+        <dt>Primary contact</dt><dd>${p ? `${p.name}<br><span class="muted">${p.mobile}</span>` : '<span class="faint">None</span>'}</dd>
+        <dt>Billing address</dt><dd>${r.esc(c.billing)}<br><span class="muted">${c.state}</span></dd>
+        <dt>Sites</dt><dd>${c.sites.map((s) => s.name).join(', ')}</dd>
+        <dt>People</dt><dd>${cx.peopleOf(c.id).map((x) => x.name).join(', ') || '<span class="faint">None</span>'}</dd>
+        <dt>Credit terms</dt><dd>${c.terms} days</dd>
+        <dt>Created</dt><dd>${r.date(c.created)} · ${r.esc(c.createdBy)}</dd>
+      </dl>`;
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

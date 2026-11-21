@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D102 Work queue</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-overview.css">
+</head>
+<body class="adm" data-page="D102">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Work queue</h1><p id="summary"></p></div>
+    <button class="btn btn-primary" type="button" id="start" data-when="ready live">Start with the first item</button>
+  </div>
+
+  <div class="grid side-left" data-when="ready live no-results">
+    <nav class="card q-rail" aria-label="Item types">
+      <div class="card-head"><h2 class="grow">Types</h2></div>
+      <ul class="mini" id="rail"></ul>
+      <div class="zero-toggle"><button class="btn btn-link" type="button" id="zero-toggle">Show all types</button></div>
+    </nav>
+
+    <section class="card list-card">
+      <div class="toolbar">
+        <label class="search" data-filter="#items"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Title, customer or record" aria-label="Search the queue"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge" id="filter-count" hidden></span></button>
+        <span class="grow"></span>
+        <label class="row">Sort <select class="select sm" id="sort" aria-label="Sort" style="width:auto">
+          <option value="due">Due soonest</option><option value="oldest">Oldest</option><option value="priority">Priority</option></select></label>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="items">
+          <thead><tr><th>Item</th><th>Record</th><th class="num">Waiting</th><th>Due</th><th class="actions"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot"><span id="foot"></span><span class="grow"></span><span>Updates live</span></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid side-left">
+      <div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span></div>
+      <section class="card list-card"><div class="toolbar"><span class="sk" style="width:300px; height:40px; border-radius:999px"></span><span class="sk" style="width:100px; height:40px; border-radius:999px"></span></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Item</th><th>Record</th><th>Customer</th><th>Waiting</th><th>Due</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section>
+    </div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>Nothing needs you right now</h3><p>New requests, offers and approvals appear here as they arrive.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div></div></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not load the work queue.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy data-toast="Queue reloaded">Retry</button></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<!-- the selected item: act here, then Next item moves on -->
+<div class="overlay right" id="item" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="item-title">
+    <div class="drawer-head"><div class="grow"><h2 id="item-title"></h2><p id="item-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="item-body"></div>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" type="button" data-menu="snooze-menu"><svg class="ic"><use href="#ph-clock"/></svg>Snooze<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      <span class="grow"></span>
+      <button class="btn btn-secondary" type="button" id="item-next">Next item</button>
+      <span id="item-action"></span>
+    </div>
+  </div>
+</div>
+
+<div class="menu" id="snooze-menu" hidden>
+  <button type="button" data-snooze="Snoozed for 1 hour, back at 1:00 PM"><svg class="ic"><use href="#ph-clock"/></svg>For 1 hour</button>
+  <button type="button" data-snooze="Snoozed until tomorrow, 9:00 AM"><svg class="ic"><use href="#ph-calendar-blank"/></svg>Until tomorrow</button>
+  <hr><button type="button" data-snooze="Marked as done"><svg class="ic"><use href="#ph-check"/></svg>Mark as done</button>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Waiting</span><div class="row wrap" data-single id="f-age">
+        <button class="chip" type="button" aria-pressed="true" data-age="">Any</button><button class="chip" type="button" aria-pressed="false" data-age="60">Under 1 hour</button>
+        <button class="chip" type="button" aria-pressed="false" data-age="1440">Under 1 day</button><button class="chip" type="button" aria-pressed="false" data-age="-1440">Over 1 day</button></div></div>
+      <div class="field"><span class="label">Priority</span><div class="row wrap" id="f-priority">
+        <button class="chip" type="button" aria-pressed="false">Urgent</button><button class="chip" type="button" aria-pressed="false">High</button>
+        <button class="chip" type="button" aria-pressed="false">Normal</button><button class="chip" type="button" aria-pressed="false">Low</button></div></div>
+      <label class="check"><input type="checkbox" id="f-missed"> Missed target only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" id="f-clear">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close id="f-apply">Show items</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error live">
+  <div><h3>What it is</h3><p>Every pending decision in one list, grouped by type with counts.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a type on the left; sort by due, age or priority.</li><li>Click a row to act in the drawer; Next item moves on.</li><li>Snooze for 1 hour or until tomorrow; mark follow ups as done.</li></ul></div>
+  <div><h3>What happens next</h3><p>The record pages: Ticket (D403), Assign (D404), Verification (D211), Offline payment (D912), Report review (D413), Part request (D821).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machine down is always on top; missed targets are red and sorted next.</li><li>Live: new rows flash; an item handled elsewhere goes with 'Handled by {name}'.</li><li>Verification over 1 working day is red (F1).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/overview.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const link = (target) => { const [id, q = ''] = target.split(/(?=\?)/); return ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`; };
+  const PRIORITY = { Urgent: 0, High: 1, Normal: 2, Low: 3 };
+  const typeName = Object.fromEntries(a.queueTypes.map(([k, label]) => [k, label]));
+  const typeIcon = Object.fromEntries(a.queueTypes.map(([k, , ic]) => [k, ic]));
+
+  let items = [...a.workQueue];
+  let type = 'all';
+  let sort = 'due';
+  let openId = null;
+  const filters = { age: '', priority: [], missed: false };
+
+  const span = (m) => {
+    const abs = Math.abs(m);
+    if (abs < 60) return `${abs} min`;
+    if (abs < 1440) { const h = Math.floor(abs / 60); const mm = abs % 60; return mm ? `${h} h ${mm} min` : `${h} h`; }
+    return `${Math.round(abs / 1440)} d`;
+  };
+  const due = (q) => (q.due < 0 ? `<span class="q-due missed">Missed by ${span(q.due)}</span>` : `<span class="q-due">Due in ${span(q.due)}</span>`);
+  /* machine down always first, then missed targets, then the chosen order */
+  const order = (x, y) => (Number(!!y.down) - Number(!!x.down)) || (Number(y.due < 0) - Number(x.due < 0))
+    || (sort === 'oldest' ? y.age - x.age : sort === 'priority' ? (PRIORITY[x.priority] - PRIORITY[y.priority]) || x.due - y.due : x.due - y.due);
+  const passes = (q) => (type === 'all' || q.type === type)
+    && (!filters.age || (Number(filters.age) > 0 ? q.age < Number(filters.age) : q.age > -Number(filters.age)))
+    && (!filters.priority.length || filters.priority.includes(q.priority)) && (!filters.missed || q.due < 0);
+  const visible = () => items.filter(passes).sort(order);
+
+  const actionButton = (q, cls = 'btn btn-sm btn-secondary') => (q.act
+    ? `<button class="${cls}" type="button" data-act="${q.id}">${q.act[0]}</button>`
+    : `<a class="${cls}" href="${link(q.go[1])}">${q.go[0]}</a>`);
+
+  const renderRail = () => {
+    const count = (k) => items.filter((q) => q.type === k).length;
+    const missed = (k) => items.some((q) => q.type === k && q.due < 0);
+    const li = (k, label, ic, n) => `<li data-type="${k}" role="button" tabindex="0" aria-current="${type === k}" class="${n ? '' : 'zero'} ${missed(k) ? 'missed' : ''}">
+      ${r.icon(ic)}<span class="grow">${label}</span><span class="end">${n}</span></li>`;
+    document.getElementById('rail').innerHTML = li('all', 'All', 'list-todo', items.length)
+      + a.queueTypes.map(([k, label, ic]) => li(k, label, ic, count(k))).join('');
+  };
+
+  const renderList = (fresh) => {
+    const list = visible();
+    document.querySelector('#items tbody').innerHTML = list.length ? list.map((q) => `
+      <tr data-drawer="item" data-id="${q.id}" class="${q.down || q.due < 0 ? 'urgent' : ''} ${q.id === fresh ? 'q-new' : ''}">
+        <td><div class="who"><span class="ic-disc ${q.tone}">${r.icon(q.icon)}</span>
+          <span><b class="clip" style="max-width:240px">${q.title}</b><small class="clip" style="max-width:240px">${q.customer} · ${q.priority}</small></span></div></td>
+        <td><a class="rec" href="${link(q.href)}">${q.record}</a></td>
+        <td class="num nowrap" data-sort="${q.age}">${span(q.age)}</td>
+        <td class="nowrap" data-sort="${q.due}">${due(q)}</td>
+        <td class="actions" style="width:auto">${actionButton(q)}</td></tr>`).join('')
+      : `<tr><td colspan="5"><div class="state"><span class="disc green">${r.icon('check')}</span><h3>Nothing in ${type === 'all' ? 'the queue' : typeName[type]}</h3><p>Pick another type or clear the filters.</p></div></td></tr>`;
+    const missedCount = items.filter((q) => q.due < 0).length;
+    const down = items.filter((q) => q.down).length;
+    document.getElementById('summary').textContent = `${items.length} items need you${down ? ` · ${down} machine down` : ''}${missedCount ? ` · ${missedCount} past target` : ''}`;
+    document.getElementById('foot').textContent = `${list.length} of ${items.length} items`;
+    const n = (filters.age ? 1 : 0) + filters.priority.length + (filters.missed ? 1 : 0);
+    const badge = document.getElementById('filter-count');
+    badge.hidden = !n; badge.textContent = n;
+  };
+  const render = (fresh) => { renderRail(); renderList(fresh); };
+
+  /* ---------- drawer ---------- */
+  const show = (id) => {
+    const q = items.find((x) => x.id === id);
+    if (!q) return;
+    openId = id;
+    document.getElementById('item-title').textContent = q.title;
+    document.getElementById('item-sub').innerHTML = `${q.customer} · <span class="mono">${q.record}</span>`;
+    document.getElementById('item-body').innerHTML = `
+      <div class="tags">${r.tag(typeName[q.type], '', typeIcon[q.type])}${r.priorityTag(q.priority)}${q.due < 0 ? r.tag(`Missed by ${span(q.due)}`, 'red') : r.tag(`Due in ${span(q.due)}`, q.due < 60 ? 'amber' : '')}</div>
+      ${q.down ? `<div class="banner red">${r.icon('siren')}<span class="grow"><b>Machine down, not assigned for ${span(q.age)}.</b> Response target 4 hours.</span></div>` : ''}
+      ${q.type === 'verification' && q.due < 0 ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Waiting over 1 working day.</b> Answer today.</span></div>` : ''}
+      <dl class="dl">${q.facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Waiting</dt><dd>${span(q.age)}</dd></dl>
+      <a class="btn btn-sm btn-ghost" href="${link(q.href)}">${r.icon('external-link')}Open ${q.record}</a>`;
+    document.getElementById('item-action').innerHTML = actionButton(q, 'btn btn-primary');
+    const list = visible();
+    document.getElementById('item-next').disabled = list.length < 2;
+  };
+  const next = (fromId) => {
+    const list = visible();
+    const i = list.findIndex((x) => x.id === fromId);
+    return list[(i + 1) % list.length]?.id;
+  };
+  /* an item leaves the queue: acted, snoozed or handled elsewhere. The drawer moves to the next one */
+  const removeItem = (id, message, kind = '') => {
+    const after = next(id);
+    items = items.filter((x) => x.id !== id);
+    render();
+    ZXA.ui.toast(message, kind);
+    if (!items.length) { ZXA.ui.closeOverlay(drawer); ZXA.ui.setState('empty'); return; }
+    if (openId === id && !drawer.hidden) { if (after && after !== id) show(after); else ZXA.ui.closeOverlay(drawer); }
+  };
+
+  const drawer = document.getElementById('item');
+  drawer.addEventListener('zxa:row', (event) => show(event.detail.dataset.id));
+  document.getElementById('item-next').addEventListener('click', () => show(next(openId)));
+  document.getElementById('start').addEventListener('click', () => { const first = visible()[0]; if (first) { ZXA.ui.openOverlay('item'); show(first.id); } });
+
+  document.addEventListener('click', (event) => {
+    const act = event.target.closest('[data-act]');
+    if (act) { const q = items.find((x) => x.id === act.dataset.act); removeItem(q.id, q.act[1]); return; }
+    const snooze = event.target.closest('[data-snooze]');
+    if (snooze && openId) { removeItem(openId, snooze.dataset.snooze, 'info'); return; }
+    const rail = event.target.closest('#rail li');
+    if (rail) { type = rail.dataset.type; render(); }
+    const chip = event.target.closest('#f-priority .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+  document.getElementById('rail').addEventListener('keydown', (event) => { if (event.key === 'Enter') event.target.closest('li')?.click(); });
+  document.getElementById('zero-toggle').addEventListener('click', (event) => {
+    const rail = document.querySelector('.q-rail');
+    rail.classList.toggle('show-zero');
+    event.target.textContent = rail.classList.contains('show-zero') ? 'Hide empty types' : 'Show all types';
+  });
+  document.getElementById('sort').addEventListener('change', (event) => { sort = event.target.value; renderList(); });
+
+  document.getElementById('f-apply').addEventListener('click', () => {
+    filters.age = document.querySelector('#f-age [aria-pressed="true"]').dataset.age;
+    filters.priority = [...document.querySelectorAll('#f-priority [aria-pressed="true"]')].map((b) => b.textContent);
+    filters.missed = document.getElementById('f-missed').checked;
+    renderList();
+  });
+  document.getElementById('f-clear').addEventListener('click', () => {
+    document.querySelectorAll('#f-age .chip').forEach((b, i) => b.setAttribute('aria-pressed', String(i === 0)));
+    document.querySelectorAll('#f-priority .chip').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    document.getElementById('f-missed').checked = false;
+  });
+
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(5)}</tr>`).join('');
+  render();
+
+  /* Live demo state: a new request arrives with a highlight, then an item is handled in another tab */
+  ZXA.queueLive = () => {
+    items = [...a.workQueue];
+    if (!items.some((x) => x.id === a.queueLive.id)) items.push({ ...a.queueLive });
+    render(a.queueLive.id);
+    ZXA.ui.toast('New item: service request TKT-2026-0120', 'info');
+    window.setTimeout(() => {
+      if (document.body.dataset.state === 'live' && items.some((x) => x.id === 'q11')) removeItem('q11', 'Handled by Rajesh Goyal', 'info');
+    }, 2500);
+  };
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  if (event.target.closest('[data-proto-state="live"]')) ZXA.queueLive();
+});
+</script>
+</body>
+</html>

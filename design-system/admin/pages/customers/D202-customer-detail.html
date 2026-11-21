@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D202 Customer detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
+</head>
+<body class="adm" data-page="D202" data-nav="D201">
+<main class="content">
+  <div data-when="ready deactivated tab-error">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 class="name" id="name"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar" id="actions"></div>
+    </div>
+
+    <div id="banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="detail">
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="Customer sections" id="tabs" style="padding:0 12px"></div>
+        <div class="card-body" style="padding-top:20px" id="panels"></div>
+      </section>
+      <aside id="side"></aside>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:360px"></span><span class="sk sk-line" style="width:420px"></span></div></div>
+    <div class="detail">
+      <div class="card pad stack"><span class="sk sk-line" style="width:60%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:80%"></span></div>
+      <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div>
+        <div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:80px"></span></div></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D201">Go to customers</a></div></div></div>
+  </div>
+</main>
+
+<!-- add site -->
+<div class="overlay right" id="add-site" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="site-title">
+    <div class="drawer-head"><div class="grow"><h2 id="site-title">Add site</h2><p>Engineers see the address and access notes.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body">
+      <div class="form-grid">
+        <div class="field full"><label for="s-name">Site name</label><input class="input" id="s-name" placeholder="Changodar unit" autofocus></div>
+        <div class="field full"><label for="s-addr">Address</label><textarea class="textarea" id="s-addr" style="min-height:72px"></textarea></div>
+        <div class="field"><label for="s-pin">Pincode</label><input class="input mono" id="s-pin" inputmode="numeric" maxlength="6"><span class="hint">6 digits</span></div>
+        <div class="field"><label for="s-map">Map pin <span class="opt">optional</span></label><input class="input" id="s-map" placeholder="Paste a map link"></div>
+        <div class="field"><label for="s-cname">Site contact</label><input class="input" id="s-cname"></div>
+        <div class="field"><label for="s-cphone">Contact mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="s-cphone" style="padding-left:44px" inputmode="tel"></div></div>
+        <div class="field full"><label for="s-access">Access notes <span class="opt">optional</span></label><input class="input" id="s-access" placeholder="Gate number, security, timings"></div>
+        <div class="field full"><label for="s-haz">Hazards <span class="opt">optional</span></label><input class="input" id="s-haz" placeholder="Hot surfaces, forklifts"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Site added">Add site</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <button type="button" data-open="add-site"><svg class="ic"><use href="#ph-map-pin"/></svg>Add site</button>
+  <a href="#D902"><svg class="ic"><use href="#ph-receipt"/></svg>Create invoice</a>
+  <a href="#D1202"><svg class="ic"><use href="#ph-file-text"/></svg>Create quotation</a>
+  <a href="#D1302"><svg class="ic"><use href="#ph-megaphone"/></svg>Send announcement</a>
+  <button type="button" data-toast="Statement PDF downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download statement</button>
+  <hr>
+  <a id="menu-merge" href="#D212"><svg class="ic"><use href="#ph-merge"/></svg>Merge with another company</a>
+  <a class="danger" id="menu-deactivate" href="#D213"><svg class="ic"><use href="#ph-ban"/></svg>Deactivate</a>
+</div>
+
+<aside class="proto" data-states="ready loading not-found deactivated tab-error error" data-mobile="../../../screens/customer/C1103-company.html">
+  <div><h3>What it is</h3><p>One customer company: people, sites, machines, service and money. Opens with <code>?c=shree</code> or <code>?c=nova</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit the company, add a person or a site.</li><li>Create a ticket, invoice or quotation for this company.</li><li>Change the primary contact; merge or deactivate from More.</li></ul></div>
+  <div><h3>What happens next</h3><p>Edit (D204), Person (D205), Merge (D212), Deactivate (D213), Primary contact (D214), Ticket (D402), Invoice (D902).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each tab loads on first open with a skeleton and its own error (Tab error).</li><li>Deactivated: grey banner and read only tabs; only Reactivate.</li><li>Same GSTIN on two companies shows a merge banner (<code>?c=shree-dup</code>).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const d = ZX.data;
+  const ic = r.icon;
+  const params = new URLSearchParams(location.search);
+  const c = cx.company(params.get('c') || 'shree');
+  if (!c) { ZXA.initialState = 'not-found'; document.body.dataset.state = 'not-found'; return; }
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const cq = `?c=${c.id}`;
+  const p = cx.primaryOf(c.id);
+  const people = cx.peopleOf(c.id);
+  const machines = cx.machinesOf(c.id);
+  const tickets = cx.ticketsOf(c.id);
+  const open = tickets.filter(r.isOpen);
+  const invoices = cx.invoicesOf(c.id);
+  const amc = cx.amcOf(c.id);
+  const dues = cx.dues(c);
+  const overdue = cx.overdue(c);
+  const dup = cx.companies.find((o) => o !== c && o.gstin === c.gstin);
+  const readOnly = c.status === 'deactivated';
+  if (readOnly) document.body.dataset.state = 'deactivated';
+  const empty = (icon, title, text, action = '') => `<div class="state"><span class="disc">${ic(icon)}</span><h3>${title}</h3><p>${text}</p>${action ? `<div class="btns">${action}</div>` : ''}</div>`;
+
+  document.title = `Zixom Admin - ${c.name}`;
+  document.getElementById('crumb').textContent = c.code;
+  document.getElementById('name').textContent = c.name;
+  document.getElementById('chips').innerHTML = `${cx.companyTag(c.status)}${overdue ? r.tag(`${r.money(overdue)} overdue`, 'red') : ''}`;
+  document.getElementById('meta').innerHTML = `<span class="mono">${c.code}</span><span>${ic('map-pin')}${c.city}, ${c.state}</span>
+    ${p ? `<span>${ic('user')}${p.name}, primary contact</span>` : ''}<span>${ic('currency-inr')}Balance due <b class="strong" style="margin-left:4px">${r.money(dues)}</b></span>`;
+
+  /* actions: deactivated companies can only be reactivated */
+  document.getElementById('actions').innerHTML = readOnly
+    ? `<a class="btn btn-primary" href="${link('D213', `${cq}&a=reactivate`)}">Reactivate</a>`
+    : `<a class="btn btn-secondary" href="${link('D204', cq)}">${ic('pencil-simple')}Edit</a>
+       <a class="btn btn-secondary" href="${link('D205', cq)}">${ic('user-plus')}Add person</a>
+       <a class="btn btn-primary" href="${link('D402', cq)}">${ic('plus')}Create ticket</a>
+       <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
+  document.getElementById('menu-merge').href = link('D212', cq);
+  document.getElementById('menu-deactivate').href = link('D213', cq);
+
+  const banners = [];
+  if (readOnly) banners.push(`<div class="banner grey center">${ic('archive')}<span class="grow"><b>Deactivated on ${r.date(c.deactivated)}.</b> ${c.reason}. People of this company cannot sign in. Read only.</span></div>`);
+  if (c.status === 'suspended') banners.push(`<div class="banner red center">${ic('ban')}<span class="grow"><b>Suspended.</b> ${r.esc(c.notes)}</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D213', `${cq}&a=reactivate`)}">Reactivate</a></span></div>`);
+  if (dup) banners.push(`<div class="banner amber center">${ic('git-compare')}<span class="grow"><b>Possible duplicate.</b> ${dup.code} ${r.esc(dup.name)} has the same GSTIN.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D212', `?c=${c.created > dup.created ? c.id : dup.id}`)}">Review merge</a></span></div>`);
+  document.getElementById('banners').innerHTML = banners.join('');
+
+  /* ---------- tab content ---------- */
+  const MACHINE = { running: ['Running', 'green'], idle: ['Idle', ''], repair: ['In repair', 'amber'], down: ['Down', 'red'], pending: ['Pending verification', 'amber'] };
+  const warranty = (m) => {
+    if (!m.warrantyEnd) return '<span class="faint">Unknown</span>';
+    const days = r.daysFromToday(m.warrantyEnd);
+    return days < 0 ? r.tag('Out of warranty', 'outline') : r.tag(`To ${r.date(m.warrantyEnd)}`, days <= 30 ? 'amber' : 'green');
+  };
+  const AMC = { active: ['Active', 'green'], expiring: ['Expiring', 'amber'], expired: ['Expired, grace', 'red'] };
+  const invTag = (s) => (s === 'draft' ? r.tag('Draft', 'outline') : r.invoiceTag(s));
+
+  const overview = () => {
+    const recent = tickets.filter(r.isOpen).slice(0, 4);
+    return `<div class="stack">
+      <div class="grid cols-4" style="gap:12px">
+        <div class="kv"><span>Machines</span><b>${cx.machineCount(c)}</b></div>
+        <div class="kv"><span>Open tickets</span><b>${open.length}</b></div>
+        <div class="kv"><span>Active AMC</span><b>${amc.filter((x) => x.status !== 'expired').length}</b></div>
+        <div class="kv"><span>Balance due</span><b>${r.money(dues)}</b></div></div>
+      ${c.notes ? `<div class="banner"><svg class="ic"><use href="#ph-sticky-note"/></svg><span class="grow"><b>Internal note.</b> ${r.esc(c.notes)}</span></div>` : ''}
+      <div><h3 style="font-size:16px; margin-bottom:8px">Open tickets</h3>
+        ${recent.length ? `<ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line)">${recent.map((t) => `<li data-href="D403?t=${t.number}">
+          <span class="ic-disc ${t.severity === 'down' ? 'red' : ''}">${ic(t.severity === 'down' ? 'siren' : 'wrench')}</span>
+          <span class="grow"><b class="mono">${t.number}</b><small>${r.machine(t.machine).model} · ${t.type}</small></span><span class="end">${r.ticketTag(t.status)}</span></li>`).join('')}</ul>`
+        : '<p class="muted">No open tickets.</p>'}</div>
+      <div><h3 style="font-size:16px; margin-bottom:8px">Latest activity</h3>
+        <ol class="timeline">${(ZXA.data.companyHistory[c.id] || [[c.created, c.createdBy, 'Company created']]).slice(0, 4).map(([when, who, what]) => `
+          <li><span class="node">${ic('history')}</span><div><b>${r.esc(what)}</b><p>${r.esc(who)}</p></div><small>${r.date(when)}</small></li>`).join('')}</ol></div>
+    </div>`;
+  };
+
+  const peopleTab = () => `<div class="stack">
+    <div class="row"><p class="muted grow">${people.length} of 25 people · permissions are the same for everyone; only the primary contact flag differs.</p>
+      ${readOnly ? '' : `<a class="btn btn-sm btn-secondary" href="${link('D214', cq)}">Change primary</a><a class="btn btn-sm btn-primary" href="${link('D205', cq)}">${ic('user-plus')}Add person</a>`}</div>
+    ${people.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Name</th><th>Mobile</th><th>Sites</th><th>Status</th><th>Last active</th></tr></thead><tbody>
+      ${people.map((x) => `<tr data-href="D205?p=${x.id}"><td><span class="who">${r.avatar(x, 'sm')}<span><b>${x.name}</b><span class="sub">${x.designation}${x.companies.find((k) => k.id === c.id).primary ? ' · Primary contact' : ''}</span></span></span></td>
+        <td class="nowrap">${x.mobile}</td><td class="nowrap">${(x.sites || []).map((s) => cx.company(c.id).sites.find((y) => y.id === s)?.name).filter(Boolean).join(', ') || '<span class="faint">–</span>'}</td>
+        <td>${cx.personTag(x.status)}</td><td class="nowrap">${x.lastActive ? r.ago(x.lastActive) : '<span class="faint">Never</span>'}</td></tr>`).join('')}
+    </tbody></table></div>` : empty('users', 'No people yet', 'People will appear here.')}
+    <div class="row"><a class="btn btn-link" href="${link('D206')}">Invitations</a><a class="btn btn-link" href="${link('D208')}">Devices and sessions</a></div></div>`;
+
+  const sitesTab = () => `<div class="stack">
+    <div class="row"><p class="muted grow">${c.sites.length} ${c.sites.length === 1 ? 'site' : 'sites'}</p>${readOnly ? '' : `<button class="btn btn-sm btn-secondary" type="button" data-open="add-site">${ic('plus')}Add site</button>`}</div>
+    <div class="grid cols-2">${c.sites.map((s) => `<div class="card pad stack-sm" style="box-shadow:inset 0 0 0 1px var(--line)">
+      <div class="row"><b class="grow" style="color:var(--text-strong)">${s.name}</b><span class="tag outline">${machines.filter((m) => m.site === s.id).length} machines</span></div>
+      <p class="muted" style="font-size:13px">${s.address}, ${s.pincode}</p>
+      <dl class="dl"><dt>Contact</dt><dd>${s.contact.name}<br><a href="tel:${s.contact.phone.replace(/\s/g, '')}">${s.contact.phone}</a></dd>
+        <dt>Access notes</dt><dd>${s.access || '<span class="faint">None</span>'}</dd></dl></div>`).join('')}</div></div>`;
+
+  const machinesTab = () => (machines.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Serial</th><th>Model</th><th>Site</th><th>Warranty</th><th>AMC</th><th>Status</th></tr></thead><tbody>
+    ${machines.map((m) => `<tr data-href="D302"><td><a class="rec" href="${link('D302')}">${m.serial}</a></td><td>${m.model}<span class="sub">${m.nickname || m.type}</span></td>
+      <td class="nowrap">${r.site(c.id, m.site)?.name ?? ''}</td><td>${warranty(m)}</td><td>${m.amc ? `<span class="mono" style="font-size:13px">${m.amc}</span>` : '<span class="faint">–</span>'}</td>
+      <td>${r.tag(...MACHINE[m.status])}</td></tr>`).join('')}</tbody></table></div>`
+    : empty('factory', 'No machines yet', `${c.machineCount ? `${c.machineCount} machines are archived with the company.` : 'Machines will appear here.'}`, readOnly ? '' : `<a class="btn btn-secondary" href="${link('D303')}">Add machine</a>`));
+
+  const ticketsTab = () => (tickets.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Ticket</th><th>Status</th><th>Machine</th><th>Engineer</th><th>Raised</th></tr></thead><tbody>
+    ${tickets.map((t) => `<tr data-href="D403?t=${t.number}" class="${t.severity === 'down' && !t.engineer ? 'urgent' : ''}"><td><a class="rec" href="${link('D403', `?t=${t.number}`)}">${t.number}</a><span class="sub">${t.type}</span></td>
+      <td>${r.ticketTag(t.status)}</td><td>${r.machine(t.machine).model}<span class="sub mono">${t.machine}</span></td>
+      <td class="nowrap">${t.engineer ? r.engineer(t.engineer).name : '<span class="red-text strong">Unassigned</span>'}</td><td class="nowrap">${r.date(t.created)}</td></tr>`).join('')}</tbody></table></div>`
+    : empty('wrench', 'No tickets yet', 'Service requests will appear here.'));
+
+  /* claims, orders, questions: numbers from the spec sample data; only Shree has them */
+  const shree = c.id === 'shree';
+  const claimsTab = () => (shree ? `<table class="table compact"><thead><tr><th>Claim</th><th>Machine</th><th>Status</th><th>Raised</th></tr></thead><tbody>
+    ${[['WCL-2026-0040', 'ZP-TF-2204', 'Submitted', 'blue', '2026-11-22'], ['WCL-2026-0042', 'ZP-TF-2310', 'Information requested', 'amber', '2026-11-18'],
+      ['WCL-2026-0043', 'ZP-TF-2310', 'Approved', 'green', '2026-11-04'], ['WCL-2026-0044', 'ZP-TF-2204', 'Rejected, appeal open', '', '2026-10-21']]
+      .map(([n, s, st, tone, when]) => `<tr data-href="D502"><td><a class="rec" href="${link('D502')}">${n}</a></td><td class="mono" style="font-size:13px">${s}</td><td>${r.tag(st, tone)}</td><td class="nowrap">${r.date(when)}</td></tr>`).join('')}
+    </tbody></table>` : empty('shield-check', 'No claims yet', 'Warranty claims will appear here.'));
+
+  const amcTab = () => (amc.length ? `<table class="table compact"><thead><tr><th>Contract</th><th>Plan</th><th>Machine</th><th>Visits</th><th>Ends</th><th>Status</th></tr></thead><tbody>
+    ${amc.map((x) => `<tr data-href="D602"><td><a class="rec" href="${link('D602')}">${x.number}</a></td><td>${x.plan}</td><td class="mono" style="font-size:13px">${x.machines.join(', ')}</td>
+      <td class="num">${x.visitsUsed} of ${x.visitsIncluded}</td><td class="nowrap">${r.date(x.end)}</td><td>${r.tag(...AMC[x.status])}</td></tr>`).join('')}</tbody></table>`
+    : empty('seal-check', 'No AMC yet', 'AMC contracts will appear here.', readOnly ? '' : `<a class="btn btn-secondary" href="${link('D603')}">Create AMC</a>`));
+
+  const ordersTab = () => (shree ? `<table class="table compact"><thead><tr><th>Order</th><th>Items</th><th>Status</th><th>Placed</th></tr></thead><tbody>
+    ${[['ORD-2026-0211', 'Ceramic heater element 650 W', 'Cancelled, refund started', ''], ['ORD-2026-0209', 'Timer relay 24 V DC × 2', 'Dispatched', 'blue'], ['ORD-2026-0207', 'Vacuum pump service kit', 'Delivered', 'green']]
+      .map(([n, item, st, tone], i) => `<tr data-href="D831"><td><a class="rec" href="${link('D831')}">${n}</a></td><td>${item}</td><td>${r.tag(st, tone)}</td><td class="nowrap">${r.date(['2026-11-21', '2026-11-19', '2026-11-14'][i])}</td></tr>`).join('')}
+    </tbody></table>` : empty('shopping-cart', 'No orders yet', 'Spare part orders will appear here.'));
+
+  const invoicesTab = () => {
+    if (!invoices.length) return empty('receipt', 'No invoices yet', 'Invoices and payments will appear here.', readOnly ? '' : `<a class="btn btn-secondary" href="${link('D902')}">Create invoice</a>`);
+    const pays = d.payments;
+    return `<div class="stack">
+      <div class="grid cols-3" style="gap:12px"><div class="kv"><span>Balance due</span><b>${r.money(dues)}</b></div>
+        <div class="kv"><span>Overdue</span><b class="red-text">${r.money(overdue)}</b></div><div class="kv"><span>Credit terms</span><b>${c.terms} days</b></div></div>
+      <div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Invoice</th><th>Status</th><th class="num">Amount</th><th class="num">Balance</th><th>Due</th></tr></thead><tbody>
+        ${invoices.map((i) => `<tr data-href="D903"><td><a class="rec" href="${link('D903')}">${i.number}</a><span class="sub">${i.title}</span></td><td>${invTag(i.status)}</td>
+          <td class="num">${r.money(i.amount)}</td><td class="num">${i.status === 'paid' ? '<span class="faint">–</span>' : r.money(r.balance(i))}</td><td class="nowrap">${r.date(i.due)}</td></tr>`).join('')}</tbody></table></div>
+      <h3 style="font-size:16px">Payments</h3>
+      <div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Receipt</th><th>Invoice</th><th>Method</th><th class="num">Amount</th><th>Status</th></tr></thead><tbody>
+        ${pays.map((x) => `<tr data-href="D911"><td>${x.receipt ? `<span class="mono">${x.receipt}</span>` : '<span class="faint">–</span>'}<span class="sub">${r.date(x.when)}</span></td><td class="mono" style="font-size:13px">${x.invoice}</td>
+          <td>${x.method}</td><td class="num">${r.money(x.amount)}</td><td>${r.tag(...{ paid: ['Paid', 'green'], failed: ['Failed', 'red'], processing: ['Processing', 'blue'] }[x.status])}</td></tr>`).join('')}</tbody></table></div></div>`;
+  };
+
+  const questionsTab = () => (shree ? `<ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line)">
+    ${[['QRY-2026-0030', 'Which heater suits 0.8 mm PET sheet?', 'Open', 'amber'], ['QRY-2026-0031', 'Mould change time on AFM-760', 'Answered', 'green'],
+      ['QRY-2026-0032', 'GST invoice copy for October', 'Closed', ''], ['QRY-2026-0033', 'Engineer arrived late on 12 Nov', 'Complaint', 'red']]
+      .map(([n, t, st, tone]) => `<li data-href="${st === 'Complaint' ? 'D1011' : 'D1002'}"><span class="ic-disc">${ic(st === 'Complaint' ? 'flag' : 'chat-circle-dots')}</span>
+        <span class="grow"><b>${t}</b><small class="mono">${n}</small></span><span class="end">${r.tag(st, tone)}</span></li>`).join('')}</ul>`
+    : empty('chat-circle-dots', 'No questions yet', 'Questions and complaints will appear here.'));
+
+  const documentsTab = () => (shree ? `<ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line)">
+    ${[['Commissioning record, ZP-TF-2204', 'PDF · 5 Dec 2025'], ['AMC-2026-0010 contract', 'PDF · 1 Apr 2026'], ['GST certificate', 'PDF · 14 May 2018'], ['Operator manual, AFM-760', 'PDF · shared with the company']]
+      .map(([t, s]) => `<li data-href="D1401"><span class="ic-disc">${ic('file-pdf')}</span><span class="grow"><b>${t}</b><small>${s}</small></span><button class="icon-btn sm" type="button" aria-label="Download" data-toast="Downloaded">${ic('download-simple')}</button></li>`).join('')}</ul>`
+    : empty('folder', 'No documents yet', 'Documents shared with this company will appear here.'));
+
+  const historyTab = () => `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
+    ${(ZXA.data.companyHistory[c.id] || [[c.created, c.createdBy, 'Company created']]).map(([when, who, what]) => `<tr><td class="nowrap">${r.date(when)}${when.length > 10 ? `, ${r.time(when)}` : ''}</td><td class="nowrap">${r.esc(who)}</td><td>${r.esc(what)}</td></tr>`).join('')}
+  </tbody></table>`;
+
+  const TABS = [['overview', 'Overview', overview], ['people', 'People', peopleTab, people.length], ['sites', 'Sites', sitesTab, c.sites.length],
+    ['machines', 'Machines', machinesTab, machines.length], ['tickets', 'Tickets', ticketsTab, open.length], ['claims', 'Claims', claimsTab],
+    ['amc', 'AMC', amcTab], ['orders', 'Orders', ordersTab], ['invoices', 'Invoices and payments', invoicesTab], ['questions', 'Questions', questionsTab],
+    ['documents', 'Documents', documentsTab], ['history', 'History', historyTab]];
+  document.getElementById('tabs').innerHTML = TABS.map(([key, label, , n], i) => `<button role="tab" aria-selected="${i === 0}" aria-controls="tab-${key}">${label}${n ? ` <span class="n">${n}</span>` : ''}</button>`).join('');
+  document.getElementById('panels').innerHTML = TABS.map(([key], i) => `<div id="tab-${key}" role="tabpanel"${i ? ' hidden' : ''}></div>`).join('');
+
+  /* each tab loads on first open: skeleton, then content (or its own error in the Tab error state) */
+  const SKELETON = '<div class="stack" aria-busy="true"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>';
+  const LOAD_MS = 450;
+  const loaded = new Set();
+  const load = (key) => {
+    const panel = document.getElementById(`tab-${key}`);
+    const render = TABS.find(([k]) => k === key)[2];
+    if (key === 'overview') { panel.innerHTML = render(); loaded.add(key); return; }
+    if (loaded.has(key)) return;
+    loaded.add(key);
+    panel.innerHTML = SKELETON;
+    window.setTimeout(() => {
+      panel.innerHTML = document.body.dataset.state === 'tab-error'
+        ? `<div class="inline-error">${ic('warning-circle')}Could not load this tab<button class="btn btn-sm btn-secondary" type="button" data-retry="${key}">Retry</button></div>`
+        : render();
+    }, LOAD_MS);
+  };
+  load('overview');
+  document.getElementById('tabs').addEventListener('click', (event) => {
+    const tab = event.target.closest('[role="tab"]');
+    if (tab) load(tab.getAttribute('aria-controls').slice(4));
+  });
+  document.addEventListener('click', (event) => {
+    const retry = event.target.closest('[data-retry]');
+    if (!retry) return;
+    loaded.delete(retry.dataset.retry);
+    document.body.dataset.state = 'ready';
+    load(retry.dataset.retry);
+  });
+
+  /* ---------- side cards ---------- */
+  const region = c.state === 'Maharashtra' ? 'anita' : 'sandeep';
+  document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Key facts</h3>${readOnly ? '' : `<a class="card-link" href="${link('D204', cq)}">Edit</a>`}</div>
+      <div class="card-body"><dl class="dl">
+        <dt>Code</dt><dd class="mono">${c.code}</dd><dt>GSTIN</dt><dd class="mono">${c.gstin}</dd><dt>PAN</dt><dd class="mono">${c.pan || '<span class="faint">Not set</span>'}</dd>
+        <dt>Billing</dt><dd>${r.esc(c.billing)}</dd><dt>Credit terms</dt><dd>${c.terms} days</dd>
+        <dt>Engineer</dt><dd>${r.engineer(region).name}, ${r.engineer(region).region}</dd>
+        <dt>Created</dt><dd>${r.date(c.created)}<br><span class="muted">${r.esc(c.createdBy)}</span></dd></dl></div></section>
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Primary contact</h3>${readOnly ? '' : `<a class="card-link" href="${link('D214', cq)}">Change</a>`}</div>
+      <div class="card-body stack-sm">${p ? `<div class="who">${r.avatar(p, 'lg')}<span><b>${p.name}</b><small>${p.designation}</small></span></div>
+        <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}${p.mobile}</a>${p.email ? `<a class="btn btn-sm btn-ghost" href="mailto:${p.email}">${ic('envelope-simple')}Email</a>` : ''}</div>`
+        : '<p class="muted">No primary contact.</p>'}</div></section>
+    ${readOnly ? '' : `<section class="card side-card"><div class="card-head"><h3 class="grow">Quick actions</h3></div>
+      <ul class="mini">
+        <li data-href="D402${cq}"><span class="ic-disc">${ic('wrench')}</span><span class="grow"><b>Create ticket</b></span>${ic('caret-right')}</li>
+        <li data-href="D902${cq}"><span class="ic-disc">${ic('receipt')}</span><span class="grow"><b>Create invoice</b></span>${ic('caret-right')}</li>
+        <li data-href="D1202${cq}"><span class="ic-disc">${ic('file-text')}</span><span class="grow"><b>Create quotation</b></span>${ic('caret-right')}</li>
+        <li data-href="D1302${cq}"><span class="ic-disc">${ic('megaphone')}</span><span class="grow"><b>Send announcement</b><small>To ${people.length} people of this company</small></span>${ic('caret-right')}</li>
+      </ul></section>`}`;
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* switching demo states reloads the open tab so Tab error shows */
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (button?.dataset.protoState === 'tab-error') ZXA.ui.toast('Open any tab other than Overview', 'info');
+});
+</script>
+</body>
+</html>

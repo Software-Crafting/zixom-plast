@@ -1,0 +1,51 @@
+/* Overview module layout no shared class covers: work queue rail (D102), today board cards (D104), search groups (D105). */
+
+/* ---------- D102 work queue rail: a list on desktop, a scrolling pill row on narrow screens ---------- */
+.q-rail .mini li{min-height:40px; padding:6px 16px; gap:10px; cursor:pointer; border-top:0}
+.q-rail .mini li .ic{width:16px; height:16px; color:var(--slate-500)}
+.q-rail .mini li .grow{min-width:0; font-size:var(--fs-13); color:var(--text-strong)}
+.q-rail .mini li .end{font-weight:600; color:var(--text-strong)}
+.q-rail .mini li.zero .grow, .q-rail .mini li.zero .end{color:var(--text-faint); font-weight:400}
+.q-rail .mini li[aria-current="true"]{background:var(--wash)}
+.q-rail .mini li[aria-current="true"] .grow{font-weight:600}
+.q-rail .mini li.missed .end{color:var(--red)}
+.q-rail .zero-toggle{padding:8px 16px 14px}
+.q-rail:not(.show-zero) li.zero{display:none}
+.q-due.missed{color:var(--red); font-weight:600}
+.q-new td{animation:flash 1.6s ease-out}
+
+/* ---------- D104 today board ---------- */
+.tb-card{display:flex; flex-direction:column; gap:6px}
+.tb-card .row{gap:8px}
+.tb-card p{font-size:var(--fs-13); color:var(--text-muted); margin:0}
+.tb-card .machine{color:var(--text-strong)}
+.lane .tb-none{padding:14px 4px; font-size:var(--fs-13); color:var(--text-faint); text-align:center}
+.tb-engineers{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px}
+.tb-engineers .card{flex:1 1 280px}
+
+@media (max-width:960px){
+  .q-rail .card-head, .q-rail .zero-toggle{display:none}
+  .q-rail .mini{display:flex; gap:6px; padding:10px; overflow-x:auto; scrollbar-width:none}
+  .q-rail .mini::-webkit-scrollbar{display:none}
+  .q-rail .mini li{flex-shrink:0; min-height:34px; padding:0 12px; border-radius:var(--r-pill); box-shadow:inset 0 0 0 1px var(--line-strong)}
+  .q-rail .mini li[aria-current="true"]{background:var(--slate-800); box-shadow:none}
+  .q-rail .mini li[aria-current="true"] .grow, .q-rail .mini li[aria-current="true"] .end, .q-rail .mini li[aria-current="true"] .ic{color:#fff}
+  .q-rail .mini li.zero{display:none}
+}
+
+/* icon disc inside table rows (same look as .mini .ic-disc) */
+.table .ic-disc{width:32px; height:32px; flex-shrink:0; display:grid; place-items:center; border-radius:10px; background:var(--slate-100); color:var(--slate-600)}
+.table .ic-disc .ic{width:16px; height:16px}
+.table .ic-disc.red{background:var(--red-50); color:var(--red)}
+.table .ic-disc.amber{background:var(--amber-50); color:var(--amber)}
+.table .ic-disc.blue{background:var(--blue-50); color:var(--blue)}
+.table .ic-disc.green{background:var(--green-50); color:var(--green)}
+.lane .card.tb-card{padding:10px 12px}
+.tb-card .ic{flex-shrink:0}
+.tb-card .tag{max-width:100%}
+@media (min-width:641px){.kanban.tb-board{grid-auto-columns:minmax(150px, 1fr)}}
+
+/* ---------- D106 notification centre: unread rows ---------- */
+.nc li.unread{background:#F7F9FE}
+.nc li.unread .grow b::after{content:""; display:inline-block; width:7px; height:7px; margin-left:6px; border-radius:50%; background:var(--blue); vertical-align:middle}
+.nc li:not(.unread) .grow b{font-weight:500}

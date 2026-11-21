@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D213 Deactivate or reactivate company</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
+</head>
+<body class="adm" data-page="D213" data-nav="D201">
+<main class="content">
+  <!-- the company record behind the modal -->
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+      <div class="record-head"><h1 class="name" id="name"></h1><span class="tags" id="chips"></span></div>
+    </div>
+    <div class="action-bar"><a class="btn btn-secondary" id="back" href="#D202">Back to company</a><button class="btn btn-primary" type="button" data-open="modal" id="reopen"></button></div>
+  </div>
+  <div class="card pad"><p class="muted" id="behind"></p></div>
+</main>
+
+<div class="overlay center" id="modal" data-static>
+  <div class="modal" role="alertdialog" aria-labelledby="m-title" style="width:560px">
+    <div class="modal-head"><span class="disc" id="m-disc"></span>
+      <div class="grow"><h2 id="m-title"></h2><p id="m-text"></p></div></div>
+    <div class="modal-body stack" id="m-body"></div>
+    <div class="modal-foot"><a class="btn btn-ghost" id="m-cancel" href="#D202">Cancel</a><button class="btn" type="button" id="m-go"></button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/access/A16-account-suspended.html">
+  <div><h3>What it is</h3><p>Deactivate a company with a reason, or reactivate it. <code>?c=shree</code> deactivates; <code>?c=ganga</code> or <code>?c=kaveri</code> reactivates.</p></div>
+  <div><h3>What you can do</h3><ul><li>Decide what happens to each open ticket first.</li><li>Pick a reason and confirm.</li></ul></div>
+  <div><h3>What happens next</h3><p>People of a deactivated company see A16 and cannot sign in. The company turns read only (D202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Open tickets are listed and need a decision before Deactivate is enabled.</li><li>Active AMC and dues are shown; dues stay collectable.</li><li>Reactivate restores sign in for active people.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const $ = (id) => document.getElementById(id);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const params = new URLSearchParams(location.search);
+  const c = cx.company(params.get('c') || 'shree') || cx.company('shree');
+  const reactivate = params.get('a') === 'reactivate' || ['deactivated', 'suspended'].includes(c.status);
+  const back = link('D202', `?c=${c.id}`);
+  const open = cx.openTicketsOf(c.id);
+  const amc = cx.amcOf(c.id).filter((x) => x.status !== 'expired');
+  const people = cx.peopleOf(c.id);
+
+  $('crumb').textContent = c.code;
+  $('name').textContent = c.name;
+  $('chips').innerHTML = cx.companyTag(c.status);
+  $('back').href = back;
+  $('m-cancel').href = back;
+  $('reopen').textContent = reactivate ? 'Reactivate' : 'Deactivate';
+  $('behind').textContent = `${people.length} people · ${cx.machineCount(c)} machines · ${open.length} open tickets`;
+
+  if (reactivate) {
+    $('m-disc').className = 'disc green';
+    $('m-disc').innerHTML = ic('power');
+    $('m-title').textContent = `Reactivate ${c.name}?`;
+    $('m-text').textContent = `${people.filter((p) => p.status !== 'disabled').length || people.length} people can sign in again and raise requests.`;
+    $('m-body').innerHTML = `${c.status === 'suspended' ? `<div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Dues of ${r.money(cx.dues(c))} are still open.</span></div>` : ''}
+      <div class="field"><label for="m-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="m-note" style="min-height:72px" placeholder="Why it is back"></textarea></div>
+      <label class="check"><input type="checkbox" checked> Tell the primary contact by push and SMS</label>`;
+    $('m-go').className = 'btn btn-primary';
+    $('m-go').textContent = 'Reactivate';
+  } else {
+    $('m-disc').className = 'disc red';
+    $('m-disc').innerHTML = ic('ban');
+    $('m-title').textContent = `Deactivate ${c.name}?`;
+    $('m-text').textContent = `${people.length} people will be signed out and see "${c.name} is not active" in the app. Records are kept and read only.`;
+    $('m-body').innerHTML = `
+      ${open.length ? `<div class="field"><span class="label">Open tickets: decide each first</span>
+        <ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line); max-height:240px; overflow:auto">${open.map((t) => `<li style="padding:8px 12px">
+          <span class="grow"><b class="mono">${t.number}</b><small>${r.ticketLabel(t.status)} · ${r.machine(t.machine).model}</small></span>
+          <select class="select sm" style="width:auto" data-decide aria-label="Decision for ${t.number}"><option value="">Choose</option><option>Cancel ticket</option><option>Finish, then lock</option></select></li>`).join('')}</ul>
+        <button class="btn btn-link" type="button" id="all-cancel" style="align-self:flex-start">Cancel all ${open.length}</button></div>` : ''}
+      <div class="grid cols-2" style="gap:10px">
+        <div class="kv"><span>Active AMC</span><b>${amc.length ? amc.map((x) => x.number).join(', ') : 'None'}</b></div>
+        <div class="kv"><span>Open dues</span><b>${r.money(cx.dues(c))}</b></div></div>
+      ${amc.length ? '<p class="muted" style="font-size:13px">AMC visits stop. Refunds, if any, go through D922.</p>' : ''}
+      <div class="field"><label for="m-reason">Reason</label><select class="select" id="m-reason"><option>Plant closed</option><option>No longer a customer</option><option>Duplicate company</option><option>Non payment</option><option>Other</option></select></div>`;
+    $('m-go').className = 'btn btn-danger';
+    $('m-go').textContent = 'Deactivate';
+  }
+
+  /* Deactivate stays disabled until every open ticket has a decision */
+  const sync = () => { if (!reactivate) $('m-go').disabled = [...document.querySelectorAll('[data-decide]')].some((s) => !s.value); };
+  document.addEventListener('change', (e) => { if (e.target.matches('[data-decide]')) sync(); });
+  $('all-cancel')?.addEventListener('click', () => { document.querySelectorAll('[data-decide]').forEach((s) => { s.value = 'Cancel ticket'; }); sync(); });
+  sync();
+  $('m-go').addEventListener('click', () => {
+    ZXA.ui.toast(reactivate ? `${c.name} reactivated` : `${c.name} deactivated. ${people.length} people signed out`);
+    window.setTimeout(() => { location.href = back; }, 900);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

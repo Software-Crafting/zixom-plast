@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D216 People</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D216" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>People</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D205"><svg class="ic"><use href="#ph-user-plus"/></svg>Add person</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="customers">Customers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="engineers">Engineers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="invited">Invited <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="disabled">Disabled <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#people"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Name, mobile, email or company" aria-label="Search people"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+        <span class="grow"></span>
+        <button class="icon-btn" type="button" aria-label="Choose columns" data-menu="columns-menu" data-tip="Columns"><svg class="ic"><use href="#ph-columns"/></svg></button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="people">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Name</th><th>Mobile</th><th class="sortable">Role</th><th class="sortable">Company</th>
+            <th class="sortable">Status</th><th class="sortable">Last active</th><th class="sortable">App</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-users"/></svg></span>
+        <h3>No people yet</h3><p>Customers and engineers who use the app appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D205">Add person</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Name</th><th>Mobile</th><th>Role</th><th>Company</th><th>Status</th><th>Last active</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="people" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Test push sent">Send test push</button>
+    <button class="btn" type="button" data-open="bulk-result">Disable</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Role</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Customer</button><button class="chip" type="button" aria-pressed="false">Engineer</button></div></div>
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Invited</button><button class="chip" type="button" aria-pressed="false">Active</button>
+        <button class="chip" type="button" aria-pressed="false">Disabled</button></div></div>
+      <div class="field"><label for="f-company">Company</label><select class="select" id="f-company"><option>Any</option></select></div>
+      <label class="check"><input type="checkbox"> Primary contacts only</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show people</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="disable" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="disable-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-user-x"/></svg></span>
+      <div class="grow"><h2 id="disable-title">Disable this person?</h2><p id="disable-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="disable-reason">Reason</label><select class="select" id="disable-reason"><option>Left the company</option><option>Asked by the primary contact</option><option>Misuse</option><option>Other</option></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Person disabled and signed out">Disable</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">1 done, 1 failed</h2><p>Rakesh Mehta is a primary contact. Choose another primary contact first.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="menu" id="columns-menu" hidden>
+  <div class="label">Columns</div>
+  <label class="check"><input type="checkbox" checked data-col="2" data-table="people"> Mobile</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="people"> Last active</label>
+  <label class="check"><input type="checkbox" checked data-col="7" data-table="people"> App</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-toast="Test push sent"><svg class="ic"><use href="#ph-bell-ring"/></svg>Send test push</button>
+  <a href="#D208"><svg class="ic"><use href="#ph-smartphone"/></svg>Devices</a>
+  <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy link</button>
+  <hr><button class="danger" type="button" data-open="disable"><svg class="ic"><use href="#ph-user-x"/></svg>Disable</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1105-team.html">
+  <div><h3>What it is</h3><p>Everyone who uses the app: customer people and engineers.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by role, company and status, export.</li><li>Click a row for the quick view; click the name for the full record.</li><li>Disable, enable or send a test push, one by one or in bulk.</li></ul></div>
+  <div><h3>What happens next</h3><p>Person (D205), engineer (D702), company (D202), devices (D208).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Permissions are flat; only the primary contact flag matters.</li><li>The primary contact cannot be disabled until another is chosen (D214).</li><li>Disabled people see A16 in the app. Bulk with failures shows done and failed (EC-A64).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const people = [...cx.people].sort((x, y) => x.name.localeCompare(y.name));
+  const isPrimary = (p) => p.companies.some((c) => c.primary);
+  const companyOf = (p) => (p.role === 'Engineer' ? `Zixom, ${p.region}` : p.companies.map((c) => cx.company(c.id).name).join(', '));
+  const openHref = (p) => (p.role === 'Engineer' ? `#D702?e=${p.id}` : `#D205?p=${p.id}`);
+  const lastActive = (p) => (p.lastActive ? r.ago(p.lastActive) : '<span class="faint">Never</span>');
+
+  const customers = people.filter((p) => p.role === 'Customer').length;
+  document.getElementById('head-sub').textContent = `${people.length} people · ${customers} customers · ${people.length - customers} engineers`;
+  document.querySelector('#people tbody').innerHTML = people.map((p) => `<tr data-drawer="quick" data-person="${p.id}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${p.name}"></label></td>
+    <td><span class="who">${r.avatar(p, 'sm')}<span><a href="${openHref(p)}"><b>${p.name}</b></a><small>${p.designation}${isPrimary(p) ? ' · Primary contact' : ''}</small></span></span></td>
+    <td class="nowrap">${p.mobile}</td>
+    <td>${cx.roleTag(p)}</td>
+    <td><span class="clip">${companyOf(p)}</span></td>
+    <td>${cx.personTag(p.status)}</td>
+    <td class="nowrap" data-sort="${p.lastActive ?? '0'}">${lastActive(p)}</td>
+    <td class="nowrap">${p.app ? `<span class="mono">${p.app}</span>` : '<span class="faint">–</span>'}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
+  </tr>`).join('');
+
+  const VIEWS = { all: () => true, customers: (p) => p.role === 'Customer', engineers: (p) => p.role === 'Engineer',
+    invited: (p) => p.status === 'invited', disabled: (p) => p.status === 'disabled' };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#people tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](cx.person(row.dataset.person)); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = people.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+  document.getElementById('f-company').insertAdjacentHTML('beforeend', cx.companies.map((c) => `<option>${c.name}</option>`).join(''));
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 8 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  /* quick view */
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = cx.person(event.detail.dataset.person);
+    const devices = ZXA.data.devices.filter((x) => x.person === p.id);
+    const limit = p.role === 'Engineer' ? 1 : 2;
+    document.getElementById('quick-title').textContent = p.name;
+    document.getElementById('quick-sub').textContent = `${p.designation} · ${companyOf(p)}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${cx.personTag(p.status)}${cx.roleTag(p)}${isPrimary(p) ? r.tag('Primary contact', 'blue') : ''}</div>
+      <dl class="dl">
+        <dt>Mobile</dt><dd><a href="tel:${p.mobile.replace(/\s/g, '')}">${p.mobile}</a></dd>
+        <dt>Email</dt><dd>${p.email || '<span class="faint">None</span>'}</dd>
+        <dt>${p.role === 'Engineer' ? 'Region' : 'Companies'}</dt><dd>${p.role === 'Engineer' ? p.region
+          : p.companies.map((c) => `<a href="#D202?c=${c.id}">${cx.company(c.id).name}</a>${c.primary ? ' (primary)' : ''}`).join('<br>')}</dd>
+        <dt>Last active</dt><dd>${lastActive(p)}</dd>
+        <dt>App version</dt><dd>${p.app ? `<span class="mono">${p.app}</span>${p.app !== '1.4.2' ? ' <span class="amber-text">update available</span>' : ''}` : '<span class="faint">Not installed</span>'}</dd>
+        <dt>Devices</dt><dd>${devices.length} of ${limit}</dd>
+      </dl>
+      ${devices.length ? `<ul class="mini card">${devices.map((x) => `<li><span class="ic-disc">${ic('smartphone')}</span><span class="grow"><b>${x.model}</b><small>${x.os} · ${r.ago(x.last)}</small></span>
+        ${x.push === 'ok' ? r.tag('Push on', 'green') : r.tag('Push token expired', 'amber')}</li>`).join('')}</ul>` : ''}
+      ${p.status === 'active' && isPrimary(p) ? `<div class="banner amber">${ic('warning')}<span class="grow"><b>Primary contact.</b> Choose another primary contact before you disable ${p.name.split(' ')[0]}.</span></div>` : ''}`;
+    const primaryCompany = p.companies.find((c) => c.primary);
+    const status = { active: isPrimary(p)
+      ? `<a class="btn btn-secondary" href="#D214?c=${primaryCompany?.id}">Change primary</a>`
+      : '<button class="btn btn-secondary" type="button" data-open="disable">Disable</button>',
+    disabled: '<button class="btn btn-secondary" type="button" data-close data-toast="Person enabled. They can sign in again">Enable</button>',
+    invited: '<button class="btn btn-secondary" type="button" data-close data-toast="Invitation sent again">Resend invitation</button>' }[p.status] ?? '';
+    document.getElementById('quick-foot').innerHTML = `<a class="btn btn-secondary" href="${openHref(p)}">Open</a><span class="grow"></span>${status}
+      <button class="btn btn-primary" type="button" data-toast="Test push sent to ${devices.length || 'no'} device${devices.length === 1 ? '' : 's'}"${devices.length ? '' : ' disabled'}>Send test push</button>`;
+    document.getElementById('disable-text').textContent = `${p.name} is signed out on every device and sees "Your account is suspended" in the app. Records stay.`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

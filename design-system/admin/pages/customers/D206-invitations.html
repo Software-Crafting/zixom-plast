@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D206 Invitations</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D206" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Invitations</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <a class="btn btn-primary" href="#D205"><svg class="ic"><use href="#ph-user-plus"/></svg>Invite person</a>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="invited">Invited <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="accepted">Accepted <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="expired">Expired <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="revoked">Revoked <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#invites"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Name, mobile or company" aria-label="Search invitations"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="invites">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Person</th><th class="sortable">Company</th><th class="sortable">Sent by</th><th class="sortable">Sent</th>
+            <th class="sortable">Status</th><th class="sortable">Expiry</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-envelope-simple"/></svg></span>
+        <h3>No invitations yet</h3><p>Invitations from the app and from the dashboard appear here.</p>
+        <div class="btns"><a class="btn btn-primary" href="#D205">Invite person</a></div></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Person</th><th>Company</th><th>Sent by</th><th>Sent</th><th>Status</th><th>Expiry</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="invites" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Invitations sent again">Resend</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Sent from</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">App</button><button class="chip" type="button" aria-pressed="false">Dashboard</button>
+        <button class="chip" type="button" aria-pressed="false">Import</button></div></div>
+      <div class="field"><label for="f-company">Company</label><select class="select" id="f-company"><option>Any</option></select></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">Sent from</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show invitations</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="revoke" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="revoke-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-ban"/></svg></span>
+      <div class="grow"><h2 id="revoke-title">Revoke this invitation?</h2><p id="revoke-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep invitation</button><button class="btn btn-danger" type="button" data-close data-toast="Invitation revoked">Revoke</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C1117-invite-sent.html">
+  <div><h3>What it is</h3><p>Every invitation to the app, sent by a primary contact in the app or by Admin here.</p></div>
+  <div><h3>What you can do</h3><ul><li>Resend, revoke or copy the invitation link.</li><li>Click a row for details; the name opens the person.</li></ul></div>
+  <div><h3>What happens next</h3><p>The person accepts in the app (A18) and becomes Active in People (D216).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Invitations are valid 7 days. Expired and revoked rows are grey.</li><li>Resend starts a new 7 day link; the old one stops working.</li><li>Up to 25 people per company (section 14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const STATUS = { invited: ['Invited', 'blue'], accepted: ['Accepted', 'green'], expired: ['Expired', ''], revoked: ['Revoked', ''] };
+  const invites = ZXA.data.invitations.map((x, i) => {
+    const p = x.person ? cx.person(x.person) : null;
+    return { ...x, i, name: p?.name ?? x.name, mobile: p?.mobile ?? x.mobile, initials: p?.initials ?? cx.initials(x.name), company: cx.company(x.company) };
+  });
+  const expiry = (x) => {
+    if (x.status === 'accepted') return `<span class="faint">Accepted ${r.dayDate(x.accepted)}</span>`;
+    const days = r.daysFromToday(x.expires);
+    if (x.status === 'invited') return `${r.date(x.expires)}<span class="sub ${days <= 3 ? 'amber-text' : ''}">in ${days} day${days === 1 ? '' : 's'}</span>`;
+    return r.date(x.expires);
+  };
+  const open = invites.filter((x) => x.status === 'invited').length;
+  document.getElementById('head-sub').textContent = `${open} waiting · valid 7 days`;
+
+  /* expired and revoked rows are grey: the cells read their colour from --text-strong */
+  document.querySelector('#invites tbody').innerHTML = invites.map((x) => `<tr data-drawer="quick" data-invite="${x.i}"
+      ${['expired', 'revoked'].includes(x.status) ? 'style="--text-strong:var(--text-faint)"' : ''}>
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.name}"></label></td>
+    <td><span class="who">${r.avatar(x, 'sm')}<span>${x.person ? `<a href="#D205?p=${x.person}"><b>${x.name}</b></a>` : `<b>${x.name}</b>`}<small>${x.mobile}</small></span></span></td>
+    <td><a href="#D202?c=${x.company.id}" class="clip">${x.company.name}</a><span class="sub mono">${x.company.code}</span></td>
+    <td>${x.by}<span class="sub">${x.from}</span></td>
+    <td class="nowrap" data-sort="${x.sent}">${r.dayDate(x.sent)}<span class="sub">${r.time(x.sent)}</span></td>
+    <td>${r.tag(...STATUS[x.status])}</td>
+    <td class="nowrap" data-sort="${x.expires}">${expiry(x)}</td>
+    <td class="actions nowrap">${x.status === 'accepted' ? '' : `<button class="btn btn-secondary btn-sm" type="button" data-toast="Invitation sent again to ${x.mobile}">Resend</button>`}</td>
+  </tr>`).join('');
+
+  const VIEWS = { all: () => true, invited: (x) => x.status === 'invited', accepted: (x) => x.status === 'accepted',
+    expired: (x) => x.status === 'expired', revoked: (x) => x.status === 'revoked' };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#invites tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](invites[row.dataset.invite]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = invites.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+  document.getElementById('f-company').insertAdjacentHTML('beforeend', cx.companies.map((c) => `<option>${c.name}</option>`).join(''));
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = invites[event.detail.dataset.invite];
+    document.getElementById('quick-title').textContent = x.name;
+    document.getElementById('quick-sub').textContent = `Invitation to ${x.company.name}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(...STATUS[x.status])}${r.tag(`From ${x.from.toLowerCase()}`, 'outline')}</div>
+      <dl class="dl">
+        <dt>Mobile</dt><dd>${x.mobile}</dd>
+        <dt>Company</dt><dd><a href="#D202?c=${x.company.id}">${x.company.name}</a></dd>
+        <dt>Sent by</dt><dd>${x.by}, ${r.dayDate(x.sent)} ${r.time(x.sent)}</dd>
+        <dt>${x.status === 'accepted' ? 'Accepted' : 'Expires'}</dt><dd>${x.status === 'accepted' ? `${r.dayDate(x.accepted)}, ${r.time(x.accepted)}` : r.date(x.expires)}</dd>
+        ${x.revoked ? `<dt>Revoked by</dt><dd>${x.revoked}</dd>` : ''}
+      </dl>
+      ${x.status === 'invited' ? `<div class="field"><span class="label">Invitation link</span><div class="input-wrap">${r.icon('link')}
+        <input class="input mono" value="https://zixom.in/i/${x.company.code.toLowerCase()}-${x.i + 41}x7" readonly aria-label="Invitation link"></div><span class="hint">Opens the app and signs in with ${x.mobile}.</span></div>` : ''}`;
+    const foot = {
+      invited: `<button class="btn btn-ghost" type="button" data-toast="Link copied">Copy link</button><span class="grow"></span>
+        <button class="btn btn-secondary" type="button" data-open="revoke">Revoke</button><button class="btn btn-primary" type="button" data-close data-toast="Invitation sent again">Resend</button>`,
+      accepted: `${x.person ? `<a class="btn btn-secondary" href="#D205?p=${x.person}">Open person</a>` : ''}<span class="grow"></span>`,
+      expired: `<span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="New invitation sent, valid 7 days">Send again</button>`,
+      revoked: `<span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="New invitation sent, valid 7 days">Send again</button>`,
+    };
+    document.getElementById('quick-foot').innerHTML = foot[x.status];
+    document.getElementById('revoke-text').textContent = `The link for ${x.name} stops working at once. ${x.by} will be told.`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

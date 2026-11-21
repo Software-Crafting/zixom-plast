@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D203 Add customer</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D203" data-nav="D201">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Add customer</span></nav>
+      <div class="page-head" style="padding:0"><div class="grow"><h1>Add customer</h1><p>The code is assigned on save: next is <span class="mono">ZP-C-0006</span>.</p></div></div>
+    </div>
+  </div>
+
+  <div id="from-request" class="banner center" style="margin-bottom:16px" hidden><svg class="ic"><use href="#ph-user-check"/></svg>
+    <span class="grow" id="from-text"></span></div>
+
+  <form class="card pad" id="form" novalidate data-when="ready duplicate errors">
+    <section class="form-section">
+      <h3>Company</h3><p>As on the GST certificate.</p>
+      <div class="form-grid">
+        <div class="field full"><label for="name">Company name</label><input class="input" id="name" maxlength="120" autocomplete="organization"></div>
+        <div class="field"><label for="gstin">GSTIN</label><input class="input mono" id="gstin" maxlength="15" placeholder="24AAKCS4821M1Z2" style="text-transform:uppercase">
+          <span class="hint" id="gstin-msg">15 characters. The state is filled from the first two digits.</span></div>
+        <div class="field"><label for="pan">PAN <span class="opt">optional</span></label><input class="input mono" id="pan" maxlength="10" style="text-transform:uppercase"><span class="hint">Taken from the GSTIN</span></div>
+        <div class="field full"><label for="billing">Billing address</label><textarea class="textarea" id="billing" style="min-height:72px"></textarea></div>
+        <div class="field"><label for="state">State</label><select class="select" id="state"><option value="">Choose</option></select></div>
+        <div class="field"><label for="bpin">Pincode</label><input class="input mono" id="bpin" inputmode="numeric" maxlength="6"><span class="hint" id="bpin-msg">6 digits</span></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>First site</h3><p>Where the machines are. Add more sites later.</p>
+      <div class="form-grid">
+        <div class="field"><label for="sname">Site name</label><input class="input" id="sname" placeholder="Main plant"></div>
+        <div class="field"><label for="spin">Pincode</label><input class="input mono" id="spin" inputmode="numeric" maxlength="6"><span class="hint" id="spin-msg">Checked against service areas</span></div>
+        <div class="field full"><label for="saddr">Site address</label><input class="input" id="saddr"><label class="check" style="margin-top:6px"><input type="checkbox" id="same"> Same as billing address</label></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Primary contact</h3><p>Signs in to the app with this mobile and can invite colleagues.</p>
+      <div class="form-grid">
+        <div class="field"><label for="cname">Name</label><input class="input" id="cname" autocomplete="name"></div>
+        <div class="field"><label for="cdes">Designation <span class="opt">optional</span></label><input class="input" id="cdes" placeholder="Plant head"></div>
+        <div class="field"><label for="cmob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="cmob" style="padding-left:44px" inputmode="tel" maxlength="11"></div><span class="hint" id="cmob-msg">10 digits</span></div>
+        <div class="field"><label for="cmail">Email <span class="opt">optional</span></label><input class="input" id="cmail" type="email"><span class="hint">Without email, notices go by SMS (EC-A61)</span></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Notes</h3>
+      <div class="form-grid"><div class="field full"><label for="notes">Internal notes <span class="opt">optional</span></label><textarea class="textarea" id="notes" maxlength="1000"></textarea><span class="hint">Only Admins see this.</span></div></div>
+    </section>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note">Nothing is sent to the customer until you invite them.</span>
+      <a class="btn btn-ghost" href="#D201">Cancel</a>
+      <button class="btn btn-secondary" type="button" data-menu="save-menu">Save and<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      <button class="btn btn-primary" type="submit" data-then="save" id="save">Save</button>
+    </div>
+  </form>
+</main>
+
+<div class="menu" id="save-menu" hidden>
+  <button type="submit" form="form" data-then="machine"><svg class="ic"><use href="#ph-factory"/></svg>Save and add machine</button>
+  <button type="submit" form="form" data-then="invite"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Save and invite</button>
+</div>
+
+<aside class="proto" data-states="ready duplicate errors" data-mobile="../../../screens/customer/C1103-company.html">
+  <div><h3>What it is</h3><p>Create a customer company with its first site and primary contact. <code>?v=VER-2026-0020</code> opens it filled from a verification request.</p></div>
+  <div><h3>What you can do</h3><ul><li>Fill the form; GSTIN is checked as you type.</li><li>Save, Save and add machine, or Save and invite the primary contact.</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer detail (D202), Add machine (D303), Invitations (D206). From a request: the person is approved and linked.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>GSTIN: 15 character pattern with a check digit.</li><li>Duplicate GSTIN or mobile warns with a link to the existing company (Duplicate state).</li><li>Invalid pincode; required fields (Errors state).</li><li>Offline keeps the data (EC-A01); Save disables on first click (EC-A09).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const $ = (id) => document.getElementById(id);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const STATES = { '06': 'Haryana', '07': 'Delhi', '08': 'Rajasthan', '09': 'Uttar Pradesh', '23': 'Madhya Pradesh', '24': 'Gujarat',
+    '27': 'Maharashtra', '29': 'Karnataka', '33': 'Tamil Nadu', '36': 'Telangana' };
+  $('state').insertAdjacentHTML('beforeend', Object.values(STATES).sort().map((s) => `<option>${s}</option>`).join(''));
+
+  /* GSTIN: 2 digit state, PAN (5 letters, 4 digits, 1 letter), entity, Z, check character (mod 36) */
+  const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const PATTERN = /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+  const checkChar = (g) => {
+    let sum = 0;
+    for (let i = 0; i < 14; i += 1) { const v = CHARS.indexOf(g[i]) * (i % 2 ? 2 : 1); sum += Math.floor(v / 36) + (v % 36); }
+    return CHARS[(36 - (sum % 36)) % 36];
+  };
+  const SERVICEABLE = /^(38|39|36|41|40|12|11)/;
+
+  const setMsg = (input, msgId, text, kind) => {
+    const msg = $(msgId);
+    input.setAttribute('aria-invalid', String(kind === 'error'));
+    msg.className = kind === 'error' ? 'error' : 'hint';
+    msg.innerHTML = kind === 'error' ? `${r.icon('warning-circle')}<span>${text}</span>` : text;
+  };
+  const checkGstin = () => {
+    const input = $('gstin');
+    const g = input.value.trim().toUpperCase();
+    if (!g) return setMsg(input, 'gstin-msg', '15 characters. The state is filled from the first two digits.', 'hint');
+    const dup = cx.companies.find((c) => c.gstin === g);
+    if (dup) {
+      return setMsg(input, 'gstin-msg', `Already used by <a href="${link('D202', `?c=${dup.id}`)}">${dup.code} ${r.esc(dup.name)}</a>`, 'error');
+    }
+    if (g.length < 15) return setMsg(input, 'gstin-msg', `${g.length} of 15 characters`, 'hint');
+    if (!PATTERN.test(g)) return setMsg(input, 'gstin-msg', 'This is not a valid GSTIN format', 'error');
+    if (checkChar(g) !== g[14]) return setMsg(input, 'gstin-msg', 'Check digit does not match. Look for a typo', 'error');
+    if (STATES[g.slice(0, 2)]) $('state').value = STATES[g.slice(0, 2)];
+    if (!$('pan').value) $('pan').value = g.slice(2, 12);
+    return setMsg(input, 'gstin-msg', `<span class="green-text">Valid · ${STATES[g.slice(0, 2)] ?? 'state code ' + g.slice(0, 2)}</span>`, 'hint');
+  };
+  const checkPin = (id) => {
+    const input = $(id);
+    const v = input.value.trim();
+    if (!v) return setMsg(input, `${id}-msg`, id === 'bpin' ? '6 digits' : 'Checked against service areas', 'hint');
+    if (!/^[1-9]\d{5}$/.test(v)) return setMsg(input, `${id}-msg`, 'Enter a 6 digit pincode', 'error');
+    if (id === 'spin' && !SERVICEABLE.test(v)) return setMsg(input, `${id}-msg`, '<span class="amber-text">Outside service areas. Tickets will be flagged (EC-A48)</span>', 'hint');
+    return setMsg(input, `${id}-msg`, '<span class="green-text">Valid</span>', 'hint');
+  };
+  const checkMobile = () => {
+    const input = $('cmob');
+    const digits = input.value.replace(/\D/g, '');
+    if (!digits) return setMsg(input, 'cmob-msg', '10 digits', 'hint');
+    if (!/^[6-9]\d{9}$/.test(digits)) return setMsg(input, 'cmob-msg', 'Enter a 10 digit mobile number', 'error');
+    const pretty = `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+    const engineer = cx.engineers.find((p) => p.mobile === pretty);
+    if (engineer) return setMsg(input, 'cmob-msg', `This is engineer ${engineer.name}'s number. <a href="${link('D207')}">Account conflicts</a>`, 'error');
+    const person = cx.customers.find((p) => p.mobile === pretty);
+    if (person) return setMsg(input, 'cmob-msg', `<span class="amber-text">${person.name} uses this number at ${person.companies.map((k) => `<a href="${link('D202', `?c=${k.id}`)}">${r.esc(cx.company(k.id).name)}</a>`).join(', ')}. Saving adds this company to them.</span>`, 'hint');
+    return setMsg(input, 'cmob-msg', '<span class="green-text">Valid</span>', 'hint');
+  };
+  $('gstin').addEventListener('input', checkGstin);
+  $('bpin').addEventListener('input', () => checkPin('bpin'));
+  $('spin').addEventListener('input', () => checkPin('spin'));
+  $('cmob').addEventListener('input', checkMobile);
+  $('same').addEventListener('change', (e) => { if (e.target.checked) { $('saddr').value = $('billing').value; $('spin').value = $('bpin').value; checkPin('spin'); } });
+
+  const fill = (values) => { Object.entries(values).forEach(([id, value]) => { $(id).value = value; }); checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile(); };
+  const clear = () => { document.getElementById('form').reset(); document.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile(); };
+
+  /* opened from a verification request: fill in what the person entered */
+  const v = cx.verification(new URLSearchParams(location.search).get('v') || '');
+  const fromRequest = () => {
+    if (!v) return;
+    $('from-request').hidden = false;
+    $('from-text').innerHTML = `<b>From <span class="mono">${v.number}</span>.</b> ${v.name} is approved and linked when you save.`;
+    $('save').textContent = 'Save and approve';
+    fill({ name: v.company, gstin: v.proof[0] === 'GSTIN' ? v.proof[1] : '', cname: v.name, cdes: v.designation, cmob: v.mobile.replace('+91 ', '').replace(' ', ''), cmail: v.email, sname: 'Main plant' });
+  };
+  fromRequest();
+
+  const required = ['name', 'gstin', 'billing', 'state', 'bpin', 'sname', 'saddr', 'spin', 'cname', 'cmob'];
+  const showErrors = () => {
+    let first = null;
+    required.forEach((id) => {
+      const input = $(id);
+      const field = input.closest('.field');
+      field.querySelector('.error.req')?.remove();
+      if (input.value.trim()) return;
+      input.setAttribute('aria-invalid', 'true');
+      field.insertAdjacentHTML('beforeend', `<span class="error req">${r.icon('warning-circle')}Required</span>`);
+      first = first || input;
+    });
+    $('bar-note').innerHTML = first ? `<span class="red-text">Fix ${document.querySelectorAll('.error.req').length} fields to save</span>` : 'Nothing is sent to the customer until you invite them.';
+    return first;
+  };
+
+  let then = 'save';
+  document.addEventListener('click', (event) => { const b = event.target.closest('[data-then]'); if (b) then = b.dataset.then; });
+  $('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const first = showErrors();
+    if (first || document.querySelector('#form [aria-invalid="true"]')) { (first || document.querySelector('#form [aria-invalid="true"]')).focus(); return; }
+    const button = $('save');
+    button.setAttribute('aria-busy', 'true');
+    button.disabled = true;
+    ZXA.ui.toast(v ? `Saved. ${v.name} approved` : then === 'invite' ? 'Saved. Invitation sent' : 'Saved');
+    window.setTimeout(() => ZXA.ui.go(then === 'machine' ? 'D303' : 'D202?c=shree'), 900);
+  });
+
+  /* demo states: duplicate fills an existing GSTIN and mobile; errors submits the empty form */
+  document.addEventListener('click', (event) => {
+    const state = event.target.closest('[data-proto-state]')?.dataset.protoState;
+    if (!state) return;
+    document.querySelectorAll('.error.req').forEach((el) => el.remove());
+    clear();
+    if (state === 'duplicate') fill({ name: 'Shree Packaging Industries Pvt Ltd', gstin: '24AAAAA0000A1Z5', cname: 'Rakesh Mehta', cmob: '9825011410', bpin: '382445' });
+    if (state === 'errors') { fill({ name: 'Sai Thermoform Works', gstin: '24AAKCS9911K1Z4', bpin: '3600' }); showErrors(); }
+    if (state === 'ready') fromRequest();
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

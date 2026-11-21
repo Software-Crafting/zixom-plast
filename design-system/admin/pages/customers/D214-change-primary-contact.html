@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D214 Change primary contact</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
+</head>
+<body class="adm" data-page="D214" data-nav="D201">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+      <div class="record-head"><h1 class="name" id="name"></h1><span class="tags" id="chips"></span></div>
+    </div>
+    <div class="action-bar"><a class="btn btn-secondary" id="back" href="#D202">Back to company</a><button class="btn btn-primary" type="button" data-open="drawer">Change primary contact</button></div>
+  </div>
+  <div class="card pad"><p class="muted" id="behind"></p></div>
+</main>
+
+<div class="overlay right" id="drawer">
+  <div class="drawer" role="dialog" aria-labelledby="d-title">
+    <div class="drawer-head"><div class="grow"><h2 id="d-title">Change primary contact</h2><p id="d-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="choices" id="people"></div>
+      <p class="muted" style="font-size:13px">The primary contact approves colleagues who sign up and gets account notices. Everything else is the same for everyone.</p>
+    </div>
+    <div class="drawer-foot"><span class="grow" id="d-note" style="font-size:13px; color:var(--text-muted)"></span>
+      <button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="save" disabled>Save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/customer/C1114-change-primary.html">
+  <div><h3>What it is</h3><p>Pick the company's primary contact. Opens with <code>?c=shree</code> or <code>?c=nova</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick one active person and save.</li></ul></div>
+  <div><h3>What happens next</h3><p>Both people are told by push. Back to Customer detail (D202).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Disabled and invited people cannot be picked.</li><li>Permissions are flat; only this flag differs.</li><li>Needed before the current primary can be disabled (D205).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const $ = (id) => document.getElementById(id);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const params = new URLSearchParams(location.search);
+  const c = cx.company(params.get('c') || 'shree') || cx.company('shree');
+  const current = cx.primaryOf(c.id);
+  const people = cx.peopleOf(c.id);
+  const back = link('D202', `?c=${c.id}`);
+
+  $('crumb').textContent = c.code;
+  $('name').textContent = c.name;
+  $('chips').innerHTML = cx.companyTag(c.status);
+  $('back').href = back;
+  $('behind').textContent = `Primary contact: ${current?.name ?? 'none'} · ${people.length} people`;
+  $('d-sub').textContent = `${c.name} · now ${current?.name ?? 'none'}`;
+
+  const preselect = params.get('p');
+  $('people').innerHTML = people.map((p) => {
+    const blocked = p.status !== 'active';
+    return `<label class="choice"${blocked ? ' style="opacity:.55; cursor:not-allowed"' : ''}>
+      <input type="radio" class="sr-only" name="primary" value="${p.id}"${p === current ? ' checked' : ''}${blocked ? ' disabled' : ''}${preselect === p.id && !blocked ? ' checked' : ''}>
+      ${r.avatar(p)}<span class="grow"><b>${p.name}</b><small>${p.designation} · ${p.mobile}</small></span>
+      <span>${p === current ? r.tag('Current', 'blue') : blocked ? cx.personTag(p.status) : ''}</span></label>`;
+  }).join('');
+
+  const sync = () => {
+    const picked = cx.person(document.querySelector('input[name="primary"]:checked')?.value);
+    const changed = picked && picked !== current;
+    $('save').disabled = !changed;
+    $('d-note').textContent = changed ? `${picked.name} and ${current?.name ?? 'nobody'} will be told` : '';
+  };
+  $('people').addEventListener('change', sync);
+  sync();
+  $('save').addEventListener('click', () => {
+    ZXA.ui.toast('Primary contact changed. Both people told');
+    window.setTimeout(() => { location.href = back; }, 900);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

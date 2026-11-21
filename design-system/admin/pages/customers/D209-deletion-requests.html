@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D209 Deletion requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D209" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Deletion requests</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="pending">Pending <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="blocked">Blocked <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="done">Completed <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="cancelled">Cancelled <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#deletions"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Request, person or company" aria-label="Search deletion requests"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="deletions">
+          <thead><tr>
+            <th class="sortable">Request</th><th class="sortable">Person</th><th class="sortable">Requested</th><th class="sortable">Deletion date</th>
+            <th>Blockers</th><th class="sortable">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-trash"/></svg></span>
+        <h3>No deletion requests yet</h3><p>Requests from the app (Delete account) appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Request</th><th>Person</th><th>Requested</th><th>Deletion date</th><th>Blockers</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Blockers</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Open tickets</button><button class="chip" type="button" aria-pressed="false">Unpaid invoices</button>
+        <button class="chip" type="button" aria-pressed="false">Active AMC</button><button class="chip" type="button" aria-pressed="false">Pending refunds</button></div></div>
+      <label class="check"><input type="checkbox"> Wait is over</label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+
+<!-- approve: destructive, names the person and the consequence -->
+<div class="overlay center" id="approve" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="approve-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="approve-title"></h2><p id="approve-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="approve-pw">Your password</label><input class="input" id="approve-pw" type="password" autocomplete="current-password"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Account deleted. Records kept without personal data">Delete account</button></div>
+  </div>
+</div>
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="dialog" aria-labelledby="reject-title">
+    <div class="modal-head"><div class="grow"><h2 id="reject-title">Reject this request?</h2><p>The person sees your reason in the app and keeps the account.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="reject-reason">Reason</label><select class="select" id="reject-reason"><option>Open items must be cleared first</option><option>Records must be kept by law</option><option>Request not made by the account owner</option><option>Other</option></select></div>
+      <div class="field"><label for="reject-note">Message to the person <span class="opt">optional</span></label><textarea class="textarea" id="reject-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Request rejected. The person is told">Reject</button></div>
+  </div>
+</div>
+<div class="overlay center" id="extend" hidden>
+  <div class="modal" role="dialog" aria-labelledby="extend-title">
+    <div class="modal-head"><div class="grow"><h2 id="extend-title">Extend the wait</h2><p>The person is told the new deletion date.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="extend-date">New deletion date</label><input class="input" id="extend-date" type="date"></div>
+      <div class="field"><label for="extend-reason">Reason</label><input class="input" id="extend-reason" value="Waiting for open items to clear"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Wait extended. The person is told">Extend</button></div>
+  </div>
+</div>
+<div class="overlay center" id="cancel" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cancel-title">
+    <div class="modal-head"><div class="grow"><h2 id="cancel-title">Cancel this deletion?</h2><p>Use this when the person asked to keep the account. They are told and can use the app as before.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep request</button><button class="btn btn-primary" type="button" data-close data-toast="Deletion cancelled">Cancel deletion</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/access/A24-deletion-requested.html">
+  <div><h3>What it is</h3><p>Requests to delete an account, made in the app (A24).</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a row to see blockers and the deletion date.</li><li>Approve, reject with a reason, extend the wait, or cancel on the person's request.</li></ul></div>
+  <div><h3>What happens next</h3><p>On approval personal data is erased; tickets, invoices and machine history are kept anonymised (A25 in the app).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Approve is disabled while blockers exist: open tickets, unpaid invoices, active AMC, pending refunds (EC-A53).</li><li>30 day wait from the request (flow F15).</li><li>The person can cancel in the app; the row moves to Cancelled.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const STATUS = { pending: ['Pending', 'amber'], cancelled: ['Cancelled by person', ''], done: ['Completed', 'green'] };
+  const list = ZXA.data.deletions.map((x, i) => {
+    const p = x.person ? cx.person(x.person) : null;
+    return { ...x, i, p, name: p?.name ?? x.name, initials: p?.initials ?? '–', company: cx.company(x.company) };
+  });
+  const waitLeft = (x) => r.daysFromToday(x.scheduled);
+  const canApprove = (x) => x.status === 'pending' && !x.blockers.length && waitLeft(x) <= 0;
+  const blockersCell = (x) => (x.status !== 'pending' ? '<span class="faint">–</span>'
+    : x.blockers.length ? `<span class="tags">${x.blockers.map(([kind]) => r.tag(kind, 'red')).join('')}</span>` : r.tag('None', 'green'));
+  const dateCell = (x) => {
+    if (x.status !== 'pending') return `${r.date(x.scheduled)}`;
+    const left = waitLeft(x);
+    return `${r.date(x.scheduled)}<span class="sub ${left <= 0 ? 'green-text' : ''}">${left <= 0 ? 'Wait is over' : `in ${left} days`}</span>`;
+  };
+  const pending = list.filter((x) => x.status === 'pending');
+  document.getElementById('head-sub').textContent = `${pending.length} pending · ${pending.filter((x) => x.blockers.length).length} blocked · 30 day wait`;
+
+  document.querySelector('#deletions tbody').innerHTML = list.map((x) => `<tr data-drawer="quick" data-del="${x.i}">
+    <td><span class="mono strong">${x.number}</span><span class="sub">${x.reason}</span></td>
+    <td>${x.p ? `<a href="#D205?p=${x.p.id}"><b>${x.name}</b></a>` : `<b class="faint">${x.name}</b>`}<span class="sub">${x.company.name}</span></td>
+    <td class="nowrap" data-sort="${x.requested}">${r.dayDate(x.requested)}<span class="sub">${r.time(x.requested)}</span></td>
+    <td class="nowrap" data-sort="${x.scheduled}">${dateCell(x)}</td>
+    <td>${blockersCell(x)}</td>
+    <td>${r.tag(...STATUS[x.status])}</td>
+  </tr>`).join('');
+
+  const VIEWS = { pending: (x) => x.status === 'pending', blocked: (x) => x.status === 'pending' && x.blockers.length > 0,
+    done: (x) => x.status === 'done', cancelled: (x) => x.status === 'cancelled', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#deletions tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](list[row.dataset.del]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('pending');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 5 }, () => `<tr>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.del];
+    document.getElementById('quick-title').textContent = x.number;
+    document.getElementById('quick-sub').textContent = `${x.name} · ${x.company.name}`;
+    const blockers = x.blockers.length
+      ? `<div class="banner red">${ic('ban')}<span class="grow"><b>Cannot delete yet.</b> Clear these first or wait for them to close.</span></div>
+         <ul class="mini card">${x.blockers.map(([kind, number, page, q]) => `<li data-href="${page}${q}"><span class="ic-disc red">${ic(kind.includes('ticket') ? 'wrench' : 'receipt')}</span>
+           <span class="grow"><b class="mono">${number}</b><small>${kind}</small></span>${ic('caret-right')}</li>`).join('')}</ul>`
+      : x.status === 'pending' ? `<div class="banner green">${ic('check-circle')}<span class="grow"><b>No blockers.</b> No open tickets, unpaid invoices, active AMC or pending refunds.</span></div>` : '';
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(...STATUS[x.status])}</div>
+      <dl class="dl">
+        <dt>Person</dt><dd>${x.p ? `${x.name}<br><span class="muted">${x.p.mobile}</span>` : `<span class="faint">${x.name}, data erased</span>`}</dd>
+        <dt>Company</dt><dd><a href="#D202?c=${x.company.id}">${x.company.name}</a></dd>
+        <dt>Reason given</dt><dd>${x.reason}</dd>
+        <dt>Requested</dt><dd>${r.dayDate(x.requested)}, ${r.time(x.requested)}</dd>
+        <dt>Deletion date</dt><dd>${r.date(x.scheduled)}${x.status === 'pending' ? `<br><span class="muted">${waitLeft(x) <= 0 ? 'Wait is over' : `in ${waitLeft(x)} days`}</span>` : ''}</dd>
+        ${x.cancelled ? `<dt>Cancelled</dt><dd>${r.dayDate(x.cancelled)}, ${r.time(x.cancelled)} in the app</dd>` : ''}
+        ${x.done ? `<dt>Deleted</dt><dd>${r.dayDate(x.done)}, ${r.time(x.done)}</dd>` : ''}
+      </dl>
+      ${blockers}
+      ${x.status === 'pending' ? '<p class="muted">On approval personal data is erased. Tickets, invoices and machine history are kept without the name.</p>' : ''}`;
+    const reason = x.blockers.length ? 'Clear the blockers first' : `Wait ends ${r.date(x.scheduled)}`;
+    document.getElementById('quick-foot').innerHTML = x.status === 'pending'
+      ? `<button class="btn btn-ghost" type="button" data-open="cancel">Cancel deletion</button><span class="grow"></span>
+         <button class="btn btn-secondary" type="button" data-open="extend">Extend</button><button class="btn btn-secondary" type="button" data-open="reject">Reject</button>
+         <button class="btn btn-primary" type="button" data-open="approve"${canApprove(x) ? '' : ` disabled title="${reason}"`}>Approve</button>`
+      : '<span class="grow"></span><button class="btn btn-secondary" type="button" data-close>Close</button>';
+    document.getElementById('approve-title').textContent = `Delete ${x.name}'s account?`;
+    document.getElementById('approve-text').textContent = `Name, mobile, email and devices are erased now. ${x.company.name} keeps its tickets and invoices without the name. This cannot be undone.`;
+    const later = new Date(`${x.scheduled}T00:00:00`);
+    later.setDate(later.getDate() + 15);
+    document.getElementById('extend-date').value = `${later.getFullYear()}-${String(later.getMonth() + 1).padStart(2, '0')}-${String(later.getDate()).padStart(2, '0')}`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

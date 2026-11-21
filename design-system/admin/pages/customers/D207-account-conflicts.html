@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D207 Account conflicts</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D207" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Account conflicts</h1><p>One mobile number or email on two accounts</p></div>
+  </div>
+
+  <div data-when="ready">
+    <div class="tabs" role="tablist" aria-label="Conflicts" style="margin-bottom:16px">
+      <button role="tab" aria-selected="true" aria-controls="tab-open">Open <span class="n" id="n-open"></span></button>
+      <button role="tab" aria-selected="false" aria-controls="tab-resolved">Resolved <span class="n" id="n-resolved"></span></button>
+    </div>
+    <div id="tab-open" role="tabpanel" class="stack"></div>
+    <div id="tab-resolved" role="tabpanel" hidden>
+      <section class="card list-card"><div class="table-wrap no-top"><table class="table" id="resolved">
+        <thead><tr><th>Case</th><th>Number or email</th><th>Accounts</th><th>Resolution</th><th class="sortable">Resolved</th></tr></thead>
+        <tbody></tbody></table></div></section>
+    </div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>No conflicts</h3><p>Every number and email is on one account.</p></div></div>
+  </div>
+
+  <div data-when="loading" class="stack">
+    <div class="card pad stack"><span class="sk sk-title" style="width:280px"></span>
+      <div class="grid cols-2"><span class="sk sk-block" style="height:180px"></span><span class="sk sk-block" style="height:180px"></span></div></div>
+    <div class="card pad stack"><span class="sk sk-title" style="width:280px"></span>
+      <div class="grid cols-2"><span class="sk sk-block" style="height:180px"></span><span class="sk sk-block" style="height:180px"></span></div></div>
+  </div>
+</main>
+
+<!-- every resolution asks for a reason and notifies the person -->
+<div class="overlay center" id="resolve" hidden>
+  <div class="modal" role="dialog" aria-labelledby="resolve-title">
+    <div class="modal-head"><span class="disc" id="resolve-disc"><svg class="ic"><use href="#ph-git-compare"/></svg></span>
+      <div class="grow"><h2 id="resolve-title"></h2><p id="resolve-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="resolve-reason">Reason</label><textarea class="textarea" id="resolve-reason" maxlength="300" placeholder="Why this account keeps the number"></textarea>
+        <span class="hint">Saved in the activity log.</span></div>
+      <label class="check"><input type="checkbox" checked> Tell the person by SMS and in the app</label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="resolve-go" data-close>Confirm</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error" data-mobile="../../../screens/access/A20-number-on-two-accounts.html">
+  <div><h3>What it is</h3><p>Cases where a mobile number or email is on two accounts, or on an engineer and a customer.</p></div>
+  <div><h3>What you can do</h3><ul><li>Compare both accounts side by side with their last activity.</li><li>Keep one, move the number to the other, ask the person to use another number, or merge two customer people.</li></ul></div>
+  <div><h3>What happens next</h3><p>The case moves to Resolved. The person can sign in again (A20 clears).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each resolution asks for a reason and notifies the person.</li><li>A number cannot be both customer and engineer: merge is not offered (section 2 rules).</li><li>Raised by EC-A35 and by imports with duplicates (EC-A32).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const cases = ZXA.data.conflicts;
+  const open = cases.filter((c) => c.status === 'open');
+  const resolved = cases.filter((c) => c.status === 'resolved');
+  document.getElementById('n-open').textContent = open.length;
+  document.getElementById('n-resolved').textContent = resolved.length;
+
+  const companyOf = (p) => (p.role === 'Engineer' ? `Zixom, ${p.region}` : p.companies.map((c) => cx.company(c.id).name).join(', '));
+  const openHref = (p) => (p.role === 'Engineer' ? `#D702?e=${p.id}` : `#D205?p=${p.id}`);
+
+  const side = (c, s, key) => {
+    const p = cx.person(s.person);
+    return `<section class="card side-card"><div class="card-head"><h3 class="grow">${key === 'a' ? 'Account 1' : 'Account 2'}</h3>
+        <a class="card-link" href="${openHref(p)}">Open</a></div>
+      <div class="card-body stack-sm">
+        <div class="who">${r.avatar(p, 'lg')}<span><b>${p.name}</b><small>${p.designation} · ${companyOf(p)}</small></span></div>
+        <div class="tags">${cx.roleTag(p)}${cx.personTag(p.status)}</div>
+        <dl class="dl"><dt>Mobile</dt><dd>${p.mobile}</dd><dt>Email</dt><dd>${p.email || '<span class="faint">None</span>'}</dd>
+          <dt>Joined</dt><dd>${r.date(p.joined)}</dd><dt>Last activity</dt><dd>${s.last}</dd></dl>
+        <div class="btns"><button class="btn btn-secondary btn-sm" type="button" data-resolve="keep" data-case="${c.id}" data-side="${key}">Keep this one</button></div>
+      </div></section>`;
+  };
+
+  document.getElementById('tab-open').innerHTML = open.map((c) => {
+    const engineerCase = [c.a, c.b].some((s) => s.role === 'Engineer');
+    return `<section class="card">
+      <div class="card-head"><div class="grow"><h2><span class="mono">${c.value}</span></h2>
+        <p>${c.kind} on two accounts · <span class="mono">${c.id}</span> · opened ${r.ago(c.opened)}</p></div>
+        ${engineerCase ? r.tag('Engineer and customer', 'red') : r.tag('Two customers', 'amber')}</div>
+      <div class="card-body stack">
+        ${engineerCase ? `<div class="banner amber">${ic('warning')}<span class="grow"><b>Both are blocked from signing in.</b> A number cannot be both customer and engineer.</span></div>` : ''}
+        <div class="grid cols-2">${side(c, c.a, 'a')}${side(c, c.b, 'b')}</div>
+      </div>
+      <div class="card-foot" style="flex-wrap:wrap"><span class="grow"></span>
+        <button class="btn btn-secondary btn-sm" type="button" data-resolve="ask" data-case="${c.id}">Ask to use another ${c.kind === 'Email' ? 'email' : 'number'}</button>
+        ${engineerCase ? '' : `<button class="btn btn-secondary btn-sm" type="button" data-resolve="merge" data-case="${c.id}">${ic('merge')}Merge people</button>`}
+        <button class="btn btn-secondary btn-sm" type="button" data-resolve="move" data-case="${c.id}">Move ${c.kind === 'Email' ? 'email' : 'number'} to account 2</button>
+      </div></section>`;
+  }).join('');
+
+  document.querySelector('#resolved tbody').innerHTML = resolved.map((c) => `<tr>
+    <td><span class="mono">${c.id}</span><span class="sub">${c.kind}</span></td><td class="nowrap">${c.value}</td>
+    <td>${cx.person(c.a.person).name}<span class="sub">${cx.person(c.b.person).name}</span></td>
+    <td><span class="clip" style="max-width:360px" title="${c.resolution}">${c.resolution}</span></td>
+    <td class="nowrap" data-sort="${c.resolved}">${r.dayDate(c.resolved)}<span class="sub">${r.time(c.resolved)}</span></td></tr>`).join('');
+
+  /* one modal for every resolution; it names the people and the consequence */
+  const COPY = {
+    keep: (c, keep, other) => [`Keep ${c.value} on ${keep.name}?`, `${other.name} loses it and must add another ${c.kind === 'Email' ? 'email' : 'number'} to sign in. Both are told.`, 'Keep on this account', 'Kept'],
+    move: (c, from, to) => [`Move ${c.value} to ${to.name}?`, `${from.name} is signed out and must add another ${c.kind === 'Email' ? 'email' : 'number'}. Both are told.`, 'Move', 'Moved'],
+    ask: (c, p) => [`Ask ${p.name} to use another ${c.kind === 'Email' ? 'email' : 'number'}?`, 'They get an SMS with a link to change it. The case stays open until they do.', 'Send request', 'Request sent'],
+    merge: (c, keep, other) => [`Merge ${other.name} into ${keep.name}?`, `Tickets, machines and companies move to ${keep.name}. ${other.name} is archived. This cannot be undone.`, 'Merge', 'People merged'],
+  };
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-resolve]');
+    if (!button) return;
+    const c = cases.find((x) => x.id === button.dataset.case);
+    const [first, second] = button.dataset.side === 'b' ? [c.b, c.a] : [c.a, c.b];
+    const kind = button.dataset.resolve;
+    const [title, text, label, done] = COPY[kind](c, cx.person(first.person), cx.person(second.person));
+    document.getElementById('resolve-title').textContent = title;
+    document.getElementById('resolve-text').textContent = text;
+    const go = document.getElementById('resolve-go');
+    go.textContent = label;
+    go.className = `btn ${kind === 'merge' ? 'btn-danger' : 'btn-primary'}`;
+    go.dataset.toast = `${done}. ${c.id} moved to Resolved`;
+    document.getElementById('resolve-disc').className = `disc ${kind === 'merge' ? 'red' : ''}`;
+    ZXA.ui.openOverlay('resolve');
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

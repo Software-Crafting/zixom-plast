@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D208 Devices and sessions</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D208" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Devices and sessions</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="customers">Customers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="engineers">Engineers <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="limit">At device limit <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="push">Push problems <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#devices"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Person, phone model or app version" aria-label="Search devices"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="devices">
+          <thead><tr>
+            <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+            <th class="sortable">Person</th><th class="sortable">Device</th><th class="sortable">App</th><th class="sortable">Last active</th>
+            <th class="sortable">Push</th><th class="sortable">Limit</th><th class="actions"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-smartphone"/></svg></span>
+        <h3>No devices yet</h3><p>Phones appear here when people sign in to the app.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th class="cb"></th><th>Person</th><th>Device</th><th>App</th><th>Last active</th><th>Push</th><th>Limit</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="bulk-bar" data-for="devices" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-toast="Test push sent">Send test push</button>
+    <button class="btn" type="button" data-toast="Export started">Export</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<!-- quick view: the person's devices -->
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">System</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Android</button><button class="chip" type="button" aria-pressed="false">iOS</button></div></div>
+      <div class="field"><span class="label">App version</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">1.4.2 latest</button><button class="chip" type="button" aria-pressed="false">Older</button></div></div>
+      <div class="field"><label for="f-active">Last active</label><select class="select" id="f-active"><option>Any time</option><option>Today</option><option>Not in 7 days</option><option>Not in 30 days</option></select></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show devices</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="remove" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="remove-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-trash"/></svg></span>
+      <div class="grow"><h2 id="remove-title"></h2><p id="remove-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Device removed">Remove device</button></div>
+  </div>
+</div>
+<div class="overlay center" id="signout" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="signout-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-sign-out"/></svg></span>
+      <div class="grow"><h2 id="signout-title"></h2><p id="signout-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Signed out on every device">Sign out everywhere</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/access/A23-device-limit.html">
+  <div><h3>What it is</h3><p>Every phone signed in to the app: model, system, app version, last active and push state.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a row to see the person's devices.</li><li>Remove a device, sign out everywhere, reset the device limit once, send a test push.</li></ul></div>
+  <div><h3>What happens next</h3><p>A removed device is signed out the next time the app opens (A15). At the limit the app shows A23.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Limit: customers 2 devices, engineers 1 (section 14).</li><li>Reset device limit allows one extra sign in, once.</li><li>Expired push token: the push fails and shows in the delivery log (EC-A26).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const LATEST = '1.4.2';
+  const devices = ZXA.data.devices.map((x, i) => ({ ...x, i, p: cx.person(x.person) }));
+  const limitOf = (p) => (p.role === 'Engineer' ? 1 : 2);
+  const countOf = (p) => devices.filter((x) => x.person === p.id).length;
+  const atLimit = (p) => countOf(p) >= limitOf(p);
+  const pushTag = (x) => (x.push === 'ok' ? r.tag('Active', 'green') : r.tag('Token expired', 'amber'));
+  const companyOf = (p) => (p.role === 'Engineer' ? `Engineer, ${p.region}` : p.companies.map((c) => cx.company(c.id).name).join(', '));
+  const people = new Set(devices.map((x) => x.person)).size;
+  document.getElementById('head-sub').textContent = `${devices.length} devices · ${people} people · customers 2, engineers 1`;
+
+  document.querySelector('#devices tbody').innerHTML = devices.map((x) => `<tr data-drawer="quick" data-device="${x.i}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${x.model}"></label></td>
+    <td><span class="who">${r.avatar(x.p, 'sm')}<span><b>${x.p.name}</b><small>${companyOf(x.p)}</small></span></span></td>
+    <td>${x.model}<span class="sub">${x.os} · ${x.city}</span></td>
+    <td class="nowrap"><span class="mono">${x.app}</span>${x.app !== LATEST ? '<span class="sub amber-text">Update available</span>' : ''}</td>
+    <td class="nowrap" data-sort="${x.last}">${r.ago(x.last)}</td>
+    <td>${pushTag(x)}</td>
+    <td class="nowrap">${atLimit(x.p) ? `<span class="red-text strong">${countOf(x.p)} of ${limitOf(x.p)}</span>` : `${countOf(x.p)} of ${limitOf(x.p)}`}</td>
+    <td class="actions"><button class="btn btn-secondary btn-sm" type="button" data-remove="${x.i}">Remove</button></td>
+  </tr>`).join('');
+
+  const VIEWS = { all: () => true, customers: (x) => x.p.role === 'Customer', engineers: (x) => x.p.role === 'Engineer',
+    limit: (x) => atLimit(x.p), push: (x) => x.push !== 'ok' };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#devices tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](devices[row.dataset.device]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = devices.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 6 }, () => `<tr><td class="cb"></td>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  const askRemove = (x) => {
+    document.getElementById('remove-title').textContent = `Remove ${x.model}?`;
+    document.getElementById('remove-text').textContent = `${x.p.name} is signed out on this phone the next time the app opens. Unsynced items on it are lost.`;
+    ZXA.ui.openOverlay('remove');
+  };
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-remove]');
+    if (button) askRemove(devices[button.dataset.remove]);
+  });
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const p = devices[event.detail.dataset.device].p;
+    const own = devices.filter((x) => x.person === p.id);
+    document.getElementById('quick-title').textContent = p.name;
+    document.getElementById('quick-sub').textContent = `${companyOf(p)} · ${p.mobile}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${cx.roleTag(p)}${cx.personTag(p.status)}${atLimit(p) ? r.tag(`At limit, ${own.length} of ${limitOf(p)}`, 'red') : r.tag(`${own.length} of ${limitOf(p)} devices`, 'outline')}</div>
+      <ul class="mini card">${own.map((x) => `<li><span class="ic-disc">${ic('smartphone')}</span>
+        <span class="grow"><b>${x.model}</b><small>${x.os} · app ${x.app} · ${r.ago(x.last)} · ${x.city}</small></span>
+        <span class="end">${pushTag(x)}<br><button class="btn btn-link" type="button" data-remove="${x.i}">Remove</button></span></li>`).join('')}</ul>
+      ${own.some((x) => x.push !== 'ok') ? `<div class="banner amber">${ic('bell-off')}<span class="grow"><b>Push token expired.</b> Pushes fail until ${p.name.split(' ')[0]} opens the app again.</span></div>` : ''}
+      ${atLimit(p) ? `<div class="banner">${ic('info')}<span class="grow"><b>Device limit reached.</b> A new phone sees "Device limit reached" (A23). Reset allows one more sign in, once.</span></div>` : ''}`;
+    document.getElementById('quick-foot').innerHTML = `<button class="btn btn-ghost" type="button" data-open="signout">Sign out everywhere</button><span class="grow"></span>
+      ${atLimit(p) ? '<button class="btn btn-secondary" type="button" data-close data-toast="Device limit reset once">Reset device limit</button>' : ''}
+      <button class="btn btn-primary" type="button" data-toast="Test push sent to ${own.length} device${own.length === 1 ? '' : 's'}">Send test push</button>`;
+    document.getElementById('signout-title').textContent = `Sign ${p.name} out everywhere?`;
+    document.getElementById('signout-text').textContent = `All ${own.length} device${own.length === 1 ? '' : 's'} sign out the next time the app opens. ${p.name.split(' ')[0]} signs in again with an OTP.`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

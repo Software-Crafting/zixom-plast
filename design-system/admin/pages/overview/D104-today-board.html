@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D104 Today board</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-overview.css">
+</head>
+<body class="adm" data-page="D104" data-nav="D101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Today board</h1><p>Monday 23 November · <span id="updated">Updated just now</span></p></div>
+    <a class="btn btn-secondary" href="#D410"><svg class="ic"><use href="#ph-calendar-range"/></svg>Schedule</a>
+  </div>
+
+  <div data-when="ready engineer-offline">
+    <div class="banner red center" style="margin-bottom:16px"><svg class="ic"><use href="#ph-siren"/></svg>
+      <span class="grow"><b>TKT-2026-0133 is not on the board.</b> Machine down at Nova Cups, not assigned for 40 min.</span>
+      <span class="btns"><a class="btn btn-sm btn-primary" href="#D404?t=TKT-2026-0133">Assign now</a></span></div>
+
+    <div class="tb-engineers" id="engineers"></div>
+
+    <section class="card list-card" style="margin-bottom:16px">
+      <div class="toolbar">
+        <label class="search" data-filter="#board" data-empty="#none-match"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Ticket, customer or machine" aria-label="Search the board"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge" id="filter-count" hidden></span></button>
+        <span class="grow"></span>
+        <span class="muted" style="font-size:13px">Drag a card to reassign</span>
+      </div>
+    </section>
+    <div class="kanban tb-board" id="board"></div>
+    <p class="muted" id="none-match" hidden style="margin-top:8px">No cards match the search.</p>
+  </div>
+
+  <div data-when="loading">
+    <div class="kanban tb-board" id="sk-board"></div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span>
+      <h3>No visits today</h3><p>Visits appear here once engineers are assigned.</p>
+      <div class="btns"><a class="btn btn-primary" href="#D401">Open tickets</a></div></div></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not load today's visits.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><a class="btn btn-secondary" id="quick-open" href="#D403">Open ticket</a><span class="grow"></span>
+      <a class="btn btn-primary" id="quick-assign" href="#D404">Reassign</a></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="f-region">Region</label><select class="select" id="f-region"><option value="">All regions</option><option>Ahmedabad</option><option>Pune</option></select></div>
+      <div class="field"><label for="f-eng">Engineer</label><select class="select" id="f-eng"><option value="">All engineers</option><option value="sandeep">Sandeep Yadav</option><option value="anita">Anita Verma</option></select></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close id="f-apply">Show visits</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty error engineer-offline">
+  <div><h3>What it is</h3><p>Today's visits by stage, from offer to done. Refreshes every 15 seconds.</p></div>
+  <div><h3>What you can do</h3><ul><li>Click a card for the ticket drawer.</li><li>Drag a card to another column to reassign (opens D404).</li><li>Filter by region or engineer; search by ticket or customer.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket detail (D403), Assign engineer (D404), Schedule (D410), Engineer map (D411).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Empty columns say None.</li><li>An engineer whose app is silent shows 'Last seen {time}' (Engineer offline state).</li><li>Unassigned machine down is flagged above the board.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const day = ZX.data.engineerDay;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const LANES = [['offered', 'Offered'], ['accepted', 'Accepted'], ['way', 'On the way'], ['site', 'At site'], ['progress', 'In progress'], ['done', 'Done'], ['failed', 'Failed']];
+  const LANE_OF = { scheduled: 'accepted', 'on-hold': 'accepted', 'on-the-way': 'way', 'in-progress': 'progress', completed: 'done', 'visit-failed': 'failed' };
+  const minutes = (m) => (m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`);
+
+  /* today's visits (dashboard data) plus the open offer; timers from the engineer's day */
+  const offer = { time: 'Offer', ticket: day.offer.ticket, engineer: day.engineer, status: 'offered' };
+  const cards = [offer, ...a.visits].map((v) => {
+    const t = r.ticket(v.ticket);
+    const e = r.engineer(v.engineer);
+    const own = day.today.find((x) => x.ticket === v.ticket);
+    let timer = '';
+    if (v.status === 'offered') timer = r.tag(`${day.offer.minutesLeft} min left`, 'amber', 'clock-countdown');
+    if (v.status === 'on-the-way') timer = r.tag(`ETA ${own?.etaMin ?? 30} min`, 'blue', 'navigation-arrow');
+    if (v.status === 'in-progress') timer = r.tag(`${minutes((new Date(ZX.data.now) - new Date(own.checkedIn)) / 60000)}`, 'blue', 'timer');
+    if (v.status === 'on-hold') timer = r.tag(t.holdReason || 'On hold', 'amber');
+    if (v.status === 'completed') timer = r.tag('Done', 'green', 'check');
+    return { ...v, t, e, lane: v.status === 'offered' ? 'offered' : LANE_OF[v.status], timer,
+      window: t.window ? t.window.slot : `${v.time}`, region: e.region };
+  });
+
+  const short = (t) => `${r.company(t.company).name.split(' ')[0]}, ${r.site(t.company, t.site).name.replace(/ (plant|unit)$/, '')}`;
+  const hour = (hhmm) => { const h = Number(hhmm.slice(0, 2)); return `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`; };
+  const card = (c) => `<div class="card tb-card" draggable="true" data-ticket="${c.ticket}" data-engineer="${c.engineer}" data-region="${c.region}" data-search-item tabindex="0">
+    <div class="row"><span class="mono strong nowrap" style="font-size:12px">${c.ticket}</span><span class="grow"></span>${c.t.severity === 'down' ? r.icon('siren', 'red-text') : ''}</div>
+    <p>${short(c.t)}</p>
+    <p class="machine">${r.machine(c.t.machine).model}</p>
+    <p>${c.lane === 'offered' ? `${r.dayDate(c.t.window.date)}, ${c.t.window.slot}` : (c.t.window?.date === ZX.data.today ? c.t.window.slot : `From ${hour(c.time)}`)}</p>
+    <div class="row">${r.avatar(c.e, 'sm')}<span class="grow" style="font-size:13px">${c.e.name.split(' ')[0]}</span></div>
+    ${c.timer ? `<div>${c.timer}</div>` : ''}
+    ${c.engineer === 'anita' && c.lane !== 'done' ? `<span data-when="engineer-offline">${r.tag('Seen 11:40 AM', 'outline', 'wifi-slash')}</span>` : ''}
+  </div>`;
+
+  const render = () => {
+    const region = document.getElementById('f-region').value;
+    const eng = document.getElementById('f-eng').value;
+    const shown = cards.filter((c) => (!region || c.region === region) && (!eng || c.engineer === eng));
+    document.getElementById('board').innerHTML = LANES.map(([key, label]) => {
+      const list = shown.filter((c) => c.lane === key);
+      return `<div class="lane" data-lane="${key}"><div class="lane-head">${label}<span class="n">${list.length}</span></div>
+        ${list.length ? list.map(card).join('') : '<div class="tb-none">None</div>'}</div>`;
+    }).join('');
+    const n = (region ? 1 : 0) + (eng ? 1 : 0);
+    const badge = document.getElementById('filter-count');
+    badge.hidden = !n; badge.textContent = n;
+    if (document.body.dataset.state) ZXA.ui?.setState(document.body.dataset.state);
+  };
+
+  document.getElementById('engineers').innerHTML = a.availability.map((x) => {
+    const e = r.engineer(x.engineer);
+    return `<div class="card pad"><div class="who">${r.avatar(e)}<span class="grow"><b>${e.name}</b><small>${e.region} · ${x.now}</small></span></div>
+      <div class="tags" style="margin-top:10px">${r.tag(x.duty, x.tone)}${x.engineer === 'anita' ? `<span data-when="engineer-offline">${r.tag('Last seen 11:40 AM', 'outline', 'wifi-slash')}</span>` : ''}
+        <span class="muted" style="font-size:13px">${x.jobs} jobs today · ${x.next}</span></div></div>`;
+  }).join('');
+  document.getElementById('sk-board').innerHTML = LANES.map(([, label]) => `<div class="lane"><div class="lane-head">${label}</div>
+    <div class="card pad stack"><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div></div>`).join('');
+  document.getElementById('f-apply').addEventListener('click', render);
+  render();
+
+  /* card click: ticket drawer. Drag to another column: reassign (D404) */
+  const quick = (number) => {
+    const c = cards.find((x) => x.ticket === number);
+    const t = c.t;
+    const s = r.site(t.company, t.site);
+    document.getElementById('quick-title').textContent = t.number;
+    document.getElementById('quick-sub').textContent = `${t.type} · ${r.company(t.company).name}`;
+    document.getElementById('quick-open').href = link('D403', `?t=${t.number}`);
+    document.getElementById('quick-assign').href = link('D404', `?t=${t.number}`);
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.ticketTag(t.status)}${t.severity ? r.severityTag(t.severity) : ''}${r.coverageTag(t.coverage)}${c.timer}</div>
+      <p>${t.summary}</p>
+      <dl class="dl"><dt>Engineer</dt><dd>${c.e.name}<br><span class="muted">${c.e.phone}</span></dd>
+        <dt>Window</dt><dd>${t.window ? `${r.dayDate(t.window.date)}, ${t.window.slot}` : c.window}</dd>
+        <dt>Site</dt><dd>${s.name}<br><span class="muted">${s.address}, ${s.pincode}</span></dd>
+        <dt>Site contact</dt><dd>${s.contact.name} · ${s.contact.phone}</dd>
+        <dt>Machine</dt><dd>${r.machine(t.machine).model}<br><span class="mono muted">${t.machine}</span></dd></dl>`;
+    ZXA.ui.openOverlay('quick');
+  };
+  const board = document.getElementById('board');
+  board.addEventListener('click', (event) => { const c = event.target.closest('[data-ticket]'); if (c) quick(c.dataset.ticket); });
+  board.addEventListener('keydown', (event) => { const c = event.target.closest('[data-ticket]'); if (c && event.key === 'Enter') quick(c.dataset.ticket); });
+  board.addEventListener('dragstart', (event) => {
+    const c = event.target.closest('[data-ticket]');
+    event.dataTransfer.setData('text/plain', c.dataset.ticket);
+    c.classList.add('dragging');
+  });
+  board.addEventListener('dragend', (event) => event.target.closest('[data-ticket]')?.classList.remove('dragging'));
+  board.addEventListener('dragover', (event) => {
+    const lane = event.target.closest('.lane');
+    if (!lane) return;
+    event.preventDefault();
+    board.querySelectorAll('.lane.over').forEach((l) => l.classList.toggle('over', l === lane));
+    lane.classList.add('over');
+  });
+  board.addEventListener('drop', (event) => {
+    event.preventDefault();
+    board.querySelectorAll('.lane.over').forEach((l) => l.classList.remove('over'));
+    ZXA.ui.go(`D404?t=${event.dataTransfer.getData('text/plain')}`);
+  });
+
+  /* refresh every 15 seconds; the label ticks in between */
+  let seconds = 0;
+  window.setInterval(() => {
+    seconds = (seconds + 1) % 15;
+    document.getElementById('updated').textContent = seconds ? `Updated ${seconds} s ago` : 'Updated just now';
+  }, 1000);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

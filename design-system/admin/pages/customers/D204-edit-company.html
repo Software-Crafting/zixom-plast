@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D204 Edit company</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D204" data-nav="D201">
+<main class="content">
+  <div class="detail-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><a id="crumb-company" href="#D202"></a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Edit</span></nav>
+      <div class="page-head" style="padding:0"><div class="grow"><h1>Edit company</h1><p id="sub"></p></div></div>
+    </div>
+  </div>
+
+  <form class="card pad" id="form" novalidate data-when="ready">
+    <section class="form-section">
+      <h3>Company</h3><p>Changes show in the app on the next refresh.</p>
+      <div class="form-grid">
+        <div class="field full"><label for="name">Company name</label><input class="input" id="name" maxlength="120"></div>
+        <div class="field"><label for="gstin">GSTIN</label><input class="input mono" id="gstin" maxlength="15" style="text-transform:uppercase"><span class="hint" id="gstin-msg">Changing the GSTIN asks for a reason</span></div>
+        <div class="field"><label for="pan">PAN</label><input class="input mono" id="pan" maxlength="10" style="text-transform:uppercase"></div>
+        <div class="field full"><label for="billing">Billing address</label><textarea class="textarea" id="billing" style="min-height:72px"></textarea></div>
+        <div class="field"><label for="state">State</label><select class="select" id="state"><option>Gujarat</option><option>Haryana</option><option>Maharashtra</option></select></div>
+        <div class="field"><label for="terms">Credit terms</label><div class="input-wrap"><input class="input" id="terms" type="number" min="0" max="90" style="padding-left:12px; padding-right:52px"><span class="suffix muted" style="right:14px; font-size:13px">days</span></div><span class="hint">Invoice due date = issue date + terms</span></div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Status</h3><p>Suspended companies can sign in but cannot raise new requests.</p>
+      <div class="form-grid">
+        <div class="field"><label for="status">Status</label><select class="select" id="status"><option value="active">Active</option><option value="pending">Pending</option><option value="suspended">Suspended</option></select>
+          <span class="hint">To deactivate, use <a id="deactivate-link" href="#D213">Deactivate company</a>.</span></div>
+        <div class="field"><label for="region">Service region</label><select class="select" id="region"><option>Ahmedabad, Sandeep Yadav</option><option>Pune, Anita Verma</option></select></div>
+        <div class="field full"><label for="notes">Internal notes <span class="opt">optional</span></label><textarea class="textarea" id="notes" maxlength="1000"></textarea><span class="hint">Only Admins see this.</span></div>
+      </div>
+    </section>
+
+    <div class="form-bar">
+      <span class="grow" id="bar-note">Last saved 12 Feb 2024 by Rajesh Goyal</span>
+      <a class="btn btn-ghost" id="cancel" href="#D202">Cancel</a>
+      <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+  </form>
+
+  <div data-when="read-only">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-lock-simple"/></svg></span>
+      <h3>This company is deactivated</h3><p>Deactivated companies are read only. Reactivate it to edit.</p>
+      <div class="btns"><a class="btn btn-primary" id="reactivate" href="#D213">Reactivate</a></div></div></div>
+  </div>
+</main>
+
+<div class="overlay center" id="gstin-reason" hidden>
+  <div class="modal" role="dialog" aria-labelledby="gr-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="gr-title">Change the GSTIN?</h2><p id="gr-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="gr-reason">Reason</label><select class="select" id="gr-reason"><option>Typo in the old GSTIN</option><option>Company re-registered</option><option>Moved to another state</option><option>Other</option></select></div>
+      <div class="field"><label for="gr-note">Note <span class="opt">optional</span></label><textarea class="textarea" id="gr-note" style="min-height:72px"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close id="gr-save">Save with reason</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready read-only" data-mobile="../../../screens/customer/C1103-company.html">
+  <div><h3>What it is</h3><p>Edit a company's details, status, credit terms and internal notes. Opens with <code>?c=shree</code>.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change any field and save.</li><li>A new GSTIN asks for a reason, kept in history.</li><li>Deactivate goes to D213.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to Customer detail (D202) with a Saved toast.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Another Admin saved first: Stale data banner, second save refused (EC-A12).</li><li>Deactivated companies open read only (Read only).</li><li>Leaving with unsaved changes asks first (D1808).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const $ = (id) => document.getElementById(id);
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const c = cx.company(new URLSearchParams(location.search).get('c') || 'shree') || cx.company('shree');
+  const cq = `?c=${c.id}`;
+  if (c.status === 'deactivated') document.body.dataset.state = 'read-only';
+
+  $('crumb-company').textContent = c.name;
+  $('crumb-company').href = link('D202', cq);
+  $('cancel').href = link('D202', cq);
+  $('deactivate-link').href = link('D213', cq);
+  $('reactivate').href = link('D213', `${cq}&a=reactivate`);
+  $('sub').innerHTML = `<span class="mono">${c.code}</span> · ${r.esc(c.name)}`;
+  Object.entries({ name: c.name, gstin: c.gstin, pan: c.pan, billing: c.billing, state: c.state, terms: c.terms, status: c.status === 'deactivated' ? 'active' : c.status,
+    region: c.state === 'Maharashtra' ? 'Pune, Anita Verma' : 'Ahmedabad, Sandeep Yadav', notes: c.notes }).forEach(([id, value]) => { $(id).value = value; });
+
+  let dirty = false;
+  $('form').addEventListener('input', () => { dirty = true; $('bar-note').innerHTML = '<span class="amber-text">Unsaved changes</span>'; });
+  window.addEventListener('beforeunload', (event) => { if (dirty) event.preventDefault(); });
+
+  const save = () => {
+    if (document.body.dataset.state === 'stale') { ZXA.ui.toast('This record changed. Reload to see the new version', 'info'); return; }
+    dirty = false;
+    ZXA.ui.toast('Saved');
+    window.setTimeout(() => ZXA.ui.go(`D202${cq}`), 800);
+  };
+  $('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const name = $('name');
+    name.closest('.field').querySelector('.error')?.remove();
+    if (!name.value.trim()) {
+      name.setAttribute('aria-invalid', 'true');
+      name.closest('.field').insertAdjacentHTML('beforeend', `<span class="error">${r.icon('warning-circle')}Required</span>`);
+      name.focus();
+      return;
+    }
+    if ($('gstin').value.trim().toUpperCase() !== c.gstin) {
+      $('gr-text').textContent = `${c.gstin} → ${$('gstin').value.trim().toUpperCase()}. Invoices already issued keep the old GSTIN.`;
+      ZXA.ui.openOverlay('gstin-reason');
+      return;
+    }
+    save();
+  });
+  $('gr-save').addEventListener('click', save);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

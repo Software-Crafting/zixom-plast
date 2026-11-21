@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D211 Verification request detail</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
+</head>
+<body class="adm" data-page="D211" data-nav="D210">
+<main class="content">
+  <div data-when="ready decided photo-loading">
+    <div class="detail-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D210">Verification requests</a><svg class="ic"><use href="#ph-caret-right"/></svg><span id="crumb"></span></nav>
+        <div class="record-head"><h1 id="number"></h1><span class="tags" id="chips"></span></div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <div class="action-bar"><a class="btn btn-secondary" id="next" href="#D211"><svg class="ic"><use href="#ph-arrow-right"/></svg>Next request</a></div>
+    </div>
+
+    <div class="banner grey center" data-when="decided" style="margin-bottom:16px"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+      <span class="grow" id="decided-text"></span></div>
+    <div id="banners" class="stack" style="margin-bottom:16px"></div>
+
+    <div class="compare">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Entered by the person</h2><p>From the app sign up (A05 to A07)</p></div></div>
+        <div class="card-body stack" id="entered"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Records we found</h2><p id="found-sub"></p></div></div>
+        <div class="card-body stack" id="found"></div>
+      </section>
+    </div>
+
+    <section class="card" id="previous-card" style="margin-top:16px" hidden>
+      <div class="card-head"><div class="grow"><h2>Previous requests from this number</h2></div></div>
+      <ul class="mini" id="previous"></ul>
+    </section>
+
+    <!-- decision bar -->
+    <div class="form-bar decision-bar" data-when="ready photo-loading" id="decision">
+      <span class="grow" id="decision-note"></span>
+      <button class="btn btn-ghost" type="button" data-menu="more-menu">More<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      <button class="btn btn-secondary hide-phone" type="button" data-open="ask-info">Ask for information</button>
+      <button class="btn btn-danger-soft" type="button" data-open="reject">Reject</button>
+      <span id="primary-slot"></span>
+    </div>
+  </div>
+
+  <div data-when="loading">
+    <div class="detail-head"><div class="grow stack-sm"><span class="sk sk-line" style="width:160px"></span><span class="sk sk-title" style="width:320px"></span><span class="sk sk-line" style="width:380px"></span></div></div>
+    <div class="compare">
+      <div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+      <div class="card pad stack"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+    </div>
+  </div>
+
+  <div data-when="not-found">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-file-search"/></svg></span>
+      <h3>We cannot find this</h3><p>It may have been removed or the address is wrong.</p>
+      <div class="btns"><button class="btn btn-secondary" type="button" onclick="history.back()">Go back</button><a class="btn btn-primary" href="#D210">Go to requests</a></div></div></div>
+  </div>
+</main>
+
+<!-- approve and link -->
+<div class="overlay center" id="approve" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ap-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-user-check"/></svg></span>
+      <div class="grow"><h2 id="ap-title"></h2><p id="ap-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="ap-site">Site</label><select class="select" id="ap-site"></select><span class="hint">The person sees machines of the sites you pick. Change later in D205.</span></div>
+      <label class="check"><input type="checkbox" id="ap-primary"> Make primary contact</label>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy id="ap-go">Approve</button></div>
+  </div>
+</div>
+
+<!-- reject: reason list, message shown in the app (A09) -->
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rj-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-user-x"/></svg></span>
+      <div class="grow"><h2 id="rj-title"></h2><p>The person sees your reason in the app and can contact support.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="rj-reason">Reason</label><select class="select" id="rj-reason"><option>Details do not match</option><option>Not a customer</option><option>Duplicate request</option><option>Other</option></select></div>
+      <div class="field"><label for="rj-msg">Message to the person</label><textarea class="textarea" id="rj-msg" maxlength="300">Details did not match our records. Add the dealer invoice or a clear nameplate photo and send again.</textarea><span class="hint">Up to 300 characters</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-danger" type="button" data-close data-toast="Request rejected. The person was told">Reject</button></div>
+  </div>
+</div>
+
+<!-- ask for more information -->
+<div class="overlay right" id="ask-info" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ai-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ai-title">Ask for information</h2><p>Sent to the app. The request waits for the reply.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Quick asks</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="true">Another nameplate photo</button><button class="chip" type="button" aria-pressed="false">Dealer invoice</button>
+        <button class="chip" type="button" aria-pressed="false">Company GSTIN</button><button class="chip" type="button" aria-pressed="false">Work email</button></div></div>
+      <div class="field"><label for="ai-msg">Message</label><textarea class="textarea" id="ai-msg" autofocus>Please send a clear photo of the machine nameplate. The serial number must be readable.</textarea></div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Sent to the app">Send</button></div>
+  </div>
+</div>
+
+<!-- mark as duplicate -->
+<div class="overlay center" id="duplicate" hidden>
+  <div class="modal" role="dialog" aria-labelledby="du-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-copy"/></svg></span>
+      <div class="grow"><h2 id="du-title">Mark as duplicate?</h2><p>The request closes. The person keeps the earlier request.</p></div></div>
+    <div class="modal-body"><div class="field"><label for="du-of">Duplicate of</label><select class="select mono" id="du-of"></select></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Marked as duplicate">Mark duplicate</button></div>
+  </div>
+</div>
+
+<div class="menu" id="more-menu" hidden>
+  <a id="menu-create" href="#D203"><svg class="ic"><use href="#ph-buildings"/></svg>Approve and create company</a>
+  <button type="button" data-open="ask-info"><svg class="ic"><use href="#ph-chat-text"/></svg>Ask for information</button>
+  <button type="button" data-open="link-other"><svg class="ic"><use href="#ph-link"/></svg>Link to another company</button>
+  <button type="button" data-open="duplicate"><svg class="ic"><use href="#ph-copy"/></svg>Mark as duplicate</button>
+  <a href="tel:+919879531420" id="menu-call"><svg class="ic"><use href="#ph-phone"/></svg>Call the person</a>
+</div>
+
+<div class="overlay center" id="link-other" hidden>
+  <div class="modal" role="dialog" aria-labelledby="lo-title">
+    <div class="modal-head"><div class="grow"><h2 id="lo-title">Link to another company</h2><p>Pick the company this person works for.</p></div></div>
+    <div class="modal-body stack">
+      <label class="search" data-filter="#lo-list"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Company, code or GSTIN" aria-label="Search companies"></label>
+      <ul class="mini card" id="lo-list" style="box-shadow:inset 0 0 0 1px var(--line)"></ul>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading photo-loading decided not-found error" data-mobile="../../../screens/access/A08-verification-pending.html">
+  <div><h3>What it is</h3><p>One sign up request: what the person entered against what we found. Try <code>?v=VER-2026-0018</code> (exact), <code>0019</code> (partial), <code>0020</code> (no match), <code>0017</code> (decided).</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a matched company and approve; choose the site.</li><li>Approve and create a company (D203 filled in), link to another company.</li><li>Reject with a reason, ask for information, mark duplicate. Next request moves on.</li></ul></div>
+  <div><h3>What happens next</h3><p>Approve sends push and SMS and A08 becomes Home. Reject shows the reason in A09.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Serial registered to another company: warning, Approve disabled for the other one.</li><li>Mobile on an engineer: blocked, resolve in D207.</li><li>Previous requests from the same number are listed.</li><li>Unreadable photo: Ask for another photo.</li><li>Decided requests are read only with the decision and name.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
+  const v = cx.verification(new URLSearchParams(location.search).get('v') || 'VER-2026-0018');
+  if (!v) { document.body.dataset.state = 'not-found'; return; }
+  if (v.status !== 'pending') document.body.dataset.state = 'decided';
+  const late = cx.isLate(v);
+  const owner = v.serialOwner ? cx.company(v.serialOwner) : null;
+  const engineer = cx.engineers.find((e) => e.mobile === v.mobile);
+  const existing = cx.customers.find((p) => p.mobile === v.mobile);
+  const machine = v.serial ? r.machine(v.serial) : null;
+
+  document.title = `Zixom Admin - ${v.number}`;
+  document.getElementById('crumb').textContent = v.number;
+  document.getElementById('number').textContent = v.number;
+  document.getElementById('chips').innerHTML = `${cx.verifyTag(v.status)}${cx.matchTag(v.match)}${v.status === 'pending' ? r.tag(late ? `${cx.age(v.submitted)}, over 1 working day` : `${cx.age(v.submitted)} old`, late ? 'red' : 'outline') : ''}`;
+  document.getElementById('meta').innerHTML = `<span>${ic('user')}${v.name}</span><span>${ic('clock')}Submitted ${r.dayDate(v.submitted)}, ${r.time(v.submitted)} · App</span>`;
+  const pending = ZXA.data.verifications.filter((x) => x.status === 'pending' && x.number !== v.number);
+  const next = document.getElementById('next');
+  if (pending.length) next.href = ZXA.href('D211', `?v=${pending[0].number}`); else next.hidden = true;
+  document.getElementById('decided-text').innerHTML = `<b>${v.decided ? r.esc(v.decided[0]) : 'Approved and linked to Shree Packaging Industries'}.</b> Rajesh Goyal · ${r.dayDate(v.decided?.[1] ?? '2026-11-23T12:00')}, ${r.time(v.decided?.[1] ?? '2026-11-23T12:00')}. Read only.`;
+  document.getElementById('menu-call').href = `tel:${v.mobile.replace(/\s/g, '')}`;
+  document.getElementById('rj-title').textContent = `Reject ${v.name}?`;
+
+  /* ---------- banners ---------- */
+  const banners = [];
+  if (engineer) banners.push(`<div class="banner red center">${ic('ban')}<span class="grow"><b>This mobile belongs to engineer ${engineer.name}.</b> A number cannot be both customer and engineer.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D207')}">Resolve in conflicts</a></span></div>`);
+  if (owner && v.status === 'pending') banners.push(`<div class="banner amber center">${ic('warning')}<span class="grow"><b>This machine is registered to ${owner.name}.</b> Approve is disabled for any other company.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D302')}">Open machine</a></span></div>`);
+  if (existing) banners.push(`<div class="banner center">${ic('info')}<span class="grow"><b>${existing.name} already uses this mobile</b> at ${existing.companies.map((k) => cx.company(k.id).name).join(', ')}. Approving adds a second company.</span></div>`);
+  document.getElementById('banners').innerHTML = banners.join('');
+
+  /* ---------- left: entered ---------- */
+  const photoBad = /blurred/i.test(v.photo);
+  document.getElementById('entered').innerHTML = `
+    <dl class="dl">
+      <dt>Name</dt><dd><b class="strong">${v.name}</b></dd><dt>Mobile</dt><dd>${v.mobile} ${r.tag('OTP verified', 'green', 'check')}</dd>
+      <dt>Email</dt><dd>${v.email || '<span class="faint">Not given</span>'}</dd><dt>Designation</dt><dd>${v.designation}</dd>
+      <dt>Company</dt><dd>${r.esc(v.company)}<br><span class="muted">${v.city}</span></dd>
+      <dt>Machine serial</dt><dd class="mono">${v.serial || '<span class="faint">Not given</span>'}</dd>
+      <dt>${v.proof[0]}</dt><dd class="mono">${v.proof[1]}</dd>
+      <dt>Notes</dt><dd>${v.notes ? r.esc(v.notes) : '<span class="faint">None</span>'}</dd>
+    </dl>
+    <div>
+      <span class="label" style="font-size:13px; font-weight:600; color:var(--text-strong)">Nameplate photo</span>
+      <div class="gallery" style="margin-top:8px; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr))">
+        <div data-when="ready decided">${v.photo
+          ? `<div class="ph">${ic(photoBad ? 'image-off' : 'image')}<small>${v.photo}</small></div>`
+          : `<div class="ph">${ic('image-off')}<small>No photo</small></div>`}</div>
+        <div data-when="photo-loading"><span class="sk" style="display:block; aspect-ratio:4 / 3; border-radius:12px"></span></div>
+      </div>
+      ${photoBad && v.status === 'pending' ? `<div class="row" style="margin-top:8px"><span class="amber-text grow" style="font-size:13px">Serial is not readable on the photo.</span><button class="btn btn-sm btn-secondary" type="button" data-open="ask-info">Ask for another photo</button></div>` : ''}
+    </div>`;
+
+  /* ---------- right: found ---------- */
+  const decidable = v.status === 'pending';
+  const blockedFor = (companyId) => owner && owner.id !== companyId;
+  document.getElementById('found-sub').textContent = v.found.length ? `${v.found.length} ${v.found.length === 1 ? 'company' : 'companies'} · best match ${v.score}%` : 'Nothing in our records matches';
+  const companyCard = (f, i) => {
+    const c = cx.company(f.company);
+    const people = cx.peopleOf(c.id);
+    const tone = f.score >= 80 ? 'green' : f.score >= 50 ? 'amber' : 'red';
+    return `<label class="choice" style="flex-direction:column; gap:10px">
+      <span class="row" style="width:100%">${decidable ? `<input type="radio" class="sr-only" name="pick" value="${c.id}"${i === 0 ? ' checked' : ''}>` : ''}
+        <span class="grow"><b>${c.name}</b><small class="mono">${c.code} · ${c.gstin}</small></span>
+        <span class="score">${f.score}%<span class="progress ${tone}"><span style="width:${f.score}%"></span></span></span></span>
+      <span class="tags">${f.matched.map((m) => r.tag(m, 'green', 'check')).join('')}${blockedFor(c.id) ? r.tag('Serial not theirs', 'amber', 'warning') : ''}</span>
+      <span class="muted" style="font-size:13px">${c.city} · ${c.sites.map((s) => s.name).join(', ')} · ${people.length} people: ${people.slice(0, 3).map((p) => p.name).join(', ')}</span>
+    </label>`;
+  };
+  document.getElementById('found').innerHTML = v.found.length ? `
+    <div class="choices">${v.found.map(companyCard).join('')}</div>
+    ${machine ? `<div><h3 style="font-size:14px; font-family:var(--font-body); font-weight:600; margin-bottom:8px">Machine for the serial</h3>
+      <div class="who card pad" style="box-shadow:inset 0 0 0 1px var(--line); padding:12px 14px"><span class="thumb">${ic('factory')}</span>
+        <span class="grow"><b>${machine.model}</b><small><span class="mono">${machine.serial}</span> · ${cx.company(machine.company).name}, ${r.site(machine.company, machine.site)?.name ?? ''}</small></span>
+        <a class="btn btn-sm btn-ghost" href="${link('D302')}">Open</a></div></div>` : ''}
+    <div><h3 style="font-size:14px; font-family:var(--font-body); font-weight:600; margin-bottom:8px" id="people-title"></h3>
+      <ul class="mini card" id="people" style="box-shadow:inset 0 0 0 1px var(--line)"></ul></div>`
+    : `<div class="state"><span class="disc">${ic('file-search')}</span><h3>No match</h3><p>No company, machine or person has this mobile, GSTIN or serial.</p>
+       ${v.serial ? `<p class="mono muted">${v.serial} is not in the machine register</p>` : ''}</div>`;
+
+  /* people already in the picked company; approve button follows the pick */
+  const primarySlot = document.getElementById('primary-slot');
+  const note = document.getElementById('decision-note');
+  const syncPick = () => {
+    const picked = document.querySelector('input[name="pick"]:checked')?.value;
+    if (!picked) {
+      primarySlot.innerHTML = `<a class="btn btn-primary" href="${link('D203', `?v=${v.number}`)}">Approve and create company</a>`;
+      note.textContent = 'No company matches. Create one or link to another company.';
+      return;
+    }
+    const c = cx.company(picked);
+    document.getElementById('people-title').textContent = `People already in ${c.name}`;
+    document.getElementById('people').innerHTML = cx.peopleOf(c.id).map((p) => `<li data-href="D205?p=${p.id}">${r.avatar(p, 'sm')}<span class="grow"><b>${p.name}</b><small>${p.designation} · ${p.mobile}</small></span>
+      ${p.companies.find((k) => k.id === c.id).primary ? r.tag('Primary', 'blue') : ''}${cx.personTag(p.status)}</li>`).join('');
+    const blocked = blockedFor(picked) || engineer;
+    primarySlot.innerHTML = `<button class="btn btn-primary" type="button" data-open="approve"${blocked ? ' disabled' : ''}>Approve and link</button>`;
+    note.textContent = engineer ? 'Blocked: this mobile is an engineer.' : blocked ? `Approve is disabled: ${v.serial} is registered to ${owner.name}.` : `Link to ${c.name}`;
+    document.getElementById('ap-title').textContent = `Approve ${v.name}?`;
+    document.getElementById('ap-text').textContent = `${v.name} will be linked to ${c.name} and told by push and SMS.`;
+    document.getElementById('ap-site').innerHTML = c.sites.map((s) => `<option value="${s.id}"${s.id === v.suggestSite ? ' selected' : ''}>${s.name}</option>`).join('');
+  };
+  if (decidable) {
+    document.getElementById('found').addEventListener('change', syncPick);
+    syncPick();
+  } else if (v.found.length) {
+    const c = cx.company(v.found[0].company);
+    document.getElementById('people-title').textContent = `People in ${c.name}`;
+    document.getElementById('people').innerHTML = cx.peopleOf(c.id).map((p) => `<li data-href="D205?p=${p.id}">${r.avatar(p, 'sm')}<span class="grow"><b>${p.name}</b><small>${p.designation}</small></span>${cx.personTag(p.status)}</li>`).join('');
+  }
+  document.getElementById('ap-go').addEventListener('click', () => ZXA.ui.toast(`${v.name} approved. Push and SMS sent`));
+  document.getElementById('menu-create').href = link('D203', `?v=${v.number}`);
+
+  /* previous requests from the same number, grouped */
+  const previous = ZXA.data.verifications.filter((x) => x.mobile === v.mobile && x.number !== v.number);
+  if (previous.length) {
+    document.getElementById('previous-card').hidden = false;
+    document.getElementById('previous').innerHTML = previous.map((x) => `<li data-href="D211?v=${x.number}"><span class="ic-disc">${ic('history')}</span>
+      <span class="grow"><b class="mono">${x.number}</b><small>${x.decided ? x.decided[0] : r.esc(x.company)} · ${r.date(x.submitted)}</small></span>${cx.verifyTag(x.status)}</li>`).join('');
+  }
+  document.getElementById('du-of').innerHTML = (previous.length ? previous : ZXA.data.verifications.filter((x) => x.number !== v.number).slice(0, 3))
+    .map((x) => `<option>${x.number}, ${x.name}</option>`).join('');
+  document.getElementById('lo-list').innerHTML = cx.companies.filter((c) => c.status !== 'deactivated').map((c) => `<li data-search-item>
+    <span class="ic-disc">${ic('buildings')}</span><span class="grow"><b>${c.name}</b><small class="mono">${c.code} · ${c.gstin}</small></span>
+    <button class="btn btn-sm btn-secondary" type="button" data-close${blockedFor(c.id) ? ' disabled' : ''} data-toast="${v.name} linked to ${c.name}">Link</button></li>`).join('');
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

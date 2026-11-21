@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D103 Alerts and system health</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D103" data-nav="D101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Alerts and system health</h1><p id="summary">Checked 12:00 PM · refreshes every 60 seconds</p></div>
+    <button class="btn btn-secondary" type="button" data-busy data-toast="All checks refreshed"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Refresh</button>
+  </div>
+
+  <div data-when="ready degraded down">
+    <div id="overall" style="margin-bottom:16px"></div>
+    <section class="grid cols-3" id="cards" aria-label="Integrations and jobs"></section>
+    <section class="card" style="margin-top:16px">
+      <div class="card-head"><div class="grow"><h2>Recent events</h2><p>Last 3 days</p></div><a class="card-link" href="#D1641">Integration log</a></div>
+      <ul class="mini" id="events"></ul>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="grid cols-3" id="sk-cards"></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not load system health.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready degraded down loading error">
+  <div><h3>What it is</h3><p>Health of payments, IndiaMART, push, email, SMS, storage, backups, app versions and background jobs.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open the log behind any card.</li><li>Retry a failed job.</li><li>Mute an alert for 24 hours.</li></ul></div>
+  <div><h3>What happens next</h3><p>Integration log (D1641), Delivery log (D1320), Backups (D1643), App adoption (D1631), Integrations (D1620).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Each card is Healthy, Degraded or Down; the top bar dot follows the worst state (try Degraded and Down).</li><li>An integration alerts after 3 failures in 10 minutes.</li><li>IndiaMART silent for 48 hours, invalid webhook signature (EC-A20), SMS down (EC-A28).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/overview.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const link = (id) => (ZXA.isBuilt(id) ? ZXA.href(id) : `${ZXA.root}index.html#${id}`);
+  const STATE = { ok: ['Healthy', 'green'], degraded: ['Degraded', 'amber'], down: ['Down', 'red'] };
+  const OVERALL = {
+    ready: '',
+    degraded: `<div class="banner amber center">${r.icon('warning')}<span class="grow"><b>3 checks need attention.</b> IndiaMART has not sent an enquiry in 48 hours.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D1620')}">Open setup</a></span></div>`,
+    down: `<div class="banner red center">${r.icon('warning-circle')}<span class="grow"><b>SMS OTP is down.</b> Customers and engineers cannot sign in with a code. Admins were emailed.</span>
+      <span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D1622')}">Open provider</a></span></div>`,
+  };
+
+  ZXA.renderHealth = (state) => {
+    const issues = a.healthIssues[state] || {};
+    const cards = a.healthCards.map((c) => ({ ...c, ...issues[c.key] }));
+    document.getElementById('overall').innerHTML = OVERALL[state] || '';
+    document.getElementById('cards').innerHTML = cards.map((c) => `
+      <article class="card kpi">
+        <div class="row"><span class="thumb">${r.icon(c.icon)}</span><span class="grow label">${c.name}</span>${r.tag(...STATE[c.state])}</div>
+        <span class="value" style="${c.state === 'down' ? 'color:var(--red)' : ''}">${c.value}</span>
+        ${c.meter ? `<span class="progress ${c.meter > 80 ? 'amber' : 'green'}"><span style="width:${c.meter}%"></span></span>` : ''}
+        <span class="foot">${c.sub}</span>
+        <div class="btns" style="margin-top:6px">
+          <a class="btn btn-sm btn-ghost" href="${link(c.log)}">${r.icon('file-text')}Open log</a>
+          ${c.retry ? `<button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="Job queued again">${r.icon('arrows-clockwise')}Retry</button>` : ''}
+          ${c.state !== 'ok' ? `<button class="btn btn-sm btn-ghost" type="button" data-toast="${c.name} muted for 24 hours">${r.icon('bell-off')}Mute 24 h</button>` : ''}
+        </div>
+      </article>`).join('');
+    const worst = cards.some((c) => c.state === 'down') ? 'red' : cards.some((c) => c.state === 'degraded') ? 'amber' : '';
+    const issuesCount = cards.filter((c) => c.state !== 'ok').length;
+    document.getElementById('summary').textContent = `${issuesCount ? `${issuesCount} of ${cards.length} checks need attention` : 'All systems healthy'} · checked 12:00 PM`;
+    /* the top bar dot follows the worst state */
+    const dot = document.querySelector('.top .health .dot');
+    if (dot) {
+      dot.className = `dot ${worst}`;
+      dot.nextElementSibling.textContent = issuesCount ? `${issuesCount} issues` : a.health.label;
+    }
+  };
+
+  document.getElementById('events').innerHTML = a.healthEvents.map(([when, title, sub, tone]) => `
+    <li><span class="ic-disc ${tone}">${r.icon(tone === 'green' ? 'check-circle' : 'warning')}</span><span class="grow"><b>${title}</b><small>${sub}</small></span>
+      <span class="end">${r.dayDate(when)}, ${r.time(when)}</span></li>`).join('');
+  document.getElementById('sk-cards').innerHTML = a.healthCards.map(() => '<div class="card kpi"><span class="sk sk-line" style="width:50%"></span><span class="sk sk-title" style="width:40%"></span><span class="sk sk-line"></span></div>').join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+ZXA.renderHealth('ready');
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (button && ['ready', 'degraded', 'down'].includes(button.dataset.protoState)) ZXA.renderHealth(button.dataset.protoState);
+});
+</script>
+</body>
+</html>

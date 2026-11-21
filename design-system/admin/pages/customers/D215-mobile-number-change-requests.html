@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D215 Mobile number change requests</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D215" data-nav="D201">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Mobile number changes</h1><p id="head-sub"></p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <div data-when="ready empty no-results">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+        <button role="tab" aria-selected="true" data-view="pending">Pending <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="approved">Approved <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="rejected">Rejected <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="all">All <span class="n"></span></button>
+      </div>
+      <div class="toolbar" data-when="ready no-results">
+        <label class="search" data-filter="#changes"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+          <input type="search" placeholder="Person or mobile number" aria-label="Search number changes"></label>
+        <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+      </div>
+      <div class="table-wrap" data-when="ready no-results">
+        <table class="table" id="changes">
+          <thead><tr>
+            <th class="sortable">Request</th><th class="sortable">Person</th><th>Old number</th><th>New number</th>
+            <th class="sortable">Requested</th><th class="sortable">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+      </div>
+      <div class="table-foot" data-when="ready no-results">
+        <span id="foot-count"></span><span class="grow"></span>
+        <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+        <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+          <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+      </div>
+      <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-device-mobile"/></svg></span>
+        <h3>No number changes yet</h3><p>Requests from the app (Change mobile number) appear here.</p></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <section class="card list-card">
+      <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Request</th><th>Person</th><th>Old number</th><th>New number</th><th>Requested</th><th>Status</th></tr></thead>
+        <tbody id="sk-rows"></tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 class="mono" id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Verification</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Both verified</button><button class="chip" type="button" aria-pressed="false">Old number lost</button></div></div>
+      <div class="field"><span class="label">Role</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Customer</button><button class="chip" type="button" aria-pressed="false">Engineer</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show requests</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="approve" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="approve-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-device-mobile"/></svg></span>
+      <div class="grow"><h2 id="approve-title"></h2><p id="approve-text"></p></div></div>
+    <div class="modal-body"><div class="field"><label for="approve-note">Note for the log</label><input class="input" id="approve-note" value="Called on the new number and confirmed"></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Number changed. The old number is released">Approve change</button></div>
+  </div>
+</div>
+<div class="overlay center" id="reject" hidden>
+  <div class="modal" role="dialog" aria-labelledby="reject-title">
+    <div class="modal-head"><div class="grow"><h2 id="reject-title">Reject this change?</h2><p id="reject-text"></p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="reject-reason">Reason</label><select class="select" id="reject-reason"><option>Could not confirm it is the account owner</option><option>New number is used by another account</option><option>Other</option></select></div>
+      <div class="field"><label for="reject-note">Message to the person <span class="opt">optional</span></label><textarea class="textarea" id="reject-note" maxlength="300"></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Change rejected. The person is told">Reject</button></div>
+  </div>
+</div>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/access/A19-change-mobile.html">
+  <div><h3>What it is</h3><p>Mobile number changes asked for in the app (A19) that need Admin.</p></div>
+  <div><h3>What you can do</h3><ul><li>See whether the new and the old number were verified by code.</li><li>Approve, reject with a reason, or call the person first.</li></ul></div>
+  <div><h3>What happens next</h3><p>On approval the person signs in with the new number and the old number is released.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The new number must be unused; otherwise approve is blocked with a link to the conflict (EC-A35, D207).</li><li>Old number lost: call the person on the new number before approving.</li><li>One change every 30 days (A19).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const ic = r.icon;
+  const STATUS = { pending: ['Pending', 'amber'], approved: ['Approved', 'green'], rejected: ['Rejected', ''] };
+  const list = ZXA.data.numberChanges.map((x, i) => ({ ...x, i, p: cx.person(x.person) }));
+  /* EC-A35: the new number must not be on any other account */
+  const usedBy = (x) => cx.people.find((p) => p.mobile === x.new && p.id !== x.person);
+  const verified = (ok, label) => (ok ? `<span class="sub green-text">${label} verified</span>` : `<span class="sub amber-text">${label} not verified</span>`);
+  const companyOf = (p) => (p.role === 'Engineer' ? `Engineer, ${p.region}` : p.companies.map((c) => cx.company(c.id).name).join(', '));
+  document.getElementById('head-sub').textContent = `${list.filter((x) => x.status === 'pending').length} pending · the new number must be unused`;
+
+  document.querySelector('#changes tbody').innerHTML = list.map((x) => `<tr data-drawer="quick" data-change="${x.i}">
+    <td><span class="mono strong">${x.id}</span><span class="sub">${x.note}</span></td>
+    <td><span class="who">${r.avatar(x.p, 'sm')}<span><a href="#D205?p=${x.p.id}"><b>${x.p.name}</b></a><small>${companyOf(x.p)}</small></span></span></td>
+    <td class="nowrap">${x.old}${verified(x.oldVerified, 'Code')}</td>
+    <td class="nowrap">${x.new}${verified(x.newVerified, 'Code')}</td>
+    <td class="nowrap" data-sort="${x.requested}">${r.dayDate(x.requested)}<span class="sub">${r.time(x.requested)}</span></td>
+    <td>${r.tag(...STATUS[x.status])}</td>
+  </tr>`).join('');
+
+  const VIEWS = { pending: (x) => x.status === 'pending', approved: (x) => x.status === 'approved', rejected: (x) => x.status === 'rejected', all: () => true };
+  const showView = (key) => {
+    const rows = [...document.querySelectorAll('#changes tbody tr')];
+    rows.forEach((row) => { row.hidden = !VIEWS[key](list[row.dataset.change]); });
+    const shown = rows.filter((row) => !row.hidden).length;
+    document.getElementById('foot-count').textContent = `1 to ${shown} of ${shown}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = list.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('pending');
+  document.getElementById('sk-rows').innerHTML = Array.from({ length: 4 }, () => `<tr>
+    ${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`).join('');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const x = list[event.detail.dataset.change];
+    const clash = x.status === 'pending' ? usedBy(x) : null;
+    document.getElementById('quick-title').textContent = x.id;
+    document.getElementById('quick-sub').textContent = `${x.p.name} · requested ${r.ago(x.requested)}`;
+    document.getElementById('quick-body').innerHTML = `
+      <div class="tags">${r.tag(...STATUS[x.status])}${cx.roleTag(x.p)}</div>
+      <div class="diff"><span class="old">${x.old}</span><span class="new">${x.new}</span></div>
+      <dl class="dl">
+        <dt>Old number</dt><dd>${x.oldVerified ? '<span class="green-text">Code verified</span>' : '<span class="amber-text">Not verified, old number lost</span>'}</dd>
+        <dt>New number</dt><dd>${x.newVerified ? '<span class="green-text">Code verified</span>' : '<span class="amber-text">Not verified</span>'}</dd>
+        <dt>Person</dt><dd><a href="#D205?p=${x.p.id}">${x.p.name}</a><br><span class="muted">${companyOf(x.p)}</span></dd>
+        <dt>Requested</dt><dd>${r.dayDate(x.requested)}, ${r.time(x.requested)}</dd>
+        <dt>Note</dt><dd>${x.note}</dd>
+      </dl>
+      ${clash ? `<div class="banner red">${ic('ban')}<span class="grow"><b>${x.new} is used by ${clash.name}.</b> Resolve the conflict first.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="#D207">Open conflicts</a></span></div>`
+        : x.status === 'pending' ? `<div class="banner green">${ic('check-circle')}<span class="grow"><b>New number is unused.</b> No other account has it.</span></div>` : ''}
+      ${x.status === 'pending' && !x.oldVerified ? `<div class="banner amber">${ic('phone')}<span class="grow"><b>Old number lost.</b> Call ${x.p.name.split(' ')[0]} on the new number before you approve.</span></div>` : ''}`;
+    document.getElementById('quick-foot').innerHTML = x.status === 'pending'
+      ? `<a class="btn btn-ghost" href="tel:${x.new.replace(/\s/g, '')}">${ic('phone')}Call</a><span class="grow"></span>
+         <button class="btn btn-secondary" type="button" data-open="reject">Reject</button>
+         <button class="btn btn-primary" type="button" data-open="approve"${clash ? ' disabled' : ''}>Approve</button>`
+      : '<span class="grow"></span><button class="btn btn-secondary" type="button" data-close>Close</button>';
+    document.getElementById('approve-title').textContent = `Change ${x.p.name}'s number to ${x.new}?`;
+    document.getElementById('approve-text').textContent = `${x.p.name.split(' ')[0]} signs in with the new number from now on and every device signs out. ${x.old} is released.`;
+    document.getElementById('reject-text').textContent = `${x.p.name} keeps ${x.old} and sees your reason in the app.`;
+  });
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-chips] .chip');
+    if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

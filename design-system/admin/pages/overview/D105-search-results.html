@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D105 Search results</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D105" data-nav="D101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Search results</h1><p id="summary"></p></div>
+  </div>
+
+  <div class="search-row" style="margin-bottom:16px; flex-wrap:nowrap">
+    <label class="search"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+      <input type="search" id="q" placeholder="Tickets, customers, people, machines, invoices" aria-label="Search everything" autocomplete="off"></label>
+    <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+  </div>
+
+  <div data-when="ready">
+    <div class="tabs" role="tablist" aria-label="Result types" id="tabs" style="margin-bottom:16px"></div>
+    <div class="stack" id="results"></div>
+  </div>
+
+  <div data-when="loading">
+    <div class="tabs" style="margin-bottom:16px"><span class="sk sk-line" style="width:420px; margin:14px 0"></span></div>
+    <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>
+  </div>
+
+  <div data-when="no-results">
+    <div class="card"><div class="state page"><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+      <h3>No matching results</h3><p id="nores-text">Try different words or clear the filters.</p>
+      <p id="suggest"></p>
+      <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Filters cleared">Clear filters</button></div></div></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not search right now.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Refine results</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Status</span><div class="row wrap" data-single>
+        <button class="chip" type="button" aria-pressed="true">Any</button><button class="chip" type="button" aria-pressed="false">Open only</button><button class="chip" type="button" aria-pressed="false">Closed only</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-from">Created from</label><input class="input" id="f-from" type="date"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Results refined">Show results</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error">
+  <div><h3>What it is</h3><p>Full results for the top bar search. Opens with <code>?q=shree</code>; any word works.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch tabs by type; counts show on each.</li><li>Open any record.</li><li>Change the words here; results follow after 2 characters.</li></ul></div>
+  <div><h3>What happens next</h3><p>Ticket (D403), Customer (D202), Person (D205), Machine (D302), Invoice (D903), Verification (D211).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>No results suggests a spelling, for example <code>?q=shre</code>.</li><li>Search answers in under 1 second after typing stops.</li><li>Long names are cut with an ellipsis (EC-A07).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/customers.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const cx = ZXA.cx;
+  const link = (target) => { const [id, q = ''] = target.split(/(?=\?)/); return ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`; };
+  const input = document.getElementById('q');
+  input.value = new URLSearchParams(location.search).get('q') || 'shree';
+
+  /* every record type the global search covers; text is what matches, row is how it shows */
+  const TYPES = [
+    ['tickets', 'Tickets', 'wrench', r.tickets.map((t) => ({ text: `${t.number} ${r.company(t.company).name} ${r.machine(t.machine).model} ${t.machine} ${t.summary}`,
+      title: t.number, mono: true, sub: `${r.company(t.company).name} · ${r.machine(t.machine).model}`, end: r.ticketTag(t.status), href: `D403?t=${t.number}` }))],
+    ['customers', 'Customers', 'buildings', cx.companies.map((c) => ({ text: `${c.name} ${c.code} ${c.city} ${c.gstin}`,
+      title: c.name, sub: `${c.code} · ${c.city}`, end: cx.companyTag(c.status), href: `D202?c=${c.id}` }))],
+    ['people', 'People', 'user', cx.people.map((p) => ({ text: `${p.name} ${p.mobile} ${p.email} ${p.designation} ${p.companies.map((c) => cx.company(c.id).name).join(' ')}`,
+      title: p.name, sub: `${p.designation}${p.companies[0] ? `, ${cx.company(p.companies[0].id).name}` : ''} · ${p.mobile}`, end: cx.roleTag(p),
+      href: p.role === 'Engineer' ? 'D702' : `D205?p=${p.id}` }))],
+    ['machines', 'Machines', 'factory', r.machines.map((m) => ({ text: `${m.serial} ${m.model} ${m.nickname} ${r.company(m.company).name}`,
+      title: m.serial, mono: true, sub: `${m.model} · ${r.company(m.company).name}`, end: m.status === 'pending' ? r.tag('Pending verification', 'amber') : '', href: 'D302' }))],
+    ['invoices', 'Invoices', 'receipt', ZX.data.invoices.map((i) => ({ text: `${i.number} ${i.title} ${i.for} Shree Packaging Industries`,
+      title: i.number, mono: true, sub: `${i.title} · ${r.money(i.amount)}`, end: i.status === 'draft' ? r.tag('Draft') : r.invoiceTag(i.status), href: 'D903' }))],
+    ['verification', 'Verification', 'user-check', ZXA.data.verifications.map((v) => ({ text: `${v.number} ${v.name} ${v.mobile} ${v.company} ${v.serial}`,
+      title: v.number, mono: true, sub: `${v.name} · ${v.company}`, end: cx.verifyTag(v.status), href: `D211?v=${v.number}` }))],
+  ];
+
+  /* spelling suggestion: the closest known word by edit distance */
+  const distance = (x, y) => {
+    const row = Array.from({ length: y.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= x.length; i += 1) {
+      let prev = row[0]; row[0] = i;
+      for (let j = 1; j <= y.length; j += 1) { const cur = row[j]; row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (x[i - 1] === y[j - 1] ? 0 : 1)); prev = cur; }
+    }
+    return row[y.length];
+  };
+  const vocabulary = [...new Set(TYPES.flatMap(([, , , rows]) => rows.flatMap((x) => x.text.toLowerCase().split(/[^a-z0-9-]+/))).filter((w) => w.length > 3))];
+  const suggest = (q) => vocabulary.map((w) => [w, distance(q, w)]).sort((x, y) => x[1] - y[1]).find(([, n]) => n > 0 && n <= 2)?.[0];
+
+  let tab = 'all';
+  const row = (x, ic) => `<li data-href="${x.href}"><span class="ic-disc">${r.icon(ic)}</span>
+    <span class="grow"><b class="${x.mono ? 'mono' : ''}">${r.esc(x.title)}</b><small>${r.esc(x.sub)}</small></span>
+    <span class="end">${x.end}</span>${r.icon('caret-right', 'faint')}</li>`;
+
+  const render = () => {
+    const q = input.value.trim().toLowerCase();
+    const hits = TYPES.map(([key, label, ic, rows]) => [key, label, ic, q.length >= 2 ? rows.filter((x) => x.text.toLowerCase().includes(q)) : []]);
+    const total = hits.reduce((n, [, , , list]) => n + list.length, 0);
+    document.getElementById('summary').textContent = `${total} results for "${input.value.trim()}"`;
+    if (!total) {
+      const words = q.split(/\s+/);
+      const fixed = words.map((w) => (vocabulary.includes(w) ? w : suggest(w) || w)).join(' ');
+      const word = fixed !== q ? fixed : '';
+      document.getElementById('nores-text').textContent = `Nothing matches "${input.value.trim()}". Try different words or clear the filters.`;
+      document.getElementById('suggest').innerHTML = word ? `Did you mean <a href="?q=${encodeURIComponent(word)}">${r.esc(word)}</a>?` : '';
+    }
+    document.getElementById('tabs').innerHTML = [['all', 'All', '', [...Array(total)]], ...hits].map(([key, label, , list]) =>
+      `<button role="tab" type="button" aria-selected="${tab === key}" data-tab-key="${key}">${label} <span class="n">${list.length}</span></button>`).join('');
+    document.getElementById('results').innerHTML = hits.filter(([key, , , list]) => list.length && (tab === 'all' || tab === key)).map(([key, label, ic, list]) => `
+      <section class="card"><div class="card-head"><div class="grow"><h2>${label}</h2><p>${list.length} found</p></div>
+        ${tab === 'all' && list.length > 5 ? `<button class="btn btn-link" type="button" data-tab-key="${key}">See all ${list.length}</button>` : ''}</div>
+        <ul class="mini" style="margin-top:6px">${(tab === 'all' ? list.slice(0, 5) : list).map((x) => row(x, ic)).join('')}</ul></section>`).join('')
+      || `<div class="card"><div class="state"><h3>No ${tab} match</h3><p>See the other tabs.</p></div></div>`;
+    return total;
+  };
+
+  if (!render()) document.body.dataset.state = 'no-results';
+  let timer;
+  input.addEventListener('input', () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      if (input.value.trim().length < 2) return;
+      history.replaceState(null, '', `?q=${encodeURIComponent(input.value.trim())}`);
+      ZXA.ui.setState(render() ? 'ready' : 'no-results');
+    }, 300);
+  });
+  document.addEventListener('click', (event) => {
+    const t = event.target.closest('[data-tab-key]');
+    if (t) { tab = t.dataset.tabKey; render(); }
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

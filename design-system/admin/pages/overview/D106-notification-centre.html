@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D106 Notification centre</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-overview.css">
+</head>
+<body class="adm" data-page="D106" data-nav="D101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Notifications</h1><p id="summary"></p></div>
+    <a class="btn btn-ghost" href="#D013"><svg class="ic"><use href="#ph-gear-six"/></svg>Settings</a>
+    <button class="btn btn-secondary" type="button" id="mark-all" data-when="ready">Mark all read</button>
+  </div>
+
+  <div data-when="ready">
+    <section class="card list-card">
+      <div class="views tabs" role="tablist" aria-label="Views">
+        <button role="tab" aria-selected="true" data-view="all">All <span class="n" id="n-all"></span></button>
+        <button role="tab" aria-selected="false" data-view="unread">Unread <span class="n" id="n-unread"></span></button>
+      </div>
+      <div class="toolbar"><div class="row wrap" data-single id="types"></div></div>
+      <div id="groups"></div>
+      <div class="card-foot" id="more-row"><span class="grow muted" style="font-size:13px" id="shown"></span>
+        <button class="btn btn-sm btn-secondary" type="button" id="more">Load older</button></div>
+    </section>
+  </div>
+
+  <div data-when="loading">
+    <div class="card pad stack">${'<span class="sk sk-line"></span>'}</div>
+  </div>
+
+  <div data-when="empty">
+    <div class="card"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+      <h3>You are all caught up</h3><p>New alerts appear here and on the bell.</p>
+      <div class="btns"><a class="btn btn-secondary" href="#D102">Open work queue</a></div></div></div>
+  </div>
+
+  <div data-when="error">
+    <div class="card"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+      <h3>Something went wrong</h3><p>We could not load notifications.</p>
+      <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button></div>
+      <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready loading empty error">
+  <div><h3>What it is</h3><p>Every alert sent to Admin, newest first, with read state.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by type; switch to Unread.</li><li>Click an alert to open the record; it is marked read.</li><li>Mark one or all as read.</li></ul></div>
+  <div><h3>What happens next</h3><p>The record pages, Work queue (D102), My notification settings (D013).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Older alerts load on scroll.</li><li>Machine down repeats every 5 minutes until acknowledged (section 12).</li><li>Empty: 'You are all caught up'.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/overview.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const PAGE = 10;
+  const all = [...a.notifications.map((n, i) => ({ ...n, type: a.notificationTypeOf[i] })), ...a.olderNotifications]
+    .map((n, i) => ({ ...n, id: i })).sort((x, y) => y.when.localeCompare(x.when));
+  let view = 'all';
+  let type = '';
+  let limit = PAGE;
+
+  document.getElementById('types').innerHTML = [['', 'All types'], ...a.notificationTypes]
+    .map(([k, label]) => `<button class="chip" type="button" aria-pressed="${k === type}" data-type="${k}">${label}</button>`).join('');
+  document.querySelector('[data-when="loading"] .card').innerHTML = Array.from({ length: 6 }, () => '<div class="row"><span class="sk sk-circle"></span><span class="sk sk-line grow"></span></div>').join('');
+
+  const dayLabel = (iso) => (iso.startsWith(ZX.data.today) ? 'Today' : r.daysFromToday(iso) === -1 ? 'Yesterday' : r.dayDate(iso));
+  const render = () => {
+    const list = all.filter((n) => (view === 'all' || n.unread) && (!type || n.type === type));
+    const shown = list.slice(0, limit);
+    const groups = [...new Set(shown.map((n) => dayLabel(n.when)))];
+    document.getElementById('groups').innerHTML = shown.length ? groups.map((g) => `
+      <div class="card-head" style="min-height:40px; padding-top:10px"><h3 class="muted" style="font-size:13px">${g}</h3></div>
+      <ul class="mini nc">${shown.filter((n) => dayLabel(n.when) === g).map((n) => `
+        <li class="${n.unread ? 'unread' : ''}" data-href="${n.href}" data-id="${n.id}"><span class="ic-disc ${n.tone}">${r.icon(n.icon)}</span>
+          <span class="grow"><b>${r.esc(n.title)}</b><small>${r.esc(n.sub)}</small></span>
+          <span class="end">${r.time(n.when)}</span>
+          ${n.unread ? `<button class="btn btn-sm btn-ghost" type="button" data-read="${n.id}">Mark read</button>` : ''}</li>`).join('')}</ul>`).join('')
+      : `<div class="state"><span class="disc green">${r.icon('check')}</span><h3>You are all caught up</h3><p>No ${view === 'unread' ? 'unread ' : ''}alerts here.</p></div>`;
+    const unread = all.filter((n) => n.unread).length;
+    document.getElementById('n-all').textContent = all.length;
+    document.getElementById('n-unread').textContent = unread;
+    document.getElementById('summary').textContent = unread ? `${unread} unread` : 'All read';
+    document.getElementById('shown').textContent = `${shown.length} of ${list.length}`;
+    document.getElementById('more').hidden = shown.length >= list.length;
+  };
+  render();
+
+  document.addEventListener('click', (event) => {
+    const read = event.target.closest('[data-read]');
+    if (read) { all.find((n) => n.id === Number(read.dataset.read)).unread = false; render(); return; }
+    const row = event.target.closest('.nc li');
+    if (row) all.find((n) => n.id === Number(row.dataset.id)).unread = false;
+    const chip = event.target.closest('[data-type]');
+    if (chip) { type = chip.dataset.type; limit = PAGE; render(); }
+    const tab = event.target.closest('[data-view]');
+    if (tab) { view = tab.dataset.view; limit = PAGE; render(); }
+  });
+  document.getElementById('mark-all').addEventListener('click', () => { all.forEach((n) => { n.unread = false; }); render(); ZXA.ui.toast('All marked as read'); });
+  const more = document.getElementById('more');
+  more.addEventListener('click', () => { limit += PAGE; render(); });
+  /* older alerts load when the foot scrolls into view */
+  new IntersectionObserver((entries) => { if (entries[0].isIntersecting && !more.hidden && document.body.dataset.state === 'ready') more.click(); })
+    .observe(document.getElementById('more-row'));
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
