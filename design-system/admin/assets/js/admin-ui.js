@@ -294,6 +294,14 @@
     return new Chart(canvas, { ...config, options });
   };
 
+  /* mobile screen previews: show only the phone, not the plate chrome around it (same origin) */
+  const PLATE_ONLY = 'body.plate{display:block !important; padding:11px !important; background:transparent !important; min-height:0 !important}'
+    + '.plate-label,.plate-states,.plate-info,.plate-note{display:none !important}';
+  $$('.phone-preview iframe').forEach((frame) => frame.addEventListener('load', () => {
+    const doc = frame.contentDocument;
+    if (doc) doc.head.insertAdjacentHTML('beforeend', `<style>${PLATE_ONLY}</style>`);
+  }));
+
   ZXA.ui = { openOverlay, closeOverlay, toast, go, setState, leave };
   setState(ZXA.initialState || document.body.dataset.state || 'ready');
 })();
