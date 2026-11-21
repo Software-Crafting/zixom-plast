@@ -10,8 +10,8 @@ Desktop web, single Admin role, light mode. Demo today is Monday 23 Nov 2026, 12
 cd design-system && python3 -m http.server 8000
 ```
 
-`http://localhost:8000/admin/` is the screen map (all 258 spec pages, built ones linked), `/admin/components.html` shows
-every component.
+`http://localhost:8000/admin/` is the screen map: all 250 Phase 1 pages are built; the 8 Phase 2 pages (D1701 to D1708)
+are listed but not built, as the spec defers them. `/admin/components.html` shows every component.
 
 ## Relation to the mobile prototype
 
@@ -33,7 +33,9 @@ assets/css/admin.css       the one stylesheet a page links (imports tokens + the
   overlays.css             drawer 480/720, modal 480, menus, popovers, command search, toast
   pages.css                record detail 2/3 + 1/3, sign in card, split view, thread, gallery, steps, diff
   proto.css                prototype panel (never build)
-assets/js/admin-screens.js page registry from the spec index, sidebar nav, ZXA.built
+assets/js/admin-screens.js page registry from the spec index, sidebar nav, ZXA.built (generated)
+assets/js/data/<module>.js demo data and small helpers of one module, on top of ZX.data and ZXA.data
+assets/css/m-<module>.css  layout only one module needs (with its phone rules); everything shared stays in the files above
 assets/js/admin-data.js    admin-only demo data on top of ZX.data
 assets/js/admin-render.js  ZXA.r: lookups, Admin status wording (spec section 11), chips, money in L/Cr
 assets/js/admin-shell.js   draws sidebar, top bar, search, bell, Create, health, banners, prototype panel
@@ -41,6 +43,8 @@ assets/js/admin-ui.js      overlays, menus, toasts, tabs, tables, search, demo s
 assets/icons.js            Lucide sprite, built by tools/build-icons.mjs (mobile names plus desktop ones)
 assets/vendor/chart.umd.js Chart.js 4.4.7 (MIT)
 pages/<module>/<ID>-<slug>.html
+tools/build-index.mjs      writes ZXA.built from pages/ and fails on a file name that does not match the registry
+tools/check-links.mjs      fails on links to unknown or Phase 2 pages and on missing mobile screens
 ```
 
 ## Page skeleton
@@ -63,7 +67,10 @@ pages/<module>/<ID>-<slug>.html
 </body>
 ```
 
-Then add the id to `ZXA.built`. Link pages with `href="#D403"` or `data-href="D403?t=TKT-2026-0126"`; unbuilt pages
+Then run `node design-system/admin/tools/build-index.mjs` and `node design-system/admin/tools/check-links.mjs`.
+A page that should open in another demo state sets `document.body.dataset.state` before the shell loads. Record pages read
+their record from the address (`?t=` ticket, `?m=` machine, `?c=` claim or company, `?e=` engineer) and fall back to a
+sensible sample. Pages that are a drawer or modal in the spec are their parent page with that overlay open. Link pages with `href="#D403"` or `data-href="D403?t=TKT-2026-0126"`; unbuilt pages
 open the screen map.
 
 ## Prototype chrome, never build this
@@ -77,3 +84,9 @@ Same as mobile: one primary action, chevrons only on plain rows, filter button b
 actions, spring in and out, no page transitions, grey surface with white hairline cards, Lucide icons, short copy.
 Lists: 25 rows (25/50/100), row click opens a quick view drawer, record number opens the page, checkboxes show the
 bulk bar. Destructive modals name the record and the consequence (spec section 18).
+
+## Responsive
+
+Desktop first, down to phones with no sideways page scroll: under 1100 px the sidebar is a slide-out menu; under 640 px
+cards stack, KPI cards sit two per row, drawers fill the screen, modals rise from the bottom, toolbars wrap with the
+filter button kept beside search, and wide tables scroll inside their card.
