@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1601 Settings overview</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+      <div class="page-head">
+        <div class="grow"><h1>Settings</h1><p>Values the app and the dashboard read. Changes reach the app within 15 minutes.</p></div>
+      </div>
+
+      <div data-when="ready no-results">
+        <div class="search-row" style="margin-bottom:16px">
+          <label class="search" data-filter="#set-cards"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+            <input type="search" placeholder="Search settings, for example radius or GST" aria-label="Search settings"></label>
+          <button class="btn btn-secondary filter-btn" type="button" data-menu="group-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Group</button>
+        </div>
+        <div id="set-cards"></div>
+        <div class="card" data-noresults hidden><div class="state"><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+          <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+          <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+      </div>
+
+      <div data-when="loading" class="stack">
+        <div class="grid cols-3" id="sk-cards"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="menu" id="group-menu" hidden>
+  <div class="label">Show group</div>
+  <div id="group-options"></div>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error">
+  <div><h3>What it is</h3><p>The home of Administration. One card per settings page with when it last changed.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search settings by name or by a word they contain.</li><li>Filter by group.</li><li>Open any settings page; the left menu stays on every settings page.</li></ul></div>
+  <div><h3>What happens next</h3><p>Each card opens its page, for example Service rules (D1605) or App control (D1630).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Every setting shows its value, default, where it is used and its history (section 14).</li><li>The app picks up a change within 15 minutes (EC-A62).</li><li>Every change is in the activity log (D1640).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const S = ZXA.data.settings;
+  /* words a card also answers to, so a search for "radius" finds Service rules */
+  const WORDS = {
+    D1605: 'response target accept window check in radius reschedule auto close reopen rating estimate validity claim review',
+    D1606: 'visit fee labour travel GST emergency surcharge discount', D1607: 'slot notice days holidays',
+    D1608: 'OTP code lock session devices password biometric', D1609: 'UPI cards net banking offline proof reminders credit terms',
+    D1610: 'photo video size voice note', D1611: 'prefix TKT INV next number financial year', D1612: 'PDF invoice quotation report',
+    D1630: 'version force update maintenance feature switch arrival code', D1620: 'Razorpay IndiaMART Firebase SMS maps storage',
+    D1604: 'GSTIN PAN bank IFSC address phone email working hours', D1642: 'export deletion retention',
+  };
+  const card = ([id, label, ic, desc, changed]) => `<a class="card pad" href="#${id}" data-search-item>
+    <span class="row"><span class="thumb">${r.icon(ic)}</span><span class="grow"><b class="strong">${label}</b></span></span>
+    <p class="muted" style="margin-top:10px; font-size:13px">${desc}</p>
+    <p class="faint" style="margin-top:6px; font-size:12px">${changed ? `Changed ${r.date(changed)} by Rajesh Goyal` : 'Read only'}</p>
+    <span class="sr-only">${WORDS[id] || ''}</span></a>`;
+  document.getElementById('set-cards').innerHTML = S.groups.map(([group, list]) => `<div data-group="${group}" data-search-item>
+    <div class="section-title"><h2>${group}</h2></div>
+    <div class="grid cols-3">${list.filter(([id]) => id !== 'D1601').map(card).join('')}</div></div>`).join('');
+  document.getElementById('group-options').innerHTML = S.groups.map(([group]) => `<label class="check"><input type="checkbox" checked data-group-toggle="${group}"> ${group}</label>`).join('');
+  document.getElementById('sk-cards').innerHTML = '<div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>'.repeat(6);
+  document.addEventListener('change', (event) => {
+    const box = event.target.closest('[data-group-toggle]');
+    if (box) document.querySelector(`[data-group="${box.dataset.groupToggle}"]`).hidden = !box.checked;
+  });
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

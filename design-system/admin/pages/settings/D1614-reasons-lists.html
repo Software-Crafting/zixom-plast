@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1614 Reasons lists</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1614" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Reasons lists</span></nav>
+          <h1>Reasons lists</h1><p>The choices people pick from when they decline, hold, cancel or reject. Used in the app and the dashboard.</p></div>
+        <button class="btn btn-primary" type="button" data-open="edit"><svg class="ic"><use href="#ph-plus"/></svg>Add reason</button>
+      </div>
+      <div data-when="ready no-results">
+        <section class="card list-card">
+          <div class="views tabs" role="tablist" aria-label="Lists" id="lists"></div>
+          <div class="toolbar">
+            <label class="search" data-filter="#reasons"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search reasons" aria-label="Search reasons"></label>
+            <button class="btn btn-secondary filter-btn" type="button" data-menu="status-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+          </div>
+          <div class="table-wrap"><table class="table" id="reasons">
+            <thead><tr><th class="sortable">Reason</th><th>Who picks it</th><th class="sortable num">Used</th><th>Status</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+            <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+          <div class="table-foot"><span id="count"></span><span class="grow"></span><span class="muted">"Other" is always last and asks for a note</span></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title">Reason</h2><p id="edit-sub">Shown in the app exactly as written.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="r-list">List</label><select class="select" id="r-list"></select></div>
+      <div class="field"><label for="r-text">Reason</label><input class="input" id="r-text" maxlength="60" autofocus><span class="hint">Up to 60 characters.</span></div>
+      <label class="check"><input type="checkbox" id="r-note"> Ask for a note</label>
+      <label class="switch"><input type="checkbox" checked id="r-active"><span></span>Active</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Saved. The app picks this up within 15 minutes">Save</button></div>
+  </div>
+</div>
+<div class="menu" id="status-menu" hidden>
+  <div class="label">Status</div>
+  <label class="check"><input type="checkbox" checked> Active</label><label class="check"><input type="checkbox" checked> Disabled</label>
+</div>
+<div class="menu" id="row-menu" hidden>
+  <button type="button" data-open="edit"><svg class="ic"><use href="#ph-pencil-simple"/></svg>Edit</button>
+  <button type="button" data-toast="Moved up"><svg class="ic"><use href="#ph-arrow-up"/></svg>Move up</button>
+  <hr><button class="danger" type="button" data-toast="Reason disabled. Past records keep it"><svg class="ic"><use href="#ph-ban"/></svg>Disable</button>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error">
+  <div><h3>What it is</h3><p>Seven lists: decline, hold, cancel, reject, dispute, visit failed, return.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch lists with the tabs, search.</li><li>Add a reason, edit, reorder or disable one.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app shows the new list within 15 minutes. Reports and filters use the same wording.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>A reason in use cannot be deleted, only disabled; past records keep it.</li><li>Other is always last and asks for a note.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const LISTS = {
+    Decline: ['Engineer', [['Already on another job', 14], ['Too far to reach in time', 6], ['Not trained on this machine', 2], ['On leave or unwell', 1], ['Other', 3]]],
+    Hold: ['Admin, engineer', [['Waiting for parts', 9], ['Customer asked to pause', 4], ['Waiting for customer approval', 5], ['Unsafe to continue', 1], ['Other', 2]]],
+    Cancel: ['Customer, Admin', [['Problem solved on our own', 7], ['Raised by mistake', 3], ['Duplicate request', 2], ['Customer asked to cancel', 5], ['Other', 1]]],
+    Reject: ['Admin', [['Outside warranty', 4], ['Damage from misuse', 2], ['Not enough evidence', 3], ['Not a Zixom machine', 0], ['Other', 1]]],
+    Dispute: ['Customer', [['Charged for warranty work', 1], ['Wrong hours billed', 2], ['Part not used', 1], ['Other', 0]]],
+    'Visit failed': ['Engineer', [['Customer not available', 3], ['Site closed', 1], ['No power at site', 1], ['Machine not accessible', 0], ['Other', 0]]],
+    Return: ['Customer', [['Wrong part delivered', 2], ['Damaged in transit', 1], ['No longer needed', 1], ['Other', 0]]],
+  };
+  const names = Object.keys(LISTS);
+  document.getElementById('lists').innerHTML = names.map((n, i) => `<button role="tab" aria-selected="${i === 0}" data-list="${n}">${n} <span class="n">${LISTS[n][1].length}</span></button>`).join('');
+  document.getElementById('r-list').innerHTML = names.map((n) => `<option>${n}</option>`).join('');
+  const show = (name) => {
+    const [who, items] = LISTS[name];
+    document.querySelector('#reasons tbody').innerHTML = items.map(([text, used], i) => {
+      const disabled = name === 'Reject' && i === 3;
+      return `<tr data-drawer="edit" data-text="${text}" data-list="${name}"><td class="strong">${text}</td><td class="muted">${who}</td><td class="num">${used}</td>
+        <td>${disabled ? r.tag('Disabled') : r.tag('Active', 'green')}</td>
+        <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu">${r.icon('dots-three')}</button></td></tr>`;
+    }).join('');
+    document.getElementById('count').textContent = `${items.length} reasons · used ${items.reduce((s, [, u]) => s + u, 0)} times in the last 90 days`;
+  };
+  document.getElementById('lists').addEventListener('click', (event) => { const tab = event.target.closest('[data-list]'); if (tab) show(tab.dataset.list); });
+  document.getElementById('edit').addEventListener('zxa:row', (event) => {
+    document.getElementById('r-text').value = event.detail.dataset.text;
+    document.getElementById('r-list').value = event.detail.dataset.list;
+    document.getElementById('r-note').checked = event.detail.dataset.text === 'Other';
+  });
+  show('Decline');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

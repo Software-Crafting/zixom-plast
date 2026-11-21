@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1615 Regions and serviceable pincodes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1615" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Regions and pincodes</span></nav>
+          <h1>Regions and serviceable pincodes</h1><p>Managed in Engineers, Service areas. This is a shortcut.</p></div>
+        <a class="btn btn-primary" href="#D713"><svg class="ic"><use href="#ph-map-pinned"/></svg>Open service areas</a>
+      </div>
+      <div data-when="ready">
+        <section class="card list-card">
+          <div class="card-head"><div class="grow"><h2>Regions</h2><p>2 regions · 62 serviceable pincodes</p></div></div>
+          <div class="table-wrap" style="margin-top:12px"><table class="table">
+            <thead><tr><th>Region</th><th>Base</th><th>Engineers</th><th class="num">Pincodes</th><th class="num">Customers</th><th>Last change</th></tr></thead>
+            <tbody>
+              <tr data-href="D713"><td class="strong">Ahmedabad</td><td class="muted">GIDC Vatva</td><td><span class="who"><span class="avatar sm">SY</span>Sandeep Yadav</span></td><td class="num">38</td><td class="num">1</td><td class="muted nowrap">12 Oct 2026</td></tr>
+              <tr data-href="D713"><td class="strong">Pune</td><td class="muted">Chakan MIDC</td><td><span class="who"><span class="avatar sm">AV</span>Anita Verma</span></td><td class="num">24</td><td class="num">1</td><td class="muted nowrap">5 Nov 2026</td></tr>
+            </tbody></table></div>
+        </section>
+        <div class="banner amber" style="margin-top:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+          <span class="grow"><b>Requests from a pincode outside these regions are flagged.</b> Admin decides to serve, quote travel or decline (EC-A48).</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>A shortcut so service areas can be found from Settings. The editor lives in Engineers.</p></div>
+  <div><h3>What you can do</h3><ul><li>See regions, engineers and pincode counts.</li><li>Open Service areas (D713) to edit.</li></ul></div>
+  <div><h3>What happens next</h3><p>Service areas (D713): add or remove pincodes, set the engineer per region.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Pincode not serviceable: the ticket shows a flag (EC-A48).</li><li>Spec D1615: see D713.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

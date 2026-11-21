@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1643 Backups</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1643" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Backups</span></nav>
+          <h1>Backups</h1><p>Database and files, every night. Kept 30 days.</p></div>
+        <button class="btn btn-secondary" type="button" data-open="download"><svg class="ic"><use href="#ph-download-simple"/></svg>Download latest</button>
+        <button class="btn btn-primary" type="button" id="run-now"><svg class="ic"><use href="#ph-database"/></svg>Run backup now</button>
+      </div>
+      <div class="banner red center" data-when="failed" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>Last night's backup failed.</b> Storage did not answer at 2:00 AM. The latest good backup is from Sun 22 Nov.</span>
+        <span class="btns"><button class="btn btn-sm btn-primary" type="button" data-busy data-toast="Backup started">Run now</button></span></div>
+      <div class="banner center" data-when="running" style="margin-bottom:16px"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>
+        <span class="grow"><b>Backup running.</b> Started 12:00 PM, about 4 minutes. The dashboard and app keep working.</span><span class="progress" style="width:160px"><span style="width:35%"></span></span></div>
+      <div data-when="ready failed running">
+        <section class="kpis">
+          <div class="card kpi"><span class="label">Last backup</span><span class="value" id="k-last">2:00 AM</span><span class="foot" id="k-last-foot">Today · succeeded</span></div>
+          <div class="card kpi"><span class="label">Size</span><span class="value">1.84 GB</span><span class="foot">database 0.42 GB, files 1.42 GB</span></div>
+          <div class="card kpi"><span class="label">Kept</span><span class="value">30</span><span class="foot">daily backups, oldest 25 Oct</span></div>
+          <div class="card kpi"><span class="label">Next</span><span class="value">2:00 AM</span><span class="foot">Tue 24 Nov</span></div>
+        </section>
+        <div class="grid side-right">
+          <section class="card list-card"><div class="card-head"><div class="grow"><h2>History</h2><p>Last 10 runs</p></div></div>
+            <div class="table-wrap" style="margin-top:12px"><table class="table"><thead><tr><th>Started</th><th>Result</th><th>Took</th><th class="num">Size</th></tr></thead><tbody id="runs"></tbody></table></div></section>
+          <form id="schedule" data-set-form onsubmit="return false" class="card">
+            <div class="card-head"><div class="grow"><h2>Schedule</h2></div></div>
+            <div class="card-body stack">
+              <div class="field"><label for="b-time">Daily at</label><input class="input" id="b-time" type="time" value="02:00"><span class="hint">IST. Quiet hours are best.</span></div>
+              <div class="field"><label for="b-keep">Keep for</label><div class="set-unit"><input class="input" id="b-keep" type="number" value="30" min="7" max="365" data-unit="days"><span>days</span></div><span class="error" hidden></span><span class="hint">30 days (Confirm)</span></div>
+              <label class="check"><input type="checkbox" checked> Alert Admins by email if a backup fails</label>
+              <div><button class="btn btn-sm btn-secondary" type="button" data-save="schedule" disabled>Save schedule</button></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="download" hidden>
+  <div class="modal" role="dialog" aria-labelledby="dl-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-lock-simple"/></svg></span><div class="grow"><h2 id="dl-title">Download the latest backup?</h2>
+      <p>It holds every customer's data. Enter your password. The download is logged.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="dl-pass">Your password</label><input class="input" id="dl-pass" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="dl-reason">Reason</label><input class="input" id="dl-reason" placeholder="For example move to a new server"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Download link ready, valid 1 hour">Download</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading failed running error">
+  <div><h3>What it is</h3><p>Nightly backup of the database and files, the last results and the schedule.</p></div>
+  <div><h3>What you can do</h3><ul><li>Run a backup now.</li><li>Download the latest with your password and a reason.</li><li>Change the time and how long backups are kept.</li></ul></div>
+  <div><h3>What happens next</h3><p>The run shows here and in the integration log (D1641).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Failed backup alerts Admins (Failed state) and retries once.</li><li>Daily with 30 day retention (Confirm, section 16).</li><li>Running state: the app keeps working.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  document.getElementById('runs').innerHTML = ZXA.data.settings.backups.map(([when, result, took, size]) => `<tr><td class="nowrap">${r.dayDate(when)}, ${r.time(when)}</td>
+    <td>${result === 'Failed' ? r.tag('Failed, storage timeout', 'red') : r.tag(result, 'green')}</td><td class="nowrap">${took}</td><td class="num">${size}</td></tr>`).join('');
+  document.getElementById('run-now').addEventListener('click', () => ZXA.ui.setState('running'));
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-proto-state]');
+  if (!button) return;
+  const failed = button.dataset.protoState === 'failed';
+  document.getElementById('k-last').textContent = failed ? 'Failed' : '2:00 AM';
+  document.getElementById('k-last').closest('.kpi').classList.toggle('alert', failed);
+  document.getElementById('k-last-foot').textContent = failed ? 'Today 2:00 AM · storage timeout' : 'Today · succeeded';
+});
+</script>
+</body>
+</html>

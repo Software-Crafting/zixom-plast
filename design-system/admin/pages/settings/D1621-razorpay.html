@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1621 Razorpay</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1621" data-nav="D1620">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1620">Integrations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Razorpay</span></nav>
+          <h1>Razorpay</h1><p>Online payments and refunds. The webhook confirms every payment.</p></div>
+        <button class="btn btn-secondary" type="button" data-busy data-toast="Razorpay answered in 182 ms. Keys are valid">Test connection</button>
+        <button class="btn btn-secondary" type="button" data-open="rotate"><svg class="ic"><use href="#ph-key"/></svg>Rotate keys</button>
+      </div>
+      <div class="banner amber center" data-when="test-mode" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+        <span class="grow"><b>Test mode.</b> Payments in the app are not real. Switch to Live before launch.</span></div>
+      <div data-when="ready test-mode">
+        <div class="detail">
+          <div>
+            <form id="rzp" data-set-form onsubmit="return false" class="card pad" data-saved="Saved. New payments use these settings">
+              <div class="form-section"><h3>Mode</h3>
+                <div class="choices" style="grid-template-columns:1fr 1fr">
+                  <label class="choice"><input type="radio" name="mode" class="sr-only" id="mode-test"><span><b>Test</b><small>No real money. Test cards and UPI ids.</small></span></label>
+                  <label class="choice"><input type="radio" name="mode" class="sr-only" id="mode-live" checked><span><b>Live</b><small>Real payments to Zixom's account.</small></span></label>
+                </div></div>
+              <div class="form-section"><h3>API keys</h3><p>Secrets are never shown again after saving. Replace them with Rotate keys.</p>
+                <div class="form-grid">
+                  <div class="field"><label for="k-id">Key id</label><input class="input mono" id="k-id" value="rzp_live_••••••7Hq2" disabled></div>
+                  <div class="field"><label for="k-secret">Key secret</label><input class="input mono" id="k-secret" value="••••••••••••••••" disabled><span class="hint">Saved 19 Nov 2026 by Rajesh Goyal</span></div>
+                </div></div>
+              <div class="form-section"><h3>Webhook</h3><p>Add this address in the Razorpay dashboard with the events below.</p>
+                <div class="form-grid">
+                  <div class="field full"><label for="w-url">Webhook address</label><div class="row"><input class="input mono" id="w-url" value="https://api.zixom.in/webhooks/razorpay" readonly>
+                    <button class="btn btn-secondary btn-sm" type="button" data-toast="Webhook address copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy</button></div></div>
+                  <div class="field"><label for="w-secret">Webhook secret</label><input class="input mono" id="w-secret" value="••••••••••••" disabled><span class="hint">Every event is checked with this secret.</span></div>
+                  <div class="field"><span class="label">Events</span><div class="tags"><span class="tag">payment.authorized</span><span class="tag">payment.captured</span><span class="tag">payment.failed</span><span class="tag">refund.processed</span><span class="tag">refund.failed</span></div></div>
+                </div></div>
+              <div class="form-section"><h3>Methods</h3><p>Shown at checkout in the app. Payment rules (D1609) controls which ones customers see.</p>
+                <div class="row wrap"><label class="check"><input type="checkbox" checked> UPI</label><label class="check"><input type="checkbox" checked> Cards</label>
+                  <label class="check"><input type="checkbox" checked> Net banking</label><label class="check"><input type="checkbox" checked> Wallets</label></div></div>
+            </form>
+            <div class="form-bar" data-for="rzp"><span class="grow"></span>
+              <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+              <button class="btn btn-primary" type="button" data-save="rzp" disabled>Save changes</button></div>
+          </div>
+          <aside>
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Status</h3><span id="mode-tag"></span></div>
+              <div class="card-body"><dl class="dl"><dt>Last webhook</dt><dd>4 min ago, payment.captured</dd><dt>Last 24 h</dt><dd>6 events, 1 rejected</dd><dt>Response time</dt><dd>182 ms average</dd><dt>Settlements</dt><dd><a href="#D913">Reconciliation</a></dd></dl></div></section>
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Webhook failures</h3><a class="card-link" href="#D1641">Log</a></div>
+              <ul class="mini">
+                <li data-href="D1641"><span class="ic-disc red"><svg class="ic"><use href="#ph-shield-warning"/></svg></span><span class="grow"><b>Bad signature, rejected 401</b><small>Today 06:02 · from 103.21.58.9</small></span></li>
+                <li data-href="D1641"><span class="ic-disc amber"><svg class="ic"><use href="#ph-copy"/></svg></span><span class="grow"><b>Duplicate payment.captured ignored</b><small>20 Nov 14:11 · INV-2026-0982</small></span></li>
+              </ul></section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="rotate" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rot-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-key"/></svg></span><div class="grow"><h2 id="rot-title">Rotate Razorpay keys?</h2>
+      <p>Paste the new keys from Razorpay. The old keys stop working here when you save. Enter your password to continue.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="n-id">New key id</label><input class="input mono" id="n-id" placeholder="rzp_live_"></div>
+      <div class="field"><label for="n-secret">New key secret</label><input class="input mono" id="n-secret" type="password"></div>
+      <div class="field"><label for="n-pass">Your password</label><input class="input" id="n-pass" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="n-reason">Reason</label><input class="input" id="n-reason" placeholder="For example scheduled rotation"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="New keys saved and tested">Rotate keys</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading test-mode error">
+  <div><h3>What it is</h3><p>Razorpay keys, webhook, mode and methods.</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch Test or Live, choose methods, save.</li><li>Copy the webhook address.</li><li>Test the connection, rotate keys with your password and a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>New payments use the new settings. Each webhook is written to the integration log (D1641).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Secrets shown masked, never revealed.</li><li>Bad signature: rejected 401, logged, alert after 3 in 10 minutes (EC-A20).</li><li>Duplicate webhook ignored by payment id (EC-A19).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const paint = () => {
+    const test = document.body.dataset.state === 'test-mode';
+    document.getElementById('mode-tag').innerHTML = test ? r.tag('Test mode', 'amber') : r.tag('Live', 'green');
+    document.getElementById(test ? 'mode-test' : 'mode-live').checked = true;
+    document.getElementById(test ? 'mode-test' : 'mode-live').defaultChecked = true;
+    document.getElementById(test ? 'mode-live' : 'mode-test').defaultChecked = false;
+    document.getElementById('k-id').value = test ? 'rzp_test_••••••9Lm4' : 'rzp_live_••••••7Hq2';
+  };
+  paint();
+  ZXA.redraw = paint;
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => { if (event.target.closest('[data-proto-state]')) ZXA.redraw(); });
+</script>
+</body>
+</html>

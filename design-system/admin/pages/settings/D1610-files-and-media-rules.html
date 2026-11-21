@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1610 Files and media rules</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1610" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Files and media</span></nav>
+          <h1>Files and media</h1><p>Size and count limits. Apply to the app and the dashboard.</p></div>
+      </div>
+      <div data-when="ready">
+        <form id="files" data-set-form onsubmit="return false" class="stack">
+          <div id="groups" class="stack"></div>
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Allowed file types</h2><p>Every upload is virus scanned. Other types are refused with a reason (EC-A29).</p></div></div>
+            <div class="card-body"><div class="row wrap">
+              <label class="check"><input type="checkbox" checked> JPG</label><label class="check"><input type="checkbox" checked> PNG</label><label class="check"><input type="checkbox" checked> HEIC</label>
+              <label class="check"><input type="checkbox" checked> PDF</label><label class="check"><input type="checkbox" checked> MP4</label><label class="check"><input type="checkbox" checked> MOV</label>
+              <label class="check"><input type="checkbox"> XLSX</label></div></div>
+          </section>
+        </form>
+        <div class="form-bar" data-for="files"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="files" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>How many photos, how long a video and how large a file can be, everywhere.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change limits and allowed types.</li><li>Reset a limit, open its history.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The app enforces the new limits within 15 minutes; files already uploaded stay.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Defaults: 10 photos, 1 video of 60 s and 50 MB, 10 MB per photo or PDF, voice note 2 min (section 14).</li><li>Too large or failed upload: per file error with Retry (EC-A29).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const { num, group } = ZXA.set;
+  document.getElementById('groups').innerHTML = [
+    group('Photos and video', 'Per request, claim or visit report', [
+      { id: 'photos', label: 'Photos per item', control: num('photos', 10, 'photos', 1, 20), def: '10 photos', reset: '10', used: 'App C503, E406, C703' },
+      { id: 'photo-mb', label: 'Photo or PDF size', control: num('photo-mb', 10, 'MB each', 1, 25), def: '10 MB', reset: '10', used: 'App and dashboard' },
+      { id: 'videos', label: 'Videos per item', control: num('videos', 1, 'video', 0, 3), def: '1 video', reset: '1', used: 'App C503, C703' },
+      { id: 'video-s', label: 'Video length', control: num('video-s', 60, 'seconds', 10, 180), def: '60 seconds', reset: '60', used: 'App C503, C703' },
+      { id: 'video-mb', label: 'Video size', control: num('video-mb', 50, 'MB', 10, 200), def: '50 MB', reset: '50', used: 'App C503, C703' },
+      { id: 'voice', label: 'Voice note length', control: num('voice', 2, 'minutes', 1, 5), def: '2 minutes', reset: '2', used: 'App C503, E406' },
+    ]),
+    group('Dashboard files', '', [
+      { id: 'doc-mb', label: 'Library document size', control: num('doc-mb', 25, 'MB', 1, 100), def: '25 MB', reset: '25', used: 'Dashboard D1402' },
+      { id: 'import', label: 'Import file', hint: '10,000 rows or 5 MB per file', control: num('import', 5, 'MB', 1, 10), def: '5 MB', reset: '5', used: 'Dashboard D1510' },
+      { id: 'link', label: 'Download links valid for', hint: 'Signed links to private files and exports', control: num('link', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'Dashboard D1520' },
+    ]),
+  ].join('');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

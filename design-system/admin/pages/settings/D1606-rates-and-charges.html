@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1606 Rates and charges</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1606" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Rates and charges</span></nav>
+          <h1>Rates and charges</h1><p>Used by estimates and the charges screen in the app.</p></div>
+      </div>
+      <div data-when="ready">
+        <div class="banner amber" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+          <span class="grow"><b>Sample rates.</b> Replace with Zixom's real rates before launch (Q9).</span></div>
+        <div class="grid side-right">
+          <div>
+            <form id="rates" data-set-form onsubmit="return false"></form>
+            <div class="form-bar" data-for="rates"><span class="grow"></span>
+              <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+              <button class="btn btn-primary" type="button" data-save="rates" disabled>Save changes</button></div>
+          </div>
+          <aside class="stack">
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Example charge</h3></div>
+              <div class="card-body stack-sm">
+                <p class="muted" style="font-size:13px">Chargeable visit, 2 h labour, site 40 km away.</p>
+                <table class="table compact"><tbody id="example"></tbody></table>
+              </div></section>
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Tax codes</h3></div>
+              <div class="card-body"><dl class="dl"><dt>Machines and parts</dt><dd>HSN <span class="mono">8477</span></dd><dt>Service</dt><dd>SAC <span class="mono">998719</span></dd><dt>GST</dt><dd>18% on all, to be confirmed</dd></dl></div></section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C1504-charges.html">
+  <div><h3>What it is</h3><p>Rates the app shows on Charges and the dashboard uses in estimates.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change a rate; the example charge updates as you type.</li><li>Reset a rate to its default, open its history.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. New estimates (D408) and the app Charges screen use the new rates within 15 minutes.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Sample values from section 14, to be replaced (Q9).</li><li>Estimates already sent keep their amounts.</li><li>Discount above the engineer limit needs Admin approval.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const { num, group } = ZXA.set;
+  const r = ZXA.r;
+  document.getElementById('rates').innerHTML = [
+    group('Visit and labour', 'Before GST', [
+      { id: 'visit', label: 'Visit fee', hint: 'Charged once per chargeable visit', control: num('visit', 1500, '₹ per visit', 0, 50000), def: '₹1,500.00', reset: '1500', used: 'App C1504, dashboard D408' },
+      { id: 'labour', label: 'Labour rate', hint: 'Billed in half hours', control: num('labour', 750, '₹ per hour', 0, 10000), def: '₹750.00 per hour', reset: '750', used: 'App C1504, dashboard D408' },
+    ]),
+    group('Travel', '', [
+      { id: 'travel', label: 'Travel charge', control: num('travel', 12, '₹ per km', 0, 100), def: '₹12.00 per km', reset: '12', used: 'App C1504, dashboard D408' },
+      { id: 'free-km', label: 'Free distance', hint: 'Travel is charged beyond this distance from the region base', control: num('free-km', 25, 'km', 0, 200), def: '25 km', reset: '25', used: 'Dashboard D408' },
+    ]),
+    group('Surcharges, tax and discounts', '', [
+      { id: 'emergency', label: 'Emergency surcharge', hint: 'Machine down after hours and on holidays', control: num('emergency', 25, '% of labour', 0, 100), def: '25%', reset: '25', used: 'App C1502, C1504' },
+      { id: 'gst', label: 'GST rate', control: num('gst', 18, '%', 0, 28), def: '18%', reset: '18', used: 'Dashboard D408, D902' },
+      { id: 'discount', label: 'Engineer discount limit', hint: 'Above this the estimate needs Admin approval', control: num('discount', 5, '%', 0, 20), def: '5%', reset: '5', used: 'App E405, dashboard D408' },
+    ]),
+  ].join('');
+  const val = (id) => Number(document.getElementById(id).value) || 0;
+  const example = () => {
+    const travel = Math.max(0, 40 - val('free-km')) * val('travel');
+    const lines = [['Visit fee', val('visit')], ['Labour, 2 h', 2 * val('labour')], [`Travel, ${Math.max(0, 40 - val('free-km'))} km`, travel]];
+    const sub = lines.reduce((s, [, v]) => s + v, 0);
+    const gst = Math.round(sub * val('gst')) / 100;
+    document.getElementById('example').innerHTML = `${lines.map(([l, v]) => `<tr><td>${l}</td><td class="num">${r.money(v)}</td></tr>`).join('')}
+      <tr><td>GST ${val('gst')}%</td><td class="num">${r.money(gst)}</td></tr><tr><td class="strong">Total</td><td class="num strong">${r.money(sub + gst)}</td></tr>`;
+  };
+  document.getElementById('rates').addEventListener('input', example);
+  example();
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

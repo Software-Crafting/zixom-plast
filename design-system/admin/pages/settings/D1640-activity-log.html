@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1640 Activity log</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1640">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><h1>Activity log</h1><p>Every Admin action with old and new values. Read only, kept 3 years.</p></div>
+        <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      </div>
+      <div data-when="ready no-results empty">
+        <section class="card list-card">
+          <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
+            <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="Setting">Settings <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="money">Money <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="service">Service <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="access">Sign in and users <span class="n"></span></button>
+          </div>
+          <div class="toolbar" data-when="ready no-results">
+            <label class="search" data-filter="#log"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Record, action or value" aria-label="Search activity"></label>
+            <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+            <span class="grow"></span><span class="muted" style="font-size:12px">Times in IST</span>
+          </div>
+          <div class="applied-row" data-when="ready no-results">
+            <span class="chip applied">Date: <b>Last 30 days</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+            <button class="btn-link btn" type="button" data-toast="Filters cleared">Clear all</button>
+          </div>
+          <div class="table-wrap" data-when="ready no-results"><table class="table" id="log">
+            <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th><th class="sortable">Time</th><th class="sortable">Admin</th><th class="sortable">Record</th>
+              <th class="sortable">Action</th><th>Old value</th><th>New value</th><th>IP</th></tr></thead><tbody></tbody></table>
+            <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+          <div class="table-foot" data-when="ready no-results"><span id="count"></span><span class="grow"></span>
+            <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+            <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button><button type="button" aria-current="page">1</button>
+              <button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div></div>
+          <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-history"/></svg></span><h3>No activity yet</h3><p>Admin actions will appear here.</p></div>
+        </section>
+      </div>
+      <div data-when="loading"><section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Time</th><th>Admin</th><th>Record</th><th>Action</th><th>Old value</th><th>New value</th></tr></thead><tbody id="sk-rows"></tbody></table></div></section></div>
+      <div class="bulk-bar" data-for="log" hidden><b data-count>0 selected</b><button class="btn" type="button" data-toast="Excel file downloaded">Export selected</button>
+        <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    </div>
+  </div>
+</main>
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot"><span class="muted grow" style="font-size:12px">Entries cannot be edited or deleted</span><a class="btn btn-primary" id="quick-open" href="#D1601">Open record</a></div>
+  </div>
+</div>
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Record type</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Ticket</button><button class="chip" type="button" aria-pressed="false">Invoice</button><button class="chip" type="button" aria-pressed="false">Payment</button>
+        <button class="chip" type="button" aria-pressed="false">Setting</button><button class="chip" type="button" aria-pressed="false">Customer</button><button class="chip" type="button" aria-pressed="false">Admin user</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="f-admin">Admin</label><select class="select" id="f-admin"><option>Any</option><option>Rajesh Goyal</option><option>System</option></select></div>
+        <div class="field"><label for="f-ip">IP address</label><input class="input mono" id="f-ip" placeholder="49.36.112.18"></div>
+        <div class="field"><label for="f-from">From</label><input class="input" id="f-from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
+      </div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show 20 entries</button></div>
+  </div>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Who did what and when: time, Admin, record, action, old and new value, IP.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter, use the saved views.</li><li>Row click opens the full entry; the record link opens the record.</li><li>Export to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>Open record goes to the ticket, invoice or setting the entry is about.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cannot be edited or deleted; kept 3 years (Confirm).</li><li>Times always in IST (EC-A57).</li><li>Exports over 5,000 rows run in the background (D1520).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const log = ZXA.data.settings.activity;
+  const MONEY = ['Invoice', 'Refund', 'Payment', 'Estimate'];
+  const SERVICE = ['Ticket', 'Part request', 'Machine', 'Customer'];
+  const link = (href) => { const [id, q = ''] = href.split(/(?=\?)/); return ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`; };
+  const dash = '<span class="faint">–</span>';
+  document.querySelector('#log tbody').innerHTML = log.map((e, i) => `<tr data-drawer="quick" data-i="${i}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select entry"></label></td>
+    <td class="nowrap" data-sort="${e.when}">${r.dayDate(e.when)}, ${r.time(e.when)}</td>
+    <td><span class="who"><span class="avatar sm dark">RG</span>Rajesh Goyal</span></td>
+    <td><span class="sub" style="margin:0">${e.type}</span><a class="rec" href="${link(e.href)}">${r.esc(e.record)}</a></td>
+    <td class="nowrap">${e.action}</td><td><span class="clip muted">${e.old ? r.esc(e.old) : dash}</span></td><td><span class="clip">${r.esc(e.now)}</span></td><td class="mono muted">${e.ip}</td></tr>`).join('');
+  const VIEWS = { all: () => true, Setting: (e) => ['Setting', 'Integration'].includes(e.type), money: (e) => MONEY.includes(e.type), service: (e) => SERVICE.includes(e.type), access: (e) => ['Sign in', 'Admin user'].includes(e.type) };
+  const showView = (key) => {
+    document.querySelectorAll('#log tbody tr').forEach((row) => { row.hidden = !VIEWS[key](log[row.dataset.i]); });
+    const n = log.filter(VIEWS[key]).length;
+    document.getElementById('count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = log.filter(VIEWS[tab.dataset.view]).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+  document.getElementById('sk-rows').innerHTML = '<tr>' + '<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6) + '</tr>'.repeat(1);
+  document.getElementById('sk-rows').innerHTML = document.getElementById('sk-rows').innerHTML.repeat(10);
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const e = log[event.detail.dataset.i];
+    document.getElementById('quick-title').textContent = e.action;
+    document.getElementById('quick-sub').textContent = `${r.date(e.when)}, ${r.time(e.when)} IST`;
+    document.getElementById('quick-open').href = link(e.href);
+    document.getElementById('quick-body').innerHTML = `<dl class="dl"><dt>Admin</dt><dd>Rajesh Goyal</dd><dt>Record</dt><dd>${e.type} · <span class="mono">${r.esc(e.record)}</span></dd>
+      <dt>IP</dt><dd class="mono">${e.ip}</dd><dt>Browser</dt><dd>${e.browser}</dd></dl>
+      <div class="field"><span class="label">Change</span><div class="diff"><span class="old">${e.old ? r.esc(e.old) : 'Empty'}</span><span class="new">${r.esc(e.now)}</span></div></div>`;
+  });
+  document.addEventListener('click', (event) => { const chip = event.target.closest('[data-chips] .chip'); if (chip) chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true')); });
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

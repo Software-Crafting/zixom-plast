@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1616 App texts</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1616" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>App texts</span></nav>
+          <h1>App texts</h1><p>Terms, privacy policy and the app texts Zixom may edit. Each publish is a new version.</p></div>
+      </div>
+      <div data-when="ready no-results">
+        <section class="card list-card">
+          <div class="toolbar">
+            <label class="search" data-filter="#texts"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search texts" aria-label="Search texts"></label>
+            <button class="btn btn-secondary filter-btn" type="button" data-menu="kind-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+          </div>
+          <div class="table-wrap"><table class="table" id="texts">
+            <thead><tr><th class="sortable">Text</th><th>Where</th><th>Version</th><th>Status</th><th class="sortable">Published</th></tr></thead><tbody></tbody></table>
+            <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+          <div class="table-foot"><span id="count"></span></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay right" id="edit" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="edit-title">
+    <div class="drawer-head"><div class="grow"><h2 id="edit-title"></h2><p id="edit-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="banner amber" id="terms-note"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>Customers and engineers accept again.</b> On next open the app shows the new terms before anything else.</span></div>
+      <div class="field"><label for="t-title">Title</label><input class="input" id="t-title"></div>
+      <div class="field"><label for="t-body">Text</label><textarea class="textarea" id="t-body" rows="12"></textarea><span class="hint">Plain text. Blank lines start a new paragraph.</span></div>
+      <div class="field"><label for="t-change">What changed <span class="opt">shown to people who accept again</span></label><input class="input" id="t-change" placeholder="For example New section on data kept for invoices"></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Draft saved">Save draft</button><span class="grow"></span>
+      <button class="btn btn-secondary" type="button" data-toast="Preview opened">Preview in app</button><button class="btn btn-primary" type="button" data-open="publish">Publish version</button></div>
+  </div>
+</div>
+<div class="overlay center" id="publish" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pub-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-note-pencil"/></svg></span><div class="grow"><h2 id="pub-title">Publish a new version?</h2>
+      <p id="pub-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="pub-go">Publish</button></div>
+  </div>
+</div>
+<div class="menu" id="kind-menu" hidden>
+  <div class="label">Kind</div>
+  <label class="check"><input type="checkbox" checked> Legal</label><label class="check"><input type="checkbox" checked> Welcome</label><label class="check"><input type="checkbox" checked> Empty states</label>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error" data-mobile="../../../screens/access/A11-terms.html">
+  <div><h3>What it is</h3><p>The texts in the app that Zixom may change without a release, each with versions.</p></div>
+  <div><h3>What you can do</h3><ul><li>Open a text, edit it, save a draft or publish a version.</li><li>Preview it as the app shows it.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app shows the new text within 15 minutes. A new Terms or Privacy version asks everyone to accept again (A11).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Old versions are kept with who accepted them and when.</li><li>Drafts are only visible here.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const TEXTS = [
+    ['Terms of use', 'Sign in, Settings', 'v3', 'Published', '2026-10-01', true, 'Legal'],
+    ['Privacy policy', 'Sign in, Settings', 'v2', 'Published', '2026-07-11', true, 'Legal'],
+    ['Welcome, customer', 'First open', 'v2', 'Published', '2026-06-20', false, 'Welcome'],
+    ['Welcome, engineer', 'First sign in', 'v1', 'Published', '2026-04-01', false, 'Welcome'],
+    ['No requests yet', 'Customer, Support', 'v1', 'Published', '2026-04-01', false, 'Empty states'],
+    ['No machines yet', 'Customer, Machines', 'v1', 'Published', '2026-04-01', false, 'Empty states'],
+    ['No jobs today', 'Engineer, Today', 'v2', 'Draft', '2026-11-20', false, 'Empty states'],
+    ['Machine down help', 'Customer, Machine down', 'v1', 'Published', '2026-04-01', false, 'Welcome'],
+  ];
+  document.querySelector('#texts tbody').innerHTML = TEXTS.map(([name, where, v, status, when, legal], i) => `<tr data-drawer="edit" data-i="${i}">
+    <td class="strong">${name}${legal ? '<span class="sub">Accept again on change</span>' : ''}</td><td class="muted">${where}</td><td class="mono">${v}</td>
+    <td>${status === 'Draft' ? r.tag('Draft, not published', 'amber') : r.tag('Published', 'green')}</td><td class="nowrap" data-sort="${when}">${r.date(when)}</td></tr>`).join('');
+  document.getElementById('count').textContent = `${TEXTS.length} texts`;
+  let current;
+  document.getElementById('edit').addEventListener('zxa:row', (event) => {
+    current = TEXTS[event.detail.dataset.i];
+    const [name, where, v, , when, legal] = current;
+    document.getElementById('edit-title').textContent = name;
+    document.getElementById('edit-sub').textContent = `${v} · ${where} · published ${r.date(when)}`;
+    document.getElementById('terms-note').hidden = !legal;
+    document.getElementById('t-title').value = name;
+    document.getElementById('t-body').value = legal
+      ? `These terms apply to the Zixom Connect app run by Zixom Plast, Seekri, Ballabhgarh, Faridabad, Haryana.\n\n1. Your account. One mobile number per person. Keep your sign in code private.\n\n2. Service requests. Response targets depend on the severity you choose. Charges for work outside warranty or AMC are shown before work starts.\n\n3. Payments. Online payments are processed by Razorpay.`
+      : `Raise a service request in a few taps. Track the engineer, approve estimates and pay invoices in one place.`;
+    document.getElementById('pub-text').textContent = legal
+      ? `${name} ${'v' + (Number(v.slice(1)) + 1)}. Every customer and engineer is asked to accept it on next open.`
+      : `${name} ${'v' + (Number(v.slice(1)) + 1)}. The app shows it within 15 minutes.`;
+  });
+  document.getElementById('pub-go').addEventListener('click', () => {
+    document.querySelectorAll('.overlay:not([hidden])').forEach((o) => ZXA.ui.closeOverlay(o));
+    ZXA.ui.toast(current?.[5] ? 'Published. People accept the new version on next open' : 'Published. The app picks this up within 15 minutes');
+  });
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

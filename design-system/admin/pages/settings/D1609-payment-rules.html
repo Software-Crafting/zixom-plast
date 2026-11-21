@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1609 Payment rules</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1609" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Payment rules</span></nav>
+          <h1>Payment rules</h1><p>How customers pay, how pending payments are checked and when reminders go out.</p></div>
+        <a class="btn btn-secondary" href="#D1621"><svg class="ic"><use href="#ph-key"/></svg>Gateway keys</a>
+      </div>
+      <div data-when="ready">
+        <form id="pay" data-set-form onsubmit="return false" class="stack">
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Online methods</h2><p>Razorpay. Keys and mode are in Integrations.</p></div></div>
+            <div class="card-body"><div class="row wrap">
+              <label class="check"><input type="checkbox" checked> UPI</label><label class="check"><input type="checkbox" checked> Cards</label>
+              <label class="check"><input type="checkbox" checked> Net banking</label><label class="check"><input type="checkbox" checked> Wallets</label></div></div>
+          </section>
+          <div id="groups" class="stack"></div>
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Offline proof</h2><p>Customers upload a reference and a file. Admin verifies in Payments (D912).</p></div></div>
+            <div class="card-body stack">
+              <div class="row wrap"><label class="check"><input type="checkbox" checked> Bank transfer</label><label class="check"><input type="checkbox" checked> UPI to account</label><label class="check"><input type="checkbox" checked> Cheque</label></div>
+              <div class="form-grid">
+                <div class="field"><label for="proof-file">Proof file</label><select class="select" id="proof-file"><option selected>Required</option><option>Optional</option></select></div>
+                <div class="field"><label for="proof-days">Verify within</label><div class="set-unit"><input class="input" type="number" id="proof-days" value="1" min="1" max="5" data-unit="working days"><span>working days</span></div><span class="error" hidden></span></div>
+              </div>
+            </div>
+          </section>
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Refund message</h2><p>Shown in the app when a refund starts.</p></div></div>
+            <div class="card-body"><div class="field"><label class="sr-only" for="refund-msg">Refund message</label>
+              <textarea class="textarea" id="refund-msg" maxlength="300">Your refund has started. The money returns to the original payment method in 5 to 7 working days.</textarea><span class="hint">Up to 300 characters. Used in App C1408 and on the receipt.</span></div></div>
+          </section>
+        </form>
+        <div class="form-bar" data-for="pay"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="pay" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>Payment methods, pending checks, offline proof, refund message, invoice reminders and credit terms.</p></div>
+  <div><h3>What you can do</h3><ul><li>Turn methods on or off.</li><li>Change check times, reminder days and default credit terms.</li><li>Edit the refund message.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The app and reminder job use the new rules within 15 minutes.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Gateway keys are in Integrations (D1621), not here.</li><li>Pending check: every 5 s for 2 min, then on each open; Admin job 24 h (section 14).</li><li>Credit terms default 15 days (Confirm); a customer can have its own.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const { num, select, group } = ZXA.set;
+  document.getElementById('groups').innerHTML = [
+    group('Pending payments', 'When the app has paid but Razorpay has not confirmed yet.', [
+      { id: 'poll', label: 'App checks every', control: num('poll', 5, 'seconds', 3, 30), def: '5 seconds', reset: '5', used: 'App C1406' },
+      { id: 'poll-for', label: 'App checks for', hint: 'Then on each open', control: num('poll-for', 2, 'minutes', 1, 10), def: '2 minutes', reset: '2', used: 'App C1406' },
+      { id: 'recheck', label: 'Server re-checks for', control: num('recheck', 24, 'hours', 1, 72), def: '24 hours', reset: '24', used: 'Dashboard D910' },
+    ]),
+    group('Invoices', '', [
+      { id: 'reminders', label: 'Invoice reminders', hint: 'Push and email', control: select('reminders', ['3 days before, on the due date, every 7 days', 'On the due date, every 7 days', 'Off'], '3 days before, on the due date, every 7 days'), def: '3 days before, on the due date, every 7 days', reset: '3 days before, on the due date, every 7 days', used: 'App C1401, dashboard D901' },
+      { id: 'terms', label: 'Default credit terms', hint: 'New customers start with this', control: num('terms', 15, 'days', 0, 90), def: '15 days', reset: '15', used: 'Dashboard D203, D902' },
+    ]),
+  ].join('');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1604 Business profile</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1604" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Business profile</span></nav>
+          <h1>Business profile</h1><p>Shown in the app (Contact, Help) and on invoices, estimates and quotations.</p></div>
+        <button class="btn btn-secondary" type="button" data-history="hours"><svg class="ic"><use href="#ph-history"/></svg>History</button>
+      </div>
+      <div data-when="ready">
+        <div class="grid side-right">
+          <form id="profile" data-set-form onsubmit="return false" class="card pad">
+            <div class="form-section"><h3>Company</h3><p>Legal details printed on every document.</p>
+              <div class="form-grid">
+                <div class="field"><label for="b-name">Trade name</label><input class="input" id="b-name" value="Zixom Plast" required><span class="error" hidden></span></div>
+                <div class="field"><label for="b-legal">Legal name</label><input class="input" id="b-legal" value="Zixom Plast"></div>
+                <div class="field"><label for="b-gstin">GSTIN</label><input class="input mono" id="b-gstin" value="06AAAAA0000A1Z5" maxlength="15" data-check="gstin" required><span class="error" hidden></span><span class="hint">Sample. State code 06, Haryana.</span></div>
+                <div class="field"><label for="b-pan">PAN</label><input class="input mono" id="b-pan" value="AAAAA0000A" maxlength="10"></div>
+              </div></div>
+            <div class="form-section"><h3>Address</h3>
+              <div class="form-grid">
+                <div class="field full"><label for="b-addr">Address</label><input class="input" id="b-addr" value="Seekri, Ballabhgarh"></div>
+                <div class="field"><label for="b-city">City</label><input class="input" id="b-city" value="Faridabad"></div>
+                <div class="field"><label for="b-state">State</label><select class="select" id="b-state"><option selected>Haryana</option><option>Delhi</option><option>Gujarat</option><option>Maharashtra</option></select></div>
+              </div></div>
+            <div class="form-section"><h3>Contact</h3><p>The app shows these on Contact and Help.</p>
+              <div class="form-grid">
+                <div class="field"><label for="b-phone">Main phone</label><input class="input" id="b-phone" type="tel" value="+91 99919 10097"></div>
+                <div class="field"><label for="b-support">Support number</label><input class="input" id="b-support" type="tel" value="+91 99919 10097"></div>
+                <div class="field"><label for="b-emergency">Emergency number</label><input class="input" id="b-emergency" type="tel" value="+91 99919 10097"><span class="hint">Shown on Machine down. Answered 24 hours.</span></div>
+                <div class="field"><label for="b-email">Email</label><input class="input" id="b-email" type="email" value="info@zixom.in"></div>
+                <div class="field"><label for="b-support-email">Support email</label><input class="input" id="b-support-email" type="email" value="info@zixom.in"></div>
+                <div class="field"><label for="b-web">Website</label><input class="input" id="b-web" value="zixom.in"></div>
+                <div class="field full"><label for="b-hours">Working hours</label><input class="input" id="b-hours" value="Mon to Sat, 9 AM to 6 PM"></div>
+              </div></div>
+            <div class="form-section"><h3>Bank</h3><p>Printed on invoices for bank transfer.</p>
+              <div class="form-grid">
+                <div class="field"><label for="b-bank">Bank</label><input class="input" id="b-bank" value="Sample Bank"></div>
+                <div class="field"><label for="b-acc">Account number</label><input class="input mono" id="b-acc" value="000000000000"></div>
+                <div class="field"><label for="b-ifsc">IFSC</label><input class="input mono" id="b-ifsc" value="SAMP0000000" maxlength="11"></div>
+                <div class="field"><label for="b-upi">UPI id <span class="opt">optional</span></label><input class="input" id="b-upi" placeholder="name@bank"></div>
+              </div></div>
+            <div class="form-section"><h3>Logo</h3><p>PNG or SVG, at least 512 px wide.</p>
+              <div class="file-row"><span class="thumb"><svg class="ic"><use href="#ph-image"/></svg></span><span class="grow"><b class="strong">zixom-logo.png</b><small class="muted" style="display:block; font-size:12px">48 KB · 1024 × 1024</small></span>
+                <button class="btn btn-sm btn-secondary" type="button" data-toast="Choose a file">Replace</button></div></div>
+          </form>
+          <aside class="stack">
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Where it shows</h3></div>
+              <ul class="mini">
+                <li><span class="ic-disc"><svg class="ic"><use href="#ph-smartphone"/></svg></span><span class="grow"><b>App, About Zixom</b><small>Phones, email, address, hours</small></span></li>
+                <li><span class="ic-disc"><svg class="ic"><use href="#ph-siren"/></svg></span><span class="grow"><b>App, Machine down</b><small>Emergency number</small></span></li>
+                <li data-href="D1612"><span class="ic-disc"><svg class="ic"><use href="#ph-file-text"/></svg></span><span class="grow"><b>Documents</b><small>Invoice, estimate, quotation, report</small></span></li>
+              </ul></section>
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Last change</h3></div>
+              <div class="card-body"><dl class="dl"><dt>Field</dt><dd>Working hours</dd><dt>By</dt><dd>Rajesh Goyal</dd><dt>When</dt><dd>2 Nov 2026, 09:30</dd></dl></div></section>
+          </aside>
+        </div>
+        <div class="form-bar" data-for="profile"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="profile" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C1116-about-zixom.html">
+  <div><h3>What it is</h3><p>Zixom's own details: legal, address, contacts, hours, bank and logo.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit any field; Save turns on.</li><li>Replace the logo.</li><li>Open the change history.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The app shows new contacts within 15 minutes. New documents use the new details; issued ones do not change.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>GSTIN must have 15 characters; try deleting one.</li><li>GSTIN and bank are sample values (section 17).</li><li>Address is real: Seekri, Ballabhgarh, Faridabad.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+ZXA.set.checks.gstin = (el) => (/^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z\d]Z[A-Z\d]$/.test(el.value.trim()) ? '' : 'GSTIN has 15 characters, for example 06AAAAA0000A1Z5');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

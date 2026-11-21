@@ -1,0 +1,66 @@
+/* Settings pages (pages/settings/): sub-navigation beside the page, and the setting row
+   (what it is, its control, then default, where used, history). Everything else uses the shared classes. */
+
+/* ---------- layout: sub-navigation 232 px + page ---------- */
+.set-layout{display:grid; grid-template-columns:232px minmax(0, 1fr); gap:24px; align-items:start; padding-top:18px}
+.set-nav{position:sticky; top:72px; padding:8px; max-height:calc(100vh - 88px); overflow-y:auto; scrollbar-width:thin}
+.set-nav a{display:flex; align-items:center; gap:10px; min-height:34px; padding:0 10px; border-radius:10px; color:var(--slate-700);
+  font-size:var(--fs-13); font-weight:500; text-decoration:none}
+.set-nav a:hover{background:var(--slate-50); color:var(--slate-900); text-decoration:none}
+.set-nav a[aria-current="page"]{background:var(--slate-100); color:var(--slate-900); font-weight:600}
+.set-nav a .ic{width:16px; height:16px; color:var(--slate-500)}
+.set-nav a[aria-current="page"] .ic{color:var(--slate-800)}
+.set-group-label{padding:12px 10px 4px; font-size:var(--fs-11); font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-faint)}
+.set-group-label:first-child{padding-top:6px}
+.set-main{min-width:0}
+.set-main > .page-head, .set-main > .detail-head{padding-top:0}
+.set-jump{display:none}
+.set-main :not(.grid):not(.stack) > .set-card + .set-card{margin-top:16px}
+.set-main .stack > .grid, .set-main .stack > .card{margin-top:0}
+
+/* ---------- setting row ---------- */
+.set-rows > .set-row{display:grid; grid-template-columns:minmax(0, 1fr) minmax(200px, 280px); gap:6px 24px; padding:16px 20px; border-top:1px solid var(--line)}
+.set-rows > .set-row:first-child{border-top:0}
+.set-card .card-head + .set-rows{margin-top:6px}
+.set-what label{font-size:var(--fs-14); font-weight:600; color:var(--text-strong)}
+.set-what small{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+.set-control{display:flex; flex-direction:column; gap:6px; grid-row:span 2}
+.set-control .error{display:flex; align-items:center; gap:6px; font-size:var(--fs-12); color:var(--red)}
+.set-control .error .ic{width:14px; height:14px}
+.set-meta{display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; font-size:var(--fs-12); color:var(--text-muted)}
+.set-meta > span{display:inline-flex; align-items:center; gap:5px}
+.set-meta b{font-weight:600; color:var(--slate-700)}
+.set-meta .ic{width:13px; height:13px}
+.set-links{gap:12px !important}
+.set-links .btn-link{font-size:var(--fs-12)}
+.set-unit{display:flex; align-items:center; gap:8px}
+.set-unit .input{width:110px}
+.set-unit span{font-size:var(--fs-13); color:var(--text-muted)}
+
+/* a small two column comparison (App users and Admins) in a table cell */
+.table .set-unit .input{width:84px; min-height:34px}
+
+/* paper preview for document templates */
+.set-paper{padding:28px; border-radius:var(--r-md); background:#fff; box-shadow:inset 0 0 0 1px var(--line-strong); font-size:var(--fs-12); color:var(--slate-700)}
+.set-paper h4{font-size:var(--fs-14); color:var(--text-strong)}
+.set-paper .row{justify-content:space-between; align-items:flex-start}
+.set-paper .table td, .set-paper .table th{height:32px; font-size:var(--fs-12)}
+
+/* json payload */
+.set-code{margin:0; padding:14px; border-radius:var(--r-md); background:var(--slate-50); box-shadow:inset 0 0 0 1px var(--line);
+  font:400 12px/1.6 var(--font-mono); color:var(--slate-800); white-space:pre-wrap; overflow-wrap:anywhere}
+
+/* checklist items with a drag handle */
+.set-drag{color:var(--slate-400); cursor:grab}
+
+@media (max-width:1100px){
+  .set-layout{grid-template-columns:minmax(0, 1fr); gap:0; padding-top:0}
+  .set-nav{display:none}
+  .set-jump{display:block; margin:0 0 16px; max-width:360px}
+}
+@media (max-width:640px){
+  .set-rows > .set-row{grid-template-columns:minmax(0, 1fr); padding:14px 16px}
+  .set-control{grid-row:auto}
+  .set-jump{max-width:none}
+  .set-paper{padding:18px}
+}

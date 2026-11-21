@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1641 Integration log</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1641" data-nav="D1620">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1620">Integrations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Integration log</span></nav>
+          <h1>Integration log</h1><p>Webhooks received and API calls made, with status. Kept 90 days.</p></div>
+        <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+      </div>
+      <div class="banner red center" data-when="alert" style="margin-bottom:16px"><svg class="ic"><use href="#ph-shield-warning"/></svg>
+        <span class="grow"><b>3 Razorpay webhooks with a bad signature in 10 minutes.</b> All were rejected. Check the webhook secret (EC-A20).</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1621">Open Razorpay</a></span></div>
+      <div data-when="ready no-results empty alert">
+        <section class="card list-card">
+          <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results alert" id="views"></div>
+          <div class="toolbar" data-when="ready no-results alert">
+            <label class="search" data-filter="#ilog"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Event, record or status" aria-label="Search integration log"></label>
+            <button class="btn btn-secondary filter-btn" type="button" data-menu="service-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+            <span class="grow"></span><button class="btn btn-ghost btn-sm" type="button" data-busy data-toast="Up to date"><svg class="ic"><use href="#ph-arrows-clockwise"/></svg>Refresh</button>
+          </div>
+          <div class="table-wrap" data-when="ready no-results alert"><table class="table" id="ilog">
+            <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th><th class="sortable">Time</th><th class="sortable">Service</th><th>Event</th><th>Direction</th>
+              <th class="sortable">Status</th><th class="sortable num">Time taken</th><th>Record</th></tr></thead><tbody></tbody></table>
+            <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+          <div class="table-foot" data-when="ready no-results alert"><span id="count"></span><span class="grow"></span>
+            <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+          <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-activity"/></svg></span><h3>No calls yet</h3><p>Webhooks and API calls will appear here.</p></div>
+        </section>
+      </div>
+      <div data-when="loading"><section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span></div>
+        <div class="table-wrap"><table class="table"><tbody id="sk-rows"></tbody></table></div></section></div>
+      <div class="bulk-bar" data-for="ilog" hidden><b data-count>0 selected</b><button class="btn" type="button" data-open="bulk-result">Reprocess</button>
+        <button class="btn" type="button" data-toast="CSV file downloaded">Export</button>
+        <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    </div>
+  </div>
+</main>
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer wide" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+<div class="overlay center" id="bulk-result" hidden>
+  <div class="modal" role="dialog" aria-labelledby="br-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">1 done, 1 failed</h2><p>Download the list of failures.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+<div class="menu" id="service-menu" hidden>
+  <div class="label">Direction</div>
+  <label class="check"><input type="checkbox" checked> Incoming webhooks</label><label class="check"><input type="checkbox" checked> Outgoing calls</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results alert error">
+  <div><h3>What it is</h3><p>Every call between Zixom and Razorpay, IndiaMART, Firebase, email, SMS and backups.</p></div>
+  <div><h3>What you can do</h3><ul><li>Filter by service or status with the views, search.</li><li>Row click shows the request and response.</li><li>Reprocess failed events, one or in bulk.</li></ul></div>
+  <div><h3>What happens next</h3><p>Reprocess runs the event again; the result is a new log line. Failed IndiaMART leads also show in D1112.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Bad signatures rejected with 401; alert after 3 in 10 minutes (Alert state, EC-A20).</li><li>Duplicates ignored by id (EC-A19, EC-A22). Bounces marked (EC-A27).</li><li>Kept 90 days.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const log = ZXA.data.settings.integrationLog;
+  const TONE = { Success: 'green', Failed: 'red', 'Rejected 401': 'red', Bounced: 'red', 'Duplicate ignored': '' };
+  const link = (href) => { const [id, q = ''] = href.split(/(?=\?)/); return ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`; };
+  const ms = (n) => (n >= 1000 ? `${Math.round(n / 1000)} s` : `${n} ms`);
+  document.querySelector('#ilog tbody').innerHTML = log.map((e, i) => `<tr data-drawer="quick" data-i="${i}">
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select event"></label></td>
+    <td class="nowrap mono" data-sort="${e.when}" style="font-size:13px">${e.when.slice(8, 10)} Nov, ${e.when.slice(11)}</td><td class="nowrap">${e.service}</td>
+    <td><span class="clip">${e.event}</span></td><td>${e.dir === 'In' ? r.tag('In', 'outline', 'arrow-down') : r.tag('Out', 'outline', 'arrow-up')}</td>
+    <td>${r.tag(e.status, TONE[e.status])}</td><td class="num" data-sort="${e.ms}">${ms(e.ms)}</td>
+    <td>${e.record ? `<a class="rec" href="${link(e.recordHref)}">${e.record}</a>` : '<span class="faint">–</span>'}</td></tr>`).join('');
+  const failed = (e) => ['Failed', 'Rejected 401', 'Bounced'].includes(e.status);
+  const VIEWS = [['all', 'All', () => true], ['failed', 'Failed', failed], ['Razorpay', 'Razorpay'], ['IndiaMART', 'IndiaMART'], ['Push (Firebase)', 'Push'], ['Email', 'Email'], ['SMS (OTP)', 'SMS']]
+    .map(([key, label, fn]) => [key, label, fn || ((e) => e.service === key)]);
+  document.getElementById('views').innerHTML = VIEWS.map(([key, label, fn], i) => `<button role="tab" aria-selected="${i === 0}" data-view="${key}">${label} <span class="n">${log.filter(fn).length}</span></button>`).join('');
+  const showView = (key) => {
+    const fn = VIEWS.find(([k]) => k === key)[2];
+    document.querySelectorAll('#ilog tbody tr').forEach((row) => { row.hidden = !fn(log[row.dataset.i]); });
+    const n = log.filter(fn).length;
+    document.getElementById('count').textContent = `1 to ${n} of ${n}`;
+  };
+  document.getElementById('views').addEventListener('click', (event) => { const tab = event.target.closest('[data-view]'); if (tab) showView(tab.dataset.view); });
+  showView('all');
+  document.getElementById('sk-rows').innerHTML = `<tr>${'<td><span class="sk sk-line" style="width:80%"></span></td>'.repeat(6)}</tr>`.repeat(10);
+  const PAYLOAD = {
+    Razorpay: (e) => `{\n  "event": "${e.event.includes('.') ? e.event : 'unknown'}",\n  "payload": {\n    "payment": { "entity": { "id": "pay_Nx4••••Q2", "amount": 354000, "currency": "INR",\n      "notes": { "invoice": "${e.record || '-'}" } } }\n  },\n  "created_at": 1795412172\n}`,
+    IndiaMART: (e) => `{\n  "UNIQUE_QUERY_ID": "2971••••5531",\n  "QUERY_TYPE": "W",\n  "SENDER_NAME": "Vikram Joshi",\n  "SENDER_MOBILE": "${e.status === 'Failed' ? '' : '+91-98••••4471'}",\n  "SENDER_CITY": "Pune",\n  "QUERY_PRODUCT_NAME": "Automatic vacuum forming machine"\n}`,
+  };
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const e = log[event.detail.dataset.i];
+    document.getElementById('quick-title').textContent = e.event;
+    document.getElementById('quick-sub').textContent = `${e.service} · ${e.when.replace('T', ' ')} IST`;
+    const why = { Failed: e.service === 'IndiaMART' ? 'No mobile or email in the enquiry. Lead created as Contact missing (EC-A23).' : 'Device token is no longer valid. Token removed (EC-A26).',
+      'Rejected 401': 'Signature did not match the webhook secret. Rejected and not processed (EC-A20).', Bounced: 'Mailbox does not exist. Person marked Email not working (EC-A27).',
+      'Duplicate ignored': 'Same query id received before. Ignored (EC-A22).' }[e.status];
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${r.tag(e.status, TONE[e.status])}${r.tag(e.dir === 'In' ? 'Incoming webhook' : 'Outgoing call', 'outline')}<span class="tag outline">${ms(e.ms)}</span></div>
+      ${why ? `<div class="banner ${TONE[e.status] === 'red' ? 'red' : 'grey'}">${r.icon('info')}<span class="grow">${why}</span></div>` : ''}
+      <dl class="dl"><dt>Record</dt><dd>${e.record ? `<span class="mono">${e.record}</span>` : 'None'}</dd><dt>Response</dt><dd class="mono">${e.status === 'Rejected 401' ? '401 Unauthorized' : '200 OK'}</dd><dt>Event id</dt><dd class="mono">${e.id}</dd></dl>
+      <div class="field"><span class="label">Payload</span><pre class="set-code">${r.esc((PAYLOAD[e.service] || (() => `{\n  "to": "${e.event.split(' to ')[1] || 'admin'}",\n  "template": "${e.event.split(' to ')[0]}",\n  "status": "${e.status.toLowerCase()}"\n}`))(e))}</pre></div>`;
+    document.getElementById('quick-foot').innerHTML = `<button class="btn btn-ghost" type="button" data-toast="Payload copied">Copy payload</button><span class="grow"></span>
+      ${failed(e) && e.status !== 'Rejected 401' ? '<button class="btn btn-primary" type="button" data-close data-toast="Event reprocessed. New log line added">Reprocess</button>' : '<button class="btn btn-primary" type="button" data-close>Close</button>'}`;
+  });
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

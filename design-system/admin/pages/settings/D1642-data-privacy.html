@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1642 Data privacy</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1642" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Data privacy</span></nav>
+          <h1>Data privacy</h1><p>Export a person's data, handle deletion requests and set how long records are kept.</p></div>
+      </div>
+      <div data-when="ready">
+        <div class="grid cols-2">
+          <section class="card">
+            <div class="card-head"><div class="grow"><h2>Export a person's data</h2><p>A ZIP with profile, requests, messages, photos and invoices.</p></div></div>
+            <div class="card-body stack">
+              <div class="field"><label for="x-person">Person</label><select class="select" id="x-person"><option>Rakesh Mehta, Shree Packaging Industries</option><option>Pooja Shah, Shree Packaging Industries</option>
+                <option>Imran Qureshi, Nova Cups Pvt Ltd</option><option>Sandeep Yadav, engineer</option><option>Anita Verma, engineer</option></select></div>
+              <div class="row wrap"><label class="check"><input type="checkbox" checked> Include photos and files</label><label class="check"><input type="checkbox" checked> Include messages</label></div>
+              <div><button class="btn btn-secondary" type="button" data-open="export"><svg class="ic"><use href="#ph-download-simple"/></svg>Export as ZIP</button></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-head"><div class="grow"><h2>Deletion requests</h2><p>From the app. Approve once nothing is open.</p></div><a class="card-link" href="#D209">Open all</a></div>
+            <ul class="mini">
+              <li data-href="D209"><span class="ic-disc amber"><svg class="ic"><use href="#ph-user-x"/></svg></span><span class="grow"><b>Pooja Shah</b><small>Asked 20 Nov · blocked: 1 open ticket</small></span><span class="tag amber">Blocked</span></li>
+              <li data-href="D209"><span class="ic-disc green"><svg class="ic"><use href="#ph-check"/></svg></span><span class="grow"><b>Suresh Kale</b><small>Former operator, Nova Cups · data removed 9 Nov</small></span><span class="tag green">Done</span></li>
+            </ul>
+          </section>
+        </div>
+        <form id="retention" data-set-form onsubmit="return false" style="margin-top:16px"></form>
+        <div class="form-bar" data-for="retention"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="retention" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="export" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ex-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-download-simple"/></svg></span><div class="grow"><h2 id="ex-title">Export personal data?</h2>
+      <p>The export is written to the activity log with your name and reason. The link is valid for 7 days.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="ex-reason">Reason</label><select class="select" id="ex-reason"><option>The person asked for their data</option><option>Legal request</option><option>Other</option></select></div>
+      <div class="field"><label for="ex-pass">Your password</label><input class="input" id="ex-pass" type="password" autocomplete="current-password"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Export started. It appears in Exports when ready">Export</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>Personal data requests and how long each kind of record is kept.</p></div>
+  <div><h3>What you can do</h3><ul><li>Export one person's data as a ZIP, with a reason and your password.</li><li>Open deletion requests (D209).</li><li>Change retention periods.</li></ul></div>
+  <div><h3>What happens next</h3><p>The ZIP appears in Exports (D1520). Every export and change is logged.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Deletion with open tickets, unpaid invoices or active AMC is blocked until cleared (EC-A53).</li><li>Invoices are kept for tax law even after deletion; the person is anonymised.</li><li>Activity log 3 years (Confirm), integration and delivery logs 90 days.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const { num, group } = ZXA.set;
+  document.getElementById('retention').innerHTML = group('Retention', 'How long records are kept before they are removed or anonymised.', [
+    { id: 'ret-activity', label: 'Activity log', hint: 'Cannot be shorter than 3 years', control: num('ret-activity', 3, 'years', 3, 10), def: '3 years', reset: '3', used: 'Dashboard D1640' },
+    { id: 'ret-int', label: 'Integration log', control: num('ret-int', 90, 'days', 30, 365), def: '90 days', reset: '90', used: 'Dashboard D1641' },
+    { id: 'ret-delivery', label: 'Delivery log', control: num('ret-delivery', 90, 'days', 30, 365), def: '90 days', reset: '90', used: 'Dashboard D1320' },
+    { id: 'ret-drafts', label: 'Drafts', hint: 'Flagged after this, deleted after the same again', control: num('ret-drafts', 30, 'days', 7, 90), def: '30 days', reset: '30', used: 'App C1508' },
+    { id: 'ret-deleted', label: 'Deleted accounts anonymised after', control: num('ret-deleted', 30, 'days', 0, 90), def: '30 days', reset: '30', used: 'Dashboard D209' },
+  ]);
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

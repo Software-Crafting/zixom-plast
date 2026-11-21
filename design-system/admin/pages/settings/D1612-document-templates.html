@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1612 Document templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1612" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Document templates</span></nav>
+          <h1>Document templates</h1><p>Text blocks on the PDFs the system creates. Layout and numbers are fixed.</p></div>
+      </div>
+      <div data-when="ready pdf-failed">
+        <section class="card">
+          <div class="tabs" role="tablist" aria-label="Templates" style="padding:0 12px" id="tpl-tabs"></div>
+          <div class="card-body" style="padding-top:20px">
+            <div class="grid cols-2" style="align-items:start">
+              <form id="tpl" data-set-form onsubmit="return false" class="stack">
+                <div class="row"><span class="strong" id="tpl-name"></span><span id="tpl-version"></span><span class="grow"></span>
+                  <button class="btn btn-sm btn-ghost" type="button" data-menu="versions">Versions<svg class="ic caret"><use href="#ph-caret-down"/></svg></button></div>
+                <div class="field"><label for="t-head">Header note</label><input class="input" id="t-head" value="Thank you for choosing Zixom Plast."></div>
+                <div class="field"><label for="t-terms">Terms</label><textarea class="textarea" id="t-terms" rows="5"></textarea><span class="hint">Placeholders: {customer}, {due_date}, {number}</span></div>
+                <div class="field"><label for="t-foot">Footer</label><input class="input" id="t-foot" value="Seekri, Ballabhgarh, Faridabad, Haryana · +91 99919 10097 · info@zixom.in"></div>
+                <div class="field"><label for="t-sign">Signature line</label><input class="input" id="t-sign" value="For Zixom Plast, Authorised signatory"></div>
+              </form>
+              <div class="stack-sm">
+                <div class="row"><span class="label strong" style="font-size:13px">Preview with sample data</span><span class="grow"></span>
+                  <button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="Preview PDF opened"><svg class="ic"><use href="#ph-file-pdf"/></svg>Open PDF</button></div>
+                <div class="inline-error" data-when="pdf-failed"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not create the PDF<button class="btn btn-sm btn-secondary" type="button" data-busy>Retry</button></div>
+                <div class="set-paper stack-sm" id="paper"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="form-bar" data-for="tpl"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" data-open="reset">Reset to default</button>
+          <button class="btn btn-primary" type="button" data-save="tpl" disabled>Publish version</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="menu" id="versions" hidden>
+  <div class="label">Versions</div>
+  <button type="button" data-toast="Showing v3, published 16 Nov"><svg class="ic"><use href="#ph-check"/></svg>v3 · 16 Nov 2026, current</button>
+  <button type="button" data-toast="Showing v2"><svg class="ic"><use href="#ph-history"/></svg>v2 · 1 Aug 2026</button>
+  <button type="button" data-toast="Showing v1"><svg class="ic"><use href="#ph-history"/></svg>v1 · 1 Apr 2026, setup</button>
+</div>
+<div class="overlay center" id="reset" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="reset-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-rotate-ccw"/></svg></span><div class="grow"><h2 id="reset-title">Reset to the default text?</h2>
+      <p>New documents use the default blocks. Documents already issued keep their version.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Default text restored. Publish to use it">Reset</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading pdf-failed error">
+  <div><h3>What it is</h3><p>Editable text on the service report, invoice, estimate, quotation, AMC contract, statement and label.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a template, edit its text blocks; the preview updates as you type.</li><li>Open the PDF with sample data, see versions, reset to default.</li><li>Publish a new version.</li></ul></div>
+  <div><h3>What happens next</h3><p>New documents use the published version. Issued documents keep the version they were made with.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Versions kept; preview uses sample data (Shree Packaging).</li><li>PDF generation fails: 'Could not create the PDF' with Retry (EC-A30).</li><li>Business details come from Business profile (D1604).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const T = [
+    ['invoice', 'Invoice', 'v3', 'Payment due by {due_date}. Pay in the Zixom app by UPI, card or net banking, or by bank transfer to Sample Bank, account 000000000000, IFSC SAMP0000000. Interest may apply after the due date.', 'INV-2026-0988'],
+    ['estimate', 'Estimate', 'v2', 'This estimate is valid for 3 days. Work starts after you approve it in the app. Parts are subject to stock.', 'TKT-2026-0122'],
+    ['report', 'Service report', 'v4', 'The customer confirms the work above was done and the machine was handed over in the stated condition.', 'TKT-2026-0126'],
+    ['quotation', 'Quotation', 'v2', 'Prices are ex works Faridabad. GST extra at 18%. Delivery 8 to 10 weeks from advance. 40% advance, balance before dispatch.', 'QT-2026-0011'],
+    ['amc', 'AMC contract', 'v1', 'Covers the visits and parts listed. Breakdown visits get priority response. Consumables are not covered.', 'AMC-2026-0010'],
+    ['statement', 'Statement', 'v1', 'Please check this statement and tell us of any difference within 7 days.', 'ZP-C-0001'],
+    ['label', 'Machine label', 'v1', 'Scan for service. Zixom Plast +91 99919 10097', 'ZP-TF-2310'],
+  ];
+  document.getElementById('tpl-tabs').innerHTML = T.map(([key, name], i) => `<button role="tab" aria-selected="${i === 0}" data-tpl="${i}">${name}</button>`).join('');
+  const val = (id) => r.esc(document.getElementById(id).value);
+  const paint = () => {
+    const [, name, , , number] = current;
+    document.getElementById('paper').innerHTML = `<div class="row"><div><h4>Zixom Plast</h4><p>GSTIN <span class="mono">06AAAAA0000A1Z5</span></p></div>
+      <div style="text-align:right"><h4>${name}</h4><p class="mono">${number}</p><p>23 Nov 2026</p></div></div>
+      <p>${val('t-head')}</p>
+      <p><b>Bill to</b> Shree Packaging Industries, Plot 214, Phase II, GIDC Vatva, Ahmedabad 382445</p>
+      <table class="table compact"><thead><tr><th>Item</th><th class="num">Amount</th></tr></thead><tbody>
+        <tr><td>Visit fee, SAC 998719</td><td class="num">${r.money(1500)}</td></tr><tr><td>Labour 2 h</td><td class="num">${r.money(1500)}</td></tr>
+        <tr><td>GST 18%</td><td class="num">${r.money(540)}</td></tr><tr><td class="strong">Total</td><td class="num strong">${r.money(3540)}</td></tr></tbody></table>
+      <p>${val('t-terms')}</p><p style="text-align:right; margin-top:12px">${val('t-sign')}</p>
+      <p class="faint" style="border-top:1px solid var(--line); padding-top:8px">${val('t-foot')}</p>`;
+  };
+  let current;
+  const pick = (i) => {
+    current = T[i];
+    document.getElementById('tpl-name').textContent = current[1];
+    document.getElementById('tpl-version').innerHTML = r.tag(`${current[2]} published`, 'green');
+    const terms = document.getElementById('t-terms');
+    terms.value = current[3]; terms.defaultValue = current[3];
+    paint();
+    document.getElementById('tpl').dispatchEvent(new Event('change'));
+  };
+  document.getElementById('tpl-tabs').addEventListener('click', (event) => { const tab = event.target.closest('[data-tpl]'); if (tab) pick(tab.dataset.tpl); });
+  document.getElementById('tpl').addEventListener('input', paint);
+  document.getElementById('tpl').dataset.saved = 'New version published. New documents use it';
+  pick(0);
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

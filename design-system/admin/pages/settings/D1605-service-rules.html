@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1605 Service rules</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1605" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+      <div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Service rules</span></nav>
+          <h1>Service rules</h1><p>The numbers that decide how service works in the app and the dashboard.</p></div>
+      </div>
+
+      <div data-when="ready pending conflict">
+        <div class="banner" data-when="ready" style="margin-bottom:16px"><svg class="ic"><use href="#ph-info"/></svg>
+          <span class="grow">Changes apply to new events. Tickets already in progress keep their rules.</span></div>
+        <div class="banner green center" data-when="pending" style="margin-bottom:16px"><svg class="ic"><use href="#ph-check-circle"/></svg>
+          <span class="grow"><b>Saved at 12:00 PM.</b> The app picks this up by 12:15 PM, or on next launch.</span></div>
+        <div class="banner amber center" data-when="conflict" style="margin-bottom:16px"><svg class="ic"><use href="#ph-git-compare"/></svg>
+          <span class="grow"><b>Changed by Priya Nair a moment ago.</b> Check in radius is now 350 m. Your value is 400 m.</span>
+          <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Their value kept">Take theirs</button><button class="btn btn-sm btn-primary" type="button" data-toast="Saved. The app picks this up within 15 minutes">Keep mine</button></span></div>
+        <form id="rules" data-set-form onsubmit="return false"></form>
+        <div class="form-bar" data-for="rules"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="rules" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready loading pending conflict error" data-mobile="../../../screens/customer/C1505-response-times.html">
+  <div><h3>What it is</h3><p>Grouped settings. Each shows its value, default, where it is used and a history link.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change a value; Save turns on.</li><li>Reset one setting to its default.</li><li>Open its change history.</li><li>Changing a response target asks for a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The app picks up the change within 15 minutes (Pending state).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Values that break rules are refused, for example an accept window under 5 minutes.</li><li>Open tickets keep their rules; new events use the new ones.</li><li>Two Admins change the same setting: EC-A12 (Conflict state).</li><li>Values from section 14; targets marked Confirm.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+  const { num, select, group } = ZXA.set;
+  const R = 'data-reason';
+  document.getElementById('rules').innerHTML = [
+    group('Response targets', 'Time from request to engineer assigned. Changing a target needs a reason.', [
+      { id: 'down', label: 'Machine down', hint: 'Shown to the customer on Response times', control: num('down', 4, 'hours', 1, 24, R), def: '4 hours', reset: '4', used: 'App C1505, dashboard D418' },
+      { id: 'production', label: 'Production affected', control: num('production', 1, 'working days', 1, 5, R), def: '1 working day', reset: '1', used: 'App C1505, dashboard D418' },
+      { id: 'minor', label: 'Minor', control: num('minor', 3, 'working days', 1, 10, R), def: '3 working days', reset: '3', used: 'App C1505, dashboard D418' },
+      { id: 'unassigned', label: 'Unassigned alert', hint: 'Admin is alerted when a ticket waits this long', control: num('unassigned', 60, 'minutes', 15, 240), def: '60 minutes', reset: '60', used: 'Dashboard D102, D103' },
+    ]),
+    group('Engineer offers', '', [
+      { id: 'accept', label: 'Accept window', hint: 'The engineer accepts or declines within this time', control: num('accept', 30, 'minutes', 5, 120), def: '30 minutes', reset: '30', used: 'App E201, dashboard D404' },
+      { id: 'accept-remind', label: 'Reminder before the window ends', control: num('accept-remind', 20, 'minutes', 1, 60), def: '20 minutes', reset: '20', used: 'App E201' },
+    ]),
+    group('Visits', '', [
+      { id: 'radius', label: 'Check in radius', hint: 'Distance from the site pin for check in', control: num('radius', 300, 'metres', 50, 2000), def: '300 metres', reset: '300', used: 'App E303' },
+      { id: 'wait', label: 'Customer not available wait', hint: 'Then Visit failed with a photo', control: num('wait', 20, 'minutes', 10, 60), def: '20 minutes', reset: '20', used: 'App E309, dashboard D419' },
+      { id: 'reschedule', label: 'Customer reschedule limit', control: num('reschedule', 2, 'times', 0, 5), def: '2 times', reset: '2', used: 'App C513' },
+      { id: 'reschedule-cut', label: 'No reschedule within', hint: 'Hours before the visit window', control: num('reschedule-cut', 4, 'hours', 1, 24), def: '4 hours', reset: '4', used: 'App C513, dashboard D405' },
+      { id: 'cancel', label: 'Customer can cancel', control: select('cancel', ['Until the engineer starts travel', 'Until the engineer is assigned'], 'Until the engineer starts travel'), def: 'Until the engineer starts travel', reset: 'Until the engineer starts travel', used: 'App C508' },
+    ]),
+    group('Closing and estimates', '', [
+      { id: 'autoclose', label: 'Auto close after pending sign off', control: num('autoclose', 3, 'days', 1, 14), def: '3 days', reset: '3', used: 'App C508, dashboard D414' },
+      { id: 'reopen', label: 'Reopen window', hint: 'Days after closing', control: num('reopen', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'App C508' },
+      { id: 'rating', label: 'Rating window', control: num('rating', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'App C510' },
+      { id: 'estimate', label: 'Estimate validity', hint: 'Reminder after 24 hours', control: num('estimate', 3, 'days', 1, 30), def: '3 days', reset: '3', used: 'App C512, dashboard D408' },
+    ]),
+    group('Claims and verification', '', [
+      { id: 'claim', label: 'Warranty claim review', control: num('claim', 2, 'working days', 1, 10), def: '2 working days', reset: '2', used: 'App C705, dashboard D502' },
+      { id: 'info', label: 'Information wait', hint: 'Then the claim or ticket closes', control: num('info', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'App C706, dashboard D503' },
+      { id: 'appeal', label: 'Appeal answer', control: num('appeal', 3, 'working days', 1, 10), def: '3 working days', reset: '3', used: 'Dashboard D506' },
+      { id: 'verify', label: 'Verification answer', control: num('verify', 1, 'working days', 1, 5), def: '1 working day', reset: '1', used: 'App A20, dashboard D210' },
+    ]),
+  ].join('');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1622 Email and SMS</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1622" data-nav="D1620">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1620">Integrations</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Email and SMS</span></nav>
+          <h1>Email and SMS</h1><p>Who emails come from, and the DLT registered SMS templates for India.</p></div>
+        <button class="btn btn-secondary" type="button" data-open="send-test"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Send test</button>
+      </div>
+      <div data-when="ready">
+        <section class="kpis" style="margin-bottom:16px">
+          <a class="card kpi" href="#D1320"><span class="label">Emails, last 24 h</span><span class="value">18</span><span class="foot">17 delivered, 1 bounced</span></a>
+          <a class="card kpi" href="#D1320"><span class="label">SMS, last 24 h</span><span class="value">9</span><span class="foot">9 delivered</span></a>
+          <a class="card kpi" href="#D1320"><span class="label">Bounce rate</span><span class="value">5.6%</span><span class="foot">imran@novacups.example</span></a>
+          <a class="card kpi" href="#D1320"><span class="label">SMS delivery time</span><span class="value">4 s</span><span class="foot">median</span></a>
+        </section>
+        <form id="mail" data-set-form onsubmit="return false" class="stack">
+          <section class="card pad">
+            <div class="form-section"><h3>Email</h3><p>Transactional email from a Zixom address.</p>
+              <div class="form-grid">
+                <div class="field"><label for="m-name">Sender name</label><input class="input" id="m-name" value="Zixom Plast" required><span class="error" hidden></span></div>
+                <div class="field"><label for="m-from">From address</label><input class="input" id="m-from" type="email" value="noreply@zixom.in"></div>
+                <div class="field"><label for="m-reply">Reply to</label><input class="input" id="m-reply" type="email" value="info@zixom.in"></div>
+                <div class="field"><span class="label">Domain checks</span><div class="tags" style="min-height:40px"><span class="tag green">SPF set</span><span class="tag green">DKIM set</span><span class="tag green">DMARC set</span></div></div>
+              </div></div>
+            <div class="form-section"><h3>SMS</h3><p>Sign in codes and invitations. India needs DLT registration.</p>
+              <div class="form-grid">
+                <div class="field"><label for="s-provider">Provider</label><select class="select" id="s-provider"><option selected>Primary SMS provider</option><option>Backup SMS provider</option></select><span class="hint">Switch here if the provider is down (EC-A28).</span></div>
+                <div class="field"><label for="s-sender">Sender id</label><input class="input mono" id="s-sender" value="ZIXOMP" maxlength="6"></div>
+                <div class="field"><label for="s-entity">DLT entity id</label><input class="input mono" id="s-entity" value="•••••••••••4417" disabled></div>
+                <div class="field"><label for="s-key">API key</label><input class="input mono" id="s-key" value="••••••••••••" disabled></div>
+              </div></div>
+          </section>
+          <section class="card list-card">
+            <div class="card-head"><div class="grow"><h2>SMS templates</h2><p>Text must match the DLT registration word for word.</p></div></div>
+            <div class="table-wrap" style="margin-top:12px"><table class="table">
+              <thead><tr><th>Template</th><th>DLT template id</th><th>Text</th><th>Status</th><th class="num">Sent, 30 days</th></tr></thead>
+              <tbody>
+                <tr><td class="strong nowrap">Sign in code</td><td class="mono">1107••••••••0231</td><td><span class="clip">{#var#} is your Zixom code. It expires in 5 minutes. Do not share it.</span></td><td><span class="tag green">Approved</span></td><td class="num">212</td></tr>
+                <tr><td class="strong nowrap">Engineer invitation</td><td class="mono">1107••••••••0232</td><td><span class="clip">Zixom Plast has added you as an engineer. Download the app: {#var#}</span></td><td><span class="tag green">Approved</span></td><td class="num">2</td></tr>
+                <tr><td class="strong nowrap">Customer invitation</td><td class="mono">1107••••••••0233</td><td><span class="clip">{#var#} invited you to Zixom Connect for {#var#}. Open: {#var#}</span></td><td><span class="tag green">Approved</span></td><td class="num">5</td></tr>
+                <tr><td class="strong nowrap">Machine down update</td><td class="mono faint">Not registered</td><td><span class="clip">Engineer {#var#} is on the way for {#var#}. ETA {#var#}.</span></td><td><span class="tag amber">Waiting for DLT</span></td><td class="num">0</td></tr>
+              </tbody></table></div>
+          </section>
+        </form>
+        <div class="form-bar" data-for="mail"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="mail" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="send-test" hidden>
+  <div class="modal" role="dialog" aria-labelledby="st-title">
+    <div class="modal-head"><div class="grow"><h2 id="st-title">Send a test</h2><p>Check that email and SMS arrive.</p></div></div>
+    <div class="modal-body stack">
+      <div class="segment" role="tablist" aria-label="Channel"><button role="tab" aria-selected="true">Email</button><button role="tab" aria-selected="false">SMS</button></div>
+      <div class="field"><label for="st-to">Send to</label><input class="input" id="st-to" value="admin@zixom.in"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Test sent. Delivery shows in the delivery log">Send test</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error">
+  <div><h3>What it is</h3><p>Email sender details, SMS provider and the DLT templates, with delivery status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Change sender name, from and reply to.</li><li>Switch SMS provider.</li><li>Send a test email or SMS.</li></ul></div>
+  <div><h3>What happens next</h3><p>Messages use the new sender at once. Every send is in the delivery log (D1320).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Bounced email is marked and the person shows Email not working (EC-A27).</li><li>SMS provider down: alert and switch provider (EC-A28).</li><li>A template not yet registered cannot be sent.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

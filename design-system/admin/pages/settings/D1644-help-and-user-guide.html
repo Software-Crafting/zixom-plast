@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1644 Help and user guide</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1644" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><h1>Help and user guide</h1><p>Zixom Admin 1.0.0 · build 2026.11.20</p></div>
+        <button class="btn btn-secondary" type="button" data-toast="User guide PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download guide</button>
+      </div>
+      <div data-when="ready no-results">
+        <div class="search-row" style="margin-bottom:16px">
+          <label class="search" data-filter="#guide"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Search the guide" aria-label="Search the guide"></label>
+          <button class="btn btn-secondary filter-btn" type="button" data-menu="topic-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Topic</button>
+        </div>
+        <div class="grid side-right">
+          <section class="card"><div class="card-head"><div class="grow"><h2>Guide</h2><p>Short answers for daily work</p></div></div>
+            <ul class="mini" id="guide"></ul>
+            <div class="card" data-noresults hidden style="box-shadow:none"><div class="state"><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div></section>
+          <aside class="stack">
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Keyboard shortcuts</h3></div>
+              <div class="card-body"><dl class="dl">
+                <dt><kbd>/</kbd></dt><dd>Search everything</dd><dt><kbd>Enter</kbd></dt><dd>All search results</dd><dt><kbd>Esc</kbd></dt><dd>Close a drawer, menu or dialog</dd>
+                <dt><kbd>Tab</kbd></dt><dd>Next field or button</dd><dt><kbd>Space</kbd></dt><dd>Tick a row checkbox</dd></dl></div></section>
+            <section class="card side-card"><div class="card-head"><h3 class="grow">Support</h3></div>
+              <div class="card-body stack-sm"><p class="muted" style="font-size:13px">Software Crafting builds and supports this dashboard.</p>
+                <div class="btns"><a class="btn btn-sm btn-secondary" href="mailto:support@softwarecrafting.example"><svg class="ic"><use href="#ph-envelope-simple"/></svg>Email support</a></div>
+                <p class="faint" style="font-size:12px">Quote the request id shown on any error.</p></div></section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="menu" id="topic-menu" hidden>
+  <div class="label">Topic</div>
+  <label class="check"><input type="checkbox" checked> Service</label><label class="check"><input type="checkbox" checked> Money</label><label class="check"><input type="checkbox" checked> Settings</label>
+</div>
+
+<aside class="proto" data-states="ready loading no-results error" data-mobile="../../../screens/engineer/E805-help.html">
+  <div><h3>What it is</h3><p>A short guide, keyboard shortcuts and the dashboard version.</p></div>
+  <div><h3>What you can do</h3><ul><li>Search the guide; each answer opens the page it is about.</li><li>Download the guide as PDF, email support.</li></ul></div>
+  <div><h3>What happens next</h3><p>Answers link to the page, for example Assign engineer (D404).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>The version helps support find the build.</li><li>Opens from the help icon in the top bar on every page.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const GUIDE = [
+    ['wrench', 'Assign an engineer to a ticket', 'Open the ticket, Assign engineer. The engineer has 30 minutes to accept.', 'D404'],
+    ['siren', 'Handle a machine down request', 'It is pinned red at the top of Tickets. Target: assigned within 4 hours.', 'D401'],
+    ['clipboard-text', 'Review a visit report', 'Work queue, Reports. Approve or ask the engineer to amend.', 'D413'],
+    ['receipt', 'Create and issue an invoice', 'From a closed ticket or Invoices, New invoice. Issuing locks the lines.', 'D902'],
+    ['credit-card', 'Verify an offline payment', 'Payments, Awaiting verification. Match the reference and approve.', 'D912'],
+    ['user-check', 'Verify a new customer', 'Verification. Exact matches can be approved in one click.', 'D210'],
+    ['inbox', 'Work IndiaMART enquiries', 'They arrive as leads. Failed ones can be reprocessed.', 'D1110'],
+    ['timer', 'Change a response target', 'Settings, Service rules. Needs a reason; the app updates within 15 minutes.', 'D1605'],
+    ['smartphone', 'Put the app in maintenance', 'App control, Maintenance mode. You see who is signed in first.', 'D1630'],
+    ['user-plus', 'Add another Admin', 'Users, Invite Admin. The link is valid for 7 days.', 'D1603'],
+  ];
+  document.getElementById('guide').innerHTML = GUIDE.map(([ic, title, text, id]) => `<li data-href="${id}" data-search-item><span class="ic-disc">${r.icon(ic)}</span>
+    <span class="grow"><b>${title}</b><small>${text}</small></span>${r.icon('caret-right')}</li>`).join('');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

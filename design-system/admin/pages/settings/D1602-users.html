@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1602 Users</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1602">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><h1>Users</h1><p>People who can sign in to this dashboard. One role: Admin.</p></div>
+        <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+        <button class="btn btn-primary" type="button" data-open="invite"><svg class="ic"><use href="#ph-user-plus"/></svg>Invite Admin</button>
+      </div>
+      <div data-when="ready no-results expired duplicate">
+        <section class="card list-card">
+          <div class="views tabs" role="tablist" aria-label="Saved views">
+            <button role="tab" aria-selected="true" data-view="all">All <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="Active">Active <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="Invited">Invited <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="Disabled">Disabled <span class="n"></span></button>
+            <button role="tab" aria-selected="false" data-view="Locked">Locked <span class="n"></span></button>
+          </div>
+          <div class="toolbar">
+            <label class="search" data-filter="#users"><svg class="ic"><use href="#ph-magnifying-glass"/></svg><input type="search" placeholder="Name, email or mobile" aria-label="Search users"></label>
+            <button class="btn btn-secondary filter-btn" type="button" data-menu="status-menu"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters</button>
+          </div>
+          <div class="table-wrap"><table class="table" id="users">
+            <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th><th class="sortable">Name</th><th class="sortable">Email</th><th>Mobile</th>
+              <th class="sortable">Status</th><th class="sortable">Last sign in</th><th class="actions"></th></tr></thead><tbody></tbody></table>
+            <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
+              <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear filters</button></div></div></div>
+          <div class="table-foot"><span id="count"></span><span class="grow"></span>
+            <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
+        </section>
+      </div>
+      <div data-when="loading"><section class="card list-card"><div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span></div>
+        <div class="table-wrap"><table class="table"><tbody>
+          <tr><td><span class="sk sk-line" style="width:60%"></span></td><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td></tr>
+          <tr><td><span class="sk sk-line" style="width:60%"></span></td><td><span class="sk sk-line"></span></td><td><span class="sk sk-line"></span></td></tr></tbody></table></div></section></div>
+      <div class="bulk-bar" data-for="users" hidden><b data-count>0 selected</b>
+        <button class="btn" type="button" data-toast="Invitations resent">Resend invitation</button><button class="btn" type="button" data-toast="Excel file downloaded">Export</button>
+        <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="invite" hidden>
+  <div class="modal" role="dialog" aria-labelledby="invite-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-user-plus"/></svg></span><div class="grow"><h2 id="invite-title">Invite Admin</h2>
+      <p>They get an email link, valid for 7 days, to set a password and sign in.</p></div></div>
+    <div class="modal-body form-grid">
+      <div class="field full"><label for="i-name">Full name</label><input class="input" id="i-name" required autofocus><span class="error" hidden></span></div>
+      <div class="field full"><label for="i-email">Work email</label>
+        <input class="input" id="i-email" type="email" required data-check="email">
+        <span class="error" hidden></span>
+        <div class="banner amber" data-when="duplicate"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow"><b>priya.nair@zixom.in already has an invitation.</b> Resend it instead.</span>
+          <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-close data-toast="Invitation resent to Priya Nair">Resend</button></span></div></div>
+      <div class="field"><label for="i-mobile">Mobile</label><input class="input" id="i-mobile" type="tel" placeholder="+91" required><span class="error" hidden></span><span class="hint">For the sign in code.</span></div>
+      <div class="field"><label for="i-title">Job title <span class="opt">optional</span></label><input class="input" id="i-title" placeholder="For example Accounts"></div>
+      <p class="muted full" style="font-size:13px">Admins can open every module and change every setting. All their actions are in the activity log.</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" id="send-invite">Send invitation</button></div>
+  </div>
+</div>
+<div class="overlay center" id="last-admin" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="la-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-shield-warning"/></svg></span><div class="grow"><h2 id="la-title">Rajesh Goyal cannot be disabled</h2>
+      <p>This is the only active Admin, and you cannot disable your own account. Invite another Admin first.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Close</button><button class="btn btn-primary" type="button" data-close data-open="invite">Invite Admin</button></div>
+  </div>
+</div>
+<div class="overlay center" id="cancel-invite" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="ci-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-user-x"/></svg></span><div class="grow"><h2 id="ci-title">Cancel the invitation for Priya Nair?</h2>
+      <p>The link in her email stops working. You can invite her again later.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep invitation</button><button class="btn btn-danger" type="button" data-close data-toast="Invitation cancelled">Cancel invitation</button></div>
+  </div>
+</div>
+<div class="overlay right" id="quick" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="quick-title">
+    <div class="drawer-head"><div class="grow"><h2 id="quick-title"></h2><p id="quick-sub"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack" id="quick-body"></div>
+    <div class="drawer-foot" id="quick-foot"></div>
+  </div>
+</div>
+<div class="menu" id="menu-active" hidden>
+  <a href="#D012"><svg class="ic"><use href="#ph-history"/></svg>Activity</a>
+  <button type="button" data-toast="Reset link sent to admin@zixom.in, valid 30 minutes"><svg class="ic"><use href="#ph-key"/></svg>Reset password</button>
+  <hr><button class="danger" type="button" data-open="last-admin"><svg class="ic"><use href="#ph-ban"/></svg>Disable</button>
+</div>
+<div class="menu" id="menu-invited" hidden>
+  <button type="button" data-toast="Invitation resent to Priya Nair, valid 7 days"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Resend invitation</button>
+  <button type="button" data-toast="Invitation link copied"><svg class="ic"><use href="#ph-copy"/></svg>Copy invitation link</button>
+  <hr><button class="danger" type="button" data-open="cancel-invite"><svg class="ic"><use href="#ph-x"/></svg>Cancel invitation</button>
+</div>
+<div class="menu" id="status-menu" hidden>
+  <div class="label">Status</div>
+  <label class="check"><input type="checkbox" checked> Active</label><label class="check"><input type="checkbox" checked> Invited</label>
+  <label class="check"><input type="checkbox" checked> Disabled</label><label class="check"><input type="checkbox" checked> Locked</label>
+</div>
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloaded"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<aside class="proto" data-states="ready loading no-results expired error">
+  <div><h3>What it is</h3><p>Dashboard Admins: Rajesh Goyal (Owner) and one pending invitation.</p></div>
+  <div><h3>What you can do</h3><ul><li>Invite an Admin (D1603).</li><li>Resend, copy or cancel an invitation.</li><li>Reset a password, unlock, disable or enable an Admin.</li><li>Row click opens the quick view.</li></ul></div>
+  <div><h3>What happens next</h3><p>The invited person gets an email link valid for 7 days. Their actions appear in the activity log (D1640).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Last Admin cannot be disabled or removed; nobody can disable themselves (section 4). Try Disable on Rajesh.</li><li>Invitation expires after 7 days (Expired state) and can be resent.</li><li>Duplicate email is blocked (Duplicate state). Locked after 5 wrong passwords; another Admin unlocks (EC-A54).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const admins = ZXA.data.settings.admins;
+  const status = (a, expired) => (a.status === 'Active' ? r.tag('Active', 'green') : expired ? r.tag('Invitation expired', 'red') : r.tag(`Invited, expires ${r.date(a.expires).slice(0, -5)}`, 'amber'));
+  const rowFor = (a, expired = false) => `<tr data-drawer="quick" data-id="${a.id}" data-status="${a.status}"${a.status === 'Invited' ? ` data-when="${expired ? 'expired' : 'ready no-results duplicate'}"` : ''}>
+    <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${a.name}"></label></td>
+    <td><span class="who">${r.avatar(a, a.you ? 'dark' : '')}<span><b>${a.name}${a.you ? ' <span class="muted">(you)</span>' : ''}</b><small>${a.title}</small></span></span></td>
+    <td>${a.email}</td><td class="nowrap">${a.mobile}</td><td>${status(a, expired)}</td>
+    <td class="nowrap" data-sort="${a.lastSignIn || ''}">${a.lastSignIn ? `Today, ${r.time(a.lastSignIn)}` : '<span class="faint">Never</span>'}</td>
+    <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="${a.status === 'Active' ? 'menu-active' : 'menu-invited'}">${r.icon('dots-three')}</button></td></tr>`;
+  document.querySelector('#users tbody').innerHTML = admins.map((a) => rowFor(a)).join('') + rowFor(admins[1], true);
+  const showView = (key) => {
+    document.querySelectorAll('#users tbody tr').forEach((row) => { row.style.display = key !== 'all' && row.dataset.status !== key ? 'none' : ''; });
+    document.getElementById('count').textContent = `1 to ${key === 'all' ? 2 : admins.filter((a) => a.status === key).length} of ${key === 'all' ? 2 : admins.filter((a) => a.status === key).length}`;
+  };
+  document.querySelectorAll('[data-view]').forEach((tab) => {
+    tab.querySelector('.n').textContent = tab.dataset.view === 'all' ? admins.length : admins.filter((a) => a.status === tab.dataset.view).length;
+    tab.addEventListener('click', () => showView(tab.dataset.view));
+  });
+  showView('all');
+
+  document.getElementById('quick').addEventListener('zxa:row', (event) => {
+    const a = admins.find((x) => x.id === event.detail.dataset.id);
+    const expired = event.detail.dataset.when === 'expired';
+    document.getElementById('quick-title').textContent = a.name;
+    document.getElementById('quick-sub').textContent = `${a.title} · Admin`;
+    document.getElementById('quick-body').innerHTML = `<div class="tags">${status(a, expired)}</div>
+      <dl class="dl"><dt>Email</dt><dd>${a.email}</dd><dt>Mobile</dt><dd>${a.mobile}</dd>
+      ${a.status === 'Active' ? `<dt>Admin since</dt><dd>${r.date(a.since)}</dd><dt>Last sign in</dt><dd>Today, ${r.time(a.lastSignIn)} · Chrome on Windows</dd><dt>Sessions</dt><dd>1 active</dd><dt>Sign in code</dt><dd>Email and SMS</dd>`
+        : `<dt>Invited</dt><dd>${r.date(a.invited)}, ${r.time(a.invited)} by Rajesh Goyal</dd><dt>Link valid until</dt><dd>${expired ? '<span class="red-text">Expired</span>' : r.date(a.expires)}</dd>`}</dl>`;
+    document.getElementById('quick-foot').innerHTML = a.status === 'Active'
+      ? `<a class="btn btn-secondary" href="${ZXA.isBuilt('D012') ? ZXA.href('D012') : `${ZXA.root}index.html#D012`}">Activity</a><span class="grow"></span><button class="btn btn-primary" type="button" data-toast="Reset link sent, valid 30 minutes">Reset password</button>`
+      : `<button class="btn btn-ghost" type="button" data-open="cancel-invite">Cancel invitation</button><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Invitation resent, valid 7 days">Resend invitation</button>`;
+  });
+
+  ZXA.set.checks.email = (el) => (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value.trim()) ? (el.value.trim() === 'priya.nair@zixom.in' || el.value.trim() === 'admin@zixom.in' ? 'This email already belongs to an Admin or invitation' : '') : 'Enter a valid email');
+  document.getElementById('send-invite').addEventListener('click', () => {
+    const fields = ['i-name', 'i-email', 'i-mobile'].map((id) => document.getElementById(id));
+    const bad = fields.filter((el) => !ZXA.set.validate(el));
+    if (bad.length) { bad[0].focus(); return; }
+    ZXA.ui.closeOverlay(document.getElementById('invite'));
+    ZXA.ui.toast(`Invitation sent to ${fields[1].value.trim()}, valid 7 days`);
+  });
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1630 App control</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1630">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><h1>App control</h1><p>What the app does at launch and during problems. The app checks at every launch and every 15 minutes.</p></div>
+        <a class="btn btn-secondary" href="#D1631"><svg class="ic"><use href="#ph-bar-chart"/></svg>App adoption</a>
+      </div>
+      <div class="banner red center" data-when="maintenance-on" style="margin-bottom:16px"><svg class="ic"><use href="#ph-wrench"/></svg>
+        <span class="grow"><b>Maintenance is on.</b> Customers and engineers see the maintenance screen. Admins can still use the dashboard (EC-A63).</span>
+        <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Maintenance turned off. The app works again">Turn off</button></span></div>
+      <div class="banner amber center" data-when="scheduled" style="margin-bottom:16px"><svg class="ic"><use href="#ph-clock-countdown"/></svg>
+        <span class="grow"><b>Maintenance starts in <span class="mono" id="countdown">10:00:00</span>.</b> Tonight 10:00 PM to 11:30 PM. The app shows a notice from 9:00 PM.</span>
+        <span class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Scheduled maintenance cancelled">Cancel schedule</button></span></div>
+      <div data-when="ready maintenance-on scheduled">
+        <form id="control" data-set-form onsubmit="return false" class="stack">
+          <section class="card list-card">
+            <div class="card-head"><div class="grow"><h2>App versions</h2><p>Minimum supported cannot be higher than the latest.</p></div></div>
+            <div class="table-wrap" style="margin-top:12px"><table class="table">
+              <thead><tr><th>Platform</th><th>Latest in store</th><th>Minimum supported</th><th>Store link</th><th class="num">People below minimum</th></tr></thead>
+              <tbody>
+                <tr><td class="strong"><span class="row"><svg class="ic"><use href="#ph-device-mobile"/></svg>iOS</span></td>
+                  <td><input class="input sm mono" id="ios-latest" value="2.4.0" aria-label="iOS latest" style="width:96px"></td>
+                  <td><input class="input sm mono" id="ios-min" value="2.2.0" aria-label="iOS minimum" style="width:96px" required data-check="minver" data-latest="ios-latest"><span class="error" hidden></span></td>
+                  <td><a href="#D1631" class="nowrap">App Store</a></td><td class="num">0</td></tr>
+                <tr><td class="strong"><span class="row"><svg class="ic"><use href="#ph-device-mobile"/></svg>Android</span></td>
+                  <td><input class="input sm mono" id="and-latest" value="2.4.0" aria-label="Android latest" style="width:96px"></td>
+                  <td><input class="input sm mono" id="and-min" value="2.2.0" aria-label="Android minimum" style="width:96px" required data-check="minver" data-latest="and-latest"><span class="error" hidden></span></td>
+                  <td><a href="#D1631" class="nowrap">Google Play</a></td><td class="num">0</td></tr>
+              </tbody></table></div>
+          </section>
+
+          <div class="grid cols-2">
+            <section class="card set-card">
+              <div class="card-head"><div class="grow"><h2>Force update</h2><p>Versions below the minimum are blocked at launch (S01).</p></div>
+                <label class="switch"><input type="checkbox" id="force" checked aria-label="Force update"><span></span></label></div>
+              <div class="card-body stack">
+                <div class="field"><label for="force-msg">Update message</label><textarea class="textarea" id="force-msg" maxlength="200">A new version of Zixom Connect is available. Update to keep using the app.</textarea></div>
+                <div class="field"><label for="avail-msg">Update available message <span class="opt">for supported old versions</span></label><input class="input" id="avail-msg" value="A new version is ready with faster photo uploads."></div>
+                <a class="btn btn-sm btn-ghost" href="../../../screens/system/S01-force-update.html" style="align-self:flex-start"><svg class="ic"><use href="#ph-eye"/></svg>Preview S01</a>
+              </div>
+            </section>
+
+            <section class="card set-card">
+              <div class="card-head"><div class="grow"><h2>Maintenance mode</h2><p>Customers and engineers see the maintenance screen (S02).</p></div>
+                <label class="switch"><input type="checkbox" id="maint" aria-label="Maintenance mode"><span></span></label></div>
+              <div class="card-body stack">
+                <div class="field"><label for="maint-msg">Message</label><textarea class="textarea" id="maint-msg" maxlength="200">We are improving Zixom Connect. For a machine down emergency call +91 99919 10097.</textarea></div>
+                <div class="form-grid">
+                  <div class="field"><label for="maint-from">Scheduled start <span class="opt">optional</span></label><input class="input" id="maint-from" type="datetime-local" value="2026-11-23T22:00"></div>
+                  <div class="field"><label for="maint-to">Expected end</label><input class="input" id="maint-to" type="datetime-local" value="2026-11-23T23:30"></div>
+                </div>
+                <div class="btns"><button class="btn btn-sm btn-secondary" type="button" data-toast="Maintenance scheduled for 10:00 PM. The app shows a notice from 9:00 PM"><svg class="ic"><use href="#ph-calendar-check"/></svg>Schedule</button>
+                  <a class="btn btn-sm btn-ghost" href="../../../screens/system/S02-maintenance.html"><svg class="ic"><use href="#ph-eye"/></svg>Preview S02</a></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="grid cols-2">
+            <section class="card set-card">
+              <div class="card-head"><div class="grow"><h2>Feature switches</h2><p>Turn a feature on or off without a release.</p></div></div>
+              <ul class="mini">
+                <li><span class="grow"><b>Arrival code</b><small>Customer gives the engineer a code at check in</small></span><label class="switch"><input type="checkbox" checked aria-label="Arrival code"><span></span></label></li>
+                <li><span class="grow"><b>Machine insights</b><small>Running hours and health on the machine page</small></span><label class="switch"><input type="checkbox" aria-label="Machine insights"><span></span></label></li>
+                <li><span class="grow"><b>Spare part orders</b><small>Customers order parts in the app</small></span><label class="switch"><input type="checkbox" checked aria-label="Spare part orders"><span></span></label></li>
+                <li><span class="grow"><b>Voice notes</b><small>On requests and visit reports</small></span><label class="switch"><input type="checkbox" checked aria-label="Voice notes"><span></span></label></li>
+                <li><span class="grow"><b>Live engineer tracking</b><small>Customer sees the engineer on a map</small></span><label class="switch"><input type="checkbox" checked aria-label="Live engineer tracking"><span></span></label></li>
+              </ul>
+            </section>
+            <div class="stack">
+              <section class="card set-card">
+                <div class="card-head"><div class="grow"><h2>Unsupported phones</h2><p>Older systems see this message at launch.</p></div></div>
+                <div class="card-body stack">
+                  <div class="form-grid">
+                    <div class="field"><label for="os-ios">Lowest iOS</label><select class="select" id="os-ios"><option>iOS 14</option><option selected>iOS 15</option><option>iOS 16</option></select></div>
+                    <div class="field"><label for="os-and">Lowest Android</label><select class="select" id="os-and"><option>Android 8</option><option selected>Android 9</option><option>Android 10</option></select></div>
+                  </div>
+                  <div class="field"><label for="os-msg">Message</label><input class="input" id="os-msg" value="This phone is too old for Zixom Connect. Call +91 99919 10097 for service."></div>
+                </div>
+              </section>
+              <section class="card set-card">
+                <div class="card-head"><div class="grow"><h2>Demo data</h2><p>Visible only in the demo environment.</p></div><span class="tag amber">Demo only</span></div>
+                <div class="card-body"><label class="switch"><input type="checkbox" checked><span></span>Show sample companies, tickets and invoices</label></div>
+              </section>
+            </div>
+          </div>
+        </form>
+        <div class="form-bar" data-for="control"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="control" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="maint-on" data-static hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="mo-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-wrench"/></svg></span><div class="grow"><h2 id="mo-title">Turn on maintenance?</h2>
+      <p>4 people are using the app now. They will see a maintenance screen.</p></div></div>
+    <div class="modal-body"><ul class="mini card" style="box-shadow:inset 0 0 0 1px var(--line)">
+      <li><span class="grow"><b>3 customers</b><small>Rakesh Mehta, Pooja Shah, Imran Qureshi</small></span></li>
+      <li><span class="grow"><b>1 engineer mid visit</b><small>Sandeep Yadav keeps working offline and syncs after</small></span></li>
+      <li><span class="grow"><b>Payments</b><small>Status checks finish; Razorpay webhooks keep working</small></span></li></ul></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" id="mo-cancel">Cancel</button><button class="btn btn-danger" type="button" id="mo-go">Turn on</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading maintenance-on scheduled error" data-mobile="../../../screens/system/S02-maintenance.html">
+  <div><h3>What it is</h3><p>App versions, force update, maintenance, unsupported phones, feature switches and demo data.</p></div>
+  <div><h3>What you can do</h3><ul><li>Set latest and minimum versions; turn force update on.</li><li>Turn maintenance on (asks first) or schedule it.</li><li>Switch features on or off. Preview S01 and S02.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The app reads these at launch and within 15 minutes. Maintenance on shows a red bar on the dashboard.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Minimum higher than latest is refused: try 2.5.0.</li><li>Force update to a version not in the store: warning.</li><li>Maintenance during a payment: status checks finish, new actions blocked; engineers mid visit keep working offline (EC-A63).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const v = (s) => s.split('.').map(Number).reduce((a, n) => a * 1000 + (n || 0), 0);
+  ZXA.set.checks.minver = (el) => {
+    if (!/^\d+\.\d+\.\d+$/.test(el.value.trim())) return 'Use a version like 2.2.0';
+    return v(el.value) > v(document.getElementById(el.dataset.latest).value) ? 'Cannot be higher than the latest version' : '';
+  };
+  ['ios-latest', 'and-latest'].forEach((id) => document.getElementById(id).addEventListener('change', (event) => {
+    if (v(event.target.value) > v('2.4.0')) ZXA.ui.toast(`${event.target.value} is not in the store yet. Force update would block everyone`, 'info');
+  }));
+  const maint = document.getElementById('maint');
+  maint.addEventListener('change', () => {
+    if (maint.checked) { maint.checked = false; ZXA.ui.openOverlay('maint-on'); }
+    else ZXA.ui.toast('Maintenance turned off. The app works again');
+  });
+  document.getElementById('mo-cancel').addEventListener('click', () => ZXA.ui.closeOverlay(document.getElementById('maint-on')));
+  document.getElementById('mo-go').addEventListener('click', () => {
+    ZXA.ui.closeOverlay(document.getElementById('maint-on'));
+    maint.checked = true; maint.defaultChecked = true;
+    ZXA.ui.setState('maintenance-on');
+    ZXA.ui.toast('Maintenance is on. The app shows the maintenance screen');
+  });
+  let left = 10 * 3600;
+  setInterval(() => {
+    left -= 1;
+    const p = (n) => String(n).padStart(2, '0');
+    document.getElementById('countdown').textContent = `${p(Math.floor(left / 3600))}:${p(Math.floor(left / 60) % 60)}:${p(left % 60)}`;
+  }, 1000);
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

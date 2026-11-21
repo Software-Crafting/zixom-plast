@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1608 Sign in and security rules</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1608" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Sign in and security</span></nav>
+          <h1>Sign in and security</h1><p>Codes, locks, sessions and devices for app users and Admins.</p></div>
+      </div>
+      <div data-when="ready">
+        <div class="banner" style="margin-bottom:16px"><svg class="ic"><use href="#ph-shield-check"/></svg>
+          <span class="grow">Rules can be made stricter. A value below the safe minimum is refused.</span></div>
+        <form id="security" data-set-form onsubmit="return false">
+          <section class="card list-card">
+            <div class="table-wrap no-top"><table class="table">
+              <thead><tr><th>Setting</th><th>App users (customers and engineers)</th><th>Dashboard Admins</th><th>Default</th><th class="actions"></th></tr></thead>
+              <tbody id="rows"></tbody></table></div>
+          </section>
+        </form>
+        <div class="form-bar" data-for="security"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="security" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/access/A13-app-lock-setup.html">
+  <div><h3>What it is</h3><p>How people sign in: code length and expiry, resend, locks, sessions, devices, biometric lock.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tighten a rule for app users or Admins.</li><li>Open the history of a row.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. New sign ins use the rule; signed in sessions keep theirs until they end.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Cannot be loosened below safe minimums: try typing 8 wrong tries or a 12 minute code.</li><li>Admin session 8 hours with 30 minute idle timeout (Confirm).</li><li>Locked Admins can be unlocked from Users (EC-A54).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const n = (id, value, unit, min, max) => `<div class="set-unit"><input class="input" type="number" id="${id}" value="${value}" min="${min}" max="${max}" data-unit="${unit}"><span>${unit}</span></div><span class="error" hidden></span>`;
+  const fixed = (text) => `<span class="muted">${text}</span>`;
+  const ROWS = [
+    ['Sign in method', fixed('Mobile number and code'), fixed('Work email, password, then code'), 'Fixed'],
+    ['Code length', n('app-len', 6, 'digits', 6, 8), n('adm-len', 6, 'digits', 6, 8), '6 digits'],
+    ['Code expiry', n('app-exp', 5, 'minutes', 2, 10), n('adm-exp', 5, 'minutes', 2, 10), '5 minutes'],
+    ['Resend after', n('app-resend', 30, 'seconds', 30, 120), n('adm-resend', 30, 'seconds', 30, 120), '30 seconds, up to 3 times'],
+    ['Wrong tries before lock', n('app-tries', 5, 'tries', 3, 5), n('adm-tries', 5, 'tries', 3, 5), '5 tries'],
+    ['Lock for', n('app-lock', 15, 'minutes', 15, 1440), n('adm-lock', 15, 'minutes', 15, 1440), '15 minutes'],
+    ['Codes per hour', n('app-hour', 5, 'codes', 1, 5), n('adm-hour', 5, 'codes', 1, 5), '5 per number or account'],
+    ['Session', n('app-session', 30, 'days idle', 1, 30), n('adm-session', 8, 'hours', 1, 8), '30 days; Admins 8 hours'],
+    ['Idle timeout', fixed('Not used'), n('adm-idle', 30, 'minutes', 5, 30), '30 minutes', 'admin-idle'],
+    ['Devices per person', `<div class="stack-sm">${n('dev-c', 2, 'customer', 1, 2)}${n('dev-e', 1, 'engineer', 1, 1)}</div>`, fixed('Unlimited, listed in Active sessions'), 'Customers 2, Engineers 1'],
+    ['Password rules', fixed('Not used'), fixed('10 or more characters, a letter and a number, not common'), 'Fixed'],
+    ['Biometric lock', `<label class="switch"><input type="checkbox" checked><span></span>Optional, after 5 min in background</label>`, fixed('Not used'), 'Optional'],
+    ['Invitation valid for', n('app-inv', 7, 'days', 1, 7), n('adm-inv', 7, 'days', 1, 7), '7 days'],
+    ['People per company', n('ppc', 25, 'people', 1, 100), fixed('Not applicable'), '25'],
+  ];
+  document.getElementById('rows').innerHTML = ROWS.map(([label, app, adm, def, key]) => `<tr><td class="strong nowrap">${label}</td><td>${app}</td><td>${adm}</td>
+    <td class="muted nowrap">${def}</td><td class="actions"><button class="icon-btn sm" type="button" aria-label="History of ${label}" data-history="${key || label}" data-tip="History"><svg class="ic"><use href="#ph-history"/></svg></button></td></tr>`).join('');
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

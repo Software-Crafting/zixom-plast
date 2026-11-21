@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1607 Service slots</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1607" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Service slots</span></nav>
+          <h1>Service slots</h1><p>Drives the slot picker customers use when they raise a request.</p></div>
+      </div>
+      <div data-when="ready">
+        <form id="slots" data-set-form onsubmit="return false" class="stack">
+          <section class="card set-card list-card">
+            <div class="card-head"><div class="grow"><h2>Visit slots</h2><p>Customers pick up to 2 slots. Engineers are scheduled inside the chosen slot.</p></div>
+              <button class="btn btn-secondary btn-sm" type="button" data-open="add-slot"><svg class="ic"><use href="#ph-plus"/></svg>Add slot</button></div>
+            <div class="table-wrap no-top" style="margin-top:12px"><table class="table">
+              <thead><tr><th>Slot</th><th>From</th><th>To</th><th>Shown in the app</th><th class="num">Visits last 30 days</th><th class="actions"></th></tr></thead>
+              <tbody>
+                <tr><td class="strong">Morning</td><td><input class="input sm" type="time" value="09:00" aria-label="Morning from"></td><td><input class="input sm" type="time" value="12:00" aria-label="Morning to"></td>
+                  <td><label class="switch"><input type="checkbox" checked><span></span>Shown</label></td><td class="num">24</td><td class="actions"><button class="icon-btn sm" type="button" aria-label="Slot history" data-history="slots"><svg class="ic"><use href="#ph-history"/></svg></button></td></tr>
+                <tr><td class="strong">Afternoon</td><td><input class="input sm" type="time" value="12:00" aria-label="Afternoon from"></td><td><input class="input sm" type="time" value="15:00" aria-label="Afternoon to"></td>
+                  <td><label class="switch"><input type="checkbox" checked><span></span>Shown</label></td><td class="num">17</td><td class="actions"><button class="icon-btn sm" type="button" aria-label="Slot history" data-history="slots"><svg class="ic"><use href="#ph-history"/></svg></button></td></tr>
+                <tr><td class="strong">Evening</td><td><input class="input sm" type="time" value="15:00" aria-label="Evening from"></td><td><input class="input sm" type="time" value="18:00" aria-label="Evening to"></td>
+                  <td><label class="switch"><input type="checkbox" checked><span></span>Shown</label></td><td class="num">11</td><td class="actions"><button class="icon-btn sm" type="button" aria-label="Slot history" data-history="slots"><svg class="ic"><use href="#ph-history"/></svg></button></td></tr>
+              </tbody></table></div>
+          </section>
+          <div id="rules"></div>
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Days available</h2><p>Machine down requests are accepted every day.</p></div></div>
+            <div class="card-body"><div class="row wrap">
+              <label class="check"><input type="checkbox" checked> Mon</label><label class="check"><input type="checkbox" checked> Tue</label><label class="check"><input type="checkbox" checked> Wed</label>
+              <label class="check"><input type="checkbox" checked> Thu</label><label class="check"><input type="checkbox" checked> Fri</label><label class="check"><input type="checkbox" checked> Sat</label>
+              <label class="check"><input type="checkbox"> Sun</label></div></div>
+          </section>
+          <section class="card set-card">
+            <div class="card-head"><div class="grow"><h2>Holidays</h2><p>No slots on these days.</p></div>
+              <button class="btn btn-secondary btn-sm" type="button" data-toast="Holiday added"><svg class="ic"><use href="#ph-plus"/></svg>Add holiday</button></div>
+            <ul class="mini" style="margin-top:8px">
+              <li><span class="ic-disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span><span class="grow"><b>Christmas</b><small>Fri 25 Dec 2026</small></span><button class="icon-btn sm" type="button" aria-label="Remove Christmas" data-toast="Holiday removed"><svg class="ic"><use href="#ph-trash"/></svg></button></li>
+              <li><span class="ic-disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span><span class="grow"><b>Republic Day</b><small>Tue 26 Jan 2027</small></span><button class="icon-btn sm" type="button" aria-label="Remove Republic Day" data-toast="Holiday removed"><svg class="ic"><use href="#ph-trash"/></svg></button></li>
+              <li><span class="ic-disc"><svg class="ic"><use href="#ph-calendar-blank"/></svg></span><span class="grow"><b>Holi</b><small>Mon 22 Mar 2027</small></span><button class="icon-btn sm" type="button" aria-label="Remove Holi" data-toast="Holiday removed"><svg class="ic"><use href="#ph-trash"/></svg></button></li>
+            </ul>
+          </section>
+        </form>
+        <div class="form-bar" data-for="slots"><span class="grow"></span>
+          <button class="btn btn-ghost" type="button" onclick="location.reload()">Discard</button>
+          <button class="btn btn-primary" type="button" data-save="slots" disabled>Save changes</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="add-slot" hidden>
+  <div class="modal" role="dialog" aria-labelledby="add-slot-title">
+    <div class="modal-head"><div class="grow"><h2 id="add-slot-title">Add slot</h2><p>Slots cannot overlap.</p></div></div>
+    <div class="modal-body form-grid">
+      <div class="field full"><label for="slot-name">Name</label><input class="input" id="slot-name" placeholder="For example Late evening"></div>
+      <div class="field"><label for="slot-from">From</label><input class="input" id="slot-from" type="time" value="18:00"></div>
+      <div class="field"><label for="slot-to">To</label><input class="input" id="slot-to" type="time" value="20:00"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Slot added. Save to publish">Add slot</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C1510-slot-picker.html">
+  <div><h3>What it is</h3><p>The visit slots, notice and days the app slot picker offers.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit slot times, hide a slot, add one.</li><li>Set minimum notice and open days.</li><li>Add or remove holidays.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. The slot picker (C1510) and Reschedule (D405) use the new slots within 15 minutes.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Defaults: 9 AM to 12 PM, 12 to 3 PM, 3 to 6 PM; minimum notice 4 hours (section 14).</li><li>Visits already booked keep their window.</li><li>Overlapping slots are refused.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const { num, group } = ZXA.set;
+  document.getElementById('rules').innerHTML = group('Booking rules', '', [
+    { id: 'notice', label: 'Minimum notice', hint: 'A slot that starts sooner is not offered', control: num('notice', 4, 'hours', 1, 48), def: '4 hours', reset: '4', used: 'App C1510' },
+    { id: 'ahead', label: 'Book ahead up to', control: num('ahead', 14, 'days', 1, 60), def: '14 days', reset: '14', used: 'App C1510' },
+    { id: 'pick', label: 'Slots a customer can pick', control: num('pick', 2, 'slots', 1, 3), def: '2 slots', reset: '2', used: 'App C1510, dashboard D404' },
+  ]);
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

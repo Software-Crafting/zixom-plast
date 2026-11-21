@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1613 Checklist templates</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1613" data-nav="D1601">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><nav class="crumbs" aria-label="Breadcrumb"><a href="#D1601">Settings</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Checklist templates</span></nav>
+          <h1>Checklist templates</h1><p>Visit report checklists per machine type. Engineers see them in the app.</p></div>
+      </div>
+      <div data-when="ready">
+        <div class="grid side-left">
+          <section class="card"><div class="card-head"><h3 class="grow">Machine types</h3></div>
+            <ul class="mini" id="types"></ul></section>
+          <section class="card">
+            <div class="card-head"><div class="grow"><h2 id="type-name"></h2><p id="type-sub"></p></div>
+              <button class="btn btn-sm btn-secondary" type="button" data-open="add-item"><svg class="ic"><use href="#ph-plus"/></svg>Add item</button></div>
+            <div class="card-body" style="padding-bottom:6px"><div class="banner" id="draft-banner"><svg class="ic"><use href="#ph-info"/></svg>
+              <span class="grow">Reports store the version they used. Publishing does not change submitted reports.</span></div></div>
+            <ul class="mini" id="items"></ul>
+            <div class="card-foot"><span class="muted grow" style="font-size:13px" id="foot"></span>
+              <button class="btn btn-sm btn-ghost" type="button" data-menu="versions">Versions<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+              <button class="btn btn-sm btn-primary" type="button" data-open="publish">Publish version</button></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="overlay right" id="add-item" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="add-title">
+    <div class="drawer-head"><div class="grow"><h2 id="add-title">Add checklist item</h2><p>The engineer marks Pass, Fail or Not applicable.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><label for="i-name">Item</label><input class="input" id="i-name" placeholder="For example Mould clamp pressure" autofocus></div>
+      <div class="field"><label for="i-how">How to check</label><textarea class="textarea" id="i-how" placeholder="One short step"></textarea></div>
+      <div class="field"><label for="i-fail">Fail when</label><input class="input" id="i-fail" placeholder="For example below 80 bar"></div>
+      <label class="check"><input type="checkbox"> Photo required on Fail</label>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Item added to the draft">Add item</button></div>
+  </div>
+</div>
+<div class="overlay center" id="publish" hidden>
+  <div class="modal" role="dialog" aria-labelledby="pub-title">
+    <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-clipboard-check"/></svg></span><div class="grow"><h2 id="pub-title">Publish Thermoforming v5?</h2>
+      <p>New visit reports use v5 from now on. Reports already started keep v4.</p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="v5 published. The app picks it up within 15 minutes">Publish</button></div>
+  </div>
+</div>
+<div class="menu" id="versions" hidden>
+  <div class="label">Versions</div>
+  <button type="button" data-toast="Showing v4"><svg class="ic"><use href="#ph-check"/></svg>v4 · 18 Nov 2026, current · 3 reports</button>
+  <button type="button" data-toast="Showing v3"><svg class="ic"><use href="#ph-history"/></svg>v3 · 2 Aug 2026 · 41 reports</button>
+  <button type="button" data-toast="Showing v2"><svg class="ic"><use href="#ph-history"/></svg>v2 · 1 Apr 2026 · 18 reports</button>
+</div>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/engineer/E410-checklist-template.html">
+  <div><h3>What it is</h3><p>The checklist an engineer fills in a visit report, one per machine type, with guidance per item.</p></div>
+  <div><h3>What you can do</h3><ul><li>Pick a machine type.</li><li>Add, edit, reorder (drag the handle) or remove items in the draft.</li><li>Publish the draft as a new version.</li></ul></div>
+  <div><h3>What happens next</h3><p>The app uses the new version for new reports within 15 minutes (E410).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Reports store the version used, so old reports stay readable.</li><li>Type with no template: the app shows the general checklist with a notice.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const TYPES = [
+    ['Thermoforming machine', 'v4', ZX.data.engineerDay.checklist, 'factory'],
+    ['Cup forming machine', 'v2', ['Heater zones and elements', 'Cup stacking unit', 'Cutting knife and trim station', 'PID controllers', 'Cooling system', 'Safety interlocks', 'Lubrication'], 'factory'],
+    ['Vacuum forming machine', 'v3', ['Heater zones and elements', 'Vacuum system', 'Vacuum gauge', 'Timers and relays', 'Safety interlocks', 'Air pressure'], 'factory'],
+    ['Blister sealing machine', 'v2', ['Sealing plate temperature', 'Gasket condition', 'Pneumatic cylinders', 'Safety interlocks', 'Air pressure'], 'factory'],
+    ['General', 'v1', ['Power and wiring', 'Moving parts and guards', 'Heating', 'Controls and display', 'Safety interlocks', 'Cleanliness'], 'toolbox'],
+  ];
+  const pick = (i) => {
+    const [name, version, items] = TYPES[i];
+    document.querySelectorAll('#types .tag-slot').forEach((s, j) => { s.innerHTML = j === i ? r.tag('Selected', 'blue') : ''; });
+    document.getElementById('type-name').textContent = name === 'General' ? 'General checklist' : name;
+    document.getElementById('type-sub').innerHTML = `${items.length} items · ${version} published${i === 0 ? ' · draft v5 has 1 change' : ''}`;
+    document.getElementById('pub-title').textContent = `Publish ${name.split(' ')[0]} v${Number(version.slice(1)) + 1}?`;
+    document.getElementById('items').innerHTML = items.map((item, n) => `<li draggable="true"><span class="set-drag" aria-label="Drag to reorder">${r.icon('grip')}</span>
+      <span class="ic-disc">${n + 1}</span><span class="grow"><b>${item}</b><small>Pass, Fail or Not applicable${/Safety/.test(item) ? ' · photo on Fail' : ''}</small></span>
+      ${i === 0 && n === items.length - 1 ? r.tag('New in draft', 'amber') : ''}
+      <button class="icon-btn sm" type="button" aria-label="Edit ${item}" data-open="add-item">${r.icon('pencil-simple')}</button>
+      <button class="icon-btn sm" type="button" aria-label="Remove ${item}" data-toast="Item removed from the draft">${r.icon('trash')}</button></li>`).join('');
+    document.getElementById('foot').textContent = i === 0 ? 'Draft saved 12:00 PM' : 'No draft changes';
+  };
+  document.getElementById('types').innerHTML = TYPES.map(([name, version, items, ic], i) => `<li data-i="${i}" style="cursor:pointer"><span class="ic-disc">${r.icon(ic)}</span>
+    <span class="grow"><b>${name}</b><small>${version} · ${items.length} items</small></span><span class="tag-slot"></span></li>`).join('');
+  document.getElementById('types').addEventListener('click', (event) => { const li = event.target.closest('li'); if (li) pick(Number(li.dataset.i)); });
+  pick(0);
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+
+</body>
+</html>

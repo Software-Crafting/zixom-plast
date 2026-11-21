@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1620 Integrations</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-settings.css">
+</head>
+<body class="adm" data-page="D1620">
+<main class="content">
+  <div class="set-layout">
+    <nav class="card set-nav" id="set-nav" aria-label="Settings"></nav>
+    <div class="set-main">
+<div class="page-head">
+        <div class="grow"><h1>Integrations</h1><p>Outside services the dashboard and the app depend on. Secrets are always masked.</p></div>
+        <a class="btn btn-secondary" href="#D1641"><svg class="ic"><use href="#ph-activity"/></svg>Integration log</a>
+      </div>
+      <div class="banner amber center" data-when="test-mode" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning"/></svg>
+        <span class="grow"><b>Razorpay is in test mode.</b> Payments in the app are not real. This banner shows on every page until Live is on.</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1621">Open Razorpay</a></span></div>
+      <div class="banner red center" data-when="partial" style="margin-bottom:16px"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>SMS provider is not answering.</b> Sign in codes are failing. Customers see a try again message (EC-A28).</span>
+        <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1622">Switch provider</a></span></div>
+      <div data-when="ready test-mode partial">
+        <div class="grid cols-2" id="cards"></div>
+      </div>
+      <div data-when="loading"><div class="grid cols-2">
+        <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>
+        <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>
+        <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div>
+        <div class="card pad stack"><span class="sk sk-title"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:60%"></span></div></div></div>
+    </div>
+  </div>
+</main>
+<div class="overlay center" id="rotate" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="rot-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-key"/></svg></span><div class="grow"><h2 id="rot-title">Rotate keys?</h2>
+      <p>The old key stops working once you save the new one. Enter your password to continue.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="rot-pass">Your password</label><input class="input" id="rot-pass" type="password" autocomplete="current-password"></div>
+      <div class="field"><label for="rot-reason">Reason</label><input class="input" id="rot-reason" placeholder="For example scheduled rotation"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="New key saved. Old key revoked">Rotate keys</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading test-mode partial error">
+  <div><h3>What it is</h3><p>One card per outside service with its status, last event and masked keys.</p></div>
+  <div><h3>What you can do</h3><ul><li>Test a connection.</li><li>Open a service's setup (Razorpay D1621, IndiaMART D1111, Email and SMS D1622, Backups D1643).</li><li>Rotate keys with your password and a reason.</li></ul></div>
+  <div><h3>What happens next</h3><p>Every call is written to the integration log (D1641). Failures alert on the dashboard.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Test mode banner on every page while Razorpay is in test (Test mode state).</li><li>SMS provider down: alert, switch provider (Partial error state, EC-A28).</li><li>Without maps, suggestions use pincode and region only.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/settings.js"></script>
+<script>
+(() => {
+const r = ZXA.r;
+  const test = () => document.body.dataset.state === 'test-mode';
+  const CARDS = [
+    ['Razorpay', 'wallet', 'Online payments and refunds', ['Live', 'green'], [['Key id', '<span class="mono">rzp_live_••••••7Hq2</span>'], ['Webhook', 'Verified, last event 4 min ago'], ['Methods', 'UPI, cards, net banking, wallets']], 'D1621', true],
+    ['IndiaMART', 'inbox', 'Enquiries become leads', ['Active', 'green'], [['Push API', 'Last enquiry 2 h ago'], ['Pull key', '<span class="mono">••••••••3fa1</span>, every 15 min'], ['Today', '3 enquiries, 1 failed']], 'D1111', true],
+    ['Push (Firebase Cloud Messaging)', 'bell', 'Notifications to the app', ['Delivering', 'green'], [['Project', '<span class="mono">zixom-connect-prod</span>'], ['Server key', '<span class="mono">••••••••••••c09e</span>'], ['Last 24 h', '41 sent, 1 failed']], 'D1320', true],
+    ['Email sender', 'envelope-simple', 'Notifications, invoices, quotations', ['Delivering', 'green'], [['From', 'Zixom Plast &lt;noreply@zixom.in&gt;'], ['Domain', 'SPF, DKIM and DMARC set'], ['Last 24 h', '18 sent, 1 bounced']], 'D1622', true],
+    ['SMS provider (DLT)', 'chat-text', 'Sign in codes and invitations', ['Delivering', 'green'], [['Sender id', '<span class="mono">ZIXOMP</span>'], ['DLT entity', '<span class="mono">•••••••••••4417</span>'], ['Last 24 h', '9 codes sent']], 'D1622', true],
+    ['Maps', 'map-trifold', 'Distance, site pin, travel ETA', ['Connected', 'green'], [['Provider', 'Google Maps (Confirm)'], ['API key', '<span class="mono">AIza••••••••Kx0</span>'], ['This month', '1,240 calls']], '', true],
+    ['File storage', 'cloud-arrow-up', 'Photos, videos, documents, PDFs', ['Healthy', 'green'], [['Storage', 'Private, signed links expire in 7 days'], ['Virus scan', 'On every upload'], ['Used', '38.6 GB']], '', false],
+    ['Backups', 'database', 'Database and files', ['Last run succeeded', 'green'], [['Schedule', 'Daily at 2:00 AM'], ['Kept', '30 days (Confirm)'], ['Last run', 'Today 2:00 AM, 1.84 GB']], 'D1643', false],
+  ];
+  const draw = () => {
+    document.getElementById('cards').innerHTML = CARDS.map(([name, ic, purpose, [st, tone], rows, href, keys], i) => {
+      let status = r.tag(st, tone);
+      if (i === 0 && test()) status = r.tag('Test mode', 'amber');
+      if (i === 4 && document.body.dataset.state === 'partial') status = r.tag('Not answering', 'red');
+      const keyRow = i === 0 && test() ? rows.map((x) => (x[0] === 'Key id' ? [x[0], '<span class="mono">rzp_test_••••••9Lm4</span>'] : x)) : rows;
+      return `<section class="card"><div class="card-head"><span class="thumb">${r.icon(ic)}</span><div class="grow"><h2>${name}</h2><p>${purpose}</p></div>${status}</div>
+        <div class="card-body"><dl class="dl">${keyRow.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div>
+        <div class="card-foot"><button class="btn btn-sm btn-secondary" type="button" data-busy data-toast="${name}: connection works, ${120 + i * 37} ms">Test connection</button>
+          ${keys ? '<button class="btn btn-sm btn-ghost" type="button" data-open="rotate">Rotate keys</button>' : ''}<span class="grow"></span>
+          ${href ? `<a class="card-link" href="#${href}">Open</a>` : ''}</div></section>`;
+    }).join('');
+  };
+  draw();
+  ZXA.redraw = draw;
+  ZXA.set.frame();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+document.querySelector('.proto-panel').addEventListener('click', (event) => { if (event.target.closest('[data-proto-state]')) ZXA.redraw(); });
+</script>
+</body>
+</html>
