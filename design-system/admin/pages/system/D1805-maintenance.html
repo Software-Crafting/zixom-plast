@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1805 Maintenance</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1805">
+<main class="content">
+  <div class="card" data-when="ready"><div class="state page"><span class="disc amber"><svg class="ic"><use href="#ph-wrench-screw"/></svg></span>
+    <h3>Dashboard maintenance</h3><p>We are updating the dashboard. Expected to end at 2:00 PM IST today.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/system/S02-maintenance.html">
+  <div><h3>What it is</h3><p>Shown to Admins while the dashboard itself is under maintenance.</p></div>
+  <div><h3>What you can do</h3><ul><li>Try again after the expected end.</li></ul></div>
+  <div><h3>What happens next</h3><p>The page the Admin opened.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>App maintenance (D1630) does not block Admins; customers and engineers see S02 (EC-A63).</li><li>Payments in progress keep checking status (F14).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

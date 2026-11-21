@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1810 Print view</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-system.css">
+</head>
+<body class="print" data-page="D1810">
+<main class="content">
+  <div class="print-bar">
+    <a class="btn btn-ghost btn-sm" href="#D401"><svg class="ic"><use href="#ph-arrow-left"/></svg>Back to tickets</a>
+    <span class="grow"></span>
+    <button class="btn btn-secondary" type="button" data-print><svg class="ic"><use href="#ph-file-pdf"/></svg>Save as PDF</button>
+    <button class="btn btn-primary" type="button" data-print><svg class="ic"><use href="#ph-printer"/></svg>Print</button>
+  </div>
+
+  <article class="print-doc">
+    <header class="doc-head">
+      <div class="grow"><h1>Service tickets</h1><p id="doc-filter"></p></div>
+      <p id="doc-printed"></p>
+    </header>
+    <div class="table-wrap">
+      <table class="table compact">
+        <thead><tr><th>Ticket</th><th>Status</th><th>Severity</th><th>Customer and site</th><th>Machine</th><th>Engineer</th><th>Raised</th><th>SLA</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <footer class="doc-foot"><span>Zixom Plast · Seekri, Ballabhgarh, Faridabad, Haryana</span><span>Times in IST</span></footer>
+  </article>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready">
+  <div><h3>What it is</h3><p>A clean print layout for lists and records. Here the open service tickets list.</p></div>
+  <div><h3>What you can do</h3><ul><li>Print, or Save as PDF from the print dialog.</li><li>Back returns to the list.</li></ul></div>
+  <div><h3>What happens next</h3><p>The browser print dialog. Opened from Print in a list or record menu (for example D401, D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Navigation is hidden and the header row repeats on each page (EC-A58).</li><li>A4 landscape for wide tables.</li><li>Hindi text uses a Devanagari font in PDF output (EC-A08).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const open = r.tickets.filter(r.isOpen);
+  document.getElementById('doc-filter').textContent = `View: All open · ${open.length} tickets · Region: Ahmedabad, Pune`;
+  document.getElementById('doc-printed').textContent = `Printed 23 Nov 2026, 12:00 PM IST by ${ZXA.data.admin.name}`;
+  document.getElementById('rows').innerHTML = open.map((t) => {
+    const m = r.machine(t.machine);
+    const e = t.engineer ? r.engineer(t.engineer) : null;
+    return `<tr><td class="nowrap"><span class="mono">${t.number}</span></td><td class="nowrap">${r.ticketTag(t.status)}</td>
+      <td class="nowrap">${t.severity ? r.severityTag(t.severity, true) : '<span class="faint">–</span>'}</td>
+      <td>${r.esc(r.company(t.company).name)}<span class="sub">${r.esc(r.site(t.company, t.site).name)}</span></td>
+      <td>${r.esc(m.model)}<span class="sub mono">${m.serial}</span></td>
+      <td class="nowrap">${e ? r.esc(e.name) : '<span class="faint">Not assigned</span>'}</td>
+      <td class="nowrap">${r.date(t.created)}</td><td class="nowrap">${r.esc(t.sla[0])}</td></tr>`;
+  }).join('');
+  document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

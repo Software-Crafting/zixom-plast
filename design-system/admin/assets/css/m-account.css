@@ -1,0 +1,50 @@
+/* Sign in and account pages: only what the shared classes do not cover. */
+
+/* pre sign in pages: the card sits centred, no shell (pages.css body.auth) */
+body.auth{grid-template-columns:minmax(0, 1fr)}
+body.auth .content{display:flex; flex-direction:column; align-items:center; max-width:none; padding:0}
+.auth-card .banner{margin-top:20px}
+.auth-card form .banner, .auth-card .form .banner{margin-top:0}
+.head-disc{width:56px; height:56px; display:grid; place-items:center; margin-bottom:18px; border-radius:50%; background:var(--slate-100); color:var(--slate-700)}
+.head-disc .ic{width:26px; height:26px}
+.head-disc.green{background:var(--green-50); color:var(--green)}
+.head-disc.red{background:var(--red-50); color:var(--red)}
+.head-disc.amber{background:var(--amber-50); color:var(--amber)}
+.head-disc.blue{background:var(--blue-50); color:var(--blue)}
+.auth-card .links{display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:var(--fs-13)}
+.auth-card .links .grow{flex:1}
+.auth-card .links.center{justify-content:center}
+
+/* password with a show or hide button at the end */
+.pw .input{padding-right:46px}
+
+/* password rules checklist (D004, D005, D010) */
+.rules{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 12px;
+  font-size:var(--fs-12); color:var(--text-muted)}
+.rules li{display:flex; align-items:center; gap:6px}
+.rules .ic{width:14px; height:14px}
+.rules li.ok{color:var(--green)}
+
+/* code timer and resend line under the boxes (D003, D005) */
+.code-line{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:var(--fs-13); color:var(--text-muted)}
+.code-line .grow{flex:1}
+.otp.invalid input{box-shadow:inset 0 0 0 1.5px var(--red)}
+
+/* first sign in tour: the highlighted part of the page and the step card next to it (D006) */
+.tour-target{outline:3px solid var(--blue); outline-offset:3px; border-radius:12px}
+.tour-pop{width:340px; max-width:calc(100vw - 24px); padding:18px 18px 14px}
+.tour-pop h3{font-size:var(--fs-16)}
+.tour-pop p{margin-top:4px; color:var(--text)}
+.tour-pop .tour-foot{display:flex; align-items:center; gap:8px; margin-top:16px}
+.tour-pop .tour-foot .grow{flex:1}
+.tour-dots{display:flex; gap:6px; margin-top:14px}
+.tour-dots i{width:6px; height:6px; border-radius:50%; background:var(--slate-200)}
+.tour-dots i.on{width:18px; border-radius:6px; background:var(--slate-800)}
+
+/* signed in account pages: narrow form column */
+.narrow{max-width:720px}
+
+@media (max-width:640px){
+  .rules{grid-template-columns:minmax(0, 1fr)}
+  .tour-pop{left:12px !important; right:12px !important; width:auto}
+}

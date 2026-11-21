@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1804 Offline</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1804">
+<main class="content">
+  <div class="banner dark center" data-when="ready" style="margin:16px 0"><svg class="ic"><use href="#ph-wifi-slash"/></svg><span class="grow"><b>You are offline.</b> Changes will not be saved until you are back online.</span></div>
+  <div class="card" data-when="ready"><div class="state page"><span class="disc "><svg class="ic"><use href="#ph-wifi-slash"/></svg></span>
+    <h3>You are offline</h3><p>Changes will not be saved until you are back online. We try again on our own.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button></div></div></div>
+  <div class="card" data-when="back-online"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+    <h3>You are back online</h3><p>Your changes are being saved.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" onclick="location.reload()">Reload page</button></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready back-online" data-mobile="../../../screens/system/S03-no-internet.html">
+  <div><h3>What it is</h3><p>Shown when the network is lost and the page cannot load.</p></div>
+  <div><h3>What you can do</h3><ul><li>Try again now.</li><li>Wait: the page retries when the network returns.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back online reloads the page (Back online).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Forms keep their data; nothing is saved twice (EC-A01).</li><li>On other pages offline is a banner over the page.</li><li>Copy from section 18.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

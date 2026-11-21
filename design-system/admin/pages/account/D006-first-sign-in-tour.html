@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D006 First sign in tour</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="adm" data-page="D006" data-nav="D101">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>Dashboard</h1><p>Monday 23 November 2026 · Updated 12:00 PM</p></div>
+    <a class="btn btn-secondary" href="#D101">Open dashboard</a>
+  </div>
+  <div data-when="ready done">
+    <section class="kpis" id="kpis" aria-label="Key numbers"></section>
+    <div class="grid cols-2">
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Today's visits</h2><p>7 visits · 2 engineers</p></div><a class="card-link" href="#D104">Today board</a></div>
+        <ul class="mini" id="visits"></ul>
+      </section>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Work queue</h2><p>14 items need you · 1 urgent</p></div><a class="card-link" href="#D102">Open queue</a></div>
+        <ul class="mini" id="queue"></ul>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div class="popover tour-pop" id="tour" role="dialog" aria-labelledby="tour-title" hidden>
+  <h3 id="tour-title"></h3>
+  <p id="tour-text"></p>
+  <div class="tour-dots" id="tour-dots" aria-hidden="true"></div>
+  <div class="tour-foot">
+    <label class="check grow"><input type="checkbox" id="tour-never"> Don't show again</label>
+    <button class="btn btn-ghost btn-sm" type="button" id="tour-skip">Skip</button>
+    <button class="btn btn-primary btn-sm" type="button" id="tour-next">Next</button>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready done" data-mobile="../../../screens/customer/C1301-tour.html">
+  <div><h3>What it is</h3><p>A four step tour over the dashboard on the first sign in: sidebar, search, work queue, Create.</p></div>
+  <div><h3>What you can do</h3><ul><li>Next moves through the steps; Skip closes the tour at any time.</li><li>Tick Don't show again to stop it.</li></ul></div>
+  <div><h3>What happens next</h3><p>The dashboard (D101). The tour can be reopened from the help icon (D1644).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Shows once per Admin.</li><li>On a phone the sidebar and work queue steps point at the menu button.</li><li>Done shows the page after the tour.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const link = (id, query = '') => (ZXA.isBuilt(id) ? ZXA.href(id, query) : `${ZXA.root}index.html#${id}`);
+  document.getElementById('kpis').innerHTML = a.kpis.map((k) => `
+    <a class="card kpi${k.alert ? ' alert' : ''}" href="${link(k.href, k.query)}">
+      <span class="label">${k.label}</span><span class="value">${k.value}</span>
+      <span class="foot">${r.trend(k.trend)}<span>${k.foot}</span></span></a>`).join('');
+  document.getElementById('visits').innerHTML = a.visits.slice(0, 5).map((v) => {
+    const e = r.engineer(v.engineer);
+    return `<li data-href="D403?t=${v.ticket}"><span class="time">${v.time}</span>${r.avatar(e, 'sm')}
+      <span class="grow"><b class="mono">${v.ticket}</b><small>${v.company}, ${v.site} · ${e.name.split(' ')[0]}</small></span>
+      ${r.tag(v.status === 'completed' ? 'Done' : r.ticketLabel(v.status), v.status === 'completed' ? 'green' : '')}</li>`;
+  }).join('');
+  document.getElementById('queue').innerHTML = a.queue.slice(0, 5).map((q) => `
+    <li data-href="${q.href}"><span class="ic-disc ${q.tone}">${r.icon(q.icon)}</span>
+      <span class="grow"><b>${q.title}</b><small>${q.sub}</small></span><span class="end">${q.age}</span></li>`).join('');
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+<script>
+/* the tour runs after the shell: it points at the sidebar, search and Create the shell draws */
+(() => {
+  const STEPS = [
+    { target: '.side nav', phone: '.top .menu-btn', title: 'Everything is in the sidebar', text: 'Customers, service, parts, money and settings. Collapse it with the panel button.' },
+    { target: '.top .gsearch', title: 'Search anything', text: 'Tickets, customers, machines and invoices. Press / from any page.' },
+    { target: '.side .item[data-tip="Work queue"]', phone: '.top .menu-btn', title: 'Start with the work queue', text: 'What needs you, most urgent first: assignments, verifications, payments.' },
+    { target: '.top .create-btn', title: 'Create from anywhere', text: 'New ticket, customer, machine, invoice, lead or announcement.' },
+  ];
+  const $ = (id) => document.getElementById(id);
+  const pop = $('tour');
+  const GAP = 14;
+  let step = 0;
+  let current = null;
+
+  const targetFor = (s) => {
+    const el = document.querySelector(s.target);
+    const box = el.getBoundingClientRect();
+    return box.right <= 0 && s.phone ? document.querySelector(s.phone) : el;
+  };
+  const place = () => {
+    const box = current.getBoundingClientRect();
+    const inSide = Boolean(current.closest('.side'));
+    let top = inSide ? box.top + Math.min(40, box.height / 4) : box.bottom + GAP;
+    let left = inSide ? box.right + GAP : box.left;
+    left = Math.max(12, Math.min(left, window.innerWidth - pop.offsetWidth - 12));
+    top = Math.max(12, Math.min(top, window.innerHeight - pop.offsetHeight - 12));
+    pop.style.top = `${top}px`;
+    pop.style.left = `${left}px`;
+  };
+  const show = () => {
+    const s = STEPS[step];
+    current?.classList.remove('tour-target');
+    current = targetFor(s);
+    current.classList.add('tour-target');
+    $('tour-title').textContent = s.title;
+    $('tour-text').textContent = s.text;
+    $('tour-dots').innerHTML = STEPS.map((_, i) => `<i class="${i === step ? 'on' : ''}"></i>`).join('');
+    $('tour-next').textContent = step === STEPS.length - 1 ? 'Done' : 'Next';
+    pop.hidden = false;
+    place();
+  };
+  const close = (message) => {
+    current?.classList.remove('tour-target');
+    pop.hidden = true;
+    if (message) ZXA.ui.toast(message, 'info');
+  };
+  $('tour-next').addEventListener('click', () => {
+    if (step < STEPS.length - 1) { step += 1; show(); return; }
+    ZXA.ui.setState('done');
+  });
+  $('tour-skip').addEventListener('click', () => ZXA.ui.setState('done'));
+  window.addEventListener('resize', () => { if (!pop.hidden) show(); });
+
+  new MutationObserver(() => {
+    if (document.body.dataset.state === 'done') close($('tour-never').checked ? 'Tour off. Reopen it from the help icon' : 'Reopen the tour from the help icon');
+    else { step = 0; show(); }
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  if (document.body.dataset.state !== 'done') show();
+})();
+</script>
+</body>
+</html>

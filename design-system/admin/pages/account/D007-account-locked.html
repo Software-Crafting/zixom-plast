@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D007 Account locked</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="auth" data-page="D007">
+<main class="content">
+  <div class="auth-card" data-when="ready ending">
+    <span class="head-disc red"><svg class="ic"><use href="#ph-lock-simple"/></svg></span>
+    <h1>Too many tries</h1>
+    <p>Try again in <b class="mono" id="countdown">14:52</b>.</p>
+    <div class="form">
+      <div class="banner grey"><svg class="ic"><use href="#ph-users"/></svg>
+        <span class="grow">Another Admin can unlock your account from Users.</span></div>
+      <a class="btn btn-primary btn-lg btn-block" href="#D001">Back to sign in</a>
+      <div class="links center"><a href="#D002">Forgot password?</a></div>
+    </div>
+  </div>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready ending">
+  <div><h3>What it is</h3><p>Shown after 5 wrong passwords or codes. The account is locked for 15 minutes.</p></div>
+  <div><h3>What you can do</h3><ul><li>Wait for the countdown.</li><li>Back to sign in, or reset the password.</li></ul></div>
+  <div><h3>What happens next</h3><p>When the countdown ends the page returns to Sign in (D001). Ending starts at 0:05.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>5 tries, 15 minute lock (section 14, EC-A54).</li><li>Another Admin can unlock from Users (D1602).</li><li>Flow F13.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const out = document.getElementById('countdown');
+  let left = 14 * 60 + 52;
+  const show = () => { out.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; };
+  new MutationObserver(() => { left = document.body.dataset.state === 'ending' ? 5 : 14 * 60 + 52; show(); })
+    .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  window.setInterval(() => {
+    left -= 1;
+    if (left <= 0) ZXA.ui.go('D001');
+    else show();
+  }, 1000);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

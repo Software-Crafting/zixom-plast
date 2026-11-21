@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D009 My profile</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="adm" data-page="D009">
+<main class="content">
+  <div class="page-head">
+    <div class="grow"><h1>My profile</h1><p>Your own details. Times show in IST.</p></div>
+  </div>
+
+  <div class="detail" data-when="ready duplicate">
+    <div>
+      <section class="card">
+        <div class="card-head"><div class="grow"><h2>Details</h2></div></div>
+        <div class="card-body stack">
+          <div class="row wrap">
+            <span class="avatar lg dark" id="avatar"></span>
+            <span class="btns"><button class="btn btn-secondary btn-sm" type="button" data-toast="Photo uploaded"><svg class="ic"><use href="#ph-upload-simple"/></svg>Upload photo</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-toast="Photo removed. Initials show instead">Remove</button></span>
+            <span class="hint muted">JPG or PNG, up to 2 MB</span>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="name">Name</label><input class="input" id="name" maxlength="80" required></div>
+            <div class="field"><label for="title">Title <span class="opt">optional</span></label><input class="input" id="title" maxlength="60"></div>
+            <div class="field"><label for="email">Work email</label>
+              <div class="input-wrap"><svg class="ic"><use href="#ph-envelope-simple"/></svg><input class="input" id="email" disabled style="padding-right:96px">
+                <button class="btn btn-secondary btn-sm suffix" type="button" data-open="change-email">Change</button></div>
+              <span class="hint">Sign in and codes use this email.</span></div>
+            <div class="field"><label for="mobile">Mobile</label>
+              <div class="input-wrap"><svg class="ic"><use href="#ph-phone"/></svg><input class="input" id="mobile" disabled style="padding-right:96px">
+                <button class="btn btn-secondary btn-sm suffix" type="button" data-open="change-mobile">Change</button></div></div>
+            <div class="field full"><label for="tz">Time zone</label><input class="input" id="tz" value="India Standard Time (IST, UTC+5:30)" disabled>
+              <span class="hint">Fixed. All times in the dashboard show in IST.</span></div>
+          </div>
+        </div>
+      </section>
+      <div class="form-bar"><span class="grow">Last saved 14 Nov 2026</span>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+    </div>
+
+    <aside>
+      <section class="card side-card">
+        <div class="card-head"><h3 class="grow">Account</h3></div>
+        <div class="card-body"><dl class="dl" id="account"></dl></div>
+      </section>
+      <section class="card side-card">
+        <div class="card-head"><h3 class="grow">Security and settings</h3></div>
+        <ul class="mini">
+          <li data-href="D010"><span class="ic-disc"><svg class="ic"><use href="#ph-key"/></svg></span><span class="grow"><b>Change password</b><small>Changed 14 Nov 2026</small></span><svg class="ic faint"><use href="#ph-caret-right"/></svg></li>
+          <li data-href="D011"><span class="ic-disc"><svg class="ic"><use href="#ph-laptop"/></svg></span><span class="grow"><b>Active sessions</b><small id="sessions-sub"></small></span><svg class="ic faint"><use href="#ph-caret-right"/></svg></li>
+          <li data-href="D012"><span class="ic-disc"><svg class="ic"><use href="#ph-history"/></svg></span><span class="grow"><b>My activity</b><small>Your actions in the activity log</small></span><svg class="ic faint"><use href="#ph-caret-right"/></svg></li>
+          <li data-href="D013"><span class="ic-disc"><svg class="ic"><use href="#ph-bell"/></svg></span><span class="grow"><b>Notification settings</b><small>Email and bell alerts</small></span><svg class="ic faint"><use href="#ph-caret-right"/></svg></li>
+          <li data-href="D014"><span class="ic-disc red"><svg class="ic"><use href="#ph-sign-out"/></svg></span><span class="grow"><b>Sign out</b><small>This browser or all</small></span><svg class="ic faint"><use href="#ph-caret-right"/></svg></li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <div class="detail" data-when="loading">
+    <div class="card pad stack"><span class="sk sk-circle" style="width:56px;height:56px"></span><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+    <div class="stack"><div class="card pad stack"><span class="sk sk-line" style="width:40%"></span><span class="sk sk-block" style="height:100px"></span></div></div>
+  </div>
+</main>
+
+<!-- change email: verified by a code sent to the new email (EC-A56) -->
+<div class="overlay center" id="change-email" hidden>
+  <div class="modal" role="dialog" aria-labelledby="ce-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-envelope-simple"/></svg></span>
+      <div class="grow"><h2 id="ce-title">Change work email</h2><p>We send a code to the new email. The old email gets a notice.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="ce-email">New work email</label>
+        <div class="row"><input class="input grow" id="ce-email" type="email" placeholder="name@zixom.in" autofocus>
+          <button class="btn btn-secondary btn-sm" type="button" data-toast="Code sent to the new email">Send code</button></div>
+        <span class="error" id="ce-dup" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>This email is used by another account</span></div>
+      <div class="field"><span class="label">6 digit code</span>
+        <div class="otp"><input inputmode="numeric" maxlength="1" aria-label="Digit 1"><input inputmode="numeric" maxlength="1" aria-label="Digit 2"><input inputmode="numeric" maxlength="1" aria-label="Digit 3">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 4"><input inputmode="numeric" maxlength="1" aria-label="Digit 5"><input inputmode="numeric" maxlength="1" aria-label="Digit 6"></div>
+        <span class="hint">Expires in 5 minutes.</span></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Work email changed">Verify and save</button></div>
+  </div>
+</div>
+
+<div class="overlay center" id="change-mobile" hidden>
+  <div class="modal" role="dialog" aria-labelledby="cm-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-phone"/></svg></span>
+      <div class="grow"><h2 id="cm-title">Change mobile</h2><p>We send a code by SMS to the new number.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="cm-mobile">New mobile</label>
+        <div class="row"><div class="input-wrap prefix grow"><b>+91</b><input class="input" id="cm-mobile" inputmode="numeric" maxlength="11" placeholder="98765 43210" style="padding-left:46px"></div>
+          <button class="btn btn-secondary btn-sm" type="button" data-toast="Code sent by SMS">Send code</button></div></div>
+      <div class="field"><span class="label">6 digit code</span>
+        <div class="otp"><input inputmode="numeric" maxlength="1" aria-label="Digit 1"><input inputmode="numeric" maxlength="1" aria-label="Digit 2"><input inputmode="numeric" maxlength="1" aria-label="Digit 3">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 4"><input inputmode="numeric" maxlength="1" aria-label="Digit 5"><input inputmode="numeric" maxlength="1" aria-label="Digit 6"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-toast="Mobile changed">Verify and save</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading duplicate error" data-mobile="../../../screens/customer/C1102-profile.html">
+  <div><h3>What it is</h3><p>The signed in Admin's own profile. Opened from the name at the bottom of the sidebar.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit name, title and photo, then Save.</li><li>Change email or mobile with a code sent to the new one.</li><li>Open password, sessions, activity and alerts.</li></ul></div>
+  <div><h3>What happens next</h3><p>Change password (D010), Active sessions (D011), My activity (D012), Notification settings (D013), Sign out (D014).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>New email is verified by a code; the old email gets a notice (EC-A56).</li><li>Email or mobile used by another account (Duplicate).</li><li>Time zone is fixed to IST (EC-A57).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const acc = a.account;
+  const $ = (id) => document.getElementById(id);
+  $('avatar').textContent = a.admin.initials;
+  $('name').value = a.admin.name;
+  $('title').value = a.admin.title;
+  $('email').value = a.admin.email;
+  $('mobile').value = a.admin.mobile;
+  $('sessions-sub').textContent = `${acc.sessions.length} browsers and devices`;
+  const current = acc.sessions.find((s) => s.current);
+  $('account').innerHTML = `<dt>Role</dt><dd>${a.admin.role}</dd><dt>Status</dt><dd>${r.tag('Active', 'green')}</dd>
+    <dt>Last sign in</dt><dd>${r.date(acc.lastSignIn)}, ${r.time(acc.lastSignIn)} IST<br><small class="muted">${current.browser}, ${current.city.split(',')[0]}</small></dd>
+    <dt>Member since</dt><dd>${r.date(acc.memberSince)}</dd>`;
+
+  new MutationObserver(() => {
+    const duplicate = document.body.dataset.state === 'duplicate';
+    $('ce-dup').hidden = !duplicate;
+    $('ce-email').setAttribute('aria-invalid', String(duplicate));
+    if (duplicate) { $('ce-email').value = 'rakesh@shreepack.example'; ZXA.ui.openOverlay('change-email'); }
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

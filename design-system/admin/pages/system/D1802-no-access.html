@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1802 No access</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1802">
+<main class="content">
+  <div class="card" data-when="ready"><div class="state page"><span class="disc "><svg class="ic"><use href="#ph-ban"/></svg></span>
+    <h3>This is not available</h3><p>The record may be archived or deleted.</p>
+    <div class="btns"><button class="btn btn-primary" type="button" onclick="history.back()">Go back</button></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/system/S06-no-access.html">
+  <div><h3>What it is</h3><p>Shown for an archived or removed record that cannot be opened.</p></div>
+  <div><h3>What you can do</h3><ul><li>Go back to the last page.</li></ul></div>
+  <div><h3>What happens next</h3><p>The previous page.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Archived or removed records (EC-A10).</li><li>Records of a deactivated company open read only instead (EC-A11).</li><li>There is one Admin role, so this is never a permission refusal.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D012 My activity</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D012">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D009">My profile</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>My activity</span></nav>
+      <h1>My activity</h1><p>Your own actions from the activity log · times in IST</p></div>
+    <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+  </div>
+
+  <section class="card list-card" data-when="ready empty no-results">
+    <div class="views tabs" role="tablist" aria-label="Saved views" id="views" data-when="ready no-results"></div>
+    <div class="toolbar" data-when="ready no-results">
+      <label class="search" data-filter="#activity"><svg class="ic"><use href="#ph-magnifying-glass"/></svg>
+        <input type="search" placeholder="Action, record or detail" aria-label="Search my activity"></label>
+      <button class="btn btn-secondary filter-btn" type="button" data-open="filters"><svg class="ic"><use href="#ph-sliders-horizontal"/></svg>Filters<span class="badge">1</span></button>
+    </div>
+    <div class="applied-row" data-when="ready no-results">
+      <span class="chip applied">Date: <b>Last 30 days</b><svg class="ic x"><use href="#ph-x"/></svg></span>
+    </div>
+    <div class="table-wrap" data-when="ready no-results">
+      <table class="table" id="activity">
+        <thead><tr><th class="sortable">When</th><th class="sortable">Action</th><th class="sortable">Record</th><th>Details</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span>
+        <h3>No matching results</h3><p>Try different words or clear the filters.</p>
+        <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
+    </div>
+    <div class="table-foot" data-when="ready no-results">
+      <span id="count"></span><span class="grow"></span>
+      <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label>
+      <div class="pager"><button type="button" disabled aria-label="Previous page"><svg class="ic"><use href="#ph-caret-left"/></svg></button>
+        <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
+    </div>
+    <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-history"/></svg></span>
+      <h3>No activity yet</h3><p>Your actions will appear here.</p></div>
+  </section>
+
+  <section class="card list-card" data-when="loading">
+    <div class="toolbar"><span class="sk" style="width:340px; height:40px; border-radius:999px"></span><span class="sk" style="width:110px; height:40px; border-radius:999px"></span></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>When</th><th>Action</th><th>Record</th><th>Details</th></tr></thead><tbody id="sk-rows"></tbody></table></div>
+  </section>
+</main>
+
+<div class="menu" id="export-menu" hidden>
+  <button type="button" data-toast="Excel file downloading"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
+  <button type="button" data-toast="CSV file downloading"><svg class="ic"><use href="#ph-file-text"/></svg>CSV</button>
+</div>
+
+<div class="overlay right" id="filters" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="filters-title">
+    <div class="drawer-head"><div class="grow"><h2 id="filters-title">Filters</h2></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="field"><span class="label">Date</span><div class="row wrap" data-single>
+        <button class="chip" type="button" aria-pressed="false">Today</button><button class="chip" type="button" aria-pressed="false">Last 7 days</button>
+        <button class="chip" type="button" aria-pressed="true">Last 30 days</button><button class="chip" type="button" aria-pressed="false">Custom</button></div></div>
+      <div class="form-grid">
+        <div class="field"><label for="from">From</label><input class="input" id="from" type="date" value="2026-10-24"></div>
+        <div class="field"><label for="to">To</label><input class="input" id="to" type="date" value="2026-11-23"></div>
+      </div>
+      <div class="field"><span class="label">Type</span><div class="row wrap">
+        <button class="chip" type="button" aria-pressed="false">Tickets</button><button class="chip" type="button" aria-pressed="false">Customers</button>
+        <button class="chip" type="button" aria-pressed="false">Money</button><button class="chip" type="button" aria-pressed="false">Settings</button>
+        <button class="chip" type="button" aria-pressed="false">Account</button></div></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show results</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready loading empty no-results error">
+  <div><h3>What it is</h3><p>Your own actions, taken from the activity log (D1640).</p></div>
+  <div><h3>What you can do</h3><ul><li>Switch views by type, search after 2 characters, filter by date and type.</li><li>Click a row to open the record.</li><li>Export to Excel or CSV.</li></ul></div>
+  <div><h3>What happens next</h3><p>Rows open the ticket (D403), invoice (D903), customer (D202), setting or account page.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Skeleton, empty and no results states.</li><li>Times show in IST (EC-A57).</li><li>The log cannot be edited; the full log for all Admins is D1640.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const rows = ZXA.data.account.activity;
+  const $ = (id) => document.getElementById(id);
+  const VIEWS = ['All', 'Tickets', 'Customers', 'Money', 'Settings', 'Account'];
+  const count = (view) => rows.filter((x) => view === 'All' || x.type === view).length;
+
+  $('views').innerHTML = VIEWS.map((v, i) => `<button role="tab" aria-selected="${i === 0}" data-view="${v}">${v} <span class="n">${count(v)}</span></button>`).join('');
+  $('activity').tBodies[0].innerHTML = rows.map((x) => `<tr data-href="${x.href}" data-type="${x.type}">
+    <td class="nowrap" data-sort="${x.when}">${r.dayDate(x.when)}, ${r.time(x.when)}</td>
+    <td class="nowrap"><span class="row">${r.icon(x.icon)}${r.esc(x.action)}</span></td>
+    <td class="nowrap">${x.record ? `<a class="rec" href="#${x.href}">${x.record}</a>` : '<span class="faint">–</span>'}</td>
+    <td>${r.esc(x.detail)}</td></tr>`).join('');
+  $('sk-rows').innerHTML = '<tr><td><span class="sk sk-line" style="width:110px"></span></td><td><span class="sk sk-line" style="width:140px"></span></td><td><span class="sk sk-line" style="width:110px"></span></td><td><span class="sk sk-line" style="width:240px"></span></td></tr>'.repeat(6);
+
+  const showCount = (n) => { $('count').textContent = `1 to ${n} of ${n}`; };
+  $('views').addEventListener('click', (event) => {
+    const tab = event.target.closest('[data-view]');
+    if (!tab) return;
+    const view = tab.dataset.view;
+    $('activity').querySelectorAll('tbody tr').forEach((tr) => { tr.hidden = view !== 'All' && tr.dataset.type !== view; });
+    showCount(count(view));
+  });
+  showCount(rows.length);
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D014 Sign out</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="auth" data-page="D014">
+<main class="content">
+  <div class="auth-card" data-when="ready unsaved signing-out">
+    <span class="head-disc"><svg class="ic"><use href="#ph-sign-out"/></svg></span>
+    <h1>Sign out of Zixom Connect Admin?</h1>
+    <p id="who"></p>
+    <div class="form">
+      <div class="banner amber" data-when="unsaved"><svg class="ic"><use href="#ph-warning"/></svg>
+        <span class="grow"><b>These changes are not saved.</b><span id="unsaved"></span></span></div>
+      <label class="check"><input type="checkbox" id="all"> Also sign out on all other browsers</label>
+      <button class="btn btn-primary btn-lg btn-block" type="button" id="sign-out">Sign out</button>
+      <button class="btn btn-ghost btn-lg btn-block" type="button" onclick="history.back()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="auth-card" data-when="signed-out">
+    <img class="logo" src="../../../assets/brand/zixom-logo.png" alt="Zixom">
+    <h1>You are signed out</h1>
+    <p id="done-text">Close this tab or sign in again.</p>
+    <div class="form"><a class="btn btn-primary btn-lg btn-block" href="#D001">Sign in</a></div>
+  </div>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready unsaved signing-out signed-out" data-mobile="../../../screens/customer/C1111-log-out.html">
+  <div><h3>What it is</h3><p>Confirms sign out. Opened from the profile menu at the bottom of the sidebar.</p></div>
+  <div><h3>What you can do</h3><ul><li>Sign out of this browser, or tick to sign out on all others too.</li><li>Cancel returns to the page.</li></ul></div>
+  <div><h3>What happens next</h3><p>Signed out, then Sign in (D001).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Unsaved changes are listed before signing out (Unsaved).</li><li>Other tabs sign out within 5 seconds (EC-A05).</li><li>Other browsers are listed in Active sessions (D011).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const { esc } = ZXA.r;
+  const a = ZXA.data;
+  const $ = (id) => document.getElementById(id);
+  $('who').innerHTML = `Signed in as <b>${esc(a.admin.email)}</b>.`;
+  $('unsaved').innerHTML = a.account.unsaved.map((u) => `<br>${esc(u.what)}, <span class="mono">${u.record}</span>`).join('');
+
+  $('sign-out').addEventListener('click', () => {
+    const all = $('all').checked;
+    ZXA.ui.setState('signing-out');
+    window.setTimeout(() => {
+      $('done-text').textContent = all ? 'Every browser is signed out. Sign in again to continue.' : 'Close this tab or sign in again.';
+      ZXA.ui.setState('signed-out');
+    }, 700);
+  });
+  new MutationObserver(() => $('sign-out').toggleAttribute('aria-busy', document.body.dataset.state === 'signing-out'))
+    .observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

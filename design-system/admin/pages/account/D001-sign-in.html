@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D001 Sign in</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="auth" data-page="D001">
+<main class="content">
+  <div class="auth-card" data-when="ready checking wrong-password locked disabled offline maintenance reset caps-lock">
+    <img class="logo" src="../../../assets/brand/zixom-logo.png" alt="Zixom">
+    <h1>Sign in to Zixom Connect Admin</h1>
+    <p>Use your work email and password.</p>
+    <form id="signin" novalidate>
+      <div class="banner green" data-when="reset"><svg class="ic"><use href="#ph-check-circle"/></svg>
+        <span class="grow"><b>Password changed.</b> Sign in with your new password.</span></div>
+      <div class="banner red" data-when="wrong-password" role="alert"><svg class="ic"><use href="#ph-warning-circle"/></svg>
+        <span class="grow"><b>Check your email and password.</b> 2 tries left before a 15 minute lock.</span></div>
+      <div class="banner red" data-when="locked" role="alert"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+        <span class="grow"><b>Too many tries.</b> Try again in 14:32. <a href="#D007">Details</a></span></div>
+      <div class="banner red" data-when="disabled" role="alert"><svg class="ic"><use href="#ph-user-x"/></svg>
+        <span class="grow"><b>This account is disabled.</b> Contact another Admin.</span></div>
+      <div class="banner dark" data-when="offline"><svg class="ic"><use href="#ph-wifi-slash"/></svg>
+        <span class="grow"><b>You are offline.</b> Connect to sign in.</span></div>
+      <div class="banner amber" data-when="maintenance"><svg class="ic"><use href="#ph-wrench-screw"/></svg>
+        <span class="grow"><b>Maintenance today, 1:00 to 2:00 PM IST.</b> You can sign in; some pages may be slow.</span></div>
+
+      <div class="field"><label for="email">Work email</label>
+        <div class="input-wrap"><svg class="ic"><use href="#ph-envelope-simple"/></svg>
+          <input class="input" id="email" type="email" autocomplete="username" placeholder="name@zixom.in" value="admin@zixom.in" required></div>
+        <span class="error" id="email-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Enter a valid work email</span></div>
+      <div class="field"><label for="password">Password</label>
+        <div class="input-wrap pw"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+          <input class="input" id="password" type="password" autocomplete="current-password" minlength="10" maxlength="64" value="Zixom@Plant2026" required>
+          <button class="icon-btn sm suffix" type="button" data-pw-toggle aria-label="Show password"><svg class="ic"><use href="#ph-eye"/></svg></button></div>
+        <span class="hint" id="caps" hidden><svg class="ic" style="width:14px;height:14px"><use href="#ph-warning"/></svg> Caps lock is on</span>
+        <span class="error" id="password-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Password has 10 to 64 characters</span></div>
+
+      <div class="links"><label class="check grow"><input type="checkbox" id="remember"> Remember this browser 30 days</label>
+        <a href="#D002">Forgot password?</a></div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="continue">Continue</button>
+    </form>
+    <p class="auth-foot" id="version"></p>
+  </div>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready checking wrong-password locked disabled offline maintenance reset caps-lock" data-mobile="../../../screens/access/A03-sign-in.html">
+  <div><h3>What it is</h3><p>The first page when there is no session. Work email and password, then a code (D003).</p></div>
+  <div><h3>What you can do</h3><ul><li>Continue checks the fields and opens Verify code. Enter submits.</li><li>Show or hide the password. Paste and password managers work.</li><li>Remember this browser for 30 days skips the code, not the password.</li></ul></div>
+  <div><h3>What happens next</h3><p>Verify code (D003), then the dashboard (D101) or the page the Admin tried to open. Forgot password opens D002.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Wrong details never say which field; tries left show after the third try.</li><li>5 wrong tries lock for 15 minutes (EC-A54, D007).</li><li>Disabled account shows only after a correct password.</li><li>Offline disables Continue. Maintenance shows a banner (EC-A63).</li><li>Browser back after sign in does not show this page again.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const form = $('signin');
+  const email = $('email');
+  const password = $('password');
+  const button = $('continue');
+  const caps = $('caps');
+  let capsOn = false;
+
+  $('version').textContent = `${ZXA.data.account.version} · Zixom Plast`;
+  if (new URLSearchParams(location.search).has('reset')) document.body.dataset.state = 'reset';
+
+  /* show or hide the password */
+  document.addEventListener('click', (event) => {
+    const toggle = event.target.closest('[data-pw-toggle]');
+    if (!toggle) return;
+    const input = toggle.parentElement.querySelector('input');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    toggle.querySelector('use').setAttribute('href', show ? '#ph-eye-slash' : '#ph-eye');
+  });
+
+  const showCaps = () => { caps.hidden = !(capsOn || document.body.dataset.state === 'caps-lock'); };
+  password.addEventListener('keyup', (event) => { capsOn = event.getModifierState('CapsLock'); showCaps(); });
+
+  /* what each demo state does to the form: checking disables the fields, offline and locked the button */
+  const apply = () => {
+    const state = document.body.dataset.state;
+    [email, password].forEach((input) => { input.disabled = state === 'checking'; });
+    button.toggleAttribute('aria-busy', state === 'checking');
+    button.disabled = ['offline', 'locked'].includes(state);
+    password.setAttribute('aria-invalid', String(state === 'wrong-password'));
+    showCaps();
+  };
+  new MutationObserver(apply).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    email.value = email.value.trim().toLowerCase();
+    const emailOk = EMAIL.test(email.value);
+    const passwordOk = password.value.length >= 10 && password.value.length <= 64;
+    $('email-error').hidden = emailOk;
+    $('password-error').hidden = passwordOk;
+    email.setAttribute('aria-invalid', String(!emailOk));
+    password.setAttribute('aria-invalid', String(!passwordOk));
+    if (!emailOk || !passwordOk || button.disabled) return;
+    ZXA.ui.setState('checking');
+    window.setTimeout(() => ZXA.ui.go('D003'), 700);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

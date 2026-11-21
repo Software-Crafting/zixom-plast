@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1808 Unsaved changes</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1808" data-nav="D201">
+<main class="content">
+  <!-- parent page: editing a company (D204) with changes not yet saved -->
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><a href="#D202">Shree Packaging Industries</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Edit</span></nav>
+      <h1>Edit company</h1><p class="mono">ZP-C-0001</p></div>
+  </div>
+  <section class="card">
+    <div class="card-body" style="padding-top:20px">
+      <div class="form-grid" id="form"></div>
+    </div>
+  </section>
+  <div class="form-bar"><span class="grow"><b>3 unsaved changes</b></span>
+    <button class="btn btn-ghost" type="button" data-open="leave">Cancel</button><button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+</main>
+
+<div class="overlay center" id="leave" data-static hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="leave-title">
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="leave-title">Leave this page?</h2><p>Your changes are not saved.</p></div></div>
+    <div class="modal-body"><ul class="mini card" id="changes"></ul></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Stay</button>
+      <a class="btn btn-danger" href="#D202">Leave</a></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready form">
+  <div><h3>What it is</h3><p>Asks before leaving a form with unsaved changes. Shown over Edit company (D204).</p></div>
+  <div><h3>What you can do</h3><ul><li>Stay keeps the form and the changes.</li><li>Leave drops the changes and opens the link.</li></ul></div>
+  <div><h3>What happens next</h3><p>Leave opens the page clicked (here the customer, D202). Form shows the page without the dialog.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>In app links show this dialog; browser close and refresh show the browser's own warning (EC-A06).</li><li>Drafts restore where autosave exists.</li><li>Copy from section 18.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const c = r.company('shree');
+  const site = c.sites[0];
+  /* [label, saved value, value on screen]; a different value is an unsaved change */
+  const FIELDS = [
+    ['Company name', c.name, c.name], ['GSTIN', c.gstin, '24AAAAA0000A1Z6'], ['City', c.city, c.city], ['Company code', c.code, c.code],
+    ['Billing address', site.address, 'Plot 214, Phase II, GIDC Vatva, Ahmedabad 382445'], ['Contact mobile', site.contact.phone, '+91 98250 11411'],
+  ];
+  document.getElementById('form').innerHTML = FIELDS.map(([label, saved, now], i) => `<div class="field${label === 'Billing address' ? ' full' : ''}">
+    <label for="f${i}">${label}${saved !== now ? ' <span class="opt">changed</span>' : ''}</label>
+    <input class="input${label === 'GSTIN' || label === 'Company code' ? ' mono' : ''}" id="f${i}" value="${r.esc(now)}"${label === 'Company code' ? ' disabled' : ''}></div>`).join('');
+  document.getElementById('changes').innerHTML = FIELDS.filter(([, saved, now]) => saved !== now).map(([label, saved, now]) => `
+    <li><span class="grow"><b>${label}</b><small>${r.esc(saved)} → ${r.esc(now)}</small></span></li>`).join('');
+
+  /* ready opens the dialog as the page would on a link click; form shows the page alone */
+  new MutationObserver(() => {
+    const overlay = document.getElementById('leave');
+    if (document.body.dataset.state === 'form') ZXA.ui.closeOverlay(overlay);
+    else if (document.body.dataset.state === 'ready') ZXA.ui.openOverlay('leave');
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

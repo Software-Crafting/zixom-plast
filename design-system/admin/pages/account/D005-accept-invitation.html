@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D005 Accept invitation</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="auth" data-page="D005">
+<main class="content">
+  <div class="auth-card" data-when="ready creating email-used offline">
+    <img class="logo" src="../../../assets/brand/zixom-logo.png" alt="Zixom">
+    <h1>Welcome, Rajesh</h1>
+    <p>The Zixom Connect setup team invited you as Admin.</p>
+    <form id="accept" novalidate>
+      <div class="banner red" data-when="email-used" role="alert"><svg class="ic"><use href="#ph-user-x"/></svg>
+        <span class="grow"><b>This email is used by another Admin.</b> Ask for an invitation to a different email.</span></div>
+      <div class="banner dark" data-when="offline"><svg class="ic"><use href="#ph-wifi-slash"/></svg>
+        <span class="grow"><b>You are offline.</b> Your entries are kept.</span></div>
+
+      <div class="field"><label for="email">Work email</label><input class="input" id="email" type="email" value="admin@zixom.in" disabled></div>
+      <div class="field"><span class="label" id="code-label">Code sent to this email</span>
+        <div class="otp" id="otp" role="group" aria-labelledby="code-label">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 1"><input inputmode="numeric" maxlength="1" aria-label="Digit 2">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 3"><input inputmode="numeric" maxlength="1" aria-label="Digit 4">
+          <input inputmode="numeric" maxlength="1" aria-label="Digit 5"><input inputmode="numeric" maxlength="1" aria-label="Digit 6"></div>
+        <div class="code-line"><span class="grow">Expires in 5 minutes</span><button class="btn btn-link" type="button" data-toast="New code sent. 2 resends left">Resend code</button></div></div>
+      <div class="field"><label for="new">Password</label>
+        <div class="input-wrap pw"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+          <input class="input" id="new" type="password" autocomplete="new-password" maxlength="64">
+          <button class="icon-btn sm suffix" type="button" data-pw-toggle aria-label="Show password"><svg class="ic"><use href="#ph-eye"/></svg></button></div>
+        <ul class="rules">
+          <li data-rule="length"><svg class="ic"><use href="#ph-circle"/></svg>10 or more characters</li>
+          <li data-rule="number"><svg class="ic"><use href="#ph-circle"/></svg>A number</li>
+          <li data-rule="letter"><svg class="ic"><use href="#ph-circle"/></svg>A letter</li>
+          <li data-rule="common"><svg class="ic"><use href="#ph-circle"/></svg>Not a common password</li></ul></div>
+      <div class="field"><label for="confirm">Confirm password</label>
+        <div class="input-wrap pw"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+          <input class="input" id="confirm" type="password" autocomplete="new-password" maxlength="64">
+          <button class="icon-btn sm suffix" type="button" data-pw-toggle aria-label="Show password"><svg class="ic"><use href="#ph-eye"/></svg></button></div>
+        <span class="error" id="match-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Passwords do not match</span></div>
+      <div class="field"><label class="check"><input type="checkbox" id="terms"> I accept the terms of use</label>
+        <span class="error" id="terms-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Accept the terms of use to continue</span></div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="create">Create account</button>
+    </form>
+    <p class="auth-foot">Invitation sent 21 Nov 2026 · valid 7 days</p>
+  </div>
+
+  <div class="auth-card" data-when="expired revoked">
+    <span class="head-disc amber"><svg class="ic"><use href="#ph-envelope-simple"/></svg></span>
+    <h1 data-when="expired">This invitation has expired</h1>
+    <h1 data-when="revoked">This invitation was withdrawn</h1>
+    <p data-when="expired">Invitations work for 7 days. Ask for a new one.</p>
+    <p data-when="revoked">Contact Zixom Plast if you think this is a mistake.</p>
+    <div class="form"><a class="btn btn-secondary btn-lg btn-block" href="#D001">Go to sign in</a></div>
+  </div>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready creating expired revoked email-used offline">
+  <div><h3>What it is</h3><p>Opened from the invitation email. The first Admin sets a password and confirms the work email.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the code sent to the email.</li><li>Set and confirm the password; rules tick as you type.</li><li>Accept the terms, then Create account.</li></ul></div>
+  <div><h3>What happens next</h3><p>Dashboard with the short tour (D006). Later Admins are invited from D1603.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Invitation valid 7 days (Expired) or withdrawn (Revoked).</li><li>Email already used by another Admin.</li><li>Offline keeps the entries (EC-A01). Flow F13.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const pass = $('new');
+  const confirm = $('confirm');
+  const create = $('create');
+  const boxes = [...document.querySelectorAll('#otp input')];
+  const RULES = { length: (v) => v.length >= 10, number: (v) => /\d/.test(v), letter: (v) => /[a-z]/i.test(v), common: (v) => v.length > 0 && !['password123', 'qwerty12345', '1234567890'].includes(v.toLowerCase()) };
+  const checkRules = () => Object.entries(RULES).map(([key, test]) => {
+    const ok = test(pass.value);
+    const li = document.querySelector(`[data-rule="${key}"]`);
+    li.classList.toggle('ok', ok);
+    li.querySelector('use').setAttribute('href', ok ? '#ph-check-circle' : '#ph-circle');
+    return ok;
+  }).every(Boolean);
+  pass.addEventListener('input', checkRules);
+
+  boxes.forEach((box, i) => box.addEventListener('input', () => {
+    box.value = box.value.replace(/\D/g, '').slice(-1);
+    if (box.value && boxes[i + 1]) boxes[i + 1].focus();
+  }));
+
+  document.addEventListener('click', (event) => {
+    const toggle = event.target.closest('[data-pw-toggle]');
+    if (!toggle) return;
+    const input = toggle.parentElement.querySelector('input');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    toggle.querySelector('use').setAttribute('href', show ? '#ph-eye-slash' : '#ph-eye');
+  });
+
+  const apply = () => {
+    const state = document.body.dataset.state;
+    create.toggleAttribute('aria-busy', state === 'creating');
+    create.disabled = ['offline', 'email-used'].includes(state);
+  };
+  new MutationObserver(apply).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+
+  $('accept').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const codeOk = boxes.every((box) => box.value);
+    const rulesOk = checkRules();
+    const match = pass.value === confirm.value && confirm.value !== '';
+    const terms = $('terms').checked;
+    $('otp').classList.toggle('invalid', !codeOk);
+    pass.setAttribute('aria-invalid', String(!rulesOk));
+    confirm.setAttribute('aria-invalid', String(!match));
+    $('match-error').hidden = match || !confirm.value;
+    $('terms-error').hidden = terms;
+    if (!codeOk || !rulesOk || !match || !terms || create.disabled) return;
+    ZXA.ui.setState('creating');
+    window.setTimeout(() => ZXA.ui.go('D006'), 700);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

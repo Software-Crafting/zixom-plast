@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1809 Bulk result</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1809" data-nav="D401">
+<main class="content">
+  <!-- parent page: the tickets list right after a bulk Change priority -->
+  <div class="page-head">
+    <div class="grow"><h1>Service tickets</h1><p>15 open · 4 unassigned · 1 machine down</p></div>
+  </div>
+  <section class="card list-card">
+    <div class="table-wrap no-top">
+      <table class="table" id="tickets">
+        <thead><tr><th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
+          <th>Ticket</th><th>Status</th><th>Priority</th><th>Customer and machine</th><th>Result</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+  <div class="bulk-bar" data-for="tickets" hidden>
+    <b data-count>0 selected</b>
+    <button class="btn" type="button" data-open="result">Change priority</button>
+    <button class="icon-btn sm" type="button" data-clear aria-label="Clear selection"><svg class="ic"><use href="#ph-x"/></svg></button>
+  </div>
+</main>
+
+<div class="overlay center" id="result" data-static hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="result-title">
+    <div class="modal-head"><span class="disc amber" id="result-disc"><svg class="ic"><use href="#ph-warning"/></svg></span>
+      <div class="grow"><h2 id="result-title"></h2><p id="result-text"></p></div></div>
+    <div class="modal-body" id="result-body"><ul class="mini card" id="failures"></ul></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Close</button>
+      <button class="btn btn-primary" type="button" id="download" data-toast="Failures list downloading (CSV)"><svg class="ic"><use href="#ph-download-simple"/></svg>Download</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready all-done">
+  <div><h3>What it is</h3><p>The result of a bulk action that partly failed. Shown over the tickets list after Change priority on 5 tickets.</p></div>
+  <div><h3>What you can do</h3><ul><li>See done and failed counts with each failure and its reason.</li><li>Download the failures as CSV; Close returns to the list.</li></ul></div>
+  <div><h3>What happens next</h3><p>Back to the list (D401). Failed rows stay selected so they can be fixed.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Partial failure shows done and failed counts with a downloadable list (EC-A64).</li><li>All done shows a short result and no download.</li><li>Copy from section 18.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  /* five tickets set to High; closed and cancelled tickets cannot change priority (section 11) */
+  const picked = ['TKT-2026-0133', 'TKT-2026-0132', 'TKT-2026-0130', 'TKT-2026-0127', 'TKT-2026-0129'].map(r.ticket);
+  const reason = (t) => (r.isOpen(t) ? '' : `${r.ticketLabel(t.status)} tickets cannot change priority`);
+  const failed = picked.filter(reason);
+
+  $('tickets').tBodies[0].innerHTML = picked.map((t) => {
+    const m = r.machine(t.machine);
+    const fail = reason(t);
+    return `<tr aria-selected="${Boolean(fail)}"><td class="cb"><label class="check"><input type="checkbox" aria-label="Select"${fail ? ' checked' : ''}></label></td>
+      <td><a class="rec" href="#D403?t=${t.number}">${t.number}</a></td><td>${r.ticketTag(t.status)}</td>
+      <td>${r.priorityTag(fail ? t.priority : 'High')}</td>
+      <td class="nowrap">${r.esc(r.company(t.company).name)}<span class="sub">${r.esc(m.model)}</span></td>
+      <td>${fail ? r.tag('Failed', 'red') : r.tag('Done', 'green')}</td></tr>`;
+  }).join('');
+  $('failures').innerHTML = failed.map((t) => `<li><span class="ic-disc red">${r.icon('x')}</span>
+    <span class="grow"><b class="mono">${t.number}</b><small>${reason(t)}</small></span></li>`).join('');
+
+  const show = (allDone) => {
+    const done = allDone ? picked.length : picked.length - failed.length;
+    $('result-title').textContent = allDone ? `${done} done` : `${done} done, ${failed.length} failed`;
+    $('result-text').textContent = allDone ? 'Priority changed to High.' : 'Download the list of failures.';
+    $('result-disc').className = `disc ${allDone ? 'green' : 'amber'}`;
+    $('result-disc').innerHTML = r.icon(allDone ? 'check' : 'warning');
+    $('result-body').hidden = allDone;
+    $('download').hidden = allDone;
+    ZXA.ui.openOverlay('result');
+  };
+  new MutationObserver(() => {
+    const state = document.body.dataset.state;
+    if (state === 'ready' || state === 'all-done') show(state === 'all-done');
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

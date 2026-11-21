@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D011 Active sessions</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D011">
+<main class="content">
+  <div class="page-head">
+    <div class="grow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#D009">My profile</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Active sessions</span></nav>
+      <h1>Active sessions</h1><p id="summary"></p></div>
+    <button class="btn btn-secondary" type="button" data-open="sign-out-others" id="others-btn" data-when="ready"><svg class="ic"><use href="#ph-sign-out"/></svg>Sign out everywhere else</button>
+  </div>
+
+  <section class="card list-card" data-when="ready only-this">
+    <div class="table-wrap no-top">
+      <table class="table" id="sessions">
+        <thead><tr><th>Browser and device</th><th>Location</th><th>Signed in</th><th>Last active</th><th class="actions"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="state" data-when="only-this"><span class="disc green"><svg class="ic"><use href="#ph-shield-check"/></svg></span>
+      <h3>No other sessions</h3><p>Only this browser is signed in.</p></div>
+  </section>
+
+  <section class="card list-card" data-when="loading">
+    <div class="table-wrap no-top"><table class="table"><thead><tr><th>Browser and device</th><th>Location</th><th>Signed in</th><th>Last active</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sk sk-line" style="width:180px"></span></td><td><span class="sk sk-line" style="width:120px"></span></td><td><span class="sk sk-line" style="width:90px"></span></td><td><span class="sk sk-line" style="width:70px"></span></td></tr>
+        <tr><td><span class="sk sk-line" style="width:150px"></span></td><td><span class="sk sk-line" style="width:120px"></span></td><td><span class="sk sk-line" style="width:90px"></span></td><td><span class="sk sk-line" style="width:70px"></span></td></tr>
+        <tr><td><span class="sk sk-line" style="width:170px"></span></td><td><span class="sk sk-line" style="width:110px"></span></td><td><span class="sk sk-line" style="width:90px"></span></td><td><span class="sk sk-line" style="width:70px"></span></td></tr>
+      </tbody></table></div>
+  </section>
+
+  <div data-when="error"><div class="inline-error"><svg class="ic"><use href="#ph-warning-circle"/></svg>Could not load your sessions
+    <button class="btn btn-sm btn-secondary" type="button" data-busy>Retry</button></div></div>
+</main>
+
+<div class="overlay center" id="sign-out-others" hidden>
+  <div class="modal" role="alertdialog" aria-labelledby="so-title">
+    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-sign-out"/></svg></span>
+      <div class="grow"><h2 id="so-title"></h2><p id="so-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep them</button>
+      <button class="btn btn-danger" type="button" data-close id="so-confirm">Sign out others</button></div>
+  </div>
+</div>
+
+<aside class="proto" data-states="ready only-this loading error" data-mobile="../../../screens/customer/C1107-security.html">
+  <div><h3>What it is</h3><p>Every browser and device signed in as you, with city and last activity.</p></div>
+  <div><h3>What you can do</h3><ul><li>Sign out one session from its row.</li><li>Sign out everywhere else keeps only this browser.</li></ul></div>
+  <div><h3>What happens next</h3><p>The other browser returns to Sign in (D001) within 5 seconds.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only this session (Only this).</li><li>Load error with Retry (Error).</li><li>Admins have no device limit (section 14). City comes from the IP and is approximate.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const $ = (id) => document.getElementById(id);
+  const sessions = ZXA.data.account.sessions;
+  const when = (iso) => `${r.date(iso)}, ${r.time(iso)}`;
+  const body = $('sessions').tBodies[0];
+
+  body.innerHTML = sessions.map((s) => `<tr data-session="${s.id}"${s.current ? '' : ' data-other'}>
+    <td class="nowrap"><span class="row">${r.icon(s.icon)}<b>${r.esc(s.browser)}</b>${s.current ? r.tag('This session', 'green') : ''}</span></td>
+    <td class="nowrap">${r.esc(s.city)}</td><td class="nowrap">${when(s.started)}</td>
+    <td class="nowrap">${s.current ? 'Now' : r.ago(s.active)}</td>
+    <td class="actions">${s.current ? '' : `<button class="btn btn-secondary btn-sm" type="button" data-sign-out="${s.id}">Sign out</button>`}</td></tr>`).join('');
+
+  const summary = () => {
+    const left = body.querySelectorAll('[data-other]').length;
+    $('summary').textContent = left ? `${left + 1} browsers and devices · times in IST` : 'Only this browser is signed in';
+    $('so-title').textContent = `Sign out ${left} other ${left === 1 ? 'session' : 'sessions'}?`;
+    $('so-text').textContent = 'They will need your password and a code to sign in again.';
+  };
+  body.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-sign-out]');
+    if (!button) return;
+    button.closest('tr').remove();
+    ZXA.ui.toast('Session signed out');
+    summary();
+    if (!body.querySelector('[data-other]')) ZXA.ui.setState('only-this');
+  });
+  $('so-confirm').addEventListener('click', () => {
+    body.querySelectorAll('[data-other]').forEach((row) => row.remove());
+    ZXA.ui.toast('Signed out everywhere else');
+    summary();
+    ZXA.ui.setState('only-this');
+  });
+  /* the only-this demo state hides the other rows; ready brings them back */
+  new MutationObserver(() => {
+    const onlyThis = document.body.dataset.state === 'only-this';
+    body.querySelectorAll('[data-other]').forEach((row) => { row.hidden = onlyThis; });
+    if (onlyThis) $('summary').textContent = 'Only this browser is signed in';
+    else summary();
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+  summary();
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

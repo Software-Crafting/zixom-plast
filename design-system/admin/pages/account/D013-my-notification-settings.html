@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D013 My notification settings</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="adm" data-page="D013">
+<main class="content">
+  <div class="narrow">
+    <div class="page-head">
+      <div class="grow">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#D009">My profile</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Notification settings</span></nav>
+        <h1>Notification settings</h1><p id="sub"></p></div>
+    </div>
+
+    <div data-when="ready">
+      <section class="card list-card">
+        <div class="card-head"><div class="grow"><h2>Alerts</h2></div></div>
+        <div class="table-wrap no-top">
+          <table class="table" id="alerts">
+            <thead><tr><th>Alert</th><th class="right">Email</th><th class="right">Bell</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:16px">
+        <div class="card-head"><div class="grow"><h2>Daily summary email</h2><p>Open work, today's visits and money due, once a day.</p></div>
+          <label class="switch"><input type="checkbox" id="daily" checked aria-label="Daily summary email"><span></span></label></div>
+        <div class="card-body"><div class="field" style="max-width:200px"><label for="daily-time">Send at</label><input class="input" id="daily-time" type="time" value="08:00">
+          <span class="hint">IST</span></div></div>
+      </section>
+
+      <div class="form-bar"><span class="grow">Changes apply to you only</span>
+        <button class="btn btn-secondary" type="button" data-busy data-toast="Test sent to your email and the bell">Send a test</button>
+        <button class="btn btn-primary" type="button" data-busy data-toast="Saved">Save</button></div>
+    </div>
+
+    <div class="card pad stack" data-when="loading"><span class="sk sk-title" style="width:30%"></span>
+      <span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line" style="width:70%"></span></div>
+  </div>
+</main>
+
+<aside class="proto" data-states="ready loading error" data-mobile="../../../screens/customer/C1002-notification-settings.html">
+  <div><h3>What it is</h3><p>Which alerts you get by email and in the bell.</p></div>
+  <div><h3>What you can do</h3><ul><li>Turn each channel on or off per alert.</li><li>Set the not assigned time and the daily summary time.</li><li>Send a test, then Save.</li></ul></div>
+  <div><h3>What happens next</h3><p>Saved toast. Alerts arrive in the bell (D106) and by email.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>SOS and integration failures cannot be turned off.</li><li>Message wording follows section 12.</li><li>Times in IST (EC-A57).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/data/account.js"></script>
+<script>
+(() => {
+  const r = ZXA.r;
+  const a = ZXA.data;
+  const $ = (id) => document.getElementById(id);
+  $('sub').innerHTML = `Email goes to <b>${r.esc(a.admin.email)}</b>.`;
+  const toggle = (alert, channel) => `<label class="switch"><input type="checkbox" aria-label="${r.esc(alert.label)} by ${channel}"${alert[channel] ? ' checked' : ''}${alert.locked ? ' disabled' : ''}><span></span></label>`;
+  const minutes = (alert) => `<select class="select sm" aria-label="Minutes" style="width:auto; margin-left:6px">${[15, 30, 60, 120]
+    .map((m) => `<option${m === alert.minutes ? ' selected' : ''}>${m}</option>`).join('')}</select> min`;
+  $('alerts').tBodies[0].innerHTML = a.account.alerts.map((alert) => `<tr>
+    <td><b>${r.esc(alert.label)}</b>${alert.minutes ? minutes(alert) : ''}${alert.locked ? ` ${r.tag('Always on', '', 'lock-simple')}` : ''}
+      <span class="sub">${r.esc(alert.sub)}</span></td>
+    <td class="right">${toggle(alert, 'email')}</td><td class="right">${toggle(alert, 'bell')}</td></tr>`).join('');
+
+  $('daily').addEventListener('change', (event) => { $('daily-time').disabled = !event.target.checked; });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

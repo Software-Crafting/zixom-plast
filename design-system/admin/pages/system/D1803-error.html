@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D1803 Error</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="adm" data-page="D1803">
+<main class="content">
+  <div class="card" data-when="ready"><div class="state page"><span class="disc red"><svg class="ic"><use href="#ph-warning-circle"/></svg></span>
+    <h3>Something went wrong</h3><p>We could not load this.</p>
+    <p class="code mono">Request id 7f3a-91c2-4be0</p>
+    <div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div></div></div>
+</main>
+
+<aside class="proto" data-states="ready" data-mobile="../../../screens/system/S04-error.html">
+  <div><h3>What it is</h3><p>Shown after a page fails to load.</p></div>
+  <div><h3>What you can do</h3><ul><li>Try again reloads the page.</li><li>Go to the dashboard.</li><li>Quote the request id to support.</li></ul></div>
+  <div><h3>What happens next</h3><p>The page reloads, or the dashboard (D101).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Server error 500 with a request id; entered data is kept (EC-A03).</li><li>Timeouts after 15 s show an inline error with Retry instead (EC-A02).</li><li>Copy from section 18.</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>

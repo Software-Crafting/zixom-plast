@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Admin - D008 Session expired</title>
+<link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-account.css">
+</head>
+<body class="auth" data-page="D008">
+<main class="content">
+  <div class="auth-card" data-when="ready signing-in offline">
+    <span class="head-disc"><svg class="ic"><use href="#ph-lock-simple"/></svg></span>
+    <h1>Your session ended</h1>
+    <p>Sign in again to continue. Your changes on this page are saved.</p>
+    <form id="again" novalidate>
+      <div class="banner dark" data-when="offline"><svg class="ic"><use href="#ph-wifi-slash"/></svg>
+        <span class="grow"><b>You are offline.</b> Connect to sign in.</span></div>
+      <div class="who"><span class="avatar dark" id="initials"></span><span><b id="name"></b><small id="email"></small></span></div>
+      <div class="banner grey"><svg class="ic"><use href="#ph-file-text"/></svg>
+        <span class="grow">You were editing <b class="mono">TKT-2026-0126</b>. Your draft comes back after sign in.</span></div>
+      <div class="field"><label for="password">Password</label>
+        <div class="input-wrap pw"><svg class="ic"><use href="#ph-lock-simple"/></svg>
+          <input class="input" id="password" type="password" autocomplete="current-password" maxlength="64" autofocus>
+          <button class="icon-btn sm suffix" type="button" data-pw-toggle aria-label="Show password"><svg class="ic"><use href="#ph-eye"/></svg></button></div>
+        <span class="error" id="password-error" hidden><svg class="ic"><use href="#ph-warning-circle"/></svg>Enter your password</span></div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="sign-in">Sign in again</button>
+      <div class="links center"><a href="#D001">Sign in as someone else</a></div>
+    </form>
+  </div>
+
+  <div class="auth-card" data-when="warning">
+    <span class="head-disc amber"><svg class="ic"><use href="#ph-clock-countdown"/></svg></span>
+    <h1>Still there?</h1>
+    <p>You will be signed out in <b class="mono" id="warn-left">1:58</b> because there was no activity.</p>
+    <div class="form">
+      <button class="btn btn-primary btn-lg btn-block" type="button" onclick="history.back()">Stay signed in</button>
+      <div class="links center"><a href="#D014">Sign out now</a></div>
+    </div>
+  </div>
+</main>
+
+<aside class="proto" data-global="none" data-states="ready warning signing-in offline" data-mobile="../../../screens/access/A15-session-expired.html">
+  <div><h3>What it is</h3><p>Shown when the session ends. In the product it sits over the page as a modal; every signed in page opens it in the Session expired state.</p></div>
+  <div><h3>What you can do</h3><ul><li>Enter the password and sign in again.</li><li>Warning: 2 minutes before the end, Stay signed in keeps the session.</li></ul></div>
+  <div><h3>What happens next</h3><p>Returns to the same page with the unsaved data restored (here TKT-2026-0126, D403).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Session lasts 8 hours with a 30 minute idle timeout (Confirm, section 14).</li><li>Unsaved data is restored; if the record changed, EC-A12 applies (EC-A04).</li><li>Sign out in one tab signs out all tabs in 5 seconds (EC-A05).</li></ul></div>
+</aside>
+
+<script src="../../assets/icons.js"></script>
+<script src="../../../assets/js/data.js"></script>
+<script src="../../../assets/js/render.js"></script>
+<script src="../../assets/js/admin-screens.js"></script>
+<script src="../../assets/js/admin-data.js"></script>
+<script src="../../assets/js/admin-render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const admin = ZXA.data.admin;
+  const password = $('password');
+  const button = $('sign-in');
+  $('initials').textContent = admin.initials;
+  $('name').textContent = admin.name;
+  $('email').textContent = admin.email;
+
+  document.addEventListener('click', (event) => {
+    const toggle = event.target.closest('[data-pw-toggle]');
+    if (!toggle) return;
+    const show = password.type === 'password';
+    password.type = show ? 'text' : 'password';
+    toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    toggle.querySelector('use').setAttribute('href', show ? '#ph-eye-slash' : '#ph-eye');
+  });
+
+  let warnLeft = 118;
+  window.setInterval(() => {
+    warnLeft = Math.max(0, warnLeft - 1);
+    $('warn-left').textContent = `${Math.floor(warnLeft / 60)}:${String(warnLeft % 60).padStart(2, '0')}`;
+  }, 1000);
+
+  new MutationObserver(() => {
+    const state = document.body.dataset.state;
+    password.disabled = state === 'signing-in';
+    button.toggleAttribute('aria-busy', state === 'signing-in');
+    button.disabled = state === 'offline';
+    if (state === 'warning') warnLeft = 118;
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
+
+  $('again').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const ok = password.value.length > 0;
+    $('password-error').hidden = ok;
+    password.setAttribute('aria-invalid', String(!ok));
+    if (!ok || button.disabled) return;
+    ZXA.ui.setState('signing-in');
+    window.setTimeout(() => ZXA.ui.go('D403?t=TKT-2026-0126'), 700);
+  });
+})();
+</script>
+<script src="../../assets/js/admin-shell.js"></script>
+<script src="../../assets/js/admin-ui.js"></script>
+</body>
+</html>
