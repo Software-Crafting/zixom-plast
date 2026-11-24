@@ -1,0 +1,35 @@
+# Publishes the mobile app prototype (design-system/) to GitHub Pages.
+# The admin dashboard and the build tools are left out until the admin demo.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['design-system/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy the mobile prototype
+        run: rsync -a --exclude admin --exclude tools --exclude README.md design-system/ _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
