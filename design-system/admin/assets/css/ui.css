@@ -3,12 +3,12 @@
 /* ---------- buttons: one primary per view; small actions are pills ---------- */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; padding:0 18px; border:0;
   border-radius:var(--r-pill); font:400 var(--fs-14) var(--font-display); white-space:nowrap; cursor:pointer; text-decoration:none;
-  transition:transform .45s var(--ease), background-color .2s ease, color .2s ease, box-shadow .25s ease}
+  transition:transform .45s var(--ease), background-color .2s ease, color .2s ease, box-shadow .2s ease, filter .2s ease}
 .btn:hover{text-decoration:none}
 .btn:active{transform:scale(.97); transition-duration:var(--dur-press)}
 .btn .ic{width:17px; height:17px}
 .btn-primary{background:linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color:#fff; box-shadow:var(--shadow-button)}
-.btn-primary:hover{background:var(--slate-900)}
+.btn-primary:hover, .btn-accent:hover, .btn-danger:hover{filter:brightness(1.18)}
 .btn-secondary{background:#fff; color:var(--slate-900); box-shadow:inset 0 0 0 1px var(--line-strong)}
 .btn-secondary:hover{box-shadow:inset 0 0 0 1px var(--slate-300)}
 .btn-soft{background:var(--wash); color:var(--slate-900)}

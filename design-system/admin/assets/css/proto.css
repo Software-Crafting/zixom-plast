@@ -20,6 +20,9 @@
   color:var(--slate-700); font:600 var(--fs-12) var(--font-body); cursor:pointer; transition:transform .45s var(--ease)}
 .proto-states button:active{transform:scale(.94)}
 .proto-states button[aria-pressed="true"]{background:var(--slate-800); box-shadow:none; color:#fff}
+.proto-switch{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:#fff; box-shadow:inset 0 0 0 1px var(--line); cursor:pointer}
+.proto-switch b{display:block; font-size:var(--fs-13); font-weight:600; color:var(--slate-900)}
+.proto-switch small{font-size:var(--fs-12); color:var(--text-muted)}
 .proto-mobile{display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; background:#fff; box-shadow:inset 0 0 0 1px var(--line);
   font-size:var(--fs-13); color:var(--slate-900)}
 .proto-mobile .ic{color:var(--slate-500)}

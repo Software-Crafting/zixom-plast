@@ -302,6 +302,11 @@
     if (doc) doc.head.insertAdjacentHTML('beforeend', `<style>${PLATE_ONLY}</style>`);
   }));
 
+  /* Skip validation (prototype panel): the browser's own required and pattern checks step aside too */
+  const syncNoValidate = () => $$('form').forEach((form) => { form.noValidate = ZXA.demo.skipValidation(); });
+  syncNoValidate();
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) syncNoValidate(); });
+
   ZXA.ui = { openOverlay, closeOverlay, toast, go, setState, leave };
   setState(ZXA.initialState || document.body.dataset.state || 'ready');
 })();

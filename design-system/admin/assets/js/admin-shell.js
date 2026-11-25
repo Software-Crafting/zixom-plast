@@ -180,6 +180,8 @@
       <header><b>${page ? `${page.id} ${esc(page.name)}` : 'Prototype'}<small>${page ? esc(ZXA.modules.find((m) => m.key === page.module).title) : ''}</small></b>
         <button class="icon-btn sm" type="button" data-proto-close aria-label="Close">${icon('x')}</button></header>
       <div class="body">
+        <label class="proto-switch"><span class="grow"><b>Skip validation</b><small>Click through any form in a demo</small></span>
+          <span class="switch"><input type="checkbox" data-skip-validation ${ZXA.demo.skipValidation() ? 'checked' : ''}><span></span></span></label>
         <div><h4>Demo state</h4><div class="proto-states">${states.map((s) => `<button type="button" data-proto-state="${s}" aria-pressed="${s === initial}">${label(s)}</button>`).join('')}</div></div>
         ${source?.dataset.mobile ? `<a class="proto-mobile" href="${source.dataset.mobile}">${icon('device-mobile')}<span class="grow">Matching app screen</span>${icon('external-link')}</a>` : ''}
         <div class="proto-notes">${source ? source.innerHTML : ''}</div>
@@ -190,6 +192,11 @@
   const panel = body.querySelector('.proto-panel');
   fab.addEventListener('click', () => {
     if (panel.hidden) { panel.hidden = false; fab.setAttribute('aria-expanded', 'true'); } else ZXA.ui.leave(panel);
+  });
+  panel.addEventListener('change', (event) => {
+    if (!event.target.matches('[data-skip-validation]')) return;
+    ZXA.demo.setSkipValidation(event.target.checked);
+    ZXA.ui.toast(event.target.checked ? 'Validation skipped for the demo' : 'Validation on', 'info');
   });
   panel.addEventListener('click', (event) => {
     if (event.target.closest('[data-proto-close]')) ZXA.ui.leave(panel);

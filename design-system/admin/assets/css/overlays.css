@@ -28,6 +28,9 @@
 .overlay.closing .modal{animation:pop-out .2s var(--ease-exit) both}
 .modal-head{display:flex; align-items:flex-start; gap:12px; padding:22px 24px 0}
 .modal-head .grow{flex:1}
+/* a dialog with an icon reads like an alert: icon, heading and text centred */
+.modal-head:has(> .disc){flex-direction:column; align-items:center; text-align:center; padding-top:26px}
+.modal:has(> .modal-head > .disc) .modal-foot{justify-content:center}
 .modal-head h2{font-size:var(--fs-18)}
 .modal-head p{margin-top:4px; font-size:var(--fs-14); color:var(--text)}
 .modal-body{padding:16px 24px; overflow-y:auto}

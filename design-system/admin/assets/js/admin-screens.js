@@ -362,3 +362,15 @@ ZXA.built = [
   ZXA.href = (id, query = '') => `${root}pages/${ZXA.page(id).file}${query}`;
   ZXA.isBuilt = (id) => ZXA.built.includes(id);
 })();
+
+/* Prototype only: "Skip validation" in the prototype panel lets a demo click through every form.
+   On by default. Pages check ZXA.demo.skipValidation() before blocking an action on field rules;
+   demo states picked in the panel (Mismatch, Duplicate...) still show their errors. */
+ZXA.demo = {
+  skipValidation: () => {
+    try { return localStorage.getItem('zxa-skip-validation') !== '0'; } catch { return true; }
+  },
+  setSkipValidation: (on) => {
+    try { localStorage.setItem('zxa-skip-validation', on ? '1' : '0'); } catch { /* storage blocked: stays on */ }
+  },
+};
