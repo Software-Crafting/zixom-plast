@@ -1,5 +1,5 @@
-# Publishes the mobile app prototype (design-system/) to GitHub Pages.
-# The admin dashboard and the build tools are left out until the admin demo.
+# Publishes the prototypes in design-system/ to GitHub Pages: the mobile app (index.html) and the admin dashboard
+# (admin/index.html). Build tools are left out.
 # Build and deploy are separate jobs: the deploy job only sees the artifact once the build job has finished.
 name: Pages
 
@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Copy the mobile prototype
-        run: rsync -a --exclude admin --exclude tools --exclude README.md design-system/ _site/
+      - name: Copy the prototypes
+        run: rsync -a --exclude tools --exclude README.md design-system/ _site/
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
