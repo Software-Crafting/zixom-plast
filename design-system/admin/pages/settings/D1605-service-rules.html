@@ -39,7 +39,7 @@
   <div><h3>What it is</h3><p>Grouped settings. Each shows its value, default, where it is used and a history link.</p></div>
   <div><h3>What you can do</h3><ul><li>Change a value; Save turns on.</li><li>Reset one setting to its default.</li><li>Open its change history.</li><li>Changing a response target asks for a reason.</li></ul></div>
   <div><h3>What happens next</h3><p>Saved toast. The app picks up the change within 15 minutes (Pending state).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Values that break rules are refused, for example an accept window under 5 minutes.</li><li>Open tickets keep their rules; new events use the new ones.</li><li>Two Admins change the same setting: EC-A12 (Conflict state).</li><li>Values from section 14; targets marked Confirm.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Values that break rules are refused, for example an accept window under 5 minutes.</li><li>Open tickets keep their rules; new events use the new ones.</li><li>App request answer covers Request a new user and Report a missing machine; there is no sign up to verify.</li><li>Two Admins change the same setting: EC-A12 (Conflict state).</li><li>Values from section 14; targets marked Confirm.</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -77,11 +77,11 @@
       { id: 'rating', label: 'Rating window', control: num('rating', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'App C510' },
       { id: 'estimate', label: 'Estimate validity', hint: 'Reminder after 24 hours', control: num('estimate', 3, 'days', 1, 30), def: '3 days', reset: '3', used: 'App C512, dashboard D408' },
     ]),
-    group('Claims and verification', '', [
+    group('Claims and app requests', '', [
       { id: 'claim', label: 'Warranty claim review', control: num('claim', 2, 'working days', 1, 10), def: '2 working days', reset: '2', used: 'App C705, dashboard D502' },
       { id: 'info', label: 'Information wait', hint: 'Then the claim or ticket closes', control: num('info', 7, 'days', 1, 30), def: '7 days', reset: '7', used: 'App C706, dashboard D503' },
       { id: 'appeal', label: 'Appeal answer', control: num('appeal', 3, 'working days', 1, 10), def: '3 working days', reset: '3', used: 'Dashboard D506' },
-      { id: 'verify', label: 'Verification answer', control: num('verify', 1, 'working days', 1, 5), def: '1 working day', reset: '1', used: 'App A20, dashboard D210' },
+      { id: 'apprequest', label: 'App request answer', hint: 'New user and missing machine requests', control: num('apprequest', 1, 'working days', 1, 5), def: '1 working day', reset: '1', used: 'App C1105, dashboard D206, D305' },
     ]),
   ].join('');
   ZXA.set.frame();

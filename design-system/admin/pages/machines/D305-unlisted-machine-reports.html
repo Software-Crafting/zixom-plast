@@ -40,7 +40,7 @@
       <div class="table-foot" data-when="ready no-results"><span id="foot-count"></span><span class="grow"></span>
         <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
       <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-factory"/></svg></span>
-        <h3>No reports yet</h3><p>Customers report machines missing from their app here.</p></div>
+        <h3>No reports yet</h3><p>Machines a primary contact reports as missing in the app show here.</p></div>
     </section>
   </div>
 
@@ -103,10 +103,10 @@
 </div>
 
 <aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C204-unlisted-machine.html">
-  <div><h3>What it is</h3><p>Machines customers report from the app that are not in the register.</p></div>
+  <div><h3>What it is</h3><p>Reports from the app's Report a missing machine. Customers cannot add machines; only Zixom adds them, from here or Add customer (D203).</p></div>
   <div><h3>What you can do</h3><ul><li>Click a row to see the text and photos.</li><li>Create the machine (opens Add machine filled in), link to an existing one, ask for details or reject.</li></ul></div>
-  <div><h3>What happens next</h3><p>Add machine (D303), Machine detail (D302).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>The customer is told the outcome in the app.</li><li>A typed serial close to an existing one is suggested for linking.</li><li>A serial already in the register cannot be created again (EC-A36).</li></ul></div>
+  <div><h3>What happens next</h3><p>Add machine (D303), Machine detail (D302). New reports also sit in the work queue (D102) as Machine reports.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only the primary contact can report a missing machine. They are told the outcome in the app.</li><li>Answer within 1 working day (D1605).</li><li>A typed serial close to an existing one is suggested for linking.</li><li>A serial already in the register cannot be created again (EC-A36).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>

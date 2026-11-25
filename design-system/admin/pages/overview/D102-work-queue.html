@@ -108,8 +108,8 @@
 <aside class="proto" data-states="ready loading empty no-results error live">
   <div><h3>What it is</h3><p>Every pending decision in one list, grouped by type with counts.</p></div>
   <div><h3>What you can do</h3><ul><li>Pick a type on the left; sort by due, age or priority.</li><li>Click a row to act in the drawer; Next item moves on.</li><li>Snooze for 1 hour or until tomorrow; mark follow ups as done.</li></ul></div>
-  <div><h3>What happens next</h3><p>The record pages: Ticket (D403), Assign (D404), Verification (D211), Offline payment (D912), Report review (D413), Part request (D821).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Machine down is always on top; missed targets are red and sorted next.</li><li>Live: new rows flash; an item handled elsewhere goes with 'Handled by {name}'.</li><li>Verification over 1 working day is red (F1).</li></ul></div>
+  <div><h3>What happens next</h3><p>The record pages: Ticket (D403), Assign (D404), App access (D206), Add person (D205), Unlisted machine reports (D305), Offline payment (D912), Report review (D413), Part request (D821).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Machine down is always on top; missed targets are red and sorted next.</li><li>Live: new rows flash; an item handled elsewhere goes with 'Handled by {name}'.</li><li>User requests and machine reports come from the primary contact in the app; answer within 1 working day (D1605).</li><li>Sign ins from numbers Zixom has not added show as User requests.</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -193,7 +193,7 @@
     document.getElementById('item-body').innerHTML = `
       <div class="tags">${r.tag(typeName[q.type], '', typeIcon[q.type])}${r.priorityTag(q.priority)}${q.due < 0 ? r.tag(`Missed by ${span(q.due)}`, 'red') : r.tag(`Due in ${span(q.due)}`, q.due < 60 ? 'amber' : '')}</div>
       ${q.down ? `<div class="banner red">${r.icon('siren')}<span class="grow"><b>Machine down, not assigned for ${span(q.age)}.</b> Response target 4 hours.</span></div>` : ''}
-      ${q.type === 'verification' && q.due < 0 ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Waiting over 1 working day.</b> Answer today.</span></div>` : ''}
+      ${['users', 'machines'].includes(q.type) && q.due < 0 ? `<div class="banner amber">${r.icon('warning')}<span class="grow"><b>Waiting over 1 working day.</b> Answer today.</span></div>` : ''}
       <dl class="dl">${q.facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Waiting</dt><dd>${span(q.age)}</dd></dl>
       <a class="btn btn-sm btn-ghost" href="${link(q.href)}">${r.icon('external-link')}Open ${q.record}</a>`;
     document.getElementById('item-action').innerHTML = actionButton(q, 'btn btn-primary');

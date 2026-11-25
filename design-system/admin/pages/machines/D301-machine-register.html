@@ -20,7 +20,7 @@
     <section class="card list-card">
       <div class="views tabs" role="tablist" aria-label="Saved views" data-when="ready no-results">
         <button role="tab" aria-selected="true" data-view="all">All machines <span class="n"></span></button>
-        <button role="tab" aria-selected="false" data-view="verify">Needs verification <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="reported">Reported in the app <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="expiring">Warranty expiring <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="out">Out of warranty <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="amc">Under AMC <span class="n"></span></button>
@@ -132,7 +132,7 @@
 </div>
 <div class="overlay center" id="bulk-result" hidden>
   <div class="modal" role="dialog" aria-labelledby="br-title">
-    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>ZP-TF-2501 is pending verification and has no warranty yet.</p></div></div>
+    <div class="modal-head"><span class="disc amber"><svg class="ic"><use href="#ph-warning"/></svg></span><div class="grow"><h2 id="br-title">2 done, 1 failed</h2><p>ZP-TF-2501 is reported in the app, not yet added, and has no warranty.</p></div></div>
     <div class="modal-foot"><button class="btn btn-ghost" type="button" data-toast="List of failures downloaded">Download failures</button><button class="btn btn-primary" type="button" data-close>Close</button></div>
   </div>
 </div>
@@ -160,7 +160,7 @@
   <div><h3>What it is</h3><p>Every machine Zixom has sold, one row each. Replaces the paper register.</p></div>
   <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the serial for the machine.</li><li>Select rows to update the warranty end or export.</li><li>Add a machine or import from Excel.</li></ul></div>
   <div><h3>What happens next</h3><p>Machine detail (D302), Add machine (D303), Import (D1510), Bulk result (D1809).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Machines added by customers are Pending and sit in Needs verification.</li><li>Warranty: In warranty, Expiring (60 days or fewer), Out of warranty.</li><li>Serials are unique and never reused.</li><li>Changing a warranty end keeps old claim decisions (EC-A38). Partial bulk failure (EC-A64).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Customers cannot add machines. A machine reported in the app (Report a missing machine) shows as Reported until Zixom checks it in Unlisted machine reports (D305).</li><li>Warranty: In warranty, Expiring (60 days or fewer), Out of warranty.</li><li>Serials are unique and never reused.</li><li>Changing a warranty end keeps old claim decisions (EC-A38). Partial bulk failure (EC-A64).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -174,12 +174,12 @@
 (() => {
   const r = ZXA.r;
   const x = ZXA.mx;
-  /* pending first (they need verifying), then by serial */
+  /* reported in the app first (Zixom checks them in D305), then by serial */
   const machines = [...x.all].sort((p, q) => Number(q.status === 'pending') - Number(p.status === 'pending') || p.serial.localeCompare(q.serial));
   const mq = (m) => `?m=${m.serial}`;
   const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
 
-  document.getElementById('head-sub').textContent = `${machines.length} machines · ${machines.filter((m) => m.status === 'pending').length} to verify · ${machines.filter((m) => x.warranty(m).state === 'expiring').length} warranty expiring`;
+  document.getElementById('head-sub').textContent = `${machines.length} machines · ${machines.filter((m) => m.status === 'pending').length} reported in the app · ${machines.filter((m) => x.warranty(m).state === 'expiring').length} warranty expiring`;
   document.querySelector('#machines tbody').innerHTML = machines.map((m) => {
     const open = x.openTickets(m.serial).length;
     const h = x.hours(m);
@@ -199,7 +199,7 @@
   }).join('');
 
   const VIEWS = {
-    all: (m) => m.status !== 'decommissioned', verify: (m) => m.status === 'pending', expiring: (m) => x.warranty(m).state === 'expiring',
+    all: (m) => m.status !== 'decommissioned', reported: (m) => m.status === 'pending', expiring: (m) => x.warranty(m).state === 'expiring',
     out: (m) => x.warranty(m).state === 'out', amc: (m) => Boolean(m.amc), tickets: (m) => x.openTickets(m.serial).length > 0,
   };
   const showView = (key) => {
@@ -212,7 +212,7 @@
     tab.querySelector('.n').textContent = machines.filter(VIEWS[tab.dataset.view]).length;
     tab.addEventListener('click', () => showView(tab.dataset.view));
   });
-  /* ?view=verify opens Needs verification (dashboard KPI, D210) */
+  /* ?view=reported opens Reported in the app */
   const startView = VIEWS[new URLSearchParams(location.search).get('view')] ? new URLSearchParams(location.search).get('view') : 'all';
   document.querySelector(`[data-view="${startView}"]`).setAttribute('aria-selected', 'true');
   if (startView !== 'all') document.querySelector('[data-view="all"]').setAttribute('aria-selected', 'false');
@@ -234,16 +234,16 @@
     document.getElementById('quick-sub').textContent = `${m.model} · ${x.series(m)}`;
     document.getElementById('quick-open').href = link('D302', mq(m));
     const action = document.getElementById('quick-action');
-    action.textContent = pending ? 'Verify machine' : 'Create ticket';
-    action.href = pending ? link('D302', mq(m)) : link('D402', mq(m));
+    action.textContent = pending ? 'Check report' : 'Create ticket';
+    action.href = pending ? link('D305') : link('D402', mq(m));
     document.getElementById('quick-body').innerHTML = `
       <div class="tags">${x.statusTag(m.status)}${x.warrantyTag(m)}${m.amc ? x.amcTag(m) : ''}</div>
-      ${pending ? '<div class="banner amber"><svg class="ic"><use href="#ph-hourglass"/></svg><span class="grow"><b>Added by the customer.</b> Check the nameplate photo, then verify.</span></div>' : ''}
+      ${pending ? '<div class="banner amber"><svg class="ic"><use href="#ph-hourglass"/></svg><span class="grow"><b>Reported in the app.</b> Check the report and nameplate photo in D305, then add it.</span></div>' : ''}
       <dl class="dl">
         <dt>Customer</dt><dd>${c.name}<br><span class="muted">${s.name}, ${s.pincode}</span></dd>
         <dt>Nickname</dt><dd>${m.nickname || '<span class="faint">None</span>'}</dd>
         <dt>Installed</dt><dd>${m.installed ? r.date(m.installed) : 'Not set'}</dd>
-        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}` : 'Starts after verification'}</dd>
+        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}` : 'Starts once added, from installation'}</dd>
         <dt>AMC</dt><dd>${m.amc ? `<span class="mono">${m.amc}</span>` : 'None'}</dd>
         <dt>Running hours</dt><dd>${x.hours(m)?.toLocaleString('en-IN') ?? '–'}</dd>
         <dt>Open tickets</dt><dd>${open.length ? open.map((t) => `<a class="mono" href="${ZXA.href('D403', `?t=${t.number}`)}">${t.number}</a>`).join('<br>') : 'None'}</dd>

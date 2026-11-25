@@ -162,7 +162,7 @@
     const e = r.engineer(d.to);
     if (e) return { name: e.name, kind: 'Engineer', contact: e.phone, initials: e.initials };
     if (d.to === 'admin') return { name: a.admin.name, kind: 'Admin', contact: a.admin.email, initials: a.admin.initials };
-    return { name: d.to, kind: 'Sign in', contact: 'Verification request', initials: '#' };
+    return { name: d.to, kind: 'Sign in', contact: 'Number not yet added', initials: '#' };
   };
   const CH_ICON = { Push: 'bell', Email: 'envelope-simple', SMS: 'chat-text' };
   const recordPage = (refNo) => (refNo.startsWith('TKT') ? ['D403', `?t=${refNo}`] : refNo.startsWith('ANN') ? ['D1302', `?n=${refNo}`]

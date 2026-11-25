@@ -117,7 +117,7 @@ ZXA.mx = (() => {
   /* spec: In warranty, Expiring (60 days or fewer), Out of warranty */
   const EXPIRING_DAYS = 60;
   const warranty = (m) => {
-    if (m.status === 'pending' || !m.warrantyEnd) return { state: 'none', label: 'Not verified', tone: '' };
+    if (m.status === 'pending' || !m.warrantyEnd) return { state: 'none', label: 'Not added yet', tone: '' };
     const left = r.daysFromToday(m.warrantyEnd);
     if (left < 0) return { state: 'out', label: 'Out of warranty', tone: '', left };
     if (left <= EXPIRING_DAYS) return { state: 'expiring', label: `Expiring in ${left} days`, tone: 'amber', left };
@@ -130,7 +130,7 @@ ZXA.mx = (() => {
   const amcTag = (m) => { const c = amcOf(m); return c ? r.tag(...AMC[c.status]) : '<span class="faint">None</span>'; };
 
   const STATUS = { running: ['Running', 'green'], idle: ['Idle', ''], repair: ['Repair', 'amber'], down: ['Repair', 'red', 'siren'],
-    pending: ['Pending', 'outline', 'hourglass'], decommissioned: ['Decommissioned', 'outline'] };
+    pending: ['Reported', 'outline', 'hourglass'], decommissioned: ['Decommissioned', 'outline'] };
   const statusTag = (s) => r.tag(...STATUS[s]);
 
   const DONE = ['closed', 'cancelled', 'rejected'];
@@ -147,7 +147,7 @@ ZXA.mx = (() => {
     const i = info(m.serial);
     const ev = (when, kind, title, sub, href = '') => ({ when, kind, title, sub, href, icon: KIND[kind][1], tone: KIND[kind][2] });
     const list = [];
-    if (m.status === 'pending') list.push(ev(i.submitted, 'install', 'Added in the app', `${i.submittedBy} · waiting for verification`, 'D305'));
+    if (m.status === 'pending') list.push(ev(i.submitted, 'install', 'Reported in the app', `${i.submittedBy} · Report a missing machine`, 'D305'));
     if (m.installed) list.push(ev(`${m.installed}T10:00`, 'install', 'Installed', `${r.site(m.company, m.site).name}`));
     if (m.commissioned) list.push(ev(`${m.commissioned}T16:00`, 'install', 'Commissioned, warranty started', i.commissioning ? `${i.commissioning.by} · signed by ${i.commissioning.signedBy}` : 'Warranty 12 months'));
     i.extensions.forEach((x) => list.push(ev(`${x.when}T12:00`, 'warranty', `Warranty extended to ${r.date(x.to)}`, `${x.by} · ${x.reason}`, 'D307')));

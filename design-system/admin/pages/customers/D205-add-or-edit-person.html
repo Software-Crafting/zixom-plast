@@ -30,11 +30,13 @@
           <div class="field"><label for="des">Designation <span class="opt">optional</span></label><input class="input" id="des" placeholder="Maintenance supervisor"></div>
           <div class="field"><label for="mob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="mob" style="padding-left:44px" inputmode="tel" maxlength="11"></div><span class="hint" id="mob-msg">10 digits. Must be unused.</span></div>
           <div class="field"><label for="mail">Email <span class="opt">optional</span></label><input class="input" id="mail" type="email"><span class="hint">Without email, notices go by SMS (EC-A61)</span></div>
+          <div class="field full" id="sms-field"><label class="switch"><input type="checkbox" id="send-sms" checked><span></span>Send app access by SMS</label>
+            <span class="hint">An SMS with the app link. They sign in with this mobile and an OTP.</span></div>
         </div>
       </section>
 
       <section class="form-section">
-        <h3>Companies and sites</h3><p>Up to 5 companies. Everyone has the same access; the primary contact also approves colleagues.</p>
+        <h3>Companies and sites</h3><p>Up to 5 companies. Everyone has the same access; the primary contact can also request new users and report missing machines in the app.</p>
         <div class="stack" id="links"></div>
         <button class="btn btn-sm btn-ghost" type="button" style="margin-top:12px" data-toast="Company picker opened"><svg class="ic"><use href="#ph-plus"/></svg>Add another company</button>
       </section>
@@ -47,7 +49,7 @@
       <div class="form-bar">
         <span class="grow" id="bar-note"></span>
         <a class="btn btn-ghost" id="cancel" href="#D202">Cancel</a>
-        <button class="btn btn-secondary" type="button" id="invite-btn" data-toast="Invitation sent by SMS. Valid 7 days">Send invitation</button>
+        <button class="btn btn-secondary" type="button" id="invite-btn" data-toast="App access sent again by SMS">Resend SMS</button>
         <button class="btn btn-primary" type="submit" id="save">Save</button>
       </div>
     </form>
@@ -80,9 +82,9 @@
 </div>
 
 <aside class="proto" data-states="ready blocked" data-mobile="../../../screens/customer/C1105-team.html">
-  <div><h3>What it is</h3><p>Add a person to a company or edit one. <code>?p=pooja</code> edits, <code>?c=nova</code> adds to Nova Cups.</p></div>
-  <div><h3>What you can do</h3><ul><li>Edit details, companies, sites and the primary flag.</li><li>Send the invitation (SMS, valid 7 days).</li><li>Disable, enable or remove from the company.</li></ul></div>
-  <div><h3>What happens next</h3><p>Invitations (D206), Devices (D208), Change primary (D214). Disabled people see A16 in the app.</p></div>
+  <div><h3>What it is</h3><p>Add a person to a company or edit one. Only Zixom adds people. <code>?p=pooja</code> edits, <code>?c=nova</code> adds to Nova Cups, <code>?request=harish</code> fills from a request in the app, <code>?mobile=9890122874</code> from an unknown number.</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit details, companies, sites and the primary flag.</li><li>Send app access by SMS (on by default); resend while they have not signed in.</li><li>Disable, enable or remove from the company.</li></ul></div>
+  <div><h3>What happens next</h3><p>App access (D206), Devices (D208), Change primary (D214). The person signs in with mobile and OTP; from a request, the primary contact is told. Disabled people see A16 in the app.</p></div>
   <div><h3>Edge cases and spec</h3><ul><li>Mobile used by an engineer is blocked (Blocked state, D207).</li><li>Mobile used at another company adds this company to that person.</li><li>The primary contact cannot be disabled until another is chosen.</li><li>Up to 25 people per company, 5 companies per person.</li></ul></div>
 </aside>
 
@@ -102,8 +104,11 @@
   const link = (id, q = '') => (ZXA.isBuilt(id) ? ZXA.href(id, q) : `${ZXA.root}index.html#${id}`);
   const params = new URLSearchParams(location.search);
   const p = params.get('p') ? cx.person(params.get('p')) : null;
+  /* ?request=harish fills the form from a request in the app; ?mobile= from an unknown number (D206) */
+  const req = !p && params.get('request') ? cx.appRequest(params.get('request')) : null;
+  const unknownMobile = !p && !req ? (params.get('mobile') || '').replace(/\D/g, '') : '';
   const engineerView = p?.role === 'Engineer';
-  const companyId = p?.companies[0]?.id || params.get('c') || 'shree';
+  const companyId = p?.companies[0]?.id || req?.company || params.get('c') || 'shree';
   const c = cx.company(companyId);
   const isPrimary = p?.companies.find((k) => k.id === c.id)?.primary;
   const cq = `?c=${c.id}`;
@@ -122,17 +127,32 @@
 
   /* actions by person status (section 11: Invited, Active, Disabled) */
   const ACTIONS = {
-    invited: `<button class="btn btn-secondary" type="button" data-toast="Invitation revoked">Revoke invitation</button>`,
+    invited: `<button class="btn btn-secondary" type="button" data-open="disable">Disable access</button>`,
     active: `<button class="btn btn-secondary" type="button" data-open="disable">Disable</button>`,
     disabled: `<button class="btn btn-secondary" type="button" data-toast="${p?.name} enabled. They can sign in again">Enable</button>`,
   };
   $('actions').innerHTML = p ? `${ACTIONS[p.status] ?? ''}<button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>` : '';
-  $('invite-btn').hidden = Boolean(p && p.status !== 'invited');
-  if (p?.status === 'invited') $('invite-btn').textContent = 'Resend invitation';
-  $('save').textContent = p ? 'Save' : 'Save and invite';
-  $('bar-note').textContent = p ? `Joined ${r.date(p.joined)}` : 'An SMS invitation goes to the mobile, valid 7 days.';
+  /* adding: the SMS switch; editing: Resend SMS while they have not signed in */
+  $('invite-btn').hidden = !p || p.status !== 'invited';
+  $('sms-field').hidden = Boolean(p);
+  $('save').textContent = req ? 'Add person' : 'Save';
+  $('bar-note').textContent = p ? `Added ${r.date(p.joined)} · ${cx.ACCESS[cx.accessOf(p)][0]}` : 'Only Zixom adds people. There is no sign up in the app.';
 
-  if (p) Object.entries({ name: p.name, des: p.designation, mob: p.mobile.replace('+91 ', '').replace(' ', ''), mail: p.email }).forEach(([id, v]) => { $(id).value = v; });
+  const fill = (x) => Object.entries(x).forEach(([id, v]) => { $(id).value = v; });
+  const local = (mobile) => mobile.replace('+91 ', '').replace(' ', '');
+  if (p) fill({ name: p.name, des: p.designation, mob: local(p.mobile), mail: p.email });
+  if (req) {
+    fill({ name: req.name, des: req.designation, mob: local(req.mobile), mail: req.email });
+    const by = cx.person(req.by).name;
+    $('title').textContent = `Add ${req.name}`;
+    $('banners').innerHTML = `<div class="banner blue center">${ic('user-plus')}<span class="grow"><b>Requested in the app by ${by}</b>, ${r.dayDate(req.submitted)} ${r.time(req.submitted)}. Check the details, then add.</span>
+      <span class="btns"><a class="btn btn-sm btn-ghost" href="${link('D206', '?tab=requests')}">All requests</a></span></div>`;
+  }
+  if (unknownMobile) {
+    fill({ mob: unknownMobile });
+    $('banners').innerHTML = `<div class="banner amber center">${ic('question')}<span class="grow"><b>This number tried to sign in.</b> Add the person only if you know who they are.</span></div>`;
+  }
+  const prefillBanner = $('banners').innerHTML;
 
   /* one block per company: sites and the primary flag */
   const links = p ? p.companies : [{ id: c.id, primary: false }];
@@ -141,7 +161,7 @@
     return `<div class="card pad stack-sm" style="box-shadow:inset 0 0 0 1px var(--line); padding:14px 16px">
       <div class="row"><span class="grow"><b style="color:var(--text-strong)">${co.name}</b> <span class="mono muted" style="font-size:12px">${co.code}</span></span>
         ${k.primary ? r.tag('Primary contact', 'blue') : `<a class="btn btn-sm btn-ghost" href="${link('D214', `?c=${co.id}${p ? `&p=${p.id}` : ''}`)}">Make primary</a>`}</div>
-      <div class="row wrap">${co.sites.map((s) => `<label class="check"><input type="checkbox"${!p || (p.sites || []).includes(s.id) ? ' checked' : ''}> ${s.name}</label>`).join('')}</div></div>`;
+      <div class="row wrap">${co.sites.map((s) => `<label class="check"><input type="checkbox"${(p ? (p.sites || []).includes(s.id) : !req || req.site === s.id) ? ' checked' : ''}> ${s.name}</label>`).join('')}</div></div>`;
   }).join('');
 
   const NOTIF = [['Service updates', true], ['Payments and invoices', true], ['AMC and warranty', true], ['Announcements', false], ['Quiet hours 9 PM to 7 AM', true], ['Email copies', Boolean(p?.email)]];
@@ -168,7 +188,7 @@
     return true;
   };
   $('mob').addEventListener('input', checkMobile);
-  if (p) checkMobile();
+  if (p || req || unknownMobile) checkMobile();
 
   $('form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -180,7 +200,9 @@
     if (!skip && !$('mob').value.trim()) { $('mob').setAttribute('aria-invalid', 'true'); $('mob-msg').className = 'error'; $('mob-msg').innerHTML = `${ic('warning-circle')}Required`; $('mob').focus(); return; }
     if (!checkMobile()) { $('mob').focus(); return; }
     event.submitter.disabled = true;
-    ZXA.ui.toast(p ? 'Saved' : 'Saved. Invitation sent');
+    const sms = !p && $('send-sms').checked;
+    const who = $('name').value.trim() || 'Person';
+    ZXA.ui.toast(p ? 'Saved' : `${who} added${sms ? '. App access sent by SMS' : ''}${req ? `. ${cx.person(req.by).name} is told` : ''}`);
     window.setTimeout(() => ZXA.ui.go(`D202${cq}`), 800);
   });
 
@@ -219,9 +241,9 @@
   document.addEventListener('click', (event) => {
     const state = event.target.closest('[data-proto-state]')?.dataset.protoState;
     if (!state) return;
-    $('mob').value = state === 'blocked' ? '9909033114' : (p ? p.mobile.replace('+91 ', '').replace(' ', '') : '');
+    $('mob').value = state === 'blocked' ? '9909033114' : local(p?.mobile || req?.mobile || unknownMobile);
     checkMobile();
-    $('banners').innerHTML = state === 'blocked' ? `<div class="banner red center">${ic('ban')}<span class="grow"><b>This mobile belongs to engineer Sandeep Yadav.</b> A number cannot be both customer and engineer.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D207')}">Account conflicts</a></span></div>` : '';
+    $('banners').innerHTML = state === 'blocked' ? `<div class="banner red center">${ic('ban')}<span class="grow"><b>This mobile belongs to engineer Sandeep Yadav.</b> A number cannot be both customer and engineer.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D207')}">Account conflicts</a></span></div>` : prefillBanner;
   });
 })();
 </script>

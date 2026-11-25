@@ -68,7 +68,7 @@
   <div><h3>What it is</h3><p>Create a ticket for a customer who called, wrote or walked in.</p></div>
   <div><h3>What you can do</h3><ul><li>Pick the company, person and machine; coverage is computed at once.</li><li>Set type, severity, description, slots, site and source.</li><li>Create, or create and go straight to Assign.</li></ul></div>
   <div><h3>What happens next</h3><p>Ticket detail (D403) or Assign engineer (D404). The customer is told in the app.</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>An open ticket on the machine shows a link.</li><li>Machine pending verification: coverage unknown.</li><li><code>?t=</code> copies a ticket (Duplicate as new).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>An open ticket on the machine shows a link.</li><li>Machine reported in the app but not yet added: coverage unknown.</li><li><code>?t=</code> copies a ticket (Duplicate as new).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -94,7 +94,7 @@
   }
 
   const coverage = (m) => {
-    if (m.status === 'pending') return [r.tag('Unknown', 'amber'), 'Machine is pending verification. Coverage is set once verified.'];
+    if (m.status === 'pending') return [r.tag('Unknown', 'amber'), 'Machine is reported in the app, not yet added. Coverage is set once added.'];
     if (m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0) return [r.coverageTag('warranty'), `In warranty until ${r.date(m.warrantyEnd)}. No charge for covered parts and labour.`];
     const amc = m.amc && ZX.data.amc.find((a) => a.number === m.amc);
     if (amc && amc.status !== 'expired') return [r.coverageTag('amc'), `${amc.number}, ${amc.plan}, to ${r.date(amc.end)}. Labour covered; parts billed.`];

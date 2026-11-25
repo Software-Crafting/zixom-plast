@@ -27,7 +27,7 @@ ZXA.data.reportLibrary = [
   ] },
   { group: 'Machines and parts', reports: [
     { key: 'machines', dim: 'State', title: 'Machines', sub: 'By state, series, warranty status', icon: 'factory', drill: 'D301',
-      chart: 'bar', unit: 'n', labels: ['Running', 'Idle', 'In repair', 'Down', 'Pending verification'], series: [{ label: 'Machines', data: [4, 1, 1, 1, 1] }] },
+      chart: 'bar', unit: 'n', labels: ['Running', 'Idle', 'In repair', 'Down', 'Reported in the app'], series: [{ label: 'Machines', data: [4, 1, 1, 1, 1] }] },
     { key: 'parts', dim: 'Part', title: 'Parts', sub: 'Usage, stock value, low stock, slow movers', icon: 'package', drill: 'D810',
       chart: 'bar', unit: 'n', labels: ['Ceramic heater element 650 W', 'Timer relay 24 V DC', 'Motor bearing set', 'Industrial chain set 12B', 'Chain tensioner'],
       series: [{ label: 'Used, last 90 days', data: [14, 6, 4, 3, 2] }] },

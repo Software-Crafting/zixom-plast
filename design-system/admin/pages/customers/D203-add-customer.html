@@ -6,22 +6,28 @@
 <title>Zixom Admin - D203 Add customer</title>
 <link rel="icon" href="../../../assets/brand/zixom-logo-small.png">
 <link rel="stylesheet" href="../../assets/css/admin.css">
+<link rel="stylesheet" href="../../assets/css/m-customers.css">
 </head>
 <body class="adm" data-page="D203" data-nav="D201">
 <main class="content">
   <div class="detail-head">
     <div class="grow">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="#D201">Customers</a><svg class="ic"><use href="#ph-caret-right"/></svg><span>Add customer</span></nav>
-      <div class="page-head" style="padding:0"><div class="grow"><h1>Add customer</h1><p>The code is assigned on save: next is <span class="mono">ZP-C-0006</span>.</p></div></div>
+      <div class="page-head" style="padding:0"><div class="grow"><h1>Add customer</h1><p>Company, sites, people and machines in one go. The code is assigned on save: next is <span class="mono">ZP-C-0006</span>.</p></div></div>
     </div>
   </div>
 
-  <div id="from-request" class="banner center" style="margin-bottom:16px" hidden><svg class="ic"><use href="#ph-user-check"/></svg>
-    <span class="grow" id="from-text"></span></div>
+  <section class="card pad" style="margin-bottom:16px" data-when="ready duplicate errors done">
+    <ol class="steps" id="steps">
+      <li data-step="company"><span class="n">1</span>Company</li><li data-step="sites"><span class="n">2</span>Sites</li>
+      <li data-step="people"><span class="n">3</span>People</li><li data-step="machines"><span class="n">4</span>Machines</li>
+      <li data-step="access"><span class="n">5</span>App access</li>
+    </ol>
+  </section>
 
   <form class="card pad" id="form" novalidate data-when="ready duplicate errors">
-    <section class="form-section">
-      <h3>Company</h3><p>As on the GST certificate.</p>
+    <section class="form-section" data-section="company">
+      <h3>1. Company</h3><p>As on the GST certificate.</p>
       <div class="form-grid">
         <div class="field full"><label for="name">Company name</label><input class="input" id="name" maxlength="120" autocomplete="organization"></div>
         <div class="field"><label for="gstin">GSTIN</label><input class="input mono" id="gstin" maxlength="15" placeholder="24AAKCS4821M1Z2" style="text-transform:uppercase">
@@ -33,49 +39,67 @@
       </div>
     </section>
 
-    <section class="form-section">
-      <h3>First site</h3><p>Where the machines are. Add more sites later.</p>
-      <div class="form-grid">
-        <div class="field"><label for="sname">Site name</label><input class="input" id="sname" placeholder="Main plant"></div>
-        <div class="field"><label for="spin">Pincode</label><input class="input mono" id="spin" inputmode="numeric" maxlength="6"><span class="hint" id="spin-msg">Checked against service areas</span></div>
-        <div class="field full"><label for="saddr">Site address</label><input class="input" id="saddr"><label class="check" style="margin-top:6px"><input type="checkbox" id="same"> Same as billing address</label></div>
+    <section class="form-section" data-section="sites">
+      <h3>2. Sites</h3><p>Where the machines are. Engineers see the address.</p>
+      <div class="stack" id="sites">
+        <div class="entry">
+          <div class="form-grid">
+            <div class="field"><label for="sname">Site name</label><input class="input" id="sname" placeholder="Main plant" data-site-name></div>
+            <div class="field"><label for="spin">Pincode</label><input class="input mono" id="spin" inputmode="numeric" maxlength="6"><span class="hint" id="spin-msg">Checked against service areas</span></div>
+            <div class="field full"><label for="saddr">Site address</label><input class="input" id="saddr"><label class="check" style="margin-top:6px"><input type="checkbox" id="same"> Same as billing address</label></div>
+          </div>
+        </div>
       </div>
+      <button class="btn btn-sm btn-ghost" type="button" id="add-site" style="margin-top:12px"><svg class="ic"><use href="#ph-plus"/></svg>Add site</button>
     </section>
 
-    <section class="form-section">
-      <h3>Primary contact</h3><p>Signs in to the app with this mobile and can invite colleagues.</p>
-      <div class="form-grid">
-        <div class="field"><label for="cname">Name</label><input class="input" id="cname" autocomplete="name"></div>
-        <div class="field"><label for="cdes">Designation <span class="opt">optional</span></label><input class="input" id="cdes" placeholder="Plant head"></div>
-        <div class="field"><label for="cmob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="cmob" style="padding-left:44px" inputmode="tel" maxlength="11"></div><span class="hint" id="cmob-msg">10 digits</span></div>
-        <div class="field"><label for="cmail">Email <span class="opt">optional</span></label><input class="input" id="cmail" type="email"><span class="hint">Without email, notices go by SMS (EC-A61)</span></div>
+    <section class="form-section" data-section="people">
+      <h3>3. People</h3><p>Everyone who uses the app. One is the primary contact: they can request new users and report missing machines.</p>
+      <div class="stack" id="people">
+        <div class="entry">
+          <div class="row entry-head"><b class="grow">Person 1</b><label class="check"><input type="radio" name="primary" value="1" checked> Primary contact</label></div>
+          <div class="form-grid">
+            <div class="field"><label for="cname">Name</label><input class="input" id="cname" autocomplete="name" data-person-name></div>
+            <div class="field"><label for="cdes">Designation <span class="opt">optional</span></label><input class="input" id="cdes" placeholder="Plant head"></div>
+            <div class="field"><label for="cmob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="cmob" style="padding-left:44px" inputmode="tel" maxlength="11" data-person-mobile></div><span class="hint" id="cmob-msg">10 digits</span></div>
+            <div class="field"><label for="cmail">Email <span class="opt">optional</span></label><input class="input" id="cmail" type="email"><span class="hint">Without email, notices go by SMS (EC-A61)</span></div>
+          </div>
+        </div>
       </div>
+      <button class="btn btn-sm btn-ghost" type="button" id="add-person" style="margin-top:12px"><svg class="ic"><use href="#ph-user-plus"/></svg>Add person</button>
     </section>
 
-    <section class="form-section">
-      <h3>Notes</h3>
-      <div class="form-grid"><div class="field full"><label for="notes">Internal notes <span class="opt">optional</span></label><textarea class="textarea" id="notes" maxlength="1000"></textarea><span class="hint">Only Admins see this.</span></div></div>
+    <section class="form-section" data-section="machines">
+      <h3>4. Machines <span class="opt">optional</span></h3><p>Warranty runs 12 months from the installation date.</p>
+      <div class="stack" id="machines"></div>
+      <button class="btn btn-sm btn-ghost" type="button" id="add-machine" style="margin-top:12px"><svg class="ic"><use href="#ph-factory"/></svg>Add machine</button>
+    </section>
+
+    <section class="form-section" data-section="access">
+      <h3>5. App access</h3><p>There is no sign up in the app. People sign in with their mobile and an OTP.</p>
+      <div class="field"><label class="switch"><input type="checkbox" id="send-sms" checked><span></span>Send app access by SMS</label>
+        <span class="hint" id="sms-hint"></span></div>
+      <div class="field" style="margin-top:16px"><label for="notes">Internal notes <span class="opt">optional</span></label><textarea class="textarea" id="notes" maxlength="1000"></textarea><span class="hint">Only Admins see this.</span></div>
     </section>
 
     <div class="form-bar">
-      <span class="grow" id="bar-note">Nothing is sent to the customer until you invite them.</span>
+      <span class="grow" id="bar-note"></span>
       <a class="btn btn-ghost" href="#D201">Cancel</a>
-      <button class="btn btn-secondary" type="button" data-menu="save-menu">Save and<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
-      <button class="btn btn-primary" type="submit" data-then="save" id="save">Save</button>
+      <button class="btn btn-primary" type="submit" id="save">Add customer</button>
     </div>
   </form>
+
+  <section class="card" data-when="done"><div class="state page"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
+    <h3 id="done-title"></h3><p id="done-sub"></p>
+    <ul class="mini card done-list" id="done-list"></ul>
+    <div class="btns"><a class="btn btn-secondary" href="#D203">Add another customer</a><a class="btn btn-primary" href="#D202?c=shree">Open customer</a></div></div></section>
 </main>
 
-<div class="menu" id="save-menu" hidden>
-  <button type="submit" form="form" data-then="machine"><svg class="ic"><use href="#ph-factory"/></svg>Save and add machine</button>
-  <button type="submit" form="form" data-then="invite"><svg class="ic"><use href="#ph-paper-plane-tilt"/></svg>Save and invite</button>
-</div>
-
-<aside class="proto" data-states="ready duplicate errors" data-mobile="../../../screens/customer/C1103-company.html">
-  <div><h3>What it is</h3><p>Create a customer company with its first site and primary contact. <code>?v=VER-2026-0020</code> opens it filled from a verification request.</p></div>
-  <div><h3>What you can do</h3><ul><li>Fill the form; GSTIN is checked as you type.</li><li>Save, Save and add machine, or Save and invite the primary contact.</li></ul></div>
-  <div><h3>What happens next</h3><p>Customer detail (D202), Add machine (D303), Invitations (D206). From a request: the person is approved and linked.</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>GSTIN: 15 character pattern with a check digit.</li><li>Duplicate GSTIN or mobile warns with a link to the existing company (Duplicate state).</li><li>Invalid pincode; required fields (Errors state).</li><li>Offline keeps the data (EC-A01); Save disables on first click (EC-A09).</li></ul></div>
+<aside class="proto" data-states="ready duplicate errors done" data-mobile="../../../screens/customer/C1103-company.html">
+  <div><h3>What it is</h3><p>The one place a customer is created. Zixom adds the company, sites, people and machines; there is no sign up in the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Fill the five sections; add more sites, people and machines.</li><li>Mark one person as the primary contact.</li><li>Send app access by SMS (on by default), then see who got it (Done state).</li></ul></div>
+  <div><h3>What happens next</h3><p>Customer detail (D202), App access (D206). People sign in with mobile and OTP; machines show in their app with warranty.</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>GSTIN: 15 character pattern with a check digit.</li><li>Duplicate GSTIN, mobile or serial warns with a link (Duplicate state). An engineer's mobile is blocked.</li><li>Invalid pincode; required fields (Errors state).</li><li>Warranty end = installation date + 12 months.</li><li>Offline keeps the data (EC-A01); Save disables on first click (EC-A09).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -85,6 +109,7 @@
 <script src="../../assets/js/admin-data.js"></script>
 <script src="../../assets/js/admin-render.js"></script>
 <script src="../../assets/js/data/customers.js"></script>
+<script src="../../assets/js/data/machines.js"></script>
 <script>
 (() => {
   const r = ZXA.r;
@@ -106,7 +131,7 @@
   const SERVICEABLE = /^(38|39|36|41|40|12|11)/;
 
   /* Skip validation turns format errors back into the field hint; demo states still show theirs.
-     'block' is a business conflict (GSTIN already used, engineer's number): it shows as an error and is never skipped */
+     'block' is a business conflict (GSTIN or serial already used, engineer's number): it shows as an error and is never skipped */
   const HINTS = { 'gstin-msg': '15 characters. The state is filled from the first two digits.', 'bpin-msg': '6 digits', 'spin-msg': 'Checked against service areas', 'cmob-msg': '10 digits' };
   let demoFill = false;
   const setMsg = (input, msgId, text, kind) => {
@@ -120,7 +145,7 @@
   const checkGstin = () => {
     const input = $('gstin');
     const g = input.value.trim().toUpperCase();
-    if (!g) return setMsg(input, 'gstin-msg', '15 characters. The state is filled from the first two digits.', 'hint');
+    if (!g) return setMsg(input, 'gstin-msg', HINTS['gstin-msg'], 'hint');
     const dup = cx.companies.find((c) => c.gstin === g);
     if (dup) {
       return setMsg(input, 'gstin-msg', `Already used by <a href="${link('D202', `?c=${dup.id}`)}">${dup.code} ${r.esc(dup.name)}</a>`, 'block');
@@ -135,47 +160,155 @@
   const checkPin = (id) => {
     const input = $(id);
     const v = input.value.trim();
-    if (!v) return setMsg(input, `${id}-msg`, id === 'bpin' ? '6 digits' : 'Checked against service areas', 'hint');
+    if (!v) return setMsg(input, `${id}-msg`, HINTS[`${id}-msg`], 'hint');
     if (!/^[1-9]\d{5}$/.test(v)) return setMsg(input, `${id}-msg`, 'Enter a 6 digit pincode', 'error');
-    if (id === 'spin' && !SERVICEABLE.test(v)) return setMsg(input, `${id}-msg`, '<span class="amber-text">Outside service areas. Tickets will be flagged (EC-A48)</span>', 'hint');
+    if (id !== 'bpin' && !SERVICEABLE.test(v)) return setMsg(input, `${id}-msg`, '<span class="amber-text">Outside service areas. Tickets will be flagged (EC-A48)</span>', 'hint');
     return setMsg(input, `${id}-msg`, '<span class="green-text">Valid</span>', 'hint');
   };
-  const checkMobile = () => {
-    const input = $('cmob');
+  const pretty = (digits) => `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+  const checkMobile = (id) => {
+    const input = $(id);
     const digits = input.value.replace(/\D/g, '');
-    if (!digits) return setMsg(input, 'cmob-msg', '10 digits', 'hint');
-    if (!/^[6-9]\d{9}$/.test(digits)) return setMsg(input, 'cmob-msg', 'Enter a 10 digit mobile number', 'error');
-    const pretty = `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
-    const engineer = cx.engineers.find((p) => p.mobile === pretty);
-    if (engineer) return setMsg(input, 'cmob-msg', `This is engineer ${engineer.name}'s number. <a href="${link('D207')}">Account conflicts</a>`, 'block');
-    const person = cx.customers.find((p) => p.mobile === pretty);
-    if (person) return setMsg(input, 'cmob-msg', `<span class="amber-text">${person.name} uses this number at ${person.companies.map((k) => `<a href="${link('D202', `?c=${k.id}`)}">${r.esc(cx.company(k.id).name)}</a>`).join(', ')}. Saving adds this company to them.</span>`, 'hint');
-    return setMsg(input, 'cmob-msg', '<span class="green-text">Valid</span>', 'hint');
+    if (!digits) return setMsg(input, `${id}-msg`, HINTS[`${id}-msg`], 'hint');
+    if (!/^[6-9]\d{9}$/.test(digits)) return setMsg(input, `${id}-msg`, 'Enter a 10 digit mobile number', 'error');
+    const engineer = cx.engineers.find((p) => p.mobile === pretty(digits));
+    if (engineer) return setMsg(input, `${id}-msg`, `This is engineer ${engineer.name}'s number. <a href="${link('D207')}">Account conflicts</a>`, 'block');
+    const twice = [...document.querySelectorAll('[data-person-mobile]')].filter((x) => x !== input && x.value.replace(/\D/g, '') === digits);
+    if (twice.length) return setMsg(input, `${id}-msg`, 'Two people in this form have this number', 'block');
+    const person = cx.customers.find((p) => p.mobile === pretty(digits));
+    if (person) return setMsg(input, `${id}-msg`, `<span class="amber-text">${person.name} uses this number at ${person.companies.map((k) => `<a href="${link('D202', `?c=${k.id}`)}">${r.esc(cx.company(k.id).name)}</a>`).join(', ')}. Saving adds this company to them.</span>`, 'hint');
+    return setMsg(input, `${id}-msg`, '<span class="green-text">Valid</span>', 'hint');
   };
+  /* serial: one machine per serial for ever (EC-A36) */
+  const checkSerial = (id) => {
+    const input = $(id);
+    const v = input.value.trim().toUpperCase();
+    if (!v) return setMsg(input, `${id}-msg`, HINTS[`${id}-msg`], 'hint');
+    const dup = r.machines.find((m) => m.serial === v);
+    if (dup) return setMsg(input, `${id}-msg`, `Already in the register at ${r.esc(r.company(dup.company).name)}. <a href="${link('D302', `?m=${dup.serial}`)}">Open</a>`, 'block');
+    return setMsg(input, `${id}-msg`, '<span class="green-text">New serial</span>', 'hint');
+  };
+  /* warranty end = installation date + 12 months */
+  const showWarranty = (n) => {
+    const v = $(`m${n}-date`).value;
+    const end = v ? `${Number(v.slice(0, 4)) + 1}${v.slice(4)}` : '';
+    $(`m${n}-war`).innerHTML = end ? `Warranty to <b>${r.date(end)}</b>` : 'Warranty: 12 months from installation';
+  };
+
   $('gstin').addEventListener('input', checkGstin);
   $('bpin').addEventListener('input', () => checkPin('bpin'));
   $('spin').addEventListener('input', () => checkPin('spin'));
-  $('cmob').addEventListener('input', checkMobile);
+  $('cmob').addEventListener('input', () => checkMobile('cmob'));
   $('same').addEventListener('change', (e) => { if (e.target.checked) { $('saddr').value = $('billing').value; $('spin').value = $('bpin').value; checkPin('spin'); } });
 
-  const fill = (values) => { Object.entries(values).forEach(([id, value]) => { $(id).value = value; }); checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile(); };
-  const clear = () => { document.getElementById('form').reset(); document.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid')); checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile(); };
-
-  /* opened from a verification request: fill in what the person entered */
-  const v = cx.verification(new URLSearchParams(location.search).get('v') || '');
-  const fromRequest = () => {
-    if (!v) return;
-    $('from-request').hidden = false;
-    $('from-text').innerHTML = `<b>From <span class="mono">${v.number}</span>.</b> ${v.name} is approved and linked when you save.`;
-    $('save').textContent = 'Save and approve';
-    fill({ name: v.company, gstin: v.proof[0] === 'GSTIN' ? v.proof[1] : '', cname: v.name, cdes: v.designation, cmob: v.mobile.replace('+91 ', '').replace(' ', ''), cmail: v.email, sname: 'Main plant' });
+  /* ---------- more sites, people and machines ---------- */
+  let next = 1;
+  const remove = (label) => `<button class="icon-btn sm" type="button" data-remove aria-label="Remove ${label}">${r.icon('trash')}</button>`;
+  const siteNames = () => [...document.querySelectorAll('[data-site-name]')].map((x) => x.value.trim()).filter(Boolean);
+  const addSite = (values = {}) => {
+    next += 1; const n = next;
+    HINTS[`s${n}-pin-msg`] = 'Checked against service areas';
+    $('sites').insertAdjacentHTML('beforeend', `<div class="entry"><div class="row entry-head"><b class="grow">Another site</b>${remove('site')}</div><div class="form-grid">
+      <div class="field"><label for="s${n}-name">Site name</label><input class="input" id="s${n}-name" data-site-name value="${values.name ?? ''}"></div>
+      <div class="field"><label for="s${n}-pin">Pincode</label><input class="input mono" id="s${n}-pin" inputmode="numeric" maxlength="6" value="${values.pin ?? ''}"><span class="hint" id="s${n}-pin-msg">${HINTS[`s${n}-pin-msg`]}</span></div>
+      <div class="field full"><label for="s${n}-addr">Site address</label><input class="input" id="s${n}-addr" value="${values.addr ?? ''}"></div></div></div>`);
+    $(`s${n}-pin`).addEventListener('input', () => checkPin(`s${n}-pin`));
+    if (values.pin) checkPin(`s${n}-pin`);
+    syncSiteOptions();
   };
-  fromRequest();
+  const addPerson = (values = {}) => {
+    next += 1; const n = next;
+    HINTS[`p${n}-mob-msg`] = '10 digits';
+    const count = document.querySelectorAll('#people .entry').length + 1;
+    $('people').insertAdjacentHTML('beforeend', `<div class="entry"><div class="row entry-head"><b class="grow">Person ${count}</b>
+      <label class="check"><input type="radio" name="primary" value="${n}"> Primary contact</label>${remove('person')}</div><div class="form-grid">
+      <div class="field"><label for="p${n}-name">Name</label><input class="input" id="p${n}-name" data-person-name value="${values.name ?? ''}"></div>
+      <div class="field"><label for="p${n}-des">Designation <span class="opt">optional</span></label><input class="input" id="p${n}-des" value="${values.des ?? ''}"></div>
+      <div class="field"><label for="p${n}-mob">Mobile</label><div class="input-wrap prefix"><b>+91</b><input class="input" id="p${n}-mob" style="padding-left:44px" inputmode="tel" maxlength="11" data-person-mobile value="${values.mob ?? ''}"></div><span class="hint" id="p${n}-mob-msg">10 digits</span></div>
+      <div class="field"><label for="p${n}-mail">Email <span class="opt">optional</span></label><input class="input" id="p${n}-mail" type="email"></div></div></div>`);
+    $(`p${n}-mob`).addEventListener('input', () => checkMobile(`p${n}-mob`));
+    if (values.mob) checkMobile(`p${n}-mob`);
+    smsHint();
+  };
+  const models = ZXA.data.models.filter((m) => m.status === 'active');
+  const addMachine = (values = {}) => {
+    next += 1; const n = next;
+    HINTS[`m${n}-serial-msg`] = 'As on the nameplate';
+    $('machines').insertAdjacentHTML('beforeend', `<div class="entry" data-machine="${n}"><div class="row entry-head"><b class="grow">Machine</b>${remove('machine')}</div><div class="form-grid">
+      <div class="field"><label for="m${n}-serial">Serial</label><input class="input mono" id="m${n}-serial" placeholder="ZP-TF-2601" style="text-transform:uppercase" value="${values.serial ?? ''}"><span class="hint" id="m${n}-serial-msg">${HINTS[`m${n}-serial-msg`]}</span></div>
+      <div class="field"><label for="m${n}-model">Model</label><select class="select" id="m${n}-model"><option value="">Choose</option>${models.map((m) => `<option${m.name === values.model ? ' selected' : ''}>${m.name}</option>`).join('')}</select></div>
+      <div class="field"><label for="m${n}-site">Site</label><select class="select" id="m${n}-site" data-site-select></select></div>
+      <div class="field"><label for="m${n}-date">Installation date</label><input class="input" id="m${n}-date" type="date" value="${values.date ?? ''}"><span class="hint" id="m${n}-war"></span></div></div></div>`);
+    $(`m${n}-serial`).addEventListener('input', () => checkSerial(`m${n}-serial`));
+    $(`m${n}-date`).addEventListener('change', () => showWarranty(n));
+    syncSiteOptions();
+    showWarranty(n);
+    if (values.serial) checkSerial(`m${n}-serial`);
+  };
+  /* machine site lists follow the site names typed above */
+  const syncSiteOptions = () => {
+    const names = siteNames();
+    document.querySelectorAll('[data-site-select]').forEach((select) => {
+      const keep = select.value;
+      select.innerHTML = names.length ? names.map((s) => `<option${s === keep ? ' selected' : ''}>${r.esc(s)}</option>`).join('') : '<option value="">Name a site first</option>';
+    });
+  };
+  const people = () => [...document.querySelectorAll('#people .entry')].map((entry) => ({
+    name: entry.querySelector('[data-person-name]').value.trim(),
+    mobile: entry.querySelector('[data-person-mobile]').value.replace(/\D/g, ''),
+    primary: entry.querySelector('[name="primary"]').checked,
+  })).filter((p) => p.name || p.mobile);
+  const smsHint = () => {
+    const n = Math.max(people().length, document.querySelectorAll('#people .entry').length);
+    $('sms-hint').textContent = $('send-sms').checked ? `${n} ${n === 1 ? 'person gets' : 'people get'} an SMS with the app link when you save.` : 'No SMS now. Send access later from the customer or App access (D206).';
+    $('bar-note').textContent = $('send-sms').checked ? 'Saving sends app access by SMS.' : 'Nothing is sent to the customer.';
+  };
+  $('add-site').addEventListener('click', () => addSite());
+  $('add-person').addEventListener('click', () => addPerson());
+  $('add-machine').addEventListener('click', () => addMachine());
+  $('send-sms').addEventListener('change', smsHint);
+  document.addEventListener('input', (event) => { if (event.target.matches('[data-site-name]')) syncSiteOptions(); if (event.target.matches('[data-person-name], [data-person-mobile]')) smsHint(); });
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-remove]');
+    if (!button) return;
+    const entry = button.closest('.entry');
+    const wasPrimary = entry.querySelector('[name="primary"]')?.checked;
+    entry.remove();
+    if (wasPrimary) document.querySelector('[name="primary"]').checked = true;
+    syncSiteOptions(); smsHint();
+  });
+  addMachine();
+  smsHint();
 
-  const required = ['name', 'gstin', 'billing', 'state', 'bpin', 'sname', 'saddr', 'spin', 'cname', 'cmob'];
+  /* stepper follows the section in view */
+  const marks = new IntersectionObserver((entries) => entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const at = entry.target.dataset.section;
+    let passed = true;
+    document.querySelectorAll('#steps li').forEach((li) => {
+      if (li.dataset.step === at) { passed = false; li.setAttribute('aria-current', 'step'); li.classList.remove('done'); return; }
+      li.removeAttribute('aria-current');
+      li.classList.toggle('done', passed);
+    });
+  }), { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('[data-section]').forEach((section) => marks.observe(section));
+
+  const fill = (values) => { Object.entries(values).forEach(([id, value]) => { $(id).value = value; }); checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile('cmob'); };
+  const clear = () => {
+    $('form').reset();
+    document.querySelectorAll('#sites .entry:not(:first-child), #people .entry:not(:first-child), #machines .entry').forEach((el) => el.remove());
+    document.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile('cmob');
+    addMachine(); smsHint();
+  };
+
+  /* required: company, the first site, every person's name and mobile, every machine's serial, model and date */
+  const requiredIds = () => ['name', 'gstin', 'billing', 'state', 'bpin', 'sname', 'saddr', 'spin',
+    ...[...document.querySelectorAll('[data-person-name], [data-person-mobile]')].map((x) => x.id),
+    ...[...document.querySelectorAll('[data-machine]')].flatMap((m) => [`m${m.dataset.machine}-serial`, `m${m.dataset.machine}-model`, `m${m.dataset.machine}-date`])];
   const showErrors = () => {
     let first = null;
-    required.forEach((id) => {
+    requiredIds().forEach((id) => {
       const input = $(id);
       const field = input.closest('.field');
       field.querySelector('.error.req')?.remove();
@@ -184,19 +317,33 @@
       field.insertAdjacentHTML('beforeend', `<span class="error req">${r.icon('warning-circle')}Required</span>`);
       first = first || input;
     });
-    $('bar-note').innerHTML = first ? `<span class="red-text">Fix ${document.querySelectorAll('.error.req').length} fields to save</span>` : 'Nothing is sent to the customer until you invite them.';
+    if (first) $('bar-note').innerHTML = `<span class="red-text">Fix ${document.querySelectorAll('.error.req').length} fields to save</span>`;
+    else smsHint();
     return first;
   };
 
   /* with Skip validation on, errors left from before it was switched on clear; business conflicts stay */
   const recheck = () => {
     document.querySelectorAll('#form .error.req').forEach((el) => el.remove());
-    required.forEach((id) => $(id).removeAttribute('aria-invalid'));
-    checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile();
+    requiredIds().forEach((id) => $(id).removeAttribute('aria-invalid'));
+    checkGstin(); checkPin('bpin'); checkPin('spin');
+    document.querySelectorAll('[data-person-mobile]').forEach((x) => checkMobile(x.id));
+    document.querySelectorAll('[id$="-serial"]').forEach((x) => checkSerial(x.id));
   };
 
-  let then = 'save';
-  document.addEventListener('click', (event) => { const b = event.target.closest('[data-then]'); if (b) then = b.dataset.then; });
+  /* ---------- done: who got app access ---------- */
+  const SAMPLE = [{ name: 'Mahesh Thakkar', mobile: '9898012345', primary: true }, { name: 'Jignesh Patel', mobile: '9824055120', primary: false }];
+  const renderDone = () => {
+    const list = people().length ? people() : SAMPLE;
+    const sms = $('send-sms').checked;
+    const machines = document.querySelectorAll('[data-machine]').length;
+    document.querySelectorAll('#steps li').forEach((li) => { li.classList.add('done'); li.removeAttribute('aria-current'); });
+    $('done-title').textContent = `${$('name').value.trim() || 'Sai Thermoform Works'} added`;
+    $('done-sub').textContent = `ZP-C-0006 · ${siteNames().length || 1} site${siteNames().length > 1 ? 's' : ''} · ${list.length} people · ${machines} machine${machines === 1 ? '' : 's'}`;
+    $('done-list').innerHTML = list.map((p) => `<li>${r.avatar({ initials: cx.initials(p.name || 'New person') }, 'sm')}<span class="grow"><b>${r.esc(p.name || 'New person')}</b><small>${p.mobile ? pretty(p.mobile) : ''}${p.primary ? ' · Primary contact' : ''}</small></span>
+      ${sms ? r.tag('SMS sent', 'green') : r.tag('Not sent')}</li>`).join('');
+  };
+
   $('form').addEventListener('submit', (event) => {
     event.preventDefault();
     /* the Duplicate and Errors demo states keep blocking; Skip validation passes what was typed */
@@ -207,22 +354,29 @@
     const button = $('save');
     button.setAttribute('aria-busy', 'true');
     button.disabled = true;
-    ZXA.ui.toast(v ? `Saved. ${v.name} approved` : then === 'invite' ? 'Saved. Invitation sent' : 'Saved');
-    window.setTimeout(() => ZXA.ui.go(then === 'machine' ? 'D303' : 'D202?c=shree'), 900);
+    window.setTimeout(() => {
+      ZXA.ui.setState('done');
+      button.removeAttribute('aria-busy'); button.disabled = false;
+      window.scrollTo(0, 0);
+    }, 700);
   });
 
-  /* demo states: duplicate fills an existing GSTIN and mobile; errors submits the empty form */
+  /* demo states: duplicate fills an existing GSTIN, mobile and serial; errors submits a half filled form; done shows the result */
   document.addEventListener('click', (event) => {
     const state = event.target.closest('[data-proto-state]')?.dataset.protoState;
     if (!state) return;
     demoFill = true;
     document.querySelectorAll('.error.req').forEach((el) => el.remove());
     clear();
-    if (state === 'duplicate') fill({ name: 'Shree Packaging Industries Pvt Ltd', gstin: '24AAAAA0000A1Z5', cname: 'Rakesh Mehta', cmob: '9825011410', bpin: '382445' });
+    if (state === 'duplicate') {
+      fill({ name: 'Shree Packaging Industries Pvt Ltd', gstin: '24AAAAA0000A1Z5', cname: 'Rakesh Mehta', cmob: '9825011410', bpin: '382445' });
+      const serial = document.querySelector('[id$="-serial"]'); serial.value = 'ZP-TF-2204'; checkSerial(serial.id);
+    }
     if (state === 'errors') { fill({ name: 'Sai Thermoform Works', gstin: '24AAKCS9911K1Z4', bpin: '3600' }); showErrors(); }
-    if (state === 'ready') fromRequest();
     demoFill = false;
   });
+  /* the done state lists who got app access, however it was reached */
+  new MutationObserver(() => { if (document.body.dataset.state === 'done') renderDone(); }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
 })();
 </script>
 <script src="../../assets/js/admin-shell.js"></script>

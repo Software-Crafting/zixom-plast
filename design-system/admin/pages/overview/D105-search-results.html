@@ -63,7 +63,7 @@
 <aside class="proto" data-states="ready loading no-results error">
   <div><h3>What it is</h3><p>Full results for the top bar search. Opens with <code>?q=shree</code>; any word works.</p></div>
   <div><h3>What you can do</h3><ul><li>Switch tabs by type; counts show on each.</li><li>Open any record.</li><li>Change the words here; results follow after 2 characters.</li></ul></div>
-  <div><h3>What happens next</h3><p>Ticket (D403), Customer (D202), Person (D205), Machine (D302), Invoice (D903), Verification (D211).</p></div>
+  <div><h3>What happens next</h3><p>Ticket (D403), Customer (D202), Person (D205), Machine (D302), Invoice (D903), App request (D206).</p></div>
   <div><h3>Edge cases and spec</h3><ul><li>No results suggests a spelling, for example <code>?q=shre</code>.</li><li>Search answers in under 1 second after typing stops.</li><li>Long names are cut with an ellipsis (EC-A07).</li></ul></div>
 </aside>
 
@@ -92,11 +92,12 @@
       title: p.name, sub: `${p.designation}${p.companies[0] ? `, ${cx.company(p.companies[0].id).name}` : ''} · ${p.mobile}`, end: cx.roleTag(p),
       href: p.role === 'Engineer' ? 'D702' : `D205?p=${p.id}` }))],
     ['machines', 'Machines', 'factory', r.machines.map((m) => ({ text: `${m.serial} ${m.model} ${m.nickname} ${r.company(m.company).name}`,
-      title: m.serial, mono: true, sub: `${m.model} · ${r.company(m.company).name}`, end: m.status === 'pending' ? r.tag('Pending verification', 'amber') : '', href: 'D302' }))],
+      title: m.serial, mono: true, sub: `${m.model} · ${r.company(m.company).name}`, end: m.status === 'pending' ? r.tag('Reported in the app', 'amber') : '', href: 'D302' }))],
     ['invoices', 'Invoices', 'receipt', ZX.data.invoices.map((i) => ({ text: `${i.number} ${i.title} ${i.for} Shree Packaging Industries`,
       title: i.number, mono: true, sub: `${i.title} · ${r.money(i.amount)}`, end: i.status === 'draft' ? r.tag('Draft') : r.invoiceTag(i.status), href: 'D903' }))],
-    ['verification', 'Verification', 'user-check', ZXA.data.verifications.map((v) => ({ text: `${v.number} ${v.name} ${v.mobile} ${v.company} ${v.serial}`,
-      title: v.number, mono: true, sub: `${v.name} · ${v.company}`, end: cx.verifyTag(v.status), href: `D211?v=${v.number}` }))],
+    ['requests', 'App requests', 'user-plus', ZXA.data.appRequests.map((x) => ({ text: `${x.id} ${x.name} ${x.mobile} ${cx.company(x.company).name}`,
+      title: x.name, sub: `${x.id} · ${cx.company(x.company).name} · by ${cx.person(x.by).name}`, end: r.tag(...{ pending: ['New', 'blue'], added: ['Added', 'green'], declined: ['Declined', ''] }[x.status]),
+      href: x.status === 'pending' ? `D205?request=${x.key}` : 'D206?tab=requests' }))],
   ];
 
   /* spelling suggestion: the closest known word by edit distance */

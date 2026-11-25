@@ -40,7 +40,7 @@
         </div>
 
         <div class="card-body" data-step="2" hidden>
-          <div class="field"><span class="label">Machines</span><span class="hint">Machines under another AMC or not verified cannot be added.</span></div>
+          <div class="field"><span class="label">Machines</span><span class="hint">Machines under another AMC or not yet in the register cannot be added.</span></div>
           <div class="choices" id="machines" style="margin-top:10px"></div>
         </div>
 
@@ -152,9 +152,9 @@
       <span><b>${s.name}</b><small>${s.address}, ${s.pincode}</small></span></label>`).join('');
   };
 
-  /* step 2: machines; under another AMC (not this one) or not verified are disabled (EC-A39) */
+  /* step 2: machines; under another AMC (not this one) or reported but not yet added are disabled (EC-A39) */
   const blocker = (m) => {
-    if (m.status === 'pending') return 'Not verified';
+    if (m.status === 'pending') return 'Not added yet';
     const other = contracts.find((c) => c.machines.includes(m.serial) && c !== from && !['cancelled', 'quote'].includes(c.status)
       && !(c.status === 'expired' && A.graceLeft(c) <= 0));
     return other ? `Under ${other.number} to ${r.date(other.end)}` : '';

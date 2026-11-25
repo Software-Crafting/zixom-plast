@@ -1,7 +1,7 @@
-/* Customers and verification demo data (spec module 2, section 17). Builds on ZX.data companies and users
+/* Customers demo data (spec module 2). Builds on ZX.data companies and users
    (Shree Packaging ZP-C-0001, Nova Cups ZP-C-0002; Rakesh, Pooja, Imran) and adds what only the dashboard holds:
-   company status and billing, more people, verification requests, invitations, conflicts, devices, deletion
-   and number change requests. ZXA.cx at the bottom joins it all for the pages. Today is Mon 23 Nov 2026, 12:00. */
+   company status and billing, more people, app access, requests from the app, unknown numbers, conflicts, devices,
+   deletion and number change requests. No sign up: Zixom adds every person and sends app access by SMS (26 Nov 2026). ZXA.cx at the bottom joins it all for the pages. Today is Mon 23 Nov 2026, 12:00. */
 window.ZXA = window.ZXA || {};
 
 Object.assign(ZXA.data, {
@@ -40,6 +40,8 @@ Object.assign(ZXA.data, {
   morePeople: [
     { id: 'dinesh', name: 'Dinesh Rathod', initials: 'DR', mobile: '+91 99252 18806', email: 'dinesh@shreepack.example', designation: 'Machine operator',
       companies: [{ id: 'shree', primary: false }], sites: ['vatva'], status: 'invited', lastActive: null, app: null, joined: '2026-11-20' },
+    { id: 'kunal', name: 'Kunal Shah', initials: 'KS', mobile: '+91 97249 30115', email: '', designation: 'Store keeper',
+      companies: [{ id: 'shree', primary: false }], sites: ['sanand'], status: 'invited', lastActive: null, app: null, joined: '2026-11-06' },
     { id: 'manoj', name: 'Manoj Desai', initials: 'MD', mobile: '+91 98795 60214', email: 'manoj@shreepack.example', designation: 'Purchase executive',
       companies: [{ id: 'shree', primary: false }], sites: ['vatva'], status: 'active', lastActive: '2026-11-20T10:05', app: '1.3.9', joined: '2023-06-12' },
     { id: 'sneha', name: 'Sneha Kulkarni', initials: 'SK', mobile: '+91 97300 51288', email: 'sneha@novacups.example', designation: 'Maintenance engineer',
@@ -54,53 +56,32 @@ Object.assign(ZXA.data, {
       companies: [{ id: 'ganga', primary: true }], sites: ['sec24'], status: 'disabled', lastActive: '2026-09-28T16:40', app: '1.3.6', joined: '2020-07-20' },
   ],
 
-  /* sign ups waiting for approval (spec 17: one exact, one partial, one no match) and some decided ones */
-  verifications: [
-    { number: 'VER-2026-0018', status: 'pending', match: 'exact', score: 96, name: 'Harish Patel', mobile: '+91 98795 31420',
-      email: 'harish@shreepack.example', designation: 'Shift engineer', company: 'Shree Packaging Industries', city: 'Ahmedabad',
-      serial: 'ZP-TF-2501', proof: ['GSTIN', '24AAAAA0000A1Z5'], photo: 'Nameplate, ZP-TF-2501', notes: 'I run the new AFM-650 at the Sanand plant.',
-      submitted: '2026-11-23T06:05', found: [{ company: 'shree', score: 96, matched: ['GSTIN', 'Serial', 'Email domain', 'City'] }],
-      suggestSite: 'sanand' },
-    { number: 'VER-2026-0019', status: 'pending', match: 'partial', score: 58, name: 'Vikram Joshi', mobile: '+91 98901 22874',
-      email: 'vikram.joshi@gmail.example', designation: 'Maintenance head', company: 'Nova Cups', city: 'Pune',
-      serial: 'ZP-CF-2011', proof: ['Invoice', 'NC/2021/2291'], photo: 'Nameplate, blurred', notes: '',
-      submitted: '2026-11-20T17:30', found: [{ company: 'nova', score: 58, matched: ['Company name', 'City'] }, { company: 'shree', score: 30, matched: ['Serial'] }],
-      serialOwner: 'shree', previous: ['VER-2026-0014'] },
-    { number: 'VER-2026-0020', status: 'pending', match: 'none', score: 0, name: 'Meera Iyer', mobile: '+91 99045 78120',
-      email: 'meera@saithermo.example', designation: 'Proprietor', company: 'Sai Thermoform Works', city: 'Rajkot',
-      serial: 'ZP-TF-1712', proof: ['GSTIN', '24AAKCS9911K1Z4'], photo: '', notes: 'Bought the machine second hand from a dealer in Rajkot.',
-      submitted: '2026-11-23T09:40', found: [] },
-    { number: 'VER-2026-0017', status: 'approved', match: 'exact', score: 92, name: 'Sneha Kulkarni', mobile: '+91 97300 51288',
-      email: 'sneha@novacups.example', designation: 'Maintenance engineer', company: 'Nova Cups Pvt Ltd', city: 'Pune', serial: 'ZP-BS-2215',
-      proof: ['GSTIN', '27AAAAA0000A1Z3'], photo: 'Nameplate, ZP-BS-2215', notes: '', submitted: '2026-11-18T09:10',
-      found: [{ company: 'nova', score: 92, matched: ['GSTIN', 'Serial', 'Email domain'] }], decided: ['Approved and linked to Nova Cups Pvt Ltd, Chakan unit', '2026-11-18T10:02'] },
-    { number: 'VER-2026-0016', status: 'info', match: 'partial', score: 44, name: 'Farhan Shaikh', mobile: '+91 90040 11873', email: '',
-      designation: 'Supervisor', company: 'Nova Cup', city: 'Pune', serial: '', proof: ['Invoice', 'Not given'], photo: '', notes: '',
-      submitted: '2026-11-17T14:22', found: [{ company: 'nova', score: 44, matched: ['Company name', 'City'] }],
-      decided: ['Asked for a machine serial or a nameplate photo', '2026-11-17T16:00'] },
-    { number: 'VER-2026-0015', status: 'rejected', match: 'none', score: 0, name: 'Ramesh Kumar', mobile: '+91 88004 52190', email: '',
-      designation: 'Trader', company: 'RK Plastics', city: 'Delhi', serial: '', proof: ['GSTIN', '07AAAAA1111A1Z1'], photo: '', notes: 'Want spare parts price list.',
-      submitted: '2026-11-14T11:05', found: [], decided: ['Rejected: Not a customer', '2026-11-14T15:30'] },
-    { number: 'VER-2026-0014', status: 'rejected', match: 'partial', score: 40, name: 'Vikram Joshi', mobile: '+91 98901 22874', email: '',
-      designation: 'Maintenance head', company: 'Nova', city: 'Pune', serial: 'ZP-CF-2011', proof: ['Invoice', 'Not given'], photo: '', notes: '',
-      submitted: '2026-11-12T10:15', found: [{ company: 'nova', score: 40, matched: ['City'] }], serialOwner: 'shree',
-      decided: ['Rejected: Details do not match', '2026-11-12T16:40'] },
+  /* app access by SMS: sent is the last SMS. Invited over 7 days without a sign in shows as Never signed in */
+  accessSent: { rakesh: '2018-05-14T12:00', pooja: '2022-03-02T10:00', imran: '2021-09-01T12:00', dinesh: '2026-11-20T15:30',
+    kunal: '2026-11-06T11:30', manoj: '2023-06-12T10:00', sneha: '2026-11-18T10:02', 'syadav-nova': '2026-11-21T10:00',
+    'rakesh-dup': '2026-11-19T12:00', nitin: '2023-02-11T12:00', ritu: '2020-07-20T12:00' },
+
+  /* "Request a new user" from a primary contact in the app; lands in the work queue */
+  appRequests: [
+    { id: 'REQ-2026-0018', key: 'harish', status: 'pending', name: 'Harish Patel', mobile: '+91 98795 31420', email: 'harish@shreepack.example',
+      designation: 'Shift engineer', company: 'shree', site: 'sanand', by: 'rakesh', submitted: '2026-11-23T06:05', note: 'Runs the new AFM-650 at Sanand.' },
+    { id: 'REQ-2026-0017', key: 'sneha', status: 'added', name: 'Sneha Kulkarni', mobile: '+91 97300 51288', email: 'sneha@novacups.example',
+      designation: 'Maintenance engineer', company: 'nova', site: 'chakan', by: 'imran', submitted: '2026-11-18T09:10', decided: ['Added by Rajesh Goyal', '2026-11-18T10:02'] },
+    { id: 'REQ-2026-0016', key: 'arjun', status: 'declined', name: 'Arjun Pawar', mobile: '+91 98507 22146', email: '',
+      designation: 'Contractor', company: 'nova', site: 'chakan', by: 'imran', submitted: '2026-11-02T09:45', decided: ['Declined: Not an employee of the customer', '2026-11-02T15:20'] },
   ],
 
-  /* invitations sent from the app (primary contact) and from the dashboard; valid 7 days */
-  invitations: [
-    { person: 'dinesh', company: 'shree', by: 'Rakesh Mehta', from: 'App', sent: '2026-11-20T15:10', expires: '2026-11-27', status: 'invited' },
-    { person: 'rakesh-dup', company: 'shree-dup', by: 'Rajesh Goyal', from: 'Import', sent: '2026-11-19T12:00', expires: '2026-11-26', status: 'invited' },
-    { person: 'sneha', company: 'nova', by: 'Rajesh Goyal', from: 'Dashboard', sent: '2026-11-18T10:02', expires: '2026-11-25', status: 'accepted', accepted: '2026-11-18T10:20' },
-    { name: 'Kunal Shah', mobile: '+91 97249 30115', company: 'shree', by: 'Pooja Shah', from: 'App', sent: '2026-11-06T11:30', expires: '2026-11-13', status: 'expired' },
-    { name: 'Arjun Pawar', mobile: '+91 98507 22146', company: 'nova', by: 'Imran Qureshi', from: 'App', sent: '2026-11-02T09:45', expires: '2026-11-09', status: 'revoked', revoked: 'Imran Qureshi' },
+  /* sign in tried from numbers Zixom has not added */
+  unknownNumbers: [
+    { mobile: '+91 98901 22874', attempts: 3, first: '2026-11-18T10:15', last: '2026-11-20T17:30', status: 'new' },
+    { mobile: '+91 88004 52190', attempts: 1, first: '2026-11-14T11:05', last: '2026-11-14T11:05', status: 'ignored' },
   ],
 
   /* one number or email on two accounts (EC-A35); both sides with their last activity */
   conflicts: [
     { id: 'CONF-0004', kind: 'Mobile', value: '+91 99090 33114', opened: '2026-11-21T18:20', status: 'open',
       a: { person: 'sandeep', role: 'Engineer', last: 'Checked in at Vatva, today 09:32' },
-      b: { person: 'syadav-nova', role: 'Customer', last: 'Added by Imran Qureshi on 21 Nov, never signed in' } },
+      b: { person: 'syadav-nova', role: 'Customer', last: 'Added on 21 Nov, never signed in' } },
     { id: 'CONF-0003', kind: 'Email', value: 'rakesh@shreepack.example', opened: '2026-11-19T12:05', status: 'open',
       a: { person: 'rakesh', role: 'Customer', last: 'Signed in today 11:52' },
       b: { person: 'rakesh-dup', role: 'Customer', last: 'Created by the 19 Nov import, invited' } },
@@ -146,8 +127,8 @@ Object.assign(ZXA.data, {
   /* company history (D202 History tab) */
   companyHistory: {
     shree: [
-      ['2026-11-23T06:05', 'System', 'Verification request VER-2026-0018 from Harish Patel'],
-      ['2026-11-20T15:10', 'Rakesh Mehta', 'Invited Dinesh Rathod from the app'],
+      ['2026-11-23T06:05', 'Rakesh Mehta', 'Requested Harish Patel as a new user in the app'],
+      ['2026-11-20T15:30', 'Rajesh Goyal', 'Added Dinesh Rathod. App access sent by SMS'],
       ['2026-11-19T12:05', 'System', 'Possible duplicate: ZP-C-0003 has the same GSTIN'],
       ['2026-04-01T10:00', 'Rajesh Goyal', 'AMC-2026-0010 Preventive Plus activated'],
       ['2025-11-20T09:30', 'Rajesh Goyal', 'Machine ZP-TF-2204 added, Vatva plant'],
@@ -180,33 +161,24 @@ ZXA.cx = (() => {
   const dues = (c) => c.dues ?? invoicesOf(c.id).filter((i) => UNPAID.includes(i.status)).reduce((sum, i) => sum + r.balance(i), 0);
   const overdue = (c) => c.overdue ?? invoicesOf(c.id).filter((i) => i.status === 'overdue').reduce((sum, i) => sum + r.balance(i), 0);
   const amcOf = (companyId) => (companyId === 'shree' ? d.amc : []);
-  const verification = (number) => a.verifications.find((v) => v.number === number);
+  /* app access: Invited turns into Never signed in after 7 days without a sign in */
+  const ACCESS = { invited: ['Invited', 'blue'], active: ['Active', 'green'], never: ['Never signed in', 'amber'], disabled: ['Disabled', ''] };
+  const accessOf = (p) => {
+    const sent = a.accessSent[p.id];
+    if (p.status !== 'invited') return p.status === 'disabled' ? 'disabled' : 'active';
+    return sent && r.daysFromToday(sent.slice(0, 10)) < -7 ? 'never' : 'invited';
+  };
+  const accessTag = (p) => r.tag(...ACCESS[accessOf(p)]);
+  const appRequest = (key) => a.appRequests.find((x) => x.key === key);
 
   const COMPANY = { active: ['Active', 'green'], pending: ['Pending', 'amber'], suspended: ['Suspended', 'red'], deactivated: ['Deactivated', ''] };
   const PERSON = { invited: ['Invited', 'blue'], active: ['Active', 'green'], disabled: ['Disabled', ''], deleted: ['Deleted', 'outline'] };
-  const VERIFY = { pending: ['Pending', 'amber'], approved: ['Approved', 'green'], rejected: ['Rejected', ''], info: ['Information requested', 'blue'] };
-  const MATCH = { exact: ['Exact match', 'green'], partial: ['Partial match', 'amber'], none: ['No match', 'red'] };
   const companyTag = (s) => r.tag(...COMPANY[s]);
   const personTag = (s) => r.tag(...PERSON[s]);
-  const verifyTag = (s) => r.tag(...VERIFY[s]);
-  const matchTag = (m) => r.tag(...MATCH[m]);
   const roleTag = (p) => (p.role === 'Engineer' ? r.tag('Engineer', 'blue') : r.tag('Customer', 'outline'));
   const initials = (name) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
-  /* working hours between two times, Mon to Sat 9 to 6 (Settings D1605); a request is late after 1 working day = 9 h */
-  const workingHours = (fromIso, toIso = d.now) => {
-    let hours = 0;
-    for (let t = new Date(fromIso); t < new Date(toIso); t = new Date(t.getTime() + 3600000)) {
-      if (t.getDay() !== 0 && t.getHours() >= 9 && t.getHours() < 18) hours += 1;
-    }
-    return hours;
-  };
-  const isLate = (v) => v.status === 'pending' && workingHours(v.submitted) >= 9;
-  const age = (iso) => {
-    const h = Math.round((new Date(d.now) - new Date(iso)) / 3600000);
-    return h < 24 ? `${Math.max(1, h)} h` : `${Math.round(h / 24)} d`;
-  };
 
   return { companies, company, customers, engineers, people, person, peopleOf, primaryOf, machinesOf, machineCount, ticketsOf, openTicketsOf,
-    invoicesOf, dues, overdue, amcOf, verification, companyTag, personTag, verifyTag, matchTag, roleTag, initials, workingHours, isLate, age, COMPANY };
+    invoicesOf, dues, overdue, amcOf, accessOf, accessTag, appRequest, ACCESS, companyTag, personTag, roleTag, initials, COMPANY };
 })();

@@ -82,8 +82,8 @@
 
 <aside class="proto" data-states="ready loading not-found deactivated tab-error error" data-mobile="../../../screens/customer/C1103-company.html">
   <div><h3>What it is</h3><p>One customer company: people, sites, machines, service and money. Opens with <code>?c=shree</code> or <code>?c=nova</code>.</p></div>
-  <div><h3>What you can do</h3><ul><li>Edit the company, add a person or a site.</li><li>Create a ticket, invoice or quotation for this company.</li><li>Change the primary contact; merge or deactivate from More.</li></ul></div>
-  <div><h3>What happens next</h3><p>Edit (D204), Person (D205), Merge (D212), Deactivate (D213), Primary contact (D214), Ticket (D402), Invoice (D902).</p></div>
+  <div><h3>What you can do</h3><ul><li>Edit the company, add a person or a site.</li><li>Create a ticket, invoice or quotation for this company.</li><li>People: see app access and send or resend the SMS.</li><li>Change the primary contact; merge or deactivate from More.</li></ul></div>
+  <div><h3>What happens next</h3><p>Edit (D204), Person (D205), App access (D206), Merge (D212), Deactivate (D213), Primary contact (D214), Ticket (D402), Invoice (D902).</p></div>
   <div><h3>Edge cases and spec</h3><ul><li>Each tab loads on first open with a skeleton and its own error (Tab error).</li><li>Deactivated: grey banner and read only tabs; only Reactivate.</li><li>Same GSTIN on two companies shows a merge banner (<code>?c=shree-dup</code>).</li></ul></div>
 </aside>
 
@@ -143,7 +143,7 @@
   document.getElementById('banners').innerHTML = banners.join('');
 
   /* ---------- tab content ---------- */
-  const MACHINE = { running: ['Running', 'green'], idle: ['Idle', ''], repair: ['In repair', 'amber'], down: ['Down', 'red'], pending: ['Pending verification', 'amber'] };
+  const MACHINE = { running: ['Running', 'green'], idle: ['Idle', ''], repair: ['In repair', 'amber'], down: ['Down', 'red'], pending: ['Reported in the app', 'amber'] };
   const warranty = (m) => {
     if (!m.warrantyEnd) return '<span class="faint">Unknown</span>';
     const days = r.daysFromToday(m.warrantyEnd);
@@ -172,15 +172,22 @@
     </div>`;
   };
 
+  /* app access by SMS: Send access before the first SMS, Resend while they have not signed in */
+  const accessAction = (x) => {
+    if (!['invited', 'never'].includes(cx.accessOf(x))) return '';
+    const sent = ZXA.data.accessSent[x.id];
+    return `<button class="btn btn-sm btn-secondary" type="button" data-toast="App access sent${sent ? ' again' : ''} to ${x.mobile}">${sent ? 'Resend invite' : 'Send access'}</button>`;
+  };
   const peopleTab = () => `<div class="stack">
     <div class="row"><p class="muted grow">${people.length} of 25 people · permissions are the same for everyone; only the primary contact flag differs.</p>
       ${readOnly ? '' : `<a class="btn btn-sm btn-secondary" href="${link('D214', cq)}">Change primary</a><a class="btn btn-sm btn-primary" href="${link('D205', cq)}">${ic('user-plus')}Add person</a>`}</div>
-    ${people.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Name</th><th>Mobile</th><th>Sites</th><th>Status</th><th>Last active</th></tr></thead><tbody>
-      ${people.map((x) => `<tr data-href="D205?p=${x.id}"><td><span class="who">${r.avatar(x, 'sm')}<span><b>${x.name}</b><span class="sub">${x.designation}${x.companies.find((k) => k.id === c.id).primary ? ' · Primary contact' : ''}</span></span></span></td>
-        <td class="nowrap">${x.mobile}</td><td class="nowrap">${(x.sites || []).map((s) => cx.company(c.id).sites.find((y) => y.id === s)?.name).filter(Boolean).join(', ') || '<span class="faint">–</span>'}</td>
-        <td>${cx.personTag(x.status)}</td><td class="nowrap">${x.lastActive ? r.ago(x.lastActive) : '<span class="faint">Never</span>'}</td></tr>`).join('')}
+    ${people.length ? `<div class="table-wrap no-top" style="max-height:none"><table class="table compact"><thead><tr><th>Name</th><th>Sites</th><th>App access</th><th class="actions"></th></tr></thead><tbody>
+      ${people.map((x) => `<tr data-href="D205?p=${x.id}"><td><span class="who">${r.avatar(x, 'sm')}<span><b>${x.name}</b><span class="sub">${x.mobile}${x.companies.find((k) => k.id === c.id).primary ? ' · Primary contact' : ''}</span></span></span></td>
+        <td class="nowrap">${(x.sites || []).map((s) => cx.company(c.id).sites.find((y) => y.id === s)?.name).filter(Boolean).join(', ') || '<span class="faint">–</span>'}</td>
+        <td class="nowrap">${cx.accessTag(x)}<span class="sub">${x.lastActive ? `Signed in ${r.ago(x.lastActive)}` : ZXA.data.accessSent[x.id] ? `SMS sent ${r.date(ZXA.data.accessSent[x.id])}` : 'No SMS yet'}</span></td>
+        <td class="actions nowrap">${readOnly ? '' : accessAction(x)}</td></tr>`).join('')}
     </tbody></table></div>` : empty('users', 'No people yet', 'People will appear here.')}
-    <div class="row"><a class="btn btn-link" href="${link('D206')}">Invitations</a><a class="btn btn-link" href="${link('D208')}">Devices and sessions</a></div></div>`;
+    <div class="row"><a class="btn btn-link" href="${link('D206')}">App access</a><a class="btn btn-link" href="${link('D208')}">Devices and sessions</a></div></div>`;
 
   const sitesTab = () => `<div class="stack">
     <div class="row"><p class="muted grow">${c.sites.length} ${c.sites.length === 1 ? 'site' : 'sites'}</p>${readOnly ? '' : `<button class="btn btn-sm btn-secondary" type="button" data-open="add-site">${ic('plus')}Add site</button>`}</div>

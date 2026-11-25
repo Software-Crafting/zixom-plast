@@ -3,11 +3,13 @@
 /* company or person name as the record title (record-head h1 is mono for record numbers) */
 .record-head h1.name{font-family:var(--font-display); font-weight:400; font-size:var(--fs-28); letter-spacing:0}
 
-/* match score on verification (D210, D211): a number with a short bar */
-.score{display:inline-flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums; font-weight:600; color:var(--text-strong)}
-.score .progress{width:64px}
+/* repeatable blocks in Add customer (D203): a site, a person or a machine */
+.entry{padding:14px 16px; border-radius:var(--r-lg); box-shadow:inset 0 0 0 1px var(--line)}
+.entry-head{margin-bottom:12px; gap:12px}
+.entry-head b{color:var(--text-strong)}
+.done-list{width:min(480px, 100%); margin:12px 0 4px; padding:4px 16px; text-align:left}
 
-/* two records side by side (D211 entered vs found, D212 merge) */
+/* two records side by side (D212 merge) */
 .compare{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:16px; align-items:start}
 
 @media (max-width:960px){
@@ -15,7 +17,4 @@
 }
 @media (max-width:640px){
   .record-head h1.name{font-size:var(--fs-22)}
-  .decision-bar .grow, .decision-bar .hide-phone{display:none}
-  .decision-bar #primary-slot{flex-basis:100%; display:flex}
-  .decision-bar #primary-slot .btn{flex:1}
 }

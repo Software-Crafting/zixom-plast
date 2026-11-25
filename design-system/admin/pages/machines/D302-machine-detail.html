@@ -70,11 +70,11 @@
   </div>
 </main>
 
-<!-- verify a machine the customer added (Pending) -->
-<div class="overlay center" id="verify" hidden>
-  <div class="modal" role="dialog" aria-labelledby="verify-title">
+<!-- add a machine reported in the app (Report a missing machine) to the register -->
+<div class="overlay center" id="add-reported" hidden>
+  <div class="modal" role="dialog" aria-labelledby="add-reported-title">
     <div class="modal-head"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
-      <div class="grow"><h2 id="verify-title">Verify this machine?</h2><p>It moves to the register and the warranty starts from the commissioning date.</p></div></div>
+      <div class="grow"><h2 id="add-reported-title">Add this machine to the register?</h2><p>It shows in the customer's app. Warranty runs 12 months from installation.</p></div></div>
     <div class="modal-body stack">
       <div class="form-grid">
         <div class="field"><label for="v-inst">Installed</label><input class="input" id="v-inst" type="date" value="2021-03-10"></div>
@@ -82,7 +82,7 @@
       </div>
       <div class="banner amber"><svg class="ic"><use href="#ph-warning"/></svg><span class="grow">Commissioned over 12 months ago: no warranty. Offer an AMC.</span></div>
     </div>
-    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Machine verified. Pooja Shah was told">Verify</button></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button><button class="btn btn-primary" type="button" data-close data-toast="Machine added. Pooja Shah was told">Add machine</button></div>
   </div>
 </div>
 <div class="overlay center" id="reject" hidden>
@@ -104,9 +104,9 @@
 
 <aside class="proto" data-states="ready loading not-found decommissioned error" data-mobile="../../../screens/customer/C202-machine-detail.html">
   <div><h3>What it is</h3><p>One machine and everything that happened to it. Opens with <code>?m=ZP-TF-2310</code>; any serial works.</p></div>
-  <div><h3>What you can do</h3><ul><li>Edit, transfer, change status, print the label.</li><li>Create a ticket or a claim for this machine.</li><li>Pending machines (<code>?m=ZP-TF-2501</code>): verify or reject.</li><li>Tabs: history, warranty and AMC, documents, parts, notes, photos, hours, tickets, claims.</li></ul></div>
+  <div><h3>What you can do</h3><ul><li>Edit, transfer, change status, print the label.</li><li>Create a ticket or a claim for this machine.</li><li>Machines reported in the app (<code>?m=ZP-TF-2501</code>): add to the register or reject.</li><li>Tabs: history, warranty and AMC, documents, parts, notes, photos, hours, tickets, claims.</li></ul></div>
   <div><h3>What happens next</h3><p>Edit (D304), Transfer (D306), Warranty (D307), Change status (D313), Full history (D314), Label (D311).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Decommissioned machines are read only.</li><li>Warranty expiring within 60 days shows amber.</li><li>Pending machines have no coverage until verified.</li><li>Another Admin saved: stale banner (EC-A12).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Decommissioned machines are read only.</li><li>Warranty expiring within 60 days shows amber.</li><li>Customers cannot add machines; a reported machine has no coverage until Zixom adds it.</li><li>Another Admin saved: stale banner (EC-A12).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -148,17 +148,17 @@
   $('meta').innerHTML = `<span>${ic('buildings')}${c.name}</span><span>${ic('map-pin')}${s.name}</span>
     <span>${ic('stack')}${x.series(m)}</span>${x.hours(m) !== null ? `<span>${ic('timer')}${x.hours(m).toLocaleString('en-IN')} h</span>` : ''}`;
 
-  /* actions: pending machines are verified or rejected first; others get the service actions */
+  /* actions: machines reported in the app are added or rejected first; others get the service actions */
   $('actions').innerHTML = pending
     ? `<button class="btn btn-secondary" type="button" data-open="reject">Reject</button><a class="btn btn-secondary" href="${link('D304', mq)}">Edit</a>
-       <button class="btn btn-primary" type="button" data-open="verify">Verify machine</button>`
+       <button class="btn btn-primary" type="button" data-open="add-reported">Add to register</button>`
     : `<a class="btn btn-secondary" href="${link('D304', mq)}">Edit</a><a class="btn btn-secondary" href="${link('D507', mq)}">Create claim</a>
        <a class="btn btn-primary" href="${link('D402', mq)}">Create ticket</a>
        <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
   document.querySelectorAll('#more-menu a').forEach((a) => { a.setAttribute('href', `${a.getAttribute('href')}${mq}`); });
 
   const banners = [];
-  if (pending) banners.push(`<div class="banner amber">${ic('hourglass')}<span class="grow"><b>Added by ${i.submittedBy} in the app, ${r.ago(i.submitted)}.</b> No coverage until verified. Check the nameplate photo.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D305')}">Open report</a></span></div>`);
+  if (pending) banners.push(`<div class="banner amber">${ic('hourglass')}<span class="grow"><b>Reported missing by ${i.submittedBy} in the app, ${r.ago(i.submitted)}.</b> No coverage until added. Check the nameplate photo.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D305')}">Open report</a></span></div>`);
   if (w.state === 'expiring') banners.push(`<div class="banner amber">${ic('shield-warning')}<span class="grow"><b>Warranty ends in ${w.left} days.</b> The customer was reminded at 60 and 30 days.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D307', mq)}">Extend warranty</a></span></div>`);
   if (amc?.status === 'expired') banners.push(`<div class="banner red">${ic('seal-check')}<span class="grow"><b>AMC expired on ${r.date(amc.end)}.</b> Grace ends ${r.date('2026-11-27')}.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D602')}">Open AMC</a></span></div>`);
   $('edge-banners').innerHTML = banners.join('');
@@ -175,7 +175,7 @@
         <dt>Nickname</dt><dd>${m.nickname || '<span class="faint">None</span>'}</dd><dt>Model</dt><dd>${m.model}<br><span class="muted">${x.series(m)}</span></dd></dl>
       <dl class="dl"><dt>Installed</dt><dd>${m.installed ? r.date(m.installed) : '<span class="faint">Not set</span>'}</dd>
         <dt>Commissioned</dt><dd>${m.commissioned ? r.date(m.commissioned) : '<span class="faint">Not set</span>'}</dd>
-        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}<br><span class="muted">${i.warrantyType}</span>` : '<span class="faint">Starts after verification</span>'}</dd>
+        <dt>Warranty</dt><dd>${m.warrantyEnd ? `${r.date(x.warrantyStart(m))} to ${r.date(m.warrantyEnd)}<br><span class="muted">${i.warrantyType}</span>` : '<span class="faint">Starts once added</span>'}</dd>
         <dt>AMC</dt><dd>${amc ? `<a class="mono" href="${link('D602')}">${amc.number}</a><br><span class="muted">${amc.plan} · to ${r.date(amc.end)}</span>` : '<span class="faint">None</span>'}</dd></dl>
     </div>
     <div><div class="row" style="margin-bottom:10px"><h3 class="grow" style="font-size:16px">Open tickets</h3><span class="muted">${open.length}</span></div>

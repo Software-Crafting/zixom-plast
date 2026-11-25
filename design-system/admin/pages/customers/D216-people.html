@@ -215,7 +215,7 @@
       ? `<a class="btn btn-secondary" href="#D214?c=${primaryCompany?.id}">Change primary</a>`
       : '<button class="btn btn-secondary" type="button" data-open="disable">Disable</button>',
     disabled: '<button class="btn btn-secondary" type="button" data-close data-toast="Person enabled. They can sign in again">Enable</button>',
-    invited: '<button class="btn btn-secondary" type="button" data-close data-toast="Invitation sent again">Resend invitation</button>' }[p.status] ?? '';
+    invited: '<button class="btn btn-secondary" type="button" data-close data-toast="App access sent again by SMS">Resend SMS</button>' }[p.status] ?? '';
     document.getElementById('quick-foot').innerHTML = `<a class="btn btn-secondary" href="${openHref(p)}">Open</a><span class="grow"></span>${status}
       <button class="btn btn-primary" type="button" data-toast="Test push sent to ${devices.length || 'no'} device${devices.length === 1 ? '' : 's'}"${devices.length ? '' : ' disabled'}>Send test push</button>`;
     document.getElementById('disable-text').textContent = `${p.name} is signed out on every device and sees "Your account is suspended" in the app. Records stay.`;

@@ -59,7 +59,7 @@ ZXA.data = {
     { label: 'Unassigned', value: '4', trend: ['up', '1', 'bad'], foot: 'oldest 3 d', href: 'D401', query: '?view=unassigned' },
     { label: 'Machine down', value: '1', alert: true, trend: ['up', '1', 'bad'], foot: 'Nova Cups, 40 min', href: 'D425' },
     { label: 'SLA at risk', value: '2', trend: ['down', '1', 'good'], foot: '1 breached this week', href: 'D418' },
-    { label: 'Pending verification', value: '3', trend: ['up', '1', 'bad'], foot: 'oldest 6 h', href: 'D210' },
+    { label: 'App requests', value: '2', trend: ['up', '1', 'bad'], foot: 'new user and machine', href: 'D102' },
     { label: 'Collected this month', value: '₹3.32 L', trend: ['up', '12%'], foot: 'vs October', href: 'D910' },
     { label: 'Overdue', value: '₹29,500', trend: ['up', '₹14,160', 'bad'], foot: '2 invoices', href: 'D901', query: '?view=overdue' },
     { label: 'Low stock parts', value: '3', trend: ['flat', '0'], foot: 'below minimum', href: 'D815' },
@@ -69,7 +69,7 @@ ZXA.data = {
   queue: [
     { type: 'Assign', icon: 'siren', tone: 'red', title: 'Machine down, assign engineer', sub: 'Nova Cups · TKT-2026-0133', age: '40 min', due: 'Due in 3 h 20 min', href: 'D403' },
     { type: 'Assign', icon: 'clock-countdown', tone: 'amber', title: 'Offer to Sandeep expires in 18 min', sub: 'Shree Packaging · TKT-2026-0123', age: '1 d', due: 'Due in 18 min', href: 'D403' },
-    { type: 'Verification', icon: 'user-check', tone: 'blue', title: 'Verify Harish Patel', sub: 'Exact match · Shree Packaging', age: '6 h', due: 'Due today', href: 'D211' },
+    { type: 'User requests', icon: 'user-plus', tone: 'blue', title: 'Add Harish Patel to the app', sub: 'Requested by Rakesh Mehta · Shree Packaging', age: '6 h', due: 'Due today', href: 'D205' },
     { type: 'Payments', icon: 'receipt', tone: 'blue', title: 'Bank transfer proof, ₹3,540.00', sub: 'Shree Packaging · INV-2026-0985', age: '2 d', due: 'Due today', href: 'D912' },
     { type: 'Reports', icon: 'clipboard-text', tone: 'blue', title: 'Review visit report', sub: 'Sandeep Yadav · TKT-2026-0128', age: '2 d', due: 'Due today', href: 'D413' },
     { type: 'Parts', icon: 'package', tone: 'amber', title: 'Chain set needed for this visit', sub: 'SPR-2026-0031 · Out of stock', age: '1 h 45 min', due: 'Urgent', href: 'D821' },
@@ -105,7 +105,7 @@ ZXA.data = {
     { icon: 'package', title: 'Part request from Sandeep', sub: 'SPR-2026-0031 · Industrial chain set, 12B', when: '2026-11-23T10:15' },
     { icon: 'check-circle', tone: 'green', title: 'Checked in at Vatva', sub: 'Sandeep · TKT-2026-0126', when: '2026-11-23T09:32' },
     { icon: 'currency-inr', title: 'Estimate sent', sub: 'TKT-2026-0122 · ₹8,968.00', when: '2026-11-23T09:30' },
-    { icon: 'user-check', title: 'New verification request', sub: 'Harish Patel · Shree Packaging', when: '2026-11-23T06:05' },
+    { icon: 'user-plus', title: 'New user requested in the app', sub: 'Harish Patel · Shree Packaging', when: '2026-11-23T06:05' },
   ],
 
   notifications: [
@@ -117,7 +117,7 @@ ZXA.data = {
   ],
 
   /* sidebar counts */
-  navCounts: { D102: 14, D210: 3, D401: [1, 'red'], D820: 1, D910: 1, D1001: 2, D1110: 3 },
+  navCounts: { D102: 14, D206: 2, D401: [1, 'red'], D820: 1, D910: 1, D1001: 2, D1110: 3 },
 
   /* 30 days of service to 23 Nov: tickets raised, closed and response hours (target 4 h for machine down) */
   series: {

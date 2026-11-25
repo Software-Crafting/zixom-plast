@@ -114,7 +114,7 @@ ZXA.data.templatesOff = ['order'];
 
 /* section 12, sent to Admin */
 ZXA.data.adminAlerts = [
-  ['New verification request', 'Bell, work queue', 'On arrival; reminder at 1 working day'],
+  ['New user request or missing machine from the app', 'Bell, work queue', 'On arrival; reminder at 1 working day'],
   ['New service request', 'Bell, work queue', 'Immediately'],
   ['Machine down request', 'Bell, sound, email', 'Immediately, repeats every 5 minutes until acknowledged'],
   ['Ticket unassigned over 60 minutes', 'Bell, email', 'Default 60 minutes'],

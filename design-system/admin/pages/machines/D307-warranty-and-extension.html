@@ -131,7 +131,7 @@
     $('period-sub').textContent = `${r.date(start)} to ${r.date(m.warrantyEnd)}`;
   } else {
     $('bar').closest('.row').remove();
-    $('period-sub').textContent = 'Starts when the machine is verified';
+    $('period-sub').textContent = 'Starts once the machine is added, from installation';
   }
   $('facts-1').innerHTML = `<dt>Start</dt><dd>${start ? r.date(start) : '–'}<br><span class="muted">Commissioning date</span></dd>
     <dt>End</dt><dd>${m.warrantyEnd ? r.date(m.warrantyEnd) : '–'}</dd><dt>Period</dt><dd>12 months${i.extensions.length ? ` plus ${i.extensions.length} extension` : ''}</dd>`;

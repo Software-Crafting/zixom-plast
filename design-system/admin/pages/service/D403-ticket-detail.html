@@ -107,7 +107,7 @@
   <div><h3>What it is</h3><p>One service request from start to finish. Opens with <code>?t=TKT-2026-0126</code>; any ticket number works.</p></div>
   <div><h3>What you can do</h3><ul><li>Only the actions allowed for the status show in the action bar (section 11).</li><li>Tabs: overview, timeline, report, estimate, parts, messages with internal notes, media, invoice, history.</li><li>Call the customer or engineer from the side cards.</li></ul></div>
   <div><h3>What happens next</h3><p>Assign (D404), Reschedule (D405), Cancel (D406), Hold (D407), Estimate (D408), Report review (D413), Close (D414), Invoice (D902).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Live: changes from the app flash the block and show a toast (Live state).</li><li>Machine pending verification shows a banner; coverage unknown.</li><li>Engineer silent 30 minutes in travel: amber chip.</li><li>Another Admin saved: stale banner. Archived: read only.</li><li>An action from an old page is refused (EC-A14).</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Live: changes from the app flash the block and show a toast (Live state).</li><li>A machine reported in the app but not yet added shows a banner; coverage unknown.</li><li>Engineer silent 30 minutes in travel: amber chip.</li><li>Another Admin saved: stale banner. Archived: read only.</li><li>An action from an old page is refused (EC-A14).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -173,7 +173,7 @@
 
   /* edge case banners */
   const banners = [];
-  if (m.status === 'pending') banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>Machine not verified.</b> Coverage is unknown until the machine is verified.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D302')}">Verify machine</a></span></div>`);
+  if (m.status === 'pending') banners.push(`<div class="banner amber">${ic('warning')}<span class="grow"><b>Machine not in the register yet.</b> Coverage is unknown until Zixom adds it.</span><span class="btns"><a class="btn btn-sm btn-secondary" href="${link('D302')}">Verify machine</a></span></div>`);
   if (t.severity === 'down' && !e) banners.push(`<div class="banner red">${ic('siren')}<span class="grow"><b>Machine down, not assigned for ${r.ago(t.created).replace(' ago', '')}.</b> Response target 4 hours.</span><span class="btns"><a class="btn btn-sm btn-primary" href="${link('D404', tq)}">Assign now</a></span></div>`);
   document.getElementById('edge-banners').innerHTML = banners.join('');
 
@@ -263,7 +263,7 @@
       <div class="btns"><a class="btn btn-sm btn-secondary" href="tel:${p.mobile.replace(/\s/g, '')}">${ic('phone')}${p.mobile}</a></div></div></section>
     <section class="card side-card"><div class="card-head"><h3 class="grow">Machine</h3><a class="card-link" href="${link('D302')}">Open</a></div>
       <div class="card-body stack-sm"><div class="who"><span class="thumb">${ic('factory')}</span><span><b>${m.model}</b><small class="mono">${m.serial}</small></span></div>
-      <div class="tags">${m.status === 'pending' ? r.tag('Pending verification') : (m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0 ? r.tag(`Warranty to ${r.date(m.warrantyEnd)}`, r.daysFromToday(m.warrantyEnd) <= 30 ? 'amber' : 'green') : r.tag('Out of warranty'))}
+      <div class="tags">${m.status === 'pending' ? r.tag('Reported in the app') : (m.warrantyEnd && r.daysFromToday(m.warrantyEnd) >= 0 ? r.tag(`Warranty to ${r.date(m.warrantyEnd)}`, r.daysFromToday(m.warrantyEnd) <= 30 ? 'amber' : 'green') : r.tag('Out of warranty'))}
         ${m.amc ? r.tag(m.amc, 'blue') : ''}</div></div></section>
     <section class="card side-card" id="engineer-card"><div class="card-head"><h3 class="grow">Engineer</h3>${e ? `<a class="card-link" href="${link('D702')}">Open</a>` : ''}</div>
       <div class="card-body stack-sm">${e ? `<div class="who">${r.avatar(e, 'lg')}<span><b>${e.name}</b><small>${e.code} · ${ic('star')} ${e.rating}</small></span></div>

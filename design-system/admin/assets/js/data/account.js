@@ -18,7 +18,7 @@ ZXA.data.account = {
     { when: '2026-11-23T09:30', type: 'Tickets', icon: 'currency-inr', action: 'Sent estimate', record: 'TKT-2026-0122', href: 'D403?t=TKT-2026-0122', detail: '₹8,968.00 to Shree Packaging Industries' },
     { when: '2026-11-23T09:02', type: 'Account', icon: 'log-in', action: 'Signed in', record: '', href: 'D011', detail: 'Chrome on Windows, Faridabad' },
     { when: '2026-11-21T15:40', type: 'Money', icon: 'receipt', action: 'Issued invoice', record: 'INV-2026-0984', href: 'D903', detail: 'Vacuum pump service kit, ₹6,962.00' },
-    { when: '2026-11-21T11:12', type: 'Customers', icon: 'user-check', action: 'Approved verification', record: 'ZP-C-0002', href: 'D202', detail: 'Imran Qureshi, Nova Cups Pvt Ltd' },
+    { when: '2026-11-21T11:12', type: 'Customers', icon: 'user-plus', action: 'Added person from an app request', record: 'ZP-C-0002', href: 'D202', detail: 'Sneha Kulkarni, Nova Cups Pvt Ltd' },
     { when: '2026-11-20T16:20', type: 'Tickets', icon: 'wrench', action: 'Created ticket', record: 'TKT-2026-0114', href: 'D403?t=TKT-2026-0114', detail: 'Spare part fitting, Nova Cups, Chakan' },
     { when: '2026-11-19T10:15', type: 'Tickets', icon: 'wrench', action: 'Created ticket', record: 'TKT-2026-0119', href: 'D403?t=TKT-2026-0119', detail: 'Preventive maintenance, phone call from Imran' },
     { when: '2026-11-18T14:02', type: 'Money', icon: 'receipt', action: 'Issued invoice', record: 'INV-2026-0983', href: 'D903', detail: 'Heater zone calibration, ₹2,360.00' },
