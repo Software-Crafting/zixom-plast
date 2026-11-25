@@ -32,7 +32,8 @@
     const root = document.createElement('div');
     root.className = `ds-select${native.classList.contains('sm') ? ' ds-select--sm' : ''}${native.classList.contains('mono') ? ' mono' : ''}`;
     root.dataset.dsSelect = '';
-    [...native.classList].filter((c) => /^w-/.test(c)).forEach((c) => root.classList.add(c));
+    /* page classes (set-jump, w-md...) move to the component so page CSS that sizes or hides the field still applies */
+    [...native.classList].filter((c) => !['select', 'sm', 'mono', 'input'].includes(c)).forEach((c) => root.classList.add(c));
     root.innerHTML = `<button type="button" class="ds-select__trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="${id}-label ${id}-value">
         <span class="ds-select__value" id="${id}-value"></span>${dsIcon('caret-down').replace('ds-icon ds-icon--sm', 'ds-icon ds-icon--sm ds-select__chevron')}</button>
       <div class="ds-select__popup ds-scroll-area" data-ds-scroll-area hidden>

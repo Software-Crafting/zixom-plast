@@ -281,4 +281,9 @@
       applyState(button.dataset.state); /* a data-open on the same button then opens its overlay */
     });
   });
+
+  /* ---------- prototype only: review notes per screen for client demos (assets/js/review-notes.js) ---------- */
+  const notes = document.createElement('script');
+  notes.src = new URL('review-notes.js', document.currentScript.src).href;
+  document.body.append(notes);
 })();

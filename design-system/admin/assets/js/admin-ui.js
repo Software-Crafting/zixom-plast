@@ -314,6 +314,11 @@
      The calendar's today and the time picker's now are the demo's Monday 23 Nov 2026, 12:00 IST. */
   window.DS = window.DS || {};
   window.DS.now = () => new Date(ZX.data.now);
+  /* review notes for client demos, shared with the mobile prototype */
+  const notes = document.createElement('script');
+  notes.src = `${ZXA.root}../assets/js/review-notes.js`;
+  document.body.append(notes);
+
   ['ds/popover.js', 'ds/scroll-area.js', 'ds/calendar.js', 'ds/date-picker.js', 'ds/time-picker.js', 'ds/select.js', 'js/admin-ds.js']
     .forEach((file) => {
       const script = document.createElement('script');
