@@ -103,6 +103,8 @@
   const body = $('lines').tBodies[0];
 
   const update = () => {
+    /* the Negative demo state keeps its block; typed quantities step aside when Skip validation is on */
+    const skip = ZXA.demo.skipValidation() && document.body.dataset.state !== 'negative';
     let negative = false;
     [...body.rows].forEach((row) => {
       const p = P.part(row.querySelector('select').value);
@@ -112,14 +114,15 @@
       row.querySelector('[data-avail]').innerHTML = `${free}${req && req.part === p.number && req.status === 'approved' ? `<span class="sub">incl. ${req.qty} reserved for ${req.number}</span>` : ''}`;
       row.querySelector('[data-after]').textContent = free - qty;
       row.querySelector('[data-after]').classList.toggle('neg', free - qty < 0);
-      row.querySelector('.qty').setAttribute('aria-invalid', String(free - qty < 0));
-      negative = negative || free - qty < 0;
+      row.querySelector('.qty').setAttribute('aria-invalid', String(!skip && free - qty < 0));
+      negative = negative || (!skip && free - qty < 0);
     });
     $('bar-note').textContent = negative ? 'Blocked until Allow negative stock is ticked with a reason.' : `${body.rows.length} line${body.rows.length > 1 ? 's' : ''}. The engineer sees the update in the app.`;
     $('issue').disabled = negative && !$('allow').checked;
   };
   body.addEventListener('input', update);
   $('allow').addEventListener('change', update);
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) update(); });
   body.addEventListener('click', (event) => { if (event.target.closest('[data-remove]') && body.rows.length > 1) { event.target.closest('tr').remove(); update(); } });
   $('add-line').addEventListener('click', () => { body.insertAdjacentHTML('beforeend', line('ZP-SP-016', 1)); update(); });
 

@@ -134,7 +134,7 @@
   });
   $('accept').addEventListener('click', () => {
     const box = $('override');
-    if (box && box.value.trim().length < 3) { $('override-error').hidden = false; box.setAttribute('aria-invalid', 'true'); box.focus(); return; }
+    if (box && !ZXA.demo.skipValidation() && box.value.trim().length < 3) { $('override-error').hidden = false; box.setAttribute('aria-invalid', 'true'); box.focus(); return; }
     ZXA.ui.closeOverlay($('quick'));
     ZXA.ui.toast(`${current.ticket} reopened and assigned`);
   });

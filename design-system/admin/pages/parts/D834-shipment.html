@@ -103,7 +103,7 @@
     const track = $('f-track').value.trim();
     if (LINKS[courier] && track) $('f-link').value = `${LINKS[courier]}${track}`;
     else if (!LINKS[courier]) $('f-link').value = '';
-    $('send').disabled = !track && courier !== 'Own vehicle';
+    $('send').disabled = !(ZXA.demo.skipValidation() || track || courier === 'Own vehicle');
     $('preview').innerHTML = `<div class="stack-sm"><div class="tags">${r.tag($('f-partial').checked ? 'Partly dispatched' : 'Dispatched', 'blue')}</div>
       <dl class="dl"><dt>Courier</dt><dd>${courier}</dd><dt>Tracking</dt><dd class="mono">${track || '<span class="faint">Not set</span>'}</dd>
         <dt>Expected</dt><dd>${$('f-eta').value ? r.dayDate($('f-eta').value) : '–'}</dd></dl>
@@ -118,6 +118,7 @@
   };
   ['f-courier', 'f-track', 'f-eta'].forEach((id) => $(id).addEventListener('input', update));
   $('f-partial').addEventListener('change', items);
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) update(); });
   items();
   new MutationObserver(() => { $('f-partial').checked = false; items(); }).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
 })();

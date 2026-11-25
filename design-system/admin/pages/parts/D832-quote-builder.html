@@ -125,6 +125,7 @@
 
   const update = () => {
     let subtotal = 0;
+    const skip = ZXA.demo.skipValidation();
     let missing = false;
     [...body.rows].forEach((row) => {
       const p = P.part(row.querySelector('select').value);
@@ -133,8 +134,8 @@
       const qty = Number(qtyIn.value) || 0;
       const rate = Number(rateIn.value.replace(/,/g, ''));
       const disc = Math.min(100, Math.max(0, Number(discIn.value) || 0));
-      missing = missing || !rateIn.value;
-      rateIn.setAttribute('aria-invalid', String(!rateIn.value));
+      missing = missing || (!skip && !rateIn.value);
+      rateIn.setAttribute('aria-invalid', String(!skip && !rateIn.value));
       const amount = Math.round(qty * rate * (1 - disc / 100) * 100) / 100 || 0;
       subtotal += amount;
       row.querySelector('[data-amount]').textContent = rateIn.value ? r.money(amount) : '–';
@@ -150,6 +151,7 @@
     $('send').disabled = missing;
   };
   body.addEventListener('input', update);
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) update(); });
   ['f-delivery', 'f-valid'].forEach((id) => $(id).addEventListener('input', update));
   body.addEventListener('click', (event) => { if (event.target.closest('[data-remove]') && body.rows.length > 1) { event.target.closest('tr').remove(); update(); } });
   $('add-line').addEventListener('click', () => { body.insertAdjacentHTML('beforeend', line('ZP-SP-016', 1, P.part('ZP-SP-016').price)); update(); });

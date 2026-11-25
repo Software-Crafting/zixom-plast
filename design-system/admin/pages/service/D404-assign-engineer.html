@@ -203,7 +203,7 @@
 
   const go = (direct) => {
     const reason = $('reason').value.trim();
-    const missing = (direct || state.needsReason) && reason.length < 3;
+    const missing = !ZXA.demo.skipValidation() && (direct || state.needsReason) && reason.length < 3;
     $('reason-error').hidden = !missing;
     $('reason').setAttribute('aria-invalid', String(missing));
     if (missing) { $('reason').focus(); return; }

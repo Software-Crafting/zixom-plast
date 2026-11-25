@@ -75,12 +75,15 @@
   document.getElementById('foot').textContent = `${D.parts.length} parts · ${D.models.length} models`;
 
   let changed = 0;
+  const refreshSave = () => { document.getElementById('save').disabled = !(ZXA.demo.skipValidation() || changed); };
   document.getElementById('matrix').addEventListener('change', () => {
     changed += 1;
     document.getElementById('changes').textContent = `${changed} unsaved change${changed > 1 ? 's' : ''}`;
-    document.getElementById('save').disabled = false;
+    refreshSave();
   });
-  document.getElementById('save').addEventListener('click', () => { changed = 0; document.getElementById('changes').textContent = ''; document.getElementById('save').disabled = true; });
+  document.getElementById('save').addEventListener('click', () => { changed = 0; document.getElementById('changes').textContent = ''; refreshSave(); });
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) refreshSave(); });
+  refreshSave();
 
   const menu = document.getElementById('cat-menu');
   menu.insertAdjacentHTML('beforeend', D.categories.filter((c) => c.status === 'active').map((c) => `<button type="button" data-cat="${c.name}">${c.name}</button>`).join(''));

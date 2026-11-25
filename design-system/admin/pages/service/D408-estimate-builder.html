@@ -193,7 +193,7 @@
     const pct = document.querySelector('[data-disc="pct"]').getAttribute('aria-selected') === 'true';
     const raw = Number($('discount').value) || 0;
     const discount = pct ? subtotal * raw / 100 : raw;
-    $('disc-error').hidden = discount <= subtotal * rates.discountLimit / 100;
+    $('disc-error').hidden = ZXA.demo.skipValidation() || discount <= subtotal * rates.discountLimit / 100;
     const taxable = subtotal - discount;
     const gst = Math.round(taxable * rates.gst) / 100;
     const total = Math.round(taxable + gst);

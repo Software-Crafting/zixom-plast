@@ -102,7 +102,11 @@
   const fill = { name: s.name, addr: s.address, gstin: s.gstin, pan: s.pan, bank: s.bank.name, branch: s.bank.branch, acct: s.bank.account, ifsc: s.bank.ifsc,
     days: s.terms, pw: '1,00,000', footer: s.footer, next: s.next };
   Object.entries(fill).forEach(([id, v]) => { $(id).value = v; });
-  document.querySelector('.content').addEventListener('input', () => { $('save').disabled = false; $('bar-text').textContent = 'Unsaved changes'; });
+  let dirty = false;
+  const refreshSave = () => { $('save').disabled = !(ZXA.demo.skipValidation() || dirty); };
+  document.querySelector('.content').addEventListener('input', () => { dirty = true; refreshSave(); $('bar-text').textContent = 'Unsaved changes'; });
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) refreshSave(); });
+  refreshSave();
   $('pv').innerHTML = `<div class="row" style="align-items:flex-start"><div class="grow"><b>${s.name}</b><p class="muted">${s.address}<br>GSTIN ${s.gstin} · PAN ${s.pan}</p></div>
     <div style="text-align:right"><b>Tax invoice</b><p class="mono">${s.next}</p></div></div>
     <p><b>Sample customer</b><br><span class="muted">Ahmedabad, Gujarat · GSTIN 24AAAAA0000A1Z5</span></p>

@@ -117,9 +117,9 @@
     const boxes = [...document.querySelectorAll('#pick tbody input, #checklist input')];
     const done = boxes.filter((b) => b.checked).length;
     $('bar-note').textContent = boxes.every((b) => b.disabled) ? 'Packed. Add the courier and tracking next.' : `${done} of ${boxes.length} ticked. Customer will be notified by push.`;
-    if ($('mark')) $('mark').disabled = done < boxes.length;
+    if ($('mark')) $('mark').disabled = !(ZXA.demo.skipValidation() || done === boxes.length);
   };
-  document.addEventListener('change', (event) => { if (event.target.closest('#pick, #checklist')) update(); });
+  document.addEventListener('change', (event) => { if (event.target.closest('#pick, #checklist') || event.target.matches('[data-skip-validation]')) update(); });
   render();
   new MutationObserver(render).observe(document.body, { attributes: true, attributeFilter: ['data-state'] });
 })();

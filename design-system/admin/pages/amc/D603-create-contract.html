@@ -216,14 +216,21 @@
     });
     $('back').disabled = n === 1;
     $('next').textContent = n === 5 ? (mode === 'edit' ? 'Save changes' : 'Create contract') : 'Next';
-    $('next').disabled = n === 2 && !state.machines.size;
+    refreshNext();
     if (n === 4) drawSchedule();
+  };
+  const refreshNext = () => { $('next').disabled = state.step === 2 && !(ZXA.demo.skipValidation() || state.machines.size); };
+  const markReason = () => {
+    const missing = !ZXA.demo.skipValidation() && !$('custom-reason').value.trim();
+    $('custom-reason').setAttribute('aria-invalid', String(missing));
+    $('custom-reason').nextElementSibling.hidden = !missing;
   };
 
   drawSites();
   drawMachines();
   update();
   goStep(1);
+  markReason();
 
   $('company').addEventListener('change', (e) => { state.company = e.target.value; state.machines.clear(); drawSites(); drawMachines(); update(); });
   document.addEventListener('change', (e) => {
@@ -232,7 +239,9 @@
     if (t.name === 'plan') state.plan = t.value;
     if (t.name === 'price') $('custom').hidden = t.value !== 'custom';
     if (t.name === 'mode') $('offline').hidden = t.value !== 'active';
-    if (t.closest('#machines')) { state.machines[t.checked ? 'add' : 'delete'](t.value); $('next').disabled = !state.machines.size; }
+    if (t.closest('#machines')) state.machines[t.checked ? 'add' : 'delete'](t.value);
+    if (t.matches('#machines input, [data-skip-validation]')) refreshNext();
+    if (t.matches('#custom-reason, [data-skip-validation]')) markReason();
     if (t.id === 'start') state.start = t.value;
     update();
   });

@@ -134,7 +134,7 @@
     }
     const create = event.target.closest('[data-create]');
     if (create) {
-      const bad = $('desc').value.trim().length < 10;
+      const bad = !ZXA.demo.skipValidation() && $('desc').value.trim().length < 10;
       $('desc-error').hidden = !bad;
       $('desc').setAttribute('aria-invalid', String(bad));
       if (bad) { $('desc').focus(); return; }
