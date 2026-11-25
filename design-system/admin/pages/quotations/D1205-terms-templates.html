@@ -106,7 +106,7 @@
   const checkSum = () => {
     const inputs = [...$('e-pay').querySelectorAll('[data-pct]')];
     const sum = inputs.reduce((s, i) => s + Number(i.value || 0), 0);
-    const ok = Math.abs(sum - 100) < 0.01;
+    const ok = ZXA.demo.skipValidation() || Math.abs(sum - 100) < 0.01;
     $('e-sum').className = ok ? 'hint' : 'error';
     $('e-sum').innerHTML = ok ? 'Adds up to 100%.' : `${r.icon('warning-circle')}Milestones add up to ${sum}%. They must add up to 100%.`;
     inputs.forEach((i) => i.setAttribute('aria-invalid', String(!ok)));

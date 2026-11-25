@@ -242,13 +242,16 @@
   /* ---------- checks: title length, audience 0, schedule in the past (EC-A65) ---------- */
   const scheduledPast = () => document.querySelector('[name="when"]:checked').value === 'later'
     && `${$('sch-date').value}T${$('sch-time').value}` <= ZX.data.now;
+  /* Skip validation lets every check pass, except in the Past and Zero audience demo states that show them */
+  const skipChecks = () => ZXA.demo.skipValidation() && !['past', 'zero'].includes(document.body.dataset.state);
   const validate = () => {
-    const titleOk = $('title').value.trim().length >= 5;
-    const past = scheduledPast();
+    const skip = skipChecks();
+    const titleOk = skip || $('title').value.trim().length >= 5;
+    const past = !skip && scheduledPast();
     $('sch-error').hidden = !past;
     $('sch-date').setAttribute('aria-invalid', String(past));
     const send = $('send');
-    if (send) send.disabled = !titleOk || !audienceCount() || past;
+    if (send) send.disabled = !titleOk || !(skip || audienceCount()) || past;
   };
 
   /* ---------- the phone preview ---------- */
@@ -281,13 +284,14 @@
   function bindPreview() { document.querySelectorAll('#form input, #form select, #form textarea').forEach((el) => { el.oninput = preview; el.onchange = preview; }); }
 
   $('title').addEventListener('blur', () => {
-    const bad = $('title').value.trim().length < 5;
+    const bad = !skipChecks() && $('title').value.trim().length < 5;
     $('title-error').hidden = !bad;
     $('title').setAttribute('aria-invalid', String(bad));
   });
   $('link').addEventListener('change', drawLink);
   $('image-drop').addEventListener('click', () => { if (sent) return; $('image-drop').hidden = true; $('image-row').hidden = false; preview(); });
   $('image-remove').addEventListener('click', () => { $('image-drop').hidden = false; $('image-row').hidden = true; preview(); });
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]') && !sent) validate(); });
   document.addEventListener('click', (event) => {
     if (event.target.closest('[data-set-now]')) { document.querySelector('[name="when"][value="now"]').checked = true; preview(); }
     const send = event.target.closest('#send');

@@ -106,7 +106,7 @@ const r = ZXA.r;
   document.getElementById('e-next').addEventListener('input', preview);
   document.getElementById('e-save').addEventListener('click', () => {
     const next = document.getElementById('e-next');
-    const ok = Number(next.value) >= current[2] + 1;
+    const ok = ZXA.demo.skipValidation() || Number(next.value) >= current[2] + 1;
     next.setAttribute('aria-invalid', String(!ok));
     const error = document.getElementById('e-error');
     error.hidden = ok;

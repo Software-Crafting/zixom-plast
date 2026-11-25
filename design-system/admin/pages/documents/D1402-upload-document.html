@@ -144,10 +144,10 @@
       : companies.length ? companies.map((c) => `<li><span class="ic-disc"><svg class="ic"><use href="#ph-buildings"/></svg></span><span class="grow"><b>${c.name}</b>
         <small>${kind === 'all' || kind === 'company' ? 'Every person' : ((n) => `${n} machine${n === 1 ? '' : 's'}`)(machines.filter((m) => m.company === c.id).length)}</small></span></li>`).join('')
       : '<li><span class="muted">No machines match</span></li>';
-    $('upload').disabled = !$('title').value.trim() || (visible && kind !== 'all' && !companies.length);
+    $('upload').disabled = !(ZXA.demo.skipValidation() || ($('title').value.trim() && !(visible && kind !== 'all' && !companies.length)));
   };
   $('applies').addEventListener('change', drawTarget);
-  document.addEventListener('change', (event) => { if (event.target.closest('#target-field, #visible')) drawReach(); });
+  document.addEventListener('change', (event) => { if (event.target.closest('#target-field, #visible, [data-skip-validation]')) drawReach(); });
   $('title').addEventListener('input', drawReach);
   drawTarget();
 })();

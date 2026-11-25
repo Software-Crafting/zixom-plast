@@ -177,7 +177,7 @@
     $('i-hint').textContent = w ? `Warranty ${r.date(w[0])} to ${r.date(w[1])}` : 'Required';
     document.querySelector('[data-warranty-text]').textContent = w ? `Warranty ${r.date(w[0])} to ${r.date(w[1])}.` : '';
     const complete = [...document.querySelectorAll('[data-check]')].every((c) => c.checked) && w && $('c-date').value && $('c-signed').value.trim();
-    $('create-btn').disabled = !complete;
+    $('create-btn').disabled = !(ZXA.demo.skipValidation() || complete);
     $('bar-hint').textContent = complete ? 'Commissioning complete. Ready to add to the register.' : 'Complete the commissioning checks to create the machine.';
     $('create-summary').innerHTML = `<dt>Serial</dt><dd class="mono">${serial}</dd><dt>Model</dt><dd>${r.esc(model)}</dd><dt>Customer</dt><dd>${r.esc(who.name)}, ${r.esc(site.name)}</dd>
       <dt>Installed</dt><dd>${w ? r.date(w[0]) : '–'}</dd><dt>Warranty</dt><dd>${w ? `${r.date(w[0])} to ${r.date(w[1])}` : '–'}</dd>`;
@@ -190,6 +190,7 @@
     ZXA.ui.setState('created');
     ZXA.ui.toast(`${serial} added to the register`);
   });
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) sync(); });
   sync();
 })();
 </script>

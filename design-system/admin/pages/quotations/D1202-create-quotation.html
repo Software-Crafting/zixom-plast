@@ -192,7 +192,7 @@
     const over = rows.some((row) => row[4] > q.DISCOUNT_LIMIT);
     $('reason-field').hidden = !over;
     if (over && !$('disc-reason').value) $('disc-reason').value = x.discountReason || '';
-    $('send-btn').disabled = !rows.length;
+    $('send-btn').disabled = !(ZXA.demo.skipValidation() || rows.length);
   };
   $('lines').addEventListener('input', (event) => {
     const input = event.target.closest('[data-k]');
@@ -202,7 +202,7 @@
     if (k === 1) { row[1] = input.value; return; }
     const value = Number(input.value.replace(/,/g, ''));
     const bad = Number.isNaN(value) || value < 0 || (k === 4 && value > 100);
-    input.setAttribute('aria-invalid', String(bad));
+    input.setAttribute('aria-invalid', String(bad && !ZXA.demo.skipValidation()));
     if (bad) return;
     row[k] = value;
     tr.querySelector('[data-amount]').textContent = q.money(q.lineAmount(row));
@@ -261,12 +261,13 @@
   $('send-subject').value = `Quotation ${no} from Zixom Plast: ${x.title}`;
   $('send-btn').addEventListener('click', () => {
     const reason = $('disc-reason');
-    const missing = !$('reason-field').hidden && !reason.value.trim();
+    const missing = !ZXA.demo.skipValidation() && !$('reason-field').hidden && !reason.value.trim();
     reason.setAttribute('aria-invalid', String(missing));
     if (missing) { reason.focus(); ZXA.ui.toast('Add a reason for the discount', 'info'); return; }
     ZXA.ui.openOverlay('send');
   });
 
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) update(); });
   drawLines();
   drawFiles();
   syncTerms();

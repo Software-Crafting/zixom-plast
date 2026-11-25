@@ -123,7 +123,7 @@
     $('b-title-count').textContent = `${$('b-title').value.length} / 50`;
     $('b-text-count').textContent = `${$('b-text').value.length} / 140`;
     const channels = ['push', 'email', 'sms'].filter((c) => $(`ch-${c}`).checked);
-    $('send').disabled = !channels.length || !$('b-title').value.trim();
+    $('send').disabled = !(ZXA.demo.skipValidation() || (channels.length && $('b-title').value.trim()));
     $('pv-app').textContent = engineer ? 'Zixom Engineer' : 'Zixom Connect';
     const t = r.esc($('b-title').value);
     const x = r.esc($('b-text').value);
@@ -140,6 +140,7 @@
   });
   document.querySelectorAll('input, select, textarea').forEach((el) => el.addEventListener('input', draw));
   document.querySelectorAll('[name="to"], #pick').forEach((el) => el.addEventListener('change', draw));
+  document.addEventListener('change', (event) => { if (event.target.matches('[data-skip-validation]')) draw(); });
   draw();
 })();
 </script>

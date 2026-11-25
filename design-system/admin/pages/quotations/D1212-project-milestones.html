@@ -164,7 +164,7 @@
   };
   $('e-status').addEventListener('change', syncStatus);
   $('e-save').addEventListener('click', () => {
-    const missing = $('e-status').value === 'delayed' && !$('e-reason').value.trim();
+    const missing = !ZXA.demo.skipValidation() && $('e-status').value === 'delayed' && !$('e-reason').value.trim();
     $('e-reason').setAttribute('aria-invalid', String(missing));
     if (missing) { $('e-reason').focus(); return; }
     ZXA.ui.closeOverlay($('edit'));

@@ -188,21 +188,24 @@ ZXA.set = (() => {
     <p>We could not load this.</p><div class="btns"><button class="btn btn-primary" type="button" data-busy>Try again</button><a class="btn btn-secondary" href="#D101">Go to dashboard</a></div>
     <p class="code mono">Request id 7f3a-91c2-4be0</p></div></div>`;
 
-  /* ---------- form: Save is enabled once something changed; min and max are checked on blur and on Save ---------- */
+  /* ---------- form: Save is enabled once something changed; min and max are checked on blur and on Save.
+     Skip validation (prototype panel) turns Save on without a change and lets min, max and the reason pass ---------- */
   const fields = (form) => [...form.querySelectorAll('input:not([type="search"]), select, textarea')];
   const changed = (el) => {
     if (el.type === 'checkbox' || el.type === 'radio') return el.checked !== el.defaultChecked;
     if (el.tagName === 'SELECT') return [...el.options].some((o) => o.selected !== o.defaultSelected);
     return el.value !== el.defaultValue;
   };
+  const ruleMessage = (el) => {
+    if (el.required && !el.value.trim()) return 'Required';
+    if (el.type === 'number' && !el.validity.valid) return `Use ${el.min} to ${el.max} ${el.dataset.unit || ''}`.trim();
+    return el.dataset.check ? ZXA.set.checks[el.dataset.check]?.(el) || '' : '';
+  };
   const validate = (el) => {
     if (!el.matches('input[type="number"], [required]')) return true;
     const box = el.closest('.set-control, .field, td');
     const error = box?.querySelector('.error');
-    let message = '';
-    if (el.required && !el.value.trim()) message = 'Required';
-    else if (el.type === 'number' && !el.validity.valid) message = `Use ${el.min} to ${el.max} ${el.dataset.unit || ''}`.trim();
-    if (el.dataset.check) message = message || ZXA.set.checks[el.dataset.check]?.(el) || '';
+    const message = ZXA.demo.skipValidation() ? '' : ruleMessage(el);
     el.setAttribute('aria-invalid', String(Boolean(message)));
     if (error) { error.hidden = !message; error.innerHTML = message ? `${icon('warning-circle')}${esc(message)}` : ''; }
     return !message;
@@ -210,7 +213,7 @@ ZXA.set = (() => {
   const refresh = (form) => {
     const count = fields(form).filter(changed).length;
     const button = document.querySelector(`[data-save="${form.id}"]`);
-    if (button) button.disabled = count === 0;
+    if (button) button.disabled = !(ZXA.demo.skipValidation() || count);
     const note = document.querySelector(`.form-bar[data-for="${form.id}"] .grow`);
     if (note) note.textContent = count ? `${count} unsaved ${count === 1 ? 'change' : 'changes'}` : 'The app picks up saved changes within 15 minutes';
     form.querySelectorAll('[data-reset]').forEach((b) => { b.hidden = document.getElementById(b.dataset.for)?.value === b.dataset.reset; });
@@ -230,6 +233,9 @@ ZXA.set = (() => {
       form.addEventListener('change', () => refresh(form));
       form.addEventListener('focusout', (event) => { if (event.target.matches('input, textarea')) validate(event.target); });
       refresh(form);
+    });
+    document.addEventListener('change', (event) => {
+      if (event.target.matches('[data-skip-validation]')) document.querySelectorAll('[data-set-form]').forEach(refresh);
     });
     document.addEventListener('click', (event) => {
       const reset = event.target.closest('[data-reset]');
@@ -254,7 +260,7 @@ ZXA.set = (() => {
       }
       if (event.target.closest('[data-confirm-save]')) {
         const text = document.getElementById('set-reason-text');
-        const ok = text.value.trim().length > 0;
+        const ok = ZXA.demo.skipValidation() || text.value.trim().length > 0;
         text.setAttribute('aria-invalid', String(!ok));
         text.parentElement.querySelector('.error').hidden = ok;
         if (!ok) { text.focus(); return; }
