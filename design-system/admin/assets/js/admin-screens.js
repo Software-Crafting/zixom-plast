@@ -30,7 +30,7 @@ ZXA.modules = [
     ['D105', 'Search results'],
     ['D106', 'Notification centre'],
   ] },
-  { key: 'customers', title: 'Customers and verification', pages: [
+  { key: 'customers', title: 'Customers and app access', pages: [
     ['D201', 'Customers and companies'],
     ['D202', 'Customer detail'],
     ['D203', 'Add customer'],

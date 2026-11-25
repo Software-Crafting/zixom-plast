@@ -38,11 +38,12 @@ a.screen-row .mono{color:var(--blue)}
     the first release. Removed screens were dropped by a client decision (README). Prototype only: HTML, CSS and sample
     data, nothing here is app code.</p>
     <div class="summary" id="summary"></div>
-    <div class="segment" role="tablist" aria-label="Role" style="max-width:520px; margin-top:24px" id="roles">
+    <div class="segment" role="tablist" aria-label="Role" style="max-width:640px; margin-top:24px" id="roles">
       <button role="tab" aria-selected="true" data-role="all">All</button>
       <button role="tab" aria-selected="false" data-role="shared">Shared</button>
       <button role="tab" aria-selected="false" data-role="customer">Customer</button>
       <button role="tab" aria-selected="false" data-role="engineer">Engineer</button>
+      <button role="tab" aria-selected="false" data-role="admin">Admin</button>
     </div>
     <div class="modules" id="modules"></div>
   </section>
@@ -52,6 +53,7 @@ a.screen-row .mono{color:var(--blue)}
 <script src="assets/js/data.js"></script>
 <script src="assets/js/render.js"></script>
 <script src="assets/js/screens.js"></script>
+<script src="admin/assets/js/admin-screens.js"></script>
 <script>
 (() => {
   const { esc, tag } = ZX.render;
@@ -63,7 +65,19 @@ a.screen-row .mono{color:var(--blue)}
     [all.length, 'Screens listed'], [phase1, 'In the first release'], [built, 'Pages built'], [removed, 'Removed by client'],
   ].map(([n, label]) => `<div class="specimen"><b>${n}</b><span>${label}</span></div>`).join('');
 
+  /* admin dashboard pages, from the admin registry (admin/assets/js/admin-screens.js) */
+  const adminModules = () => ZXA.modules.map((m) => {
+    const rows = m.pages.map(([id, name]) => {
+      const href = ZXA.isBuilt(id) && ZXA.href(id);
+      const badge = m.phase === 2 ? tag('Phase 2') : href ? tag('Built', 'green') : '';
+      const inner = `<span class="mono">${id}</span><span>${esc(name)}</span>${badge}`;
+      return href ? `<a class="screen-row" href="${href}">${inner}</a>` : `<div class="screen-row">${inner}</div>`;
+    }).join('');
+    return `<div class="specimen module"><h3>Admin. ${esc(m.title)}<small>${m.pages.length} pages</small></h3>${rows}</div>`;
+  }).join('');
+
   const draw = (role) => {
+    if (role === 'admin') { document.getElementById('modules').innerHTML = adminModules(); return; }
     document.getElementById('modules').innerHTML = ZX.modules.filter((m) => role === 'all' || m.role === role).map((m) => {
       const rows = m.screens.map(([id, name, phase = 1]) => {
         const href = ZX.built.has(id) && ZX.pagePath(id);
@@ -72,7 +86,7 @@ a.screen-row .mono{color:var(--blue)}
         return href ? `<a class="screen-row" href="${href}">${inner}</a>` : `<div class="screen-row">${inner}</div>`;
       }).join('');
       return `<div class="specimen module"><h3>${m.id}. ${esc(m.name)}<small>${m.screens.length} screens</small></h3>${rows}</div>`;
-    }).join('');
+    }).join('') + (role === 'all' ? adminModules() : '');
   };
   draw('all');
   document.getElementById('roles').addEventListener('click', (event) => {
