@@ -11,19 +11,21 @@
 <body class="adm" data-page="D1510">
 <main class="content">
   <div class="page-head">
-    <div class="grow"><h1>Import</h1><p>Bring existing Excel data in. Up to 5 MB or 10,000 rows per file.</p></div>
+    <div class="grow"><h1>Import</h1><p>Bring Excel or Tally data in. Up to 5 MB or 10,000 rows per file.</p></div>
     <a class="btn btn-secondary" href="#D1511"><svg class="ic"><use href="#ph-history"/></svg>Import history</a>
   </div>
 
-  <section class="card wizard" data-when="ready upload wrong-file map review importing done failed large">
+  <section class="card wizard" id="wizard" data-kind="tally" data-when="ready upload wrong-file map review importing done failed large">
     <ol class="steps" id="steps"></ol>
 
     <!-- 1 choose type -->
     <div data-when="ready">
       <div class="step-body stack">
-        <div><h2 style="font-size:16px">What are you importing?</h2><p class="muted" style="font-size:13px">Start from the template so the columns match.</p></div>
+        <div><h2 style="font-size:16px">What are you importing?</h2><p class="muted" style="font-size:13px" data-kind="other">Start from the template so the columns match.</p>
+          <p class="muted" style="font-size:13px" data-kind="tally">GST invoices are made in Tally. Import them so customers can pay in the app.</p></div>
         <div class="choices" style="grid-template-columns:repeat(4, minmax(0, 1fr))" id="types"></div>
-        <div class="row wrap"><button class="btn btn-secondary btn-sm" type="button" data-toast="zixom_machines_template.xlsx downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download machines template</button>
+        <div class="banner grey" data-kind="tally"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>Export from Tally:</b> Display More Reports &gt; Sales Register &gt; Export, Excel or XML. No template needed.</span></div>
+        <div class="row wrap" data-kind="other"><button class="btn btn-secondary btn-sm" type="button" data-toast="zixom_machines_template.xlsx downloaded"><svg class="ic"><use href="#ph-download-simple"/></svg>Download machines template</button>
           <span class="muted" style="font-size:13px">Machines need an existing company code (ZP-C-NNNN).</span></div>
       </div>
       <div class="card-foot"><a class="btn btn-ghost" href="#D1501">Cancel</a><button class="btn btn-primary" type="button" data-step="upload">Next</button></div>
@@ -32,13 +34,18 @@
     <!-- 2 upload -->
     <div data-when="upload wrong-file">
       <div class="step-body stack">
-        <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b>Drop an XLSX or CSV here</b>Up to 5 MB or 10,000 rows
+        <div class="drop"><svg class="ic"><use href="#ph-upload-simple"/></svg><b data-kind="other">Drop an XLSX or CSV here</b><b data-kind="tally">Drop the Tally export (.xlsx or .xml) here</b>Up to 5 MB or 10,000 rows
           <button class="btn btn-secondary btn-sm" type="button" style="margin-top:6px">Choose file</button></div>
-        <div class="field" data-when="wrong-file"><span class="error"><svg class="ic"><use href="#ph-warning-circle"/></svg>machines_list.pdf is not an XLSX or CSV file. Save it from Excel as .xlsx and upload again.</span></div>
-        <div class="file-row" data-when="upload"><span class="thumb"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span>
+        <div class="field" data-when="wrong-file"><span class="error" data-kind="other"><svg class="ic"><use href="#ph-warning-circle"/></svg>machines_list.pdf is not an XLSX or CSV file. Save it from Excel as .xlsx and upload again.</span>
+          <span class="error" data-kind="tally"><svg class="ic"><use href="#ph-warning-circle"/></svg>sales_register.pdf is not a Tally export. Export the Sales Register as Excel or XML and upload again.</span></div>
+        <div class="file-row" data-when="upload" data-kind="tally"><span class="thumb"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+          <span class="grow"><b>Sales_Register_23Nov.xml</b><small class="muted"> · 96 KB · 7 vouchers, 23 Nov</small><span class="progress green"><span style="width:100%"></span></span></span>
+          <span class="tag green">Uploaded</span></div>
+        <div class="banner grey" data-when="upload" data-kind="tally"><svg class="ic"><use href="#ph-check-circle"/></svg><span class="grow"><b>TallyPrime XML, company Zixom Plast.</b> Sales vouchers only; receipts and journals are ignored.</span></div>
+        <div class="file-row" data-when="upload" data-kind="other"><span class="thumb"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg></span>
           <span class="grow"><b>nova_chakan_machines.xlsx</b><small class="muted"> · 184 KB · 12 rows</small><span class="progress green"><span style="width:100%"></span></span></span>
           <span class="tag green">Uploaded</span></div>
-        <div class="form-grid" data-when="upload">
+        <div class="form-grid" data-when="upload" data-kind="other">
           <div class="field"><label for="u-sheet">Sheet</label><select class="select" id="u-sheet"><option>Machines</option><option>Notes</option></select></div>
           <div class="field"><label for="u-header">Header row</label><select class="select" id="u-header"><option>Row 1</option><option selected>Row 2</option><option>Row 3</option></select>
             <span class="hint">Row 1 looks like a title, so row 2 is used.</span></div>
@@ -50,7 +57,7 @@
     <!-- 3 map columns -->
     <div data-when="map">
       <div class="step-body stack">
-        <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>6 of 7 columns matched by name.</b> Unmapped columns are ignored.</span></div>
+        <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b id="map-count"></b> Unmapped columns are ignored.</span></div>
         <div class="table-wrap no-top"><table class="table compact">
           <thead><tr><th>Column in your file</th><th>Sample</th><th>Zixom field</th><th></th></tr></thead>
           <tbody id="mapping"></tbody></table></div>
@@ -61,33 +68,45 @@
     <!-- 4 review -->
     <div data-when="review">
       <div class="step-body stack">
-        <div class="kpis" style="margin:0">
+        <div class="kpis" style="margin:0" data-kind="tally">
+          <div class="card kpi"><span class="label">Ready</span><span class="value green-text">5</span><span class="foot">matched by GSTIN</span></div>
+          <div class="card kpi"><span class="label">No linked record</span><span class="value amber-text">1</span><span class="foot">imported without a link</span></div>
+          <div class="card kpi"><span class="label">Duplicates</span><span class="value">1</span><span class="foot">skipped by invoice number</span></div>
+          <div class="card kpi alert"><span class="label">Customer not found</span><span class="value">1</span><span class="foot">match to import</span></div>
+        </div>
+        <div class="table-wrap no-top" data-kind="tally"><table class="table compact">
+          <thead><tr><th>Voucher</th><th>Customer, by GSTIN</th><th>Linked record, from narration</th><th class="num">Total</th><th>Result</th></tr></thead>
+          <tbody id="tally-rows"></tbody></table></div>
+        <label class="check" data-kind="tally"><input type="checkbox" checked> Notify customers in the app when their invoices are imported</label>
+        <div class="kpis" style="margin:0" data-kind="other">
           <div class="card kpi"><span class="label">Valid</span><span class="value green-text">7</span><span class="foot">ready to import</span></div>
           <div class="card kpi"><span class="label">Warnings</span><span class="value amber-text">2</span><span class="foot">imported as cleaned</span></div>
           <div class="card kpi"><span class="label">Match existing</span><span class="value">1</span><span class="foot">see duplicates below</span></div>
           <div class="card kpi alert"><span class="label">Errors</span><span class="value">2</span><span class="foot">not imported</span></div>
         </div>
-        <div class="table-wrap no-top"><table class="table compact">
+        <div class="table-wrap no-top" data-kind="other"><table class="table compact">
           <thead><tr><th class="num">Row</th><th>Serial</th><th>Result</th><th>Message</th></tr></thead>
           <tbody id="review-rows"></tbody></table></div>
-        <div class="field"><span class="label">Rows that match an existing machine</span>
+        <div class="field" data-kind="other"><span class="label">Rows that match an existing machine</span>
           <div class="choices" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
             <label class="choice"><input type="radio" name="dup" class="sr-only"><span><b>Skip</b><small>Keep the existing machine as it is</small></span></label>
             <label class="choice"><input type="radio" name="dup" class="sr-only" checked><span><b>Update</b><small>Fill in the fields from the file</small></span></label>
             <label class="choice" style="opacity:.55"><input type="radio" name="dup" class="sr-only" disabled><span><b>Create new</b><small>Not for machines: serials are unique (EC-A36)</small></span></label>
           </div></div>
-        <label class="check"><input type="checkbox" checked> Dates are DD/MM/YYYY (03/04/2025 is 3 Apr 2025)</label>
-        <label class="switch"><input type="checkbox" disabled><span></span>Create missing companies, off in Settings</label>
+        <label class="check" data-kind="other"><input type="checkbox" checked> Dates are DD/MM/YYYY (03/04/2025 is 3 Apr 2025)</label>
+        <label class="switch" data-kind="other"><input type="checkbox" disabled><span></span>Create missing companies, off in Settings</label>
       </div>
       <div class="card-foot"><button class="btn btn-ghost" type="button" data-step="map">Back</button><span class="grow"></span>
-        <button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows"><svg class="ic"><use href="#ph-download-simple"/></svg>Download error file</button>
-        <button class="btn btn-primary" type="button" data-step="importing">Import 10 rows</button></div>
+        <button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows" data-kind="other"><svg class="ic"><use href="#ph-download-simple"/></svg>Download error file</button>
+        <button class="btn btn-secondary" type="button" data-toast="Skipped vouchers downloaded, 2 rows" data-kind="tally"><svg class="ic"><use href="#ph-download-simple"/></svg>Download skipped</button>
+        <button class="btn btn-primary" type="button" data-step="importing" data-kind="other">Import 10 rows</button>
+        <button class="btn btn-primary" type="button" data-step="importing" data-kind="tally">Import 5 invoices</button></div>
     </div>
 
     <!-- 5 import -->
     <div data-when="importing large">
       <div class="step-body stack">
-        <div class="row"><b class="grow" data-when="importing">Importing 7 of 10 rows</b><b class="grow" data-when="large">Importing 1,770 of 9,840 rows in the background</b><span class="muted" id="pct"></span></div>
+        <div class="row"><b class="grow" data-when="importing"><span data-kind="other">Importing 7 of 10 rows</span><span data-kind="tally">Importing 3 of 5 invoices</span></b><b class="grow" data-when="large">Importing 1,770 of 9,840 rows in the background</b><span class="muted" id="pct"></span></div>
         <div class="progress green"><span id="bar"></span></div>
         <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>You can leave this page.</b> The import keeps running and you get a notification when it is done.</span></div>
       </div>
@@ -96,8 +115,10 @@
 
     <div data-when="done">
       <div class="state"><span class="disc green"><svg class="ic"><use href="#ph-check"/></svg></span>
-        <h3>Import done</h3><p>9 machines created, 1 updated, 2 rows not imported. Undo is available for 24 hours.</p>
-        <div class="btns"><button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows">Download error file</button><a class="btn btn-primary" href="#D1511">Open import history</a></div></div>
+        <h3>Import done</h3><p data-kind="other">9 machines created, 1 updated, 2 rows not imported. Undo is available for 24 hours.</p>
+        <p data-kind="tally">5 invoices are in the customer app with Pay, and customers were notified. 1 duplicate skipped, 1 waits for a customer match.</p>
+        <div class="btns" data-kind="tally"><a class="btn btn-secondary" href="#D1511">Import history</a><a class="btn btn-primary" href="#D901">Open invoices</a></div>
+        <div class="btns" data-kind="other"><button class="btn btn-secondary" type="button" data-toast="Error file downloaded, 2 rows">Download error file</button><a class="btn btn-primary" href="#D1511">Open import history</a></div></div>
     </div>
 
     <div data-when="failed">
@@ -109,11 +130,23 @@
   </section>
 </main>
 
+<div class="overlay center" id="match" hidden>
+  <div class="modal" role="dialog" aria-labelledby="match-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-buildings"/></svg></span>
+      <div class="grow"><h2 id="match-title">Match customer for INV-2026-0996</h2><p>Tally party Nova Cups Pvt Ltd, Unit 2, GSTIN 27AAAAA0000A2Z2, is not on any company.</p></div></div>
+    <div class="modal-body stack">
+      <div class="field"><label for="match-company">Company</label><select class="select" id="match-company"><option>Nova Cups Pvt Ltd</option><option>Shree Packaging Industries</option></select></div>
+      <label class="check"><input type="checkbox" checked> Save this GSTIN on the company so next imports match</label>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" href="#D203">Add new company</a><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Matched. INV-2026-0996 will be imported">Match</button></div>
+  </div>
+</div>
+
 <aside class="proto" data-states="ready upload wrong-file map review importing done failed large loading error">
-  <div><h3>What it is</h3><p>Five step import wizard. Ready is step 1; each step is a demo state.</p></div>
-  <div><h3>What you can do</h3><ul><li>Choose a type and download its template.</li><li>Upload, pick the header row, map columns.</li><li>Review counts and row messages, choose duplicate handling, download the error file.</li><li>Import the valid rows.</li></ul></div>
-  <div><h3>What happens next</h3><p>Import history (D1511), where an import can be undone within 24 hours.</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Wrong file type or empty file is refused (EC-A29).</li><li>Row errors with numbers; import valid rows only (EC-A31).</li><li>Duplicates: Skip, Update or Create new (EC-A32).</li><li>Large files run in the background (EC-A33).</li><li>Dates read as DD/MM/YYYY; +91 and spaces cleaned; duplicate serials flagged.</li></ul></div>
+  <div><h3>What it is</h3><p>Five step import wizard. Tally invoices is chosen; pick another type to see the Excel flow.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tally invoices: upload the Sales Register export, map columns, review matches, import.</li><li>Match a customer whose GSTIN is not on file.</li><li>Other types: download the template, choose duplicate handling, download the error file.</li></ul></div>
+  <div><h3>What happens next</h3><p>Imported invoices show in the app with Pay and in Invoices (D901). Undo from Import history (D1511).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Tally: customer by GSTIN, linked record by the reference in the narration, duplicates skipped by invoice number.</li><li>Automatic sync from TallyPrime is coming later (D1620).</li><li>Open with the client: TallyPrime or Tally ERP 9; who uploads the export each day.</li><li>Wrong file refused (EC-A29); row errors (EC-A31); duplicates (EC-A32); large files in the background (EC-A33).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -125,17 +158,56 @@
 <script>
 (() => {
   const r = ZXA.r;
-  const TYPES = [['Customers', 'Companies and sites'], ['People', 'Customer contacts'], ['Machines', 'Serial, model, site, install date'], ['Spare parts', 'Catalogue and prices'],
-    ['Stock', 'Opening stock per store'], ['Leads', 'Open enquiries'], ['IndiaMART history', 'Past enquiries export']];
-  document.getElementById('types').innerHTML = TYPES.map(([name, sub]) => `<label class="choice"><input type="radio" name="type" class="sr-only" ${name === 'Machines' ? 'checked' : ''}>
+  const wizard = document.getElementById('wizard');
+  const TYPES = [['Tally invoices', 'Sales Register, Excel or XML'], ['Customers', 'Companies and sites'], ['People', 'Customer contacts'], ['Machines', 'Serial, model, site, install date'],
+    ['Spare parts', 'Catalogue and prices'], ['Stock', 'Opening stock per store'], ['Leads', 'Open enquiries'], ['IndiaMART history', 'Past enquiries export']];
+  const chosen = new URLSearchParams(location.search).get('type') === 'machines' ? 'Machines' : 'Tally invoices';
+  document.getElementById('types').innerHTML = TYPES.map(([name, sub]) => `<label class="choice"><input type="radio" name="type" class="sr-only" value="${name}" ${name === chosen ? 'checked' : ''}>
     <span><b>${name}</b><small>${sub}</small></span></label>`).join('');
 
-  const FIELDS = ['Serial number', 'Company code', 'Model', 'Site', 'Installation date', 'Site contact mobile', 'Do not import'];
-  const MAP = [['Serial No', 'ZP-CF-2240', 'Serial number'], ['Customer Code', 'ZP-C-0002', 'Company code'], ['Model', 'CFM-450 Cup Former', 'Model'],
-    ['Plant', 'Chakan unit', 'Site'], ['Install Date', '03/04/2025', 'Installation date'], ['Contact Mobile', '098220 43120', 'Site contact mobile'], ['Remarks', 'Old line', 'Do not import']];
-  document.getElementById('mapping').innerHTML = MAP.map(([col, sample, field]) => `<tr><td><b>${col}</b></td><td class="mono muted">${sample}</td>
-    <td><select class="select sm" aria-label="Field for ${col}">${FIELDS.map((f) => `<option ${f === field ? 'selected' : ''}>${f}</option>`).join('')}</select></td>
-    <td>${field === 'Do not import' ? r.tag('Ignored') : r.tag('Matched', 'green')}</td></tr>`).join('');
+  /* [column in the file, sample, field] per kind */
+  const MAPS = {
+    other: { fields: ['Serial number', 'Company code', 'Model', 'Site', 'Installation date', 'Site contact mobile', 'Do not import'],
+      rows: [['Serial No', 'ZP-CF-2240', 'Serial number'], ['Customer Code', 'ZP-C-0002', 'Company code'], ['Model', 'CFM-450 Cup Former', 'Model'],
+        ['Plant', 'Chakan unit', 'Site'], ['Install Date', '03/04/2025', 'Installation date'], ['Contact Mobile', '098220 43120', 'Site contact mobile'], ['Remarks', 'Old line', 'Do not import']] },
+    tally: { fields: ['Invoice number', 'Invoice date', 'Customer GSTIN', 'Customer name', 'Linked record', 'Taxable value', 'CGST', 'SGST', 'IGST', 'Total', 'Do not import'],
+      rows: [['Voucher No.', 'INV-2026-0992', 'Invoice number'], ['Date', '23-Nov-26', 'Invoice date'], ['Party GSTIN/UIN', '27AAAAA0000A1Z3', 'Customer GSTIN'],
+        ['Particulars', 'Nova Cups Pvt Ltd', 'Customer name'], ['Narration', 'Service visit TKT-2026-0114', 'Linked record'], ['Taxable Value', '5,040.00', 'Taxable value'],
+        ['CGST', '0.00', 'CGST'], ['SGST', '0.00', 'SGST'], ['IGST', '907.20', 'IGST'], ['Gross Total', '5,947.00', 'Total']] },
+  };
+  /* Tally review: [voucher, company id or null, GSTIN, linked record, total, result] */
+  const TALLY = [
+    ['INV-2026-0992', 'nova', '27AAAAA0000A1Z3', 'TKT-2026-0114', 5947, 'ready'],
+    ['INV-2026-0993', 'shree', '24AAAAA0000A1Z5', 'TKT-2026-0128', 9204, 'ready'],
+    ['INV-2026-0994', 'shree', '24AAAAA0000A1Z5', 'ORD-2026-0209', 4366, 'ready'],
+    ['INV-2026-0995', 'nova', '27AAAAA0000A1Z3', 'ORD-2026-0206', 2950, 'ready'],
+    ['INV-2026-0996', null, '27AAAAA0000A2Z2', 'TKT-2026-0133', 3540, 'no-customer'],
+    ['INV-2026-0997', 'shree', '24AAAAA0000A1Z5', null, 1770, 'no-link'],
+    ['INV-2026-0988', 'shree', '24AAAAA0000A1Z5', 'AMC-2026-0012', 42480, 'duplicate'],
+  ];
+  const RESULT = {
+    ready: () => r.tag('Ready', 'green'),
+    'no-link': () => `${r.tag('No linked record', 'amber')}<span class="sub">Narration has no reference</span>`,
+    duplicate: () => `${r.tag('Duplicate, skipped')}<span class="sub">Imported 20 Nov</span>`,
+    'no-customer': () => `${r.tag('Customer not found', 'red')}<span class="sub"><button class="btn-link btn" type="button" data-open="match">Match customer</button></span>`,
+  };
+  document.getElementById('tally-rows').innerHTML = TALLY.map(([voucher, company, gstin, record, total, result]) => `<tr class="${result === 'no-customer' ? 'urgent' : ''}">
+    <td class="mono nowrap">${voucher}</td>
+    <td>${company ? `<b class="clip">${r.company(company).name}</b>` : '<b class="clip">Nova Cups Pvt Ltd, Unit 2</b>'}<span class="sub mono">${gstin}</span></td>
+    <td class="nowrap">${record ? `<span class="mono">${record}</span>` : '<span class="faint">None</span>'}</td>
+    <td class="num">${r.money(total)}</td><td>${RESULT[result]()}</td></tr>`).join('');
+
+  const drawMap = () => {
+    const { fields, rows } = MAPS[wizard.dataset.kind];
+    const matched = rows.filter(([, , field]) => field !== 'Do not import').length;
+    document.getElementById('map-count').textContent = `${matched} of ${rows.length} columns matched by name.`;
+    document.getElementById('mapping').innerHTML = rows.map(([col, sample, field]) => `<tr><td><b>${col}</b></td><td class="mono muted">${sample}</td>
+      <td><select class="select sm" aria-label="Field for ${col}">${fields.map((f) => `<option ${f === field ? 'selected' : ''}>${f}</option>`).join('')}</select></td>
+      <td>${field === 'Do not import' ? r.tag('Ignored') : r.tag('Matched', 'green')}</td></tr>`).join('');
+  };
+  const setKind = (name) => { wizard.dataset.kind = name === 'Tally invoices' ? 'tally' : 'other'; drawMap(); };
+  document.getElementById('types').addEventListener('change', (event) => setKind(event.target.value));
+  setKind(chosen);
 
   const REVIEW = [[4, 'ZP-CF-2241', ['Warning', 'amber'], 'Date 03/04/2025 read as 3 Apr 2025'],
     [6, 'ZP-BS-2242', ['Warning', 'amber'], 'Mobile 098220 43120 cleaned to +91 98220 43120'],

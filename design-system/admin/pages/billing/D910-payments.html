@@ -13,6 +13,7 @@
     <div class="grow"><h1>Payments</h1><p id="head-sub"></p></div>
     <button class="btn btn-secondary" type="button" data-menu="more-pages">Payments<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
     <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
+    <button class="btn btn-secondary" type="button" data-open="tally-export"><svg class="ic"><use href="#ph-file-text"/></svg>Export to Tally</button>
     <a class="btn btn-primary" href="#D912"><svg class="ic"><use href="#ph-bank"/></svg>Verify proofs</a>
   </div>
 
@@ -98,6 +99,7 @@
         <div class="field"><label for="f-to">to</label><input class="input" id="f-to" type="date" value="2026-11-23"></div>
       </div>
       <label class="check"><input type="checkbox"> Amount mismatch only</label>
+      <label class="check"><input type="checkbox"> Not yet in Tally only</label>
     </div>
     <div class="drawer-foot"><button class="btn btn-ghost" type="button" data-toast="Filters cleared">Clear all</button><span class="grow"></span>
       <button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Show payments</button></div>
@@ -126,11 +128,28 @@
   <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
 </div>
 
+<div class="overlay center" id="tally-export" hidden>
+  <div class="modal" role="dialog" aria-labelledby="te-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+      <div class="grow"><h2 id="te-title">Export receipts for Tally</h2><p>Online and verified offline payments as Tally receipt vouchers (XML).</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="te-from">From</label><input class="input" id="te-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="te-to">To</label><input class="input" id="te-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Skip payments already exported</label>
+      <span class="hint">In Tally: Gateway of Tally &gt; Import &gt; Vouchers, then choose the file.</span>
+    </div>
+    <div class="modal-foot"><a class="btn btn-ghost" href="#D1520">Earlier exports</a><span class="grow"></span>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Tally receipts XML downloaded, 1 to 23 Nov">Export XML</button></div>
+  </div>
+</div>
+
 <aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C808-payment-history.html">
   <div><h3>What it is</h3><p>Every payment: Razorpay online payments, bank transfer, UPI and cheque proofs.</p></div>
-  <div><h3>What you can do</h3><ul><li>Search, filter by method and date, saved views.</li><li>Row click for the quick view; the payment id opens the detail.</li><li>Payments menu: failed and pending, reconciliation, receipts, refunds.</li></ul></div>
-  <div><h3>What happens next</h3><p>Payment detail (D911), Offline verification (D912), Refund (D922).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Amount mismatch is flagged; the invoice stays Processing (EC-A21).</li><li>Failed payments show the gateway reason.</li><li>Duplicate and late webhooks never create a second row (EC-A18, EC-A19).</li></ul></div>
+  <div><h3>What you can do</h3><ul><li>Search, filter by method and date, saved views.</li><li>Export to Tally: received payments as Tally receipt vouchers; each paid row says whether it is in a Tally file.</li><li>Row click for the quick view; the payment id opens the detail.</li><li>Payments menu: failed and pending, reconciliation, receipts, refunds.</li></ul></div>
+  <div><h3>What happens next</h3><p>Payment detail (D911), Offline verification (D912), Refund (D922). Tally files are kept in Exports (D1520).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Amount mismatch is flagged; the invoice stays Processing (EC-A21).</li><li>Failed payments show the gateway reason.</li><li>Only paid and verified money is exported; proofs go after verification. Before 1 Nov was typed in Tally by hand.</li><li>Duplicate and late webhooks never create a second row (EC-A18, EC-A19).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -146,6 +165,10 @@
   const B = ZXA.bill;
   const all = B.payments;
   const target = (p) => (p.status === 'verification' ? `D912?p=${encodeURIComponent(p.txn)}` : `D911?p=${encodeURIComponent(B.paymentId(p))}`);
+  const TALLY = { exported: `${r.tag('Exported', 'green')}<span class="sub">${r.date(ZXA.data.billing.tally.receiptsExported)}</span>`,
+    'not-exported': `${r.tag('Not exported', 'outline')}<span class="sub">Before 1 Nov</span>`, null: '<span class="faint">After payment</span>' };
+  const CHIP = { exported: `<span class="sub green-text">In Tally ${r.date(ZXA.data.billing.tally.receiptsExported).replace(/ \d{4}$/, '')}</span>`,
+    'not-exported': '<span class="sub">Not in Tally file</span>' };
   document.getElementById('head-sub').textContent = `${all.length} payments · ${all.filter((p) => p.status === 'verification').length} proofs to verify · 1 failed today`;
 
   document.querySelector('#payments tbody').innerHTML = all.map((p, n) => {
@@ -159,7 +182,7 @@
       <td class="nowrap"><span class="who">${r.icon(B.METHOD_ICON[p.kind])}<span>${p.kind}</span></span><span class="sub">${p.method.split(', ')[1] || ''}</span></td>
       <td class="mono nowrap">${p.txn}</td>
       <td class="num" data-sort="${p.amount}">${r.money(p.amount)}</td>
-      <td>${B.paymentTag(p.status)}${p.flag ? `<span class="sub red-text strong">${p.flag}</span>` : ''}${p.reason ? `<span class="sub red-text">${p.reason}</span>` : ''}</td>
+      <td>${B.paymentTag(p.status)}${p.flag ? `<span class="sub red-text strong">${p.flag}</span>` : ''}${p.reason ? `<span class="sub red-text">${p.reason}</span>` : ''}${CHIP[B.tallyReceipt(p)] || ''}</td>
       <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td>
     </tr>`;
   }).join('');
@@ -193,7 +216,8 @@
       <dl class="dl"><dt>Amount</dt><dd class="strong">${r.money(p.amount)}</dd>${p.captured ? `<dt>Captured</dt><dd class="red-text">${r.money(p.captured)}</dd>` : ''}
         <dt>Customer</dt><dd>${c.name}</dd><dt>For</dt><dd>${p.invoice ? `<span class="mono">${p.invoice}</span>` : `<span class="mono">${p.order}</span>`}</dd>
         <dt>Reference</dt><dd class="mono">${p.txn}</dd><dt>Gateway fee</dt><dd>${p.fee === undefined ? '<span class="faint">None, offline</span>' : r.money(p.fee)}</dd>
-        ${p.reason ? `<dt>Reason</dt><dd class="red-text">${p.reason}</dd>` : ''}${p.refund ? `<dt>Refund</dt><dd class="mono">${p.refund}</dd>` : ''}${p.note ? `<dt>Note</dt><dd>${p.note}</dd>` : ''}</dl>`;
+        ${p.reason ? `<dt>Reason</dt><dd class="red-text">${p.reason}</dd>` : ''}${p.refund ? `<dt>Refund</dt><dd class="mono">${p.refund}</dd>` : ''}${p.note ? `<dt>Note</dt><dd>${p.note}</dd>` : ''}
+        <dt>Tally</dt><dd>${TALLY[B.tallyReceipt(p)]}</dd></dl>`;
   });
 })();
 </script>

@@ -83,25 +83,22 @@
   </div>
 </div>
 
-<!-- cancel: only before payment -->
-<div class="overlay center" id="cancel" hidden>
-  <div class="modal" role="alertdialog" aria-labelledby="cancel-title">
-    <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-x"/></svg></span>
-      <div class="grow"><h2 id="cancel-title"></h2><p id="cancel-text"></p></div></div>
-    <div class="modal-body stack">
-      <div class="field"><label for="cancel-reason">Reason</label><select class="select" id="cancel-reason"><option>Raised by mistake</option><option>Wrong customer</option><option>Customer will pay on a new invoice</option><option>Other</option></select></div>
-    </div>
-    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep invoice</button><button class="btn btn-danger" type="button" data-close data-toast="Invoice cancelled. The customer is told">Cancel invoice</button></div>
+<!-- GST lines, credit notes and cancellations are made in Tally -->
+<div class="overlay center" id="tally-fix" hidden>
+  <div class="modal" role="dialog" aria-labelledby="tally-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-file-diff"/></svg></span>
+      <div class="grow"><h2 id="tally-title">Correct in Tally and import again</h2><p id="tally-text"></p></div></div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Close</button><a class="btn btn-primary" href="#D1510">Open import</a></div>
   </div>
 </div>
 
 <div class="menu" id="more-menu" hidden></div>
 
 <aside class="proto" data-states="ready loading not-found pdf-failed error" data-mobile="../../../screens/customer/C802-invoice-detail.html">
-  <div><h3>What it is</h3><p>One issued invoice: lines, payments, credit notes, reminders and the PDF. Opens with <code>?inv=INV-2026-0981</code>; try 0985, 0986, 0987, 0983.</p></div>
-  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show (section 11).</li><li>Record an offline payment, send a reminder, download the PDF.</li><li>Create a credit note; cancel only while unpaid.</li></ul></div>
-  <div><h3>What happens next</h3><p>Credit note (D905), Verify proof (D912), Refund (D922), Follow up (D925), Suspend AMC (D610).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Edits after payment are blocked; use a credit note and a new invoice (EC-A42).</li><li>PDF failure shows Retry; the invoice stays saved (EC-A30).</li><li>Open dispute and amount mismatch show banners (EC-A21).</li></ul></div>
+  <div><h3>What it is</h3><p>One GST invoice imported from Tally: lines, payments, credit notes, reminders and the PDF. Opens with <code>?inv=INV-2026-0981</code>; try 0985, 0986, 0987, 0983.</p></div>
+  <div><h3>What you can do</h3><ul><li>Only the actions the status allows show (section 11).</li><li>Record an offline payment, send a reminder, download the PDF.</li><li>GST lines are read only: Correct in Tally and import again.</li></ul></div>
+  <div><h3>What happens next</h3><p>Import (D1510), Verify proof (D912), Refund (D922), Follow up (D925), Suspend AMC (D610).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Credit notes and cancellations are made in Tally and come back with the next import (EC-A42).</li><li>Side card shows the import time and Tally voucher.</li><li>PDF failure shows Retry; the invoice stays saved (EC-A30).</li><li>Open dispute and amount mismatch show banners (EC-A21).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -131,6 +128,7 @@
   const disputes = data.disputes.filter((x) => x.invoice === i.number);
   const openDispute = disputes.find((x) => ['open', 'review'].includes(x.status));
   const amc = i.for?.startsWith('AMC-');
+  const imported = B.tallyImported(i);
 
   document.title = `Zixom Admin - ${i.number}`;
   document.getElementById('crumb').textContent = i.number;
@@ -144,17 +142,16 @@
     remind: ['Send reminder', 'toast:Reminder sent by push and email'], record: ['Record offline payment', '#record'], call: ['Log a call', `D925`],
     recheck: ['Re-check status', 'toast:Still processing at the bank. Checked again 12:00'], verify: ['Verify proof', 'D912'],
     payment: ['Record payment', '#record'], receipt: ['Download receipt', 'toast:Receipt downloaded'], refund: ['Refund', 'D922'],
-    pdf: ['Download PDF', 'toast:PDF downloaded'], credit: ['Create credit note', `D905${q}`], duplicate: ['Duplicate as new', 'D902'],
-    cancel: ['Cancel invoice', '#cancel'], suspend: ['Suspend AMC', 'D610'],
+    pdf: ['Download PDF', 'toast:PDF downloaded'], tally: ['Correct in Tally and import again', '#tally-fix'], suspend: ['Suspend AMC', 'D610'],
   };
   const BY_STATUS = {
-    due: [['remind', 'record'], ['pdf', 'credit', 'duplicate', 'cancel']],
-    overdue: [['call', 'remind', 'record'], ['pdf', 'credit', ...(amc ? ['suspend'] : []), 'duplicate', 'cancel']],
-    processing: [['recheck', 'pdf'], ['duplicate']],
-    verification: [['verify', 'pdf'], ['record', 'duplicate']],
-    partly: [['payment', 'remind'], ['pdf', 'credit', 'duplicate']],
-    paid: [['receipt', 'credit'], ['refund', 'pdf', 'duplicate']],
-    cancelled: [['duplicate'], ['pdf']],
+    due: [['remind', 'record'], ['pdf', 'tally']],
+    overdue: [['call', 'remind', 'record'], ['pdf', ...(amc ? ['suspend'] : []), 'tally']],
+    processing: [['recheck', 'pdf'], ['tally']],
+    verification: [['verify', 'pdf'], ['record', 'tally']],
+    partly: [['payment', 'remind'], ['pdf', 'tally']],
+    paid: [['receipt', 'pdf'], ['refund', 'tally']],
+    cancelled: [['pdf'], []],
   };
   const button = (key, cls) => {
     const [label, target] = A[key];
@@ -165,12 +162,10 @@
   const [bar, more] = BY_STATUS[i.status];
   document.getElementById('actions').innerHTML = `${bar.slice(1).map((k) => button(k, 'btn btn-secondary')).join('')}${button(bar[0], 'btn btn-primary')}
     <button class="icon-btn white" type="button" aria-label="More actions" data-menu="more-menu">${ic('dots-three')}</button>`;
-  const MENU_ICON = { pdf: 'file-pdf', credit: 'file-minus', duplicate: 'copy', cancel: 'x', suspend: 'pause', refund: 'rotate-ccw', record: 'banknote' };
-  document.getElementById('more-menu').innerHTML = `${more.filter((k) => k !== 'cancel').map((k) => button(k, '').replace('>', `>${ic(MENU_ICON[k])}`)).join('')}
-    <button type="button" data-toast="Link copied">${ic('link')}Copy link</button><button type="button" data-toast="Print view opened">${ic('printer')}Print</button>
-    ${more.includes('cancel') ? `<hr><button class="danger" type="button" data-open="cancel">${ic('x')}Cancel invoice</button>` : ''}`;
-  document.getElementById('cancel-title').textContent = `Cancel ${i.number}?`;
-  document.getElementById('cancel-text').textContent = `${c.name} will be told. The number stays in the series and the invoice is kept as Cancelled.`;
+  const MENU_ICON = { pdf: 'file-pdf', tally: 'file-diff', suspend: 'pause', refund: 'rotate-ccw', record: 'banknote' };
+  document.getElementById('more-menu').innerHTML = `${more.map((k) => button(k, '').replace('>', `>${ic(MENU_ICON[k])}`)).join('')}
+    <button type="button" data-toast="Link copied">${ic('link')}Copy link</button><button type="button" data-toast="Print view opened">${ic('printer')}Print</button>`;
+  document.getElementById('tally-text').textContent = `Make the credit note or the corrected invoice for voucher ${B.voucher(i)} in Tally, then import the Sales Register again. ${c.name} sees the update in the app.`;
   document.getElementById('rec-sub').textContent = `${i.number} · balance ${r.money(bal)}`;
   document.getElementById('rec-amount').value = bal.toFixed(2);
 
@@ -181,7 +176,7 @@
   if (i.status === 'processing') banners.push(banner('amber', 'warning', '<b>Amount mismatch.</b> Razorpay captured ₹2,300.00, the invoice is ₹2,360.00. The invoice stays Processing until you review it.', `<a class="btn btn-sm btn-secondary" href="#D911?p=pay_Oa9TyHn2Jw6C">Open payment</a>`));
   if (i.lastAttempt === 'failed') banners.push(banner('red', 'warning-circle', '<b>Last payment failed.</b> Your bank declined the payment. The customer can try again in the app.', `<a class="btn btn-sm btn-secondary" href="#D914">Failed payments</a>`));
   if (i.status === 'verification') banners.push(banner('', 'bank', '<b>Bank transfer proof uploaded.</b> Verify within 1 working day.', `<a class="btn btn-sm btn-primary" href="#D912">Verify proof</a>`));
-  if (['paid', 'partly'].includes(i.status)) banners.push(banner('grey', 'lock-simple', '<b>Lines are locked.</b> A payment is recorded, so changes need a credit note and a new invoice.'));
+  if (['paid', 'partly'].includes(i.status)) banners.push(banner('grey', 'lock-simple', '<b>Lines are locked.</b> A payment is recorded. Corrections are a credit note in Tally, imported again.'));
   if (i.status === 'cancelled') banners.push(banner('grey', 'ban', `<b>Cancelled.</b> ${i.cancelReason}. Read only.`));
   document.getElementById('edge-banners').innerHTML = banners.join('');
 
@@ -218,11 +213,14 @@
 
   document.getElementById('tab-history').innerHTML = `<table class="table compact"><thead><tr><th>Time</th><th>Who</th><th>Change</th></tr></thead><tbody>
     ${rems.filter((x) => x.status === 'sent').slice(0, 2).map((x) => `<tr><td class="nowrap">${r.date(x.when)}, ${r.time(x.when)}</td><td>System</td><td>Reminder sent: ${x.rule}</td></tr>`).join('')}
-    <tr><td class="nowrap">${r.date(i.issued)}, 11:05</td><td>Rajesh Goyal</td><td>Issued, number ${i.number} assigned; customer notified</td></tr>
-    <tr><td class="nowrap">${r.date(i.issued)}, 10:48</td><td>Rajesh Goyal</td><td>Draft created${i.for ? ` from ${i.for}` : ''}</td></tr></tbody></table>`;
+    <tr><td class="nowrap">${r.date(imported)}, ${r.time(imported)}</td><td>Rajesh Goyal</td><td>Imported from Tally, voucher ${B.voucher(i)}${i.for ? `, linked to ${i.for}` : ''}; customer notified</td></tr>
+    <tr><td class="nowrap">${r.date(i.issued)}</td><td>Tally</td><td>Made in Tally as ${i.number}</td></tr></tbody></table>`;
 
   /* side cards */
   document.getElementById('side').innerHTML = `
+    <section class="card side-card"><div class="card-head"><h3 class="grow">Source</h3>${r.tag('Tally', 'outline')}</div>
+      <div class="card-body stack-sm"><p style="font-size:13px">From Tally, imported ${B.importedText(i)}, voucher ${B.voucher(i)}</p>
+        <div class="btns"><button class="btn btn-sm btn-secondary" type="button" data-open="tally-fix">Correct in Tally and import again</button></div></div></section>
     <section class="card side-card"><div class="card-head"><h3 class="grow">Balance</h3></div>
       <div class="card-body stack-sm"><span class="kpi-big ${i.status === 'overdue' ? 'red-text' : ''}">${r.money(bal)}</span>
         <dl class="dl"><dt>Invoice total</dt><dd>${r.money(i.amount)}</dd><dt>Received</dt><dd>${r.money(i.paid || 0)}</dd>

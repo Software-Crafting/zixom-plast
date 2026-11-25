@@ -32,7 +32,7 @@ ZXA.data.settings = {
       ['D1608', 'Sign in and security', 'lock-simple', 'Codes, locks, sessions, devices', '2026-09-02'],
     ]],
     ['Connections', [
-      ['D1620', 'Integrations', 'plug', '8 services, all healthy', '2026-11-19'],
+      ['D1620', 'Integrations', 'plug', '9 services, Tally by manual upload', '2026-11-19'],
       ['D1621', 'Razorpay', 'wallet', 'Live mode, webhook verified', '2026-11-19'],
       ['D1622', 'Email and SMS', 'mail-check', 'Sender, DLT templates, delivery', '2026-10-14'],
       ['D1641', 'Integration log', 'activity', 'Webhooks and API calls, 90 days', null],

@@ -24,6 +24,16 @@
         <span class="grow"><b>SMS provider is not answering.</b> Sign in codes are failing. Customers see a try again message (EC-A28).</span>
         <span class="btns"><a class="btn btn-sm btn-secondary" href="#D1622">Switch provider</a></span></div>
       <div data-when="ready test-mode partial">
+        <section class="card tally-card" style="margin-bottom:16px">
+          <div class="card-head"><span class="thumb"><svg class="ic"><use href="#ph-file-text"/></svg></span><div class="grow"><h2>Tally</h2><p>GST invoices in, receipts out</p></div><span class="tag green">Manual upload</span></div>
+          <div class="card-body"><dl class="dl">
+            <dt>Mode</dt><dd>Manual upload, Sales Register export (Excel or XML)</dd>
+            <dt>Last import</dt><dd>Today 9:15 AM, 6 invoices, 1 duplicate skipped</dd>
+            <dt>Last receipts export</dt><dd>Today 11:40 AM, 5 receipts, 1 to 23 Nov</dd>
+            <dt>Automatic sync</dt><dd><span class="tag outline">Not set up</span> TallyPrime only, coming later</dd></dl></div>
+          <div class="card-foot"><a class="btn btn-sm btn-secondary" href="#D1510">Import invoices</a><a class="btn btn-sm btn-ghost" href="#D1520">Receipts for Tally</a><span class="grow"></span>
+            <button class="btn btn-sm btn-secondary" type="button" data-open="tally-sync">Set up automatic sync</button></div>
+        </section>
         <div class="grid cols-2" id="cards"></div>
       </div>
       <div data-when="loading"><div class="grid cols-2">
@@ -46,11 +56,24 @@
   </div>
 </div>
 
+<div class="overlay right" id="tally-sync" hidden>
+  <div class="drawer" role="dialog" aria-labelledby="ts-title">
+    <div class="drawer-head"><div class="grow"><h2 id="ts-title">Automatic Tally sync</h2><p>Coming later. Manual upload works today.</p></div>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
+    <div class="drawer-body stack">
+      <div class="banner grey"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>Needs TallyPrime.</b> Tally ERP 9 stays on manual upload.</span></div>
+      <dl class="dl"><dt>How</dt><dd>A small sync program on the Tally PC</dd><dt>Every</dt><dd>15 minutes</dd>
+        <dt>In</dt><dd>New sales vouchers as invoices</dd><dt>Out</dt><dd>Receipts as receipt vouchers</dd><dt>Status</dt><dd><span class="tag outline">Not set up</span></dd></dl>
+    </div>
+    <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close>Close</button></div>
+  </div>
+</div>
+
 <aside class="proto" data-states="ready loading test-mode partial error">
-  <div><h3>What it is</h3><p>One card per outside service with its status, last event and masked keys.</p></div>
-  <div><h3>What you can do</h3><ul><li>Test a connection.</li><li>Open a service's setup (Razorpay D1621, IndiaMART D1111, Email and SMS D1622, Backups D1643).</li><li>Rotate keys with your password and a reason.</li></ul></div>
+  <div><h3>What it is</h3><p>One card per outside service with its status, last event and masked keys. Tally is first.</p></div>
+  <div><h3>What you can do</h3><ul><li>Tally: import invoices, export receipts, see the automatic sync plan.</li><li>Test a connection.</li><li>Open a service's setup (Razorpay D1621, IndiaMART D1111, Email and SMS D1622, Backups D1643).</li><li>Rotate keys with your password and a reason.</li></ul></div>
   <div><h3>What happens next</h3><p>Every call is written to the integration log (D1641). Failures alert on the dashboard.</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Test mode banner on every page while Razorpay is in test (Test mode state).</li><li>SMS provider down: alert, switch provider (Partial error state, EC-A28).</li><li>Without maps, suggestions use pincode and region only.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Test mode banner on every page while Razorpay is in test (Test mode state).</li><li>SMS provider down: alert, switch provider (Partial error state, EC-A28).</li><li>Without maps, suggestions use pincode and region only.</li><li>Open with the client: TallyPrime or Tally ERP 9 (decides automatic sync); who uploads the Tally export each day.</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>

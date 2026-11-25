@@ -59,6 +59,7 @@
   .set-jump{display:block; margin:0 0 16px; max-width:360px}
 }
 @media (max-width:640px){
+  .tally-card .card-foot{flex-wrap:wrap}
   .set-rows > .set-row{grid-template-columns:minmax(0, 1fr); padding:14px 16px}
   .set-control{grid-row:auto}
   .set-jump{max-width:none}

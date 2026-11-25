@@ -16,3 +16,6 @@
   .wizard .card-foot{flex-wrap:wrap}
   .wizard .card-foot .btn{flex:1 1 auto}
 }
+
+/* import wizard: Tally invoices and the Excel types show their own copy (D1510) */
+.wizard[data-kind="tally"] [data-kind="other"], .wizard[data-kind="other"] [data-kind="tally"]{display:none !important}

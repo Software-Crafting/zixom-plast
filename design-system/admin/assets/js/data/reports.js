@@ -69,8 +69,10 @@ ZXA.data.schedules = [
     status: 'active', last: '2026-11-20T18:00', lastOk: false, error: 'sales@zixom.in: mailbox does not exist', next: 'Fri 27 Nov, 6:00 PM' },
 ];
 
-/* import jobs (D1511). The setup imports on 2 Nov created the demo records */
+/* import jobs (D1511). The setup imports on 2 Nov created the demo records; Tally invoices are uploaded each morning (skipped: duplicate invoice numbers) */
 ZXA.data.imports = [
+  { id: 'IMP-0010', type: 'Tally invoices', file: 'Sales_Register_23Nov.xlsx', rows: 7, created: 6, updated: 0, skipped: 1, errors: 0,
+    status: 'done', by: 'Rajesh Goyal', when: '2026-11-23T09:15', undoUntil: '2026-11-24T09:15' },
   { id: 'IMP-0009', type: 'Machines', file: 'nova_machines_update.xlsx', rows: 3, created: 0, updated: 2, skipped: 0, errors: 1,
     status: 'done', by: 'Rajesh Goyal', when: '2026-11-23T10:20', undoUntil: '2026-11-24T10:20' },
   { id: 'IMP-0008', type: 'IndiaMART history', file: 'indiamart_enquiries_2026.csv', rows: 0, created: 0, updated: 0, skipped: 0, errors: 0,
@@ -85,8 +87,9 @@ ZXA.data.imports = [
   { id: 'IMP-0001', type: 'Customers', file: 'customers.xlsx', rows: 2, created: 2, updated: 0, skipped: 0, errors: 0, status: 'done', by: 'Rajesh Goyal', when: '2026-11-02T10:50' },
 ];
 
-/* background exports (D1520): over 5,000 rows, link valid 7 days */
+/* background exports (D1520): over 5,000 rows, link valid 7 days. Tally receipts: paid and verified payments as Tally receipt vouchers (XML) */
 ZXA.data.exports = [
+  { name: 'Tally receipts, 1 to 23 Nov', source: 'D910', format: 'XML', rows: 5, size: '14 KB', status: 'ready', when: '2026-11-23T11:40', expires: '2026-11-30', unit: 'receipts' },
   { name: 'Activity log, 1 Oct to 23 Nov', source: 'D1640', format: 'XLSX', rows: 18420, size: '2.4 MB', status: 'ready', when: '2026-11-23T11:05', expires: '2026-11-30' },
   { name: 'Delivery log, last 90 days', source: 'D1320', format: 'CSV', rows: 12806, status: 'running', progress: 62, when: '2026-11-23T11:52' },
   { name: 'IndiaMART log, last 90 days', source: 'D1112', format: 'XLSX', rows: 8640, status: 'failed', error: 'The export timed out', when: '2026-11-22T19:10' },

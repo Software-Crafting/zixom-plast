@@ -10,7 +10,7 @@
 <body class="adm" data-page="D1511" data-nav="D1510">
 <main class="content">
   <div class="page-head">
-    <div class="grow"><h1>Import history</h1><p>9 imports · 1 can be undone</p></div>
+    <div class="grow"><h1>Import history</h1><p id="head-sub"></p></div>
     <a class="btn btn-primary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>New import</a>
   </div>
 
@@ -34,7 +34,7 @@
         <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
           <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
       </div>
-      <div class="table-foot"><span id="foot">1 to 9 of 9</span><span class="grow"></span>
+      <div class="table-foot"><span id="foot"></span><span class="grow"></span>
         <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
     </section>
   </div>
@@ -66,7 +66,7 @@
       <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
     <div class="drawer-body stack">
       <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
-        <button class="chip" type="button" aria-pressed="false">Customers</button><button class="chip" type="button" aria-pressed="false">People</button>
+        <button class="chip" type="button" aria-pressed="false">Tally invoices</button><button class="chip" type="button" aria-pressed="false">Customers</button><button class="chip" type="button" aria-pressed="false">People</button>
         <button class="chip" type="button" aria-pressed="false">Machines</button><button class="chip" type="button" aria-pressed="false">Spare parts</button>
         <button class="chip" type="button" aria-pressed="false">Stock</button><button class="chip" type="button" aria-pressed="false">Leads</button>
         <button class="chip" type="button" aria-pressed="false">IndiaMART history</button></div></div>
@@ -82,18 +82,17 @@
 <div class="overlay center" id="undo" hidden>
   <div class="modal" role="alertdialog" aria-labelledby="undo-title">
     <div class="modal-head"><span class="disc red"><svg class="ic"><use href="#ph-undo"/></svg></span>
-      <div class="grow"><h2 id="undo-title">Undo nova_machines_update.xlsx?</h2>
-        <p>The 2 machines it updated go back to their earlier values. Rows changed since the import are kept and listed. Available until Tue 24 Nov, 10:20 AM.</p></div></div>
+      <div class="grow"><h2 id="undo-title"></h2><p id="undo-text"></p></div></div>
     <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Keep import</button>
-      <button class="btn btn-danger" type="button" data-close data-toast="Import undone. 2 machines restored">Undo import</button></div>
+      <button class="btn btn-danger" type="button" data-close data-toast="Import undone" id="undo-go">Undo import</button></div>
   </div>
 </div>
 
 <aside class="proto" data-states="ready loading empty no-results error">
-  <div><h3>What it is</h3><p>Every import with its counts and who ran it.</p></div>
+  <div><h3>What it is</h3><p>Every import with its counts and who ran it, Tally invoices included.</p></div>
   <div><h3>What you can do</h3><ul><li>Click a row for the details.</li><li>Download the file or the error file.</li><li>Undo an import within 24 hours.</li></ul></div>
   <div><h3>What happens next</h3><p>Fix the errors and import again (D1510).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Undo removes only rows created by that import that nobody changed since.</li><li>After 24 hours Undo is gone.</li><li>A failed import saved nothing; the reason is shown.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Undo removes only rows created by that import that nobody changed since.</li><li>Tally invoices: duplicate invoice numbers are skipped and counted.</li><li>After 24 hours Undo is gone.</li><li>A failed import saved nothing; the reason is shown.</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -112,11 +111,24 @@
   const when = (iso) => `${r.dayDate(iso)}, ${r.time(iso)}`;
 
   document.querySelector('#imports tbody').innerHTML = jobs.map((j) => `<tr data-drawer="quick" data-job="${j.id}">
-    <td><b>${j.file}</b><span class="sub">${j.type} · ${j.rows} rows</span></td>
+    <td><b>${j.file}</b><span class="sub">${j.type} · ${j.rows} rows${j.skipped ? ` · ${j.skipped} duplicate skipped` : ''}</span></td>
     <td>${statusTag(j)}</td><td class="num">${j.created}</td><td class="num">${j.updated}</td>
     <td class="num">${j.errors ? `<span class="red-text strong">${j.errors}</span>` : '0'}</td>
     <td class="nowrap">${j.by}</td><td class="nowrap" data-sort="${j.when}">${when(j.when)}</td>
-    <td class="nowrap">${canUndo(j) ? '<button class="btn btn-secondary btn-sm" type="button" data-open="undo">Undo</button><span class="sub">until 24 Nov, 10:20</span>' : '<span class="faint">–</span>'}</td></tr>`).join('');
+    <td class="nowrap">${canUndo(j) ? '<button class="btn btn-secondary btn-sm" type="button" data-open="undo">Undo</button><span class="sub">until ${r.date(j.undoUntil)}, ${r.time(j.undoUntil)}</span>' : '<span class="faint">–</span>'}</td></tr>`).join('');
+
+  document.getElementById('head-sub').textContent = `${jobs.length} imports · ${jobs.filter(canUndo).length} can be undone`;
+  /* the undo modal names the import of the row or drawer it opened from */
+  const UNDO = { 'Tally invoices': (j) => `The ${j.created} invoices it imported leave the dashboard and the app. Invoices with a payment are kept and listed.`,
+    Machines: (j) => `The ${j.updated} machines it updated go back to their earlier values. Rows changed since the import are kept and listed.` };
+  let undoJob = null;
+  document.addEventListener('click', (event) => {
+    const row = event.target.closest('[data-job]');
+    if (row) undoJob = job(row.dataset.job);
+    if (!event.target.closest('[data-open="undo"]') || !undoJob) return;
+    document.getElementById('undo-title').textContent = `Undo ${undoJob.file}?`;
+    document.getElementById('undo-text').textContent = `${UNDO[undoJob.type](undoJob)} Available until ${r.dayDate(undoJob.undoUntil)}, ${r.time(undoJob.undoUntil)}.`;
+  }, true);
 
   const VIEWS = { all: () => true, undo: canUndo, failed: (j) => j.status === 'failed' };
   const job = (id) => jobs.find((j) => j.id === id);
@@ -138,9 +150,9 @@
     document.getElementById('quick-body').innerHTML = `<div class="tags">${statusTag(j)}</div>
       ${j.status === 'failed' ? `<div class="banner red">${r.icon('warning-circle')}<span class="grow">${j.reason}</span></div>` : ''}
       ${j.status === 'undone' ? `<div class="banner grey">${r.icon('undo')}<span class="grow">Undone by ${j.undoneBy}, ${when(j.undoneAt)}. The ${j.created} rows it created were removed.</span></div>` : ''}
-      <dl class="dl"><dt>Rows in file</dt><dd>${j.rows}</dd><dt>Created</dt><dd>${j.created}</dd><dt>Updated</dt><dd>${j.updated}</dd>
+      <dl class="dl"><dt>Rows in file</dt><dd>${j.rows}</dd><dt>Created</dt><dd>${j.created}</dd><dt>Updated</dt><dd>${j.updated}</dd>${j.skipped ? `<dt>Skipped</dt><dd>${j.skipped} · INV-2026-0981 already imported</dd>` : ''}
         <dt>Errors</dt><dd>${j.errors}${j.errors ? ' · row 3: company code ZP-C-0009 does not exist' : ''}</dd>
-        <dt>Undo</dt><dd>${canUndo(j) ? 'Available until Tue 24 Nov, 10:20 AM' : j.status === 'done' ? 'Expired after 24 hours' : 'Not available'}</dd></dl>`;
+        <dt>Undo</dt><dd>${canUndo(j) ? `Available until ${r.dayDate(j.undoUntil)}, ${r.time(j.undoUntil)}` : j.status === 'done' ? 'Expired after 24 hours' : 'Not available'}</dd></dl>`;
     document.getElementById('quick-foot').innerHTML = `<button class="btn btn-secondary" type="button" data-toast="${j.file} downloaded">${r.icon('download-simple')}File</button>
       ${j.errors ? '<button class="btn btn-ghost" type="button" data-toast="Error file downloaded">Error file</button>' : ''}<span class="grow"></span>
       ${canUndo(j) ? '<button class="btn btn-primary" type="button" data-open="undo">Undo import</button>' : j.status === 'failed' ? '<a class="btn btn-primary" href="#D1510">Import again</a>' : ''}`;

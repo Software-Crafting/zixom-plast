@@ -13,7 +13,8 @@
     <div class="grow"><h1>Invoices</h1><p id="head-sub"></p></div>
     <button class="btn btn-secondary" type="button" data-menu="more-pages">Billing<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
     <button class="btn btn-secondary" type="button" data-menu="export-menu">Export<svg class="ic caret"><use href="#ph-caret-down"/></svg></button>
-    <a class="btn btn-primary" href="#D902"><svg class="ic"><use href="#ph-plus"/></svg>Create invoice</a>
+    <a class="btn btn-secondary" href="#D902"><svg class="ic"><use href="#ph-plus"/></svg>Create proforma</a>
+    <a class="btn btn-primary" href="#D1510"><svg class="ic"><use href="#ph-upload-simple"/></svg>Import from Tally</a>
   </div>
 
   <div data-when="ready empty no-results">
@@ -27,7 +28,7 @@
         <button role="tab" aria-selected="false" data-view="overdue">Overdue <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="partly">Partly paid <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="paid">Paid <span class="n"></span></button>
-        <button role="tab" aria-selected="false" data-view="draft">Drafts <span class="n"></span></button>
+        <button role="tab" aria-selected="false" data-view="draft">Proformas <span class="n"></span></button>
         <button role="tab" aria-selected="false" data-view="cancelled">Cancelled <span class="n"></span></button>
       </div>
       <div class="toolbar" data-when="ready no-results">
@@ -46,7 +47,7 @@
         <table class="table" id="invoices">
           <thead><tr>
             <th class="cb"><label class="check"><input type="checkbox" aria-label="Select all"></label></th>
-            <th class="sortable">Invoice</th><th class="sortable">Customer</th><th class="sortable">Type</th><th>Linked record</th>
+            <th class="sortable">Invoice</th><th class="sortable">Customer</th><th class="sortable">Type</th><th class="sortable">Source</th><th>Linked record</th>
             <th class="sortable">Issued</th><th class="sortable">Due</th><th class="sortable num">Amount</th><th class="sortable num">Balance</th>
             <th class="sortable">Status</th><th class="actions"></th>
           </tr></thead>
@@ -63,8 +64,9 @@
           <button type="button" aria-current="page">1</button><button type="button" disabled aria-label="Next page"><svg class="ic"><use href="#ph-caret-right"/></svg></button></div>
       </div>
       <div class="state" data-when="empty"><span class="disc"><svg class="ic"><use href="#ph-receipt"/></svg></span>
-        <h3>No invoices yet</h3><p>Invoices you issue will appear here.</p>
-        <div class="btns"><a class="btn btn-primary" href="#D902">Create invoice</a></div></div>
+        <h3>No invoices yet</h3><p>Imported Tally invoices and proformas appear here.</p>
+        <div class="banner grey" style="text-align:left; max-width:520px"><svg class="ic"><use href="#ph-info"/></svg><span class="grow"><b>GST invoices are made in Tally.</b> Export the Sales Register from Tally and import it here; customers then pay in the app.</span></div>
+        <div class="btns"><a class="btn btn-secondary" href="#D902">Create proforma</a><a class="btn btn-primary" href="#D1510">Import from Tally</a></div></div>
     </section>
   </div>
 
@@ -101,6 +103,8 @@
       <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#ph-x"/></svg></button></div>
     <div class="drawer-body stack">
       <div class="field"><span class="label">Status</span><div class="row wrap" data-chips id="f-status"></div></div>
+      <div class="field"><span class="label">Source</span><div class="row wrap" data-chips>
+        <button class="chip" type="button" aria-pressed="false">Tally</button><button class="chip" type="button" aria-pressed="false">Proforma</button></div></div>
       <div class="field"><span class="label">Type</span><div class="row wrap" data-chips>
         <button class="chip" type="button" aria-pressed="false">Service</button><button class="chip" type="button" aria-pressed="false">AMC</button>
         <button class="chip" type="button" aria-pressed="false">Parts</button><button class="chip" type="button" aria-pressed="false">Other</button></div></div>
@@ -121,9 +125,10 @@
 <div class="menu" id="columns-menu" hidden>
   <div class="label">Columns</div>
   <label class="check"><input type="checkbox" checked data-col="3" data-table="invoices"> Type</label>
-  <label class="check"><input type="checkbox" checked data-col="4" data-table="invoices"> Linked record</label>
-  <label class="check"><input type="checkbox" checked data-col="5" data-table="invoices"> Issued</label>
-  <label class="check"><input type="checkbox" checked data-col="7" data-table="invoices"> Amount</label>
+  <label class="check"><input type="checkbox" checked data-col="4" data-table="invoices"> Source</label>
+  <label class="check"><input type="checkbox" checked data-col="5" data-table="invoices"> Linked record</label>
+  <label class="check"><input type="checkbox" checked data-col="6" data-table="invoices"> Issued</label>
+  <label class="check"><input type="checkbox" checked data-col="8" data-table="invoices"> Amount</label>
 </div>
 <div class="menu" id="export-menu" hidden>
   <button type="button" data-toast="Excel file downloaded"><svg class="ic"><use href="#ph-file-spreadsheet"/></svg>Excel (.xlsx)</button>
@@ -142,7 +147,6 @@
   <a href="#D903"><svg class="ic"><use href="#ph-external-link"/></svg>Open invoice</a>
   <button type="button" data-toast="Reminder sent"><svg class="ic"><use href="#ph-bell-ring"/></svg>Send reminder</button>
   <button type="button" data-toast="PDF downloaded"><svg class="ic"><use href="#ph-file-pdf"/></svg>Download PDF</button>
-  <a href="#D902"><svg class="ic"><use href="#ph-copy"/></svg>Duplicate as new</a>
   <button type="button" data-toast="Link copied"><svg class="ic"><use href="#ph-link"/></svg>Copy link</button>
 </div>
 <div class="overlay center" id="bulk-result" hidden>
@@ -153,10 +157,10 @@
 </div>
 
 <aside class="proto" data-states="ready loading empty no-results error" data-mobile="../../../screens/customer/C801-payments.html">
-  <div><h3>What it is</h3><p>Every invoice Zixom issued, with balance and status in Admin wording.</p></div>
-  <div><h3>What you can do</h3><ul><li>Search, filter, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the invoice.</li><li>Select rows to send reminders or download PDFs.</li><li>Billing menu opens credit notes, statements, reminders, settings.</li></ul></div>
-  <div><h3>What happens next</h3><p>Invoice detail (D903), Create invoice (D902), Offline verification (D912), Overdue follow up (D925).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Overdue rows are red with days overdue.</li><li>Drafts have no number until issue (EC-A43).</li><li>Invoices are never deleted; cancelled stays listed.</li><li>Bulk with some failures shows done and failed (EC-A64).</li></ul></div>
+  <div><h3>What it is</h3><p>GST invoices imported from Tally and proformas made here, with balance and status.</p></div>
+  <div><h3>What you can do</h3><ul><li>Import from Tally (D1510); create a proforma for an advance (D902).</li><li>Search, filter by source, use saved views, choose columns.</li><li>Click a row for the quick view; click the number for the invoice.</li><li>Select rows to send reminders or download PDFs.</li><li>Billing menu opens credit notes, statements, reminders, settings.</li></ul></div>
+  <div><h3>What happens next</h3><p>Invoice detail (D903), New proforma (D902), Offline verification (D912), Overdue follow up (D925).</p></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Overdue rows are red with days overdue.</li><li>The dashboard issues no GST invoice numbers; INV numbers are Tally vouchers.</li><li>Empty state explains the Tally import.</li><li>Invoices are never deleted; cancelled stays listed.</li><li>Bulk with some failures shows done and failed (EC-A64).</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -192,12 +196,13 @@
   };
   document.querySelector('#invoices tbody').innerHTML = all.map((i) => {
     const c = r.company(i.company);
-    const number = i.status === 'draft' ? `<a class="rec" href="#D902">Draft</a><span class="sub">${i.title}</span>` : `<a class="rec" href="#D903?inv=${i.number}">${i.number}</a><span class="sub">${i.title}</span>`;
+    const number = i.status === 'draft' ? `<a class="rec" href="#D902">${B.proformaNumber(i)}</a><span class="sub">${i.title}</span>` : `<a class="rec" href="#D903?inv=${i.number}">${i.number}</a><span class="sub">${i.title}</span>`;
     return `<tr data-drawer="quick" data-inv="${i.number}" class="${i.status === 'overdue' ? 'urgent' : ''}">
       <td class="cb"><label class="check"><input type="checkbox" aria-label="Select ${i.number}"></label></td>
       <td>${number}</td>
       <td><b class="clip">${c.name}</b><span class="sub">${c.code}</span></td>
       <td>${typeTag(i.type)}</td>
+      <td>${B.sourceTag(i)}</td>
       <td class="nowrap">${B.recordLink(i.for)}</td>
       <td class="nowrap" data-sort="${i.issued}">${i.status === 'draft' ? '<span class="faint">Not issued</span>' : r.date(i.issued)}</td>
       <td class="nowrap" data-sort="${i.due}">${dueCell(i)}</td>
@@ -235,7 +240,7 @@
 
   /* quick view: the primary action follows the status (section 11) */
   const PRIMARY = {
-    draft: ['Issue invoice', '#D902'], due: ['Send reminder', 'toast:Reminder sent'], overdue: ['Log a call', '#D925'], processing: ['Re-check status', 'toast:Still processing at the bank'],
+    draft: ['Send proforma', '#D902'], due: ['Send reminder', 'toast:Reminder sent'], overdue: ['Log a call', '#D925'], processing: ['Re-check status', 'toast:Still processing at the bank'],
     verification: ['Verify proof', '#D912'], partly: ['Record payment', '#D903'], paid: ['Download receipt', 'toast:Receipt downloaded'], cancelled: null,
   };
   const quick = document.getElementById('quick');
@@ -243,17 +248,18 @@
     const i = B.invoice(event.detail.dataset.inv);
     const c = r.company(i.company);
     const t = B.tax(i.lines, B.billing(i.company).stateCode);
-    document.getElementById('quick-title').textContent = i.status === 'draft' ? 'Draft invoice' : i.number;
+    document.getElementById('quick-title').textContent = i.status === 'draft' ? B.proformaNumber(i) : i.number;
     document.getElementById('quick-sub').textContent = `${i.type} · ${i.title}`;
     document.getElementById('quick-open').href = i.status === 'draft' ? ZXA.href('D902') : ZXA.href('D903', `?inv=${i.number}`);
-    document.getElementById('quick-open').textContent = i.status === 'draft' ? 'Open draft' : 'Open invoice';
+    document.getElementById('quick-open').textContent = i.status === 'draft' ? 'Open proforma' : 'Open invoice';
     const action = PRIMARY[i.status];
     document.getElementById('quick-action').innerHTML = !action ? '' : action[1].startsWith('toast:')
       ? `<button class="btn btn-primary" type="button" data-toast="${action[1].slice(6)}">${action[0]}</button>`
       : `<a class="btn btn-primary" href="${action[1]}${action[1] === '#D903' ? `?inv=${i.number}` : ''}">${action[0]}</a>`;
     document.getElementById('quick-body').innerHTML = `
-      <div class="tags">${B.invoiceTag(i.status)}<span class="tag outline">${i.type}</span></div>
+      <div class="tags">${B.invoiceTag(i.status)}${B.sourceTag(i)}<span class="tag outline">${i.type}</span></div>
       <dl class="dl">
+        <dt>Source</dt><dd>${B.fromTally(i) ? `Tally, voucher ${B.voucher(i)}<br><span class="muted">Imported ${B.importedText(i)}</span>` : 'Proforma, no GST invoice number'}</dd>
         <dt>Customer</dt><dd>${c.name}<br><span class="muted mono">${c.gstin}</span></dd>
         <dt>Linked record</dt><dd>${B.recordLink(i.for)}</dd>
         <dt>Issued</dt><dd>${i.status === 'draft' ? 'Not issued' : r.date(i.issued)}</dd>

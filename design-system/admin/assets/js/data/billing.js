@@ -136,6 +136,14 @@ ZXA.data.billing = {
     { invoice: 'INV-2026-0948', company: 'nova', amount: 0.4, reason: 'Rounding difference', when: '2026-07-02T10:30', by: 'Rajesh Goyal' },
   ],
 
+  /* Tally (client meeting): GST invoices are made in Tally and imported (D1510); paid receipts go back as Tally receipt vouchers (D1520).
+     Each invoice was imported the morning after it was made unless listed here. The dashboard only makes proformas, PRF-2026-NNNN */
+  tally: {
+    imported: { 'INV-2026-0980': '2026-11-23T09:15' },
+    receiptsFrom: '2026-11-01', receiptsExported: '2026-11-23T11:40', proformaNext: 'PRF-2026-0041',
+    proformas: { 'INV-2026-0990': 'PRF-2026-0039', 'INV-2026-0991': 'PRF-2026-0040' },
+  },
+
   /* overdue follow up: calls and promises per invoice */
   followUps: {
     'INV-2026-0989': { last: { when: '2026-11-18T11:30', who: 'Rakesh Mehta', outcome: 'Promised to pay by 20 Nov' }, promise: '2026-11-20', broken: true,
@@ -265,7 +273,32 @@ ZXA.bill = (() => {
     return `<span class="sla ${days <= 1 ? 'risk' : 'ok'}">${r.icon(days <= 1 ? 'clock-countdown' : 'check-circle')}By ${r.dayDate(due)}</span>`;
   };
 
-  return { disputeDue, invoices, invoice, payments, payment, paymentId, refund, creditNote, dispute, invoiceTag, paymentTag, refundTag, disputeTag, correctionTag,
+  /* Tally: drafts are proformas made here; every other invoice was made in Tally and imported */
+  const t = b.tally;
+  const fromTally = (inv) => inv.status !== 'draft';
+  const proformaNumber = (inv) => t.proformas[inv.number];
+  const sourceTag = (inv) => (fromTally(inv) ? tag('Tally', 'outline') : tag('Proforma', 'blue'));
+  const tallyImported = (inv) => {
+    if (t.imported[inv.number]) return t.imported[inv.number];
+    const next = new Date(`${inv.issued}T09:15`);
+    next.setDate(next.getDate() + 1);
+    return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(next.getDate()).padStart(2, '0')}T09:15`;
+  };
+  const voucher = (inv) => String(Number(inv.number.slice(-4)));
+  /* "23 Nov 9:15 AM" */
+  const importedText = (inv) => {
+    const iso = tallyImported(inv);
+    const [h, m] = iso.slice(11, 16).split(':').map(Number);
+    return `${r.date(iso).replace(/ \d{4}$/, '')} ${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+  };
+  /* receipt voucher export: money received from 1 Nov is in the Tally file; older payments were typed in Tally by hand */
+  const RECEIVED = ['paid', 'refunded', 'refund-initiated'];
+  const tallyReceipt = (p) => {
+    if (!RECEIVED.includes(p.status)) return null;
+    return p.when.slice(0, 10) >= t.receiptsFrom ? 'exported' : 'not-exported';
+  };
+
+  return { fromTally, proformaNumber, sourceTag, tallyImported, importedText, voucher, tallyReceipt, disputeDue, invoices, invoice, payments, payment, paymentId, refund, creditNote, dispute, invoiceTag, paymentTag, refundTag, disputeTag, correctionTag,
     INVOICE, PAYMENT, METHOD_ICON, linesTable, balance, daysOverdue, billing, linkOf, recordLink, hsn, tax, words, passwordFields };
 })();
 

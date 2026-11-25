@@ -10,7 +10,8 @@
 <body class="adm" data-page="D1520">
 <main class="content">
   <div class="page-head">
-    <div class="grow"><h1>Exports</h1><p>Lists over 5,000 rows export here. Links are valid for 7 days.</p></div>
+    <div class="grow"><h1>Exports</h1><p>Large lists and Tally receipt files. Links are valid for 7 days.</p></div>
+    <button class="btn btn-secondary" type="button" data-open="tally-export"><svg class="ic"><use href="#ph-file-text"/></svg>Export receipts for Tally</button>
   </div>
 
   <div data-when="ready no-results">
@@ -27,7 +28,7 @@
         <div class="state" data-noresults hidden><span class="disc"><svg class="ic"><use href="#ph-magnifying-glass"/></svg></span><h3>No matching results</h3><p>Try different words or clear the filters.</p>
           <div class="btns"><button class="btn btn-secondary" type="button" data-clear-search>Clear search</button></div></div>
       </div>
-      <div class="table-foot"><span>1 to 4 of 4</span><span class="grow"></span>
+      <div class="table-foot"><span id="count"></span><span class="grow"></span>
         <label class="row">Rows <select class="select" aria-label="Rows per page"><option>25</option><option>50</option><option>100</option></select></label></div>
     </section>
   </div>
@@ -53,7 +54,7 @@
         <button class="chip" type="button" aria-pressed="false">Ready</button><button class="chip" type="button" aria-pressed="false">Running</button>
         <button class="chip" type="button" aria-pressed="false">Failed</button><button class="chip" type="button" aria-pressed="false">Expired</button></div></div>
       <div class="field"><span class="label">Format</span><div class="row wrap" data-chips>
-        <button class="chip" type="button" aria-pressed="false">XLSX</button><button class="chip" type="button" aria-pressed="false">CSV</button></div></div>
+        <button class="chip" type="button" aria-pressed="false">XLSX</button><button class="chip" type="button" aria-pressed="false">CSV</button><button class="chip" type="button" aria-pressed="false">XML</button></div></div>
     </div>
     <div class="drawer-foot"><span class="grow"></span><button class="btn btn-primary" type="button" data-close data-toast="Filters applied">Apply</button></div>
   </div>
@@ -72,11 +73,28 @@
   </div>
 </div>
 
+<div class="overlay center" id="tally-export" hidden>
+  <div class="modal" role="dialog" aria-labelledby="te-title">
+    <div class="modal-head"><span class="disc"><svg class="ic"><use href="#ph-file-text"/></svg></span>
+      <div class="grow"><h2 id="te-title">Export receipts for Tally</h2><p>Online and verified offline payments as Tally receipt vouchers (XML).</p></div></div>
+    <div class="modal-body stack">
+      <div class="form-grid">
+        <div class="field"><label for="te-from">From</label><input class="input" id="te-from" type="date" value="2026-11-01"></div>
+        <div class="field"><label for="te-to">To</label><input class="input" id="te-to" type="date" value="2026-11-23"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Skip payments already exported</label>
+      <span class="hint">In Tally: Gateway of Tally &gt; Import &gt; Vouchers, then choose the file.</span>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="button" data-close data-busy data-toast="Tally receipts XML is ready below">Export XML</button></div>
+  </div>
+</div>
+
 <aside class="proto" data-states="ready loading empty no-results error">
-  <div><h3>What it is</h3><p>Background exports of large lists, with their status and download link.</p></div>
-  <div><h3>What you can do</h3><ul><li>Download a ready file.</li><li>Retry a failed export.</li><li>Copy the link or delete the export.</li></ul></div>
+  <div><h3>What it is</h3><p>Background exports of large lists and Tally receipt files, with status and download link.</p></div>
+  <div><h3>What you can do</h3><ul><li>Download a ready file.</li><li>Export receipts for Tally: payments in a period as Tally receipt vouchers (XML).</li><li>Retry a failed export.</li><li>Copy the link or delete the export.</li></ul></div>
   <div><h3>What happens next</h3><p>A notification arrives when an export is ready. Started from Excel export (D1521).</p></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Over 5,000 rows runs in the background (EC-A34).</li><li>Links expire after 7 days; export again.</li><li>Failed exports can be retried. Every export is in the activity log.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Over 5,000 rows runs in the background (EC-A34).</li><li>Links expire after 7 days; export again.</li><li>Tally receipts skip payments already exported, so a voucher is never entered twice.</li><li>Failed exports can be retried. Every export is in the activity log.</li></ul></div>
 </aside>
 
 <script src="../../assets/icons.js"></script>
@@ -104,11 +122,12 @@
   };
   document.querySelector('#exports tbody').innerHTML = ZXA.data.exports.map((x) => `<tr data-name="${x.name}">
     <td><b>${x.name}</b><span class="sub">${ZXA.page(x.source).name} · ${x.format}</span></td>
-    <td class="num" data-sort="${x.rows}">${n(x.rows)}</td>
+    <td class="num" data-sort="${x.rows}">${n(x.rows)}${x.unit ? `<span class="sub">${x.unit}</span>` : ''}</td>
     <td>${STATUS[x.status](x)}</td>
     <td class="nowrap" data-sort="${x.when}">${r.dayDate(x.when)}, ${r.time(x.when)}<span class="sub">Rajesh Goyal</span></td>
     <td class="nowrap">${LINK[x.status](x)}</td>
     <td class="actions"><button class="icon-btn sm" type="button" aria-label="More actions" data-menu="row-menu"><svg class="ic"><use href="#ph-dots-three"/></svg></button></td></tr>`).join('');
+  document.getElementById('count').textContent = `1 to ${ZXA.data.exports.length} of ${ZXA.data.exports.length}`;
   document.getElementById('sk-rows').innerHTML = `<tr>${'<td><span class="sk sk-line"></span></td>'.repeat(5)}</tr>`.repeat(4);
   document.addEventListener('click', (event) => {
     const dots = event.target.closest('[data-menu="row-menu"]');
