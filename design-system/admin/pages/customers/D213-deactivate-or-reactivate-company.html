@@ -97,9 +97,9 @@
     $('m-go').textContent = 'Deactivate';
   }
 
-  /* Deactivate stays disabled until every open ticket has a decision */
-  const sync = () => { if (!reactivate) $('m-go').disabled = [...document.querySelectorAll('[data-decide]')].some((s) => !s.value); };
-  document.addEventListener('change', (e) => { if (e.target.matches('[data-decide]')) sync(); });
+  /* Deactivate stays disabled until every open ticket has a decision (unless Skip validation is on) */
+  const sync = () => { if (!reactivate) $('m-go').disabled = !ZXA.demo.skipValidation() && [...document.querySelectorAll('[data-decide]')].some((s) => !s.value); };
+  document.addEventListener('change', (e) => { if (e.target.matches('[data-decide], [data-skip-validation]')) sync(); });
   $('all-cancel')?.addEventListener('click', () => { document.querySelectorAll('[data-decide]').forEach((s) => { s.value = 'Cancel ticket'; }); sync(); });
   sync();
   $('m-go').addEventListener('click', () => {

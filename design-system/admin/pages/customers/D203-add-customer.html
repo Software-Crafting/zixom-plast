@@ -105,11 +105,17 @@
   };
   const SERVICEABLE = /^(38|39|36|41|40|12|11)/;
 
+  /* Skip validation turns format errors back into the field hint; demo states still show theirs.
+     'block' is a business conflict (GSTIN already used, engineer's number): it shows as an error and is never skipped */
+  const HINTS = { 'gstin-msg': '15 characters. The state is filled from the first two digits.', 'bpin-msg': '6 digits', 'spin-msg': 'Checked against service areas', 'cmob-msg': '10 digits' };
+  let demoFill = false;
   const setMsg = (input, msgId, text, kind) => {
+    if (kind === 'error' && !demoFill && ZXA.demo.skipValidation()) return setMsg(input, msgId, HINTS[msgId], 'hint');
     const msg = $(msgId);
-    input.setAttribute('aria-invalid', String(kind === 'error'));
-    msg.className = kind === 'error' ? 'error' : 'hint';
-    msg.innerHTML = kind === 'error' ? `${r.icon('warning-circle')}<span>${text}</span>` : text;
+    const error = kind === 'error' || kind === 'block';
+    input.setAttribute('aria-invalid', String(error));
+    msg.className = error ? 'error' : 'hint';
+    msg.innerHTML = error ? `${r.icon('warning-circle')}<span>${text}</span>` : text;
   };
   const checkGstin = () => {
     const input = $('gstin');
@@ -117,7 +123,7 @@
     if (!g) return setMsg(input, 'gstin-msg', '15 characters. The state is filled from the first two digits.', 'hint');
     const dup = cx.companies.find((c) => c.gstin === g);
     if (dup) {
-      return setMsg(input, 'gstin-msg', `Already used by <a href="${link('D202', `?c=${dup.id}`)}">${dup.code} ${r.esc(dup.name)}</a>`, 'error');
+      return setMsg(input, 'gstin-msg', `Already used by <a href="${link('D202', `?c=${dup.id}`)}">${dup.code} ${r.esc(dup.name)}</a>`, 'block');
     }
     if (g.length < 15) return setMsg(input, 'gstin-msg', `${g.length} of 15 characters`, 'hint');
     if (!PATTERN.test(g)) return setMsg(input, 'gstin-msg', 'This is not a valid GSTIN format', 'error');
@@ -141,7 +147,7 @@
     if (!/^[6-9]\d{9}$/.test(digits)) return setMsg(input, 'cmob-msg', 'Enter a 10 digit mobile number', 'error');
     const pretty = `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
     const engineer = cx.engineers.find((p) => p.mobile === pretty);
-    if (engineer) return setMsg(input, 'cmob-msg', `This is engineer ${engineer.name}'s number. <a href="${link('D207')}">Account conflicts</a>`, 'error');
+    if (engineer) return setMsg(input, 'cmob-msg', `This is engineer ${engineer.name}'s number. <a href="${link('D207')}">Account conflicts</a>`, 'block');
     const person = cx.customers.find((p) => p.mobile === pretty);
     if (person) return setMsg(input, 'cmob-msg', `<span class="amber-text">${person.name} uses this number at ${person.companies.map((k) => `<a href="${link('D202', `?c=${k.id}`)}">${r.esc(cx.company(k.id).name)}</a>`).join(', ')}. Saving adds this company to them.</span>`, 'hint');
     return setMsg(input, 'cmob-msg', '<span class="green-text">Valid</span>', 'hint');
@@ -182,12 +188,22 @@
     return first;
   };
 
+  /* with Skip validation on, errors left from before it was switched on clear; business conflicts stay */
+  const recheck = () => {
+    document.querySelectorAll('#form .error.req').forEach((el) => el.remove());
+    required.forEach((id) => $(id).removeAttribute('aria-invalid'));
+    checkGstin(); checkPin('bpin'); checkPin('spin'); checkMobile();
+  };
+
   let then = 'save';
   document.addEventListener('click', (event) => { const b = event.target.closest('[data-then]'); if (b) then = b.dataset.then; });
   $('form').addEventListener('submit', (event) => {
     event.preventDefault();
-    const first = showErrors();
-    if (first || document.querySelector('#form [aria-invalid="true"]')) { (first || document.querySelector('#form [aria-invalid="true"]')).focus(); return; }
+    /* the Duplicate and Errors demo states keep blocking; Skip validation passes what was typed */
+    const skip = ZXA.demo.skipValidation() && !['duplicate', 'errors'].includes(document.body.dataset.state);
+    if (skip) recheck();
+    const invalid = (skip ? null : showErrors()) || document.querySelector('#form [aria-invalid="true"]');
+    if (invalid) { invalid.focus(); return; }
     const button = $('save');
     button.setAttribute('aria-busy', 'true');
     button.disabled = true;
@@ -199,11 +215,13 @@
   document.addEventListener('click', (event) => {
     const state = event.target.closest('[data-proto-state]')?.dataset.protoState;
     if (!state) return;
+    demoFill = true;
     document.querySelectorAll('.error.req').forEach((el) => el.remove());
     clear();
     if (state === 'duplicate') fill({ name: 'Shree Packaging Industries Pvt Ltd', gstin: '24AAAAA0000A1Z5', cname: 'Rakesh Mehta', cmob: '9825011410', bpin: '382445' });
     if (state === 'errors') { fill({ name: 'Sai Thermoform Works', gstin: '24AAKCS9911K1Z4', bpin: '3600' }); showErrors(); }
     if (state === 'ready') fromRequest();
+    demoFill = false;
   });
 })();
 </script>

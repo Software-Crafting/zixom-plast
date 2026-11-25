@@ -34,7 +34,6 @@
       <button class="btn btn-primary btn-lg btn-block" type="submit" id="verify-btn">Verify</button>
       <div class="links center"><a href="#D001"><svg class="ic" style="width:15px;height:15px"><use href="#ph-arrow-left"/></svg> Use another account</a></div>
     </form>
-    <p class="auth-foot">Codes go to your work email only.</p>
   </div>
 </main>
 
@@ -86,7 +85,7 @@
     const expired = document.body.dataset.state === 'expired' || expiresIn <= 0;
     $('expiry').textContent = expired ? 'Code expired' : `Code expires in ${mmss(expiresIn)}`;
     resend.disabled = resendsLeft === 0 || (resendIn > 0 && !expired);
-    resend.textContent = resendsLeft === 0 ? 'No resends left' : resend.disabled ? `Resend in ${mmss(resendIn)}` : 'Resend code';
+    resend.textContent = resendsLeft === 0 ? 'No resends left' : resend.disabled ? `Resend in ${mmss(resendIn)}` : 'Resend';
   };
   window.setInterval(() => { expiresIn = Math.max(0, expiresIn - 1); resendIn = Math.max(0, resendIn - 1); render(); }, 1000);
   resend.addEventListener('click', () => {
@@ -94,7 +93,7 @@
     resendIn = RESEND_WAIT;
     expiresIn = 5 * 60;
     if (document.body.dataset.state === 'expired') ZXA.ui.setState('ready');
-    ZXA.ui.toast(`New code sent. ${resendsLeft} ${resendsLeft === 1 ? 'resend' : 'resends'} left`);
+    ZXA.ui.toast('Code resent');
     render();
   });
 
@@ -112,7 +111,7 @@
   $('verify').addEventListener('submit', (event) => {
     event.preventDefault();
     if (verify.disabled) return;
-    if (boxes.some((box) => !box.value)) { $('otp').classList.add('invalid'); boxes.find((box) => !box.value).focus(); return; }
+    if (!ZXA.demo.skipValidation() && boxes.some((box) => !box.value)) { $('otp').classList.add('invalid'); boxes.find((box) => !box.value).focus(); return; }
     ZXA.ui.setState('verifying');
     window.setTimeout(() => ZXA.ui.go('D101'), 700);
   });

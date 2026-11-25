@@ -157,8 +157,10 @@
     const other = cx.customers.find((x) => x.mobile === pretty && x.id !== p?.id);
     input.removeAttribute('aria-invalid');
     msg.className = 'hint';
-    if (!digits) { msg.textContent = '10 digits. Must be unused.'; return true; }
-    if (!/^[6-9]\d{9}$/.test(digits)) { input.setAttribute('aria-invalid', 'true'); msg.className = 'error'; msg.innerHTML = `${ic('warning-circle')}<span>Enter a 10 digit mobile number</span>`; return false; }
+    const formatOk = /^[6-9]\d{9}$/.test(digits);
+    /* Skip validation passes a wrong format; engineer and same-company numbers stay blocked (business rule) */
+    if (!digits || (!formatOk && ZXA.demo.skipValidation())) { msg.textContent = '10 digits. Must be unused.'; return true; }
+    if (!formatOk) { input.setAttribute('aria-invalid', 'true'); msg.className = 'error'; msg.innerHTML = `${ic('warning-circle')}<span>Enter a 10 digit mobile number</span>`; return false; }
     if (engineer) { input.setAttribute('aria-invalid', 'true'); msg.className = 'error'; msg.innerHTML = `${ic('warning-circle')}<span>Engineer ${engineer.name} uses this number. <a href="${link('D207')}">Account conflicts</a></span>`; return false; }
     if (other && other.companies.some((k) => k.id === c.id)) { input.setAttribute('aria-invalid', 'true'); msg.className = 'error'; msg.innerHTML = `${ic('warning-circle')}<span>${other.name} already has this number here. <a href="${link('D205', `?p=${other.id}`)}">Open</a></span>`; return false; }
     if (other) { msg.innerHTML = `<span class="amber-text">${other.name} uses this number at ${other.companies.map((k) => cx.company(k.id).name).join(', ')}. Saving adds ${c.name} to them.</span>`; return true; }
@@ -173,8 +175,9 @@
     const name = $('name');
     name.closest('.field').querySelector('.error')?.remove();
     name.removeAttribute('aria-invalid');
-    if (!name.value.trim()) { name.setAttribute('aria-invalid', 'true'); name.closest('.field').insertAdjacentHTML('beforeend', `<span class="error">${ic('warning-circle')}Required</span>`); name.focus(); return; }
-    if (!$('mob').value.trim()) { $('mob').setAttribute('aria-invalid', 'true'); $('mob-msg').className = 'error'; $('mob-msg').innerHTML = `${ic('warning-circle')}Required`; $('mob').focus(); return; }
+    const skip = ZXA.demo.skipValidation();
+    if (!skip && !name.value.trim()) { name.setAttribute('aria-invalid', 'true'); name.closest('.field').insertAdjacentHTML('beforeend', `<span class="error">${ic('warning-circle')}Required</span>`); name.focus(); return; }
+    if (!skip && !$('mob').value.trim()) { $('mob').setAttribute('aria-invalid', 'true'); $('mob-msg').className = 'error'; $('mob-msg').innerHTML = `${ic('warning-circle')}Required`; $('mob').focus(); return; }
     if (!checkMobile()) { $('mob').focus(); return; }
     event.submitter.disabled = true;
     ZXA.ui.toast(p ? 'Saved' : 'Saved. Invitation sent');

@@ -112,10 +112,11 @@
 
   $('accept').addEventListener('submit', (event) => {
     event.preventDefault();
-    const codeOk = boxes.every((box) => box.value);
-    const rulesOk = checkRules();
-    const match = pass.value === confirm.value && confirm.value !== '';
-    const terms = $('terms').checked;
+    const skip = ZXA.demo.skipValidation();
+    const codeOk = skip || boxes.every((box) => box.value);
+    const rulesOk = checkRules() || skip;
+    const match = skip || (pass.value === confirm.value && confirm.value !== '');
+    const terms = skip || $('terms').checked;
     $('otp').classList.toggle('invalid', !codeOk);
     pass.setAttribute('aria-invalid', String(!rulesOk));
     confirm.setAttribute('aria-invalid', String(!match));

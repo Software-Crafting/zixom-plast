@@ -127,7 +127,7 @@
 
   $('cf-go').addEventListener('click', () => {
     const pass = $('cf-pass');
-    if (!pass.value) { pass.setAttribute('aria-invalid', 'true'); $('cf-msg').className = 'error'; $('cf-msg').innerHTML = `${ic('warning-circle')}<span>Enter your password</span>`; return; }
+    if (!ZXA.demo.skipValidation() && !pass.value) { pass.setAttribute('aria-invalid', 'true'); $('cf-msg').className = 'error'; $('cf-msg').innerHTML = `${ic('warning-circle')}<span>Enter your password</span>`; return; }
     ZXA.ui.closeOverlay($('confirm'));
     ZXA.ui.setState('merged');
     ZXA.ui.toast('Companies merged');

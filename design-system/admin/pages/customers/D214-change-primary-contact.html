@@ -78,10 +78,11 @@
   const sync = () => {
     const picked = cx.person(document.querySelector('input[name="primary"]:checked')?.value);
     const changed = picked && picked !== current;
-    $('save').disabled = !changed;
+    $('save').disabled = !(ZXA.demo.skipValidation() || changed);
     $('d-note').textContent = changed ? `${picked.name} and ${current?.name ?? 'nobody'} will be told` : '';
   };
   $('people').addEventListener('change', sync);
+  document.addEventListener('change', (e) => { if (e.target.matches('[data-skip-validation]')) sync(); });
   sync();
   $('save').addEventListener('click', () => {
     ZXA.ui.toast('Primary contact changed. Both people told');

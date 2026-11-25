@@ -89,7 +89,7 @@
 
   $('again').addEventListener('submit', (event) => {
     event.preventDefault();
-    const ok = password.value.length > 0;
+    const ok = ZXA.demo.skipValidation() || password.value.length > 0;
     $('password-error').hidden = ok;
     password.setAttribute('aria-invalid', String(!ok));
     if (!ok || button.disabled) return;

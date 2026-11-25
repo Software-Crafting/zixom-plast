@@ -203,7 +203,7 @@
     if (event.target.closest('[data-ack]')) { ZXA.ui.setState('acknowledged'); ZXA.ui.toast('Acknowledged. Sound stopped for every Admin'); }
     if (event.target.closest('#r-save')) {
       const reason = document.getElementById('r-reason');
-      const bad = reason.value.trim().length < 10;
+      const bad = !ZXA.demo.skipValidation() && reason.value.trim().length < 10;
       document.getElementById('r-error').hidden = !bad;
       reason.setAttribute('aria-invalid', String(bad));
       if (bad) return;

@@ -112,7 +112,7 @@
     event.preventDefault();
     const name = $('name');
     name.closest('.field').querySelector('.error')?.remove();
-    if (!name.value.trim()) {
+    if (!ZXA.demo.skipValidation() && !name.value.trim()) {
       name.setAttribute('aria-invalid', 'true');
       name.closest('.field').insertAdjacentHTML('beforeend', `<span class="error">${r.icon('warning-circle')}Required</span>`);
       name.focus();
