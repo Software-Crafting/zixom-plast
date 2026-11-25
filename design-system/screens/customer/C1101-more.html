@@ -119,7 +119,7 @@
   const $ = (id) => document.getElementById(id);
   const company = data.companies.find((c) => c.id === 'shree');
   const user = (id) => data.users.find((u) => u.id === id);
-  const PAGE_ONLY_PEOPLE = 2; /* ponytail: the invited and disabled people live in C1105's page data; only their count shows here */
+  const PAGE_ONLY_PEOPLE = 1; /* ponytail: the disabled person lives in C1105's page data; only the count shows here. Requested people are not members yet */
 
   const card = (u) => {
     const primary = u.companies.find((c) => c.id === company.id).primary;

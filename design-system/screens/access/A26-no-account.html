@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - A26 No account for this number</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>A26 No account for this number</b><span>both roles</span><span class="plate-tag">PHASE 1</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="A03-sign-in.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a><h1></h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding-top:36px">
+          <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span>
+          <h3>No account for this number</h3>
+          <p>Zixom has not added it yet. Ask us to set up your access.</p>
+        </div>
+
+        <div class="card-fill">
+          <dl class="kv" style="margin:0">
+            <div><dt>Number</dt><dd>+91 99040 18273</dd></div>
+            <div><dt>Zixom support</dt><dd class="support-phone"></dd></div>
+          </dl>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <div class="stack-sm">
+          <a class="btn btn-primary" href="#" id="call"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom</a>
+          <a class="btn btn-secondary" href="#" id="whatsapp"><svg class="ic" aria-hidden="true"><use href="#ph-whatsapp-logo"/></svg>WhatsApp</a>
+          <a class="btn btn-text" href="A03-sign-in.html">Try another number</a>
+        </div>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Shown after the OTP when Zixom has not registered the number. There is no sign up in the app.</p></div>
+  <div><h3>What you can do</h3><ul><li>Call Zixom or WhatsApp</li><li>Try another number</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Zixom adds the company or person in the admin dashboard and sends app access by SMS (<a href="A18-accept-invitation.html">A18</a>)</li><li>Try another number opens <a href="A03-sign-in.html">A03</a></li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only after a correct OTP, so nobody learns which numbers have accounts</li><li>A removed or suspended account opens <a href="A16-account-suspended.html">A16</a>, not this</li><li>Client decision 26 Nov 2026, replaces sign up A05 to A09</li></ul></div>
+</section>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const { support } = ZX.data;
+  const digits = support.phone.replace(/\D/g, '');
+  document.querySelector('.support-phone').textContent = support.phone;
+  document.getElementById('call').href = `tel:+${digits}`;
+  document.getElementById('whatsapp').href = `https://wa.me/${digits}`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

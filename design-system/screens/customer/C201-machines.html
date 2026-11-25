@@ -58,6 +58,7 @@
             <p class="count-line"><span><b id="count-all"></b> · <span id="count-sites"></span></span><span>Sorted by name</span></p>
             <div class="stack-sm" id="all" style="margin-top:10px"></div>
             <div class="inline-retry" style="margin-top:10px" data-when="moreerror">Couldn't load more machines.<button class="btn btn-secondary btn-sm" type="button" data-busy>Try again</button></div>
+            <a class="link" href="C204-unlisted-machine.html" style="margin:14px 4px 0">Missing a machine? Tell Zixom</a>
           </div>
           <div data-when="filtered">
             <p class="count-line"><span><b id="count-filtered"></b></span><button class="btn btn-soft btn-sm" type="button" style="min-height:34px">Clear filters</button></p>
@@ -74,8 +75,8 @@
           <div class="state" data-when="empty" style="padding-top:48px">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span>
             <h3>No machines yet</h3>
-            <p>Add a machine to see its history, warranty and service.</p>
-            <a class="btn btn-primary" href="C203-add-machine.html"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a>
+            <p>Zixom adds your machines. Missing one? Tell us.</p>
+            <a class="btn btn-primary" href="C204-unlisted-machine.html">Report a missing machine</a>
           </div>
 
           <div class="stack-sm" data-when="loading">
@@ -94,7 +95,7 @@
         </div>
       </div>
     </div>
-    <a class="fab" href="C203-add-machine.html" data-when="ready moreerror filtered noresults"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Add machine</a></div>
+</div>
 
     <nav class="tabbar" data-tabs="customer" data-active="machines"></nav>
     <span class="home-indicator"></span>
@@ -138,8 +139,8 @@
 
 <section class="plate-info" aria-label="About this screen">
   <div><h3>What it is</h3><p>The Machines tab: every machine the company owns with warranty, AMC and open requests.</p></div>
-  <div><h3>What you can do</h3><ul><li>Search by model, serial or site</li><li>Filter and sort; remove filter chips</li><li>Long press a card for quick actions</li><li>Add machine</li></ul></div>
-  <div><h3>What happens next</h3><ul><li>A card opens <a href="C202-machine-detail.html">C202</a></li><li>Add machine opens <a href="C203-add-machine.html">C203</a></li><li>AMC opens the AMC segment, C401</li></ul></div>
+  <div><h3>What you can do</h3><ul><li>Search by model, serial or site</li><li>Filter and sort; remove filter chips</li><li>Long press a card for quick actions</li><li>Scan a machine QR to open it</li><li>Report a missing machine</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A card opens <a href="C202-machine-detail.html">C202</a></li><li>Missing a machine? opens <a href="C204-unlisted-machine.html">C204</a>; only Zixom adds machines</li><li>Scan opens <a href="C205-scan-qr.html">C205</a></li><li>AMC opens the AMC segment, C401</li></ul></div>
   <div><h3>Edge cases and spec</h3><ul><li>Pages of 20; a failed page shows an inline Try again</li><li>Pending machines show a grey chip and a limited detail</li><li>Spec: section 8, C201 · C2 rules</li></ul></div>
 </section>
 

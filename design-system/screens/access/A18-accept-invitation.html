@@ -16,10 +16,10 @@
 </head>
 <body class="plate">
 
-<div class="plate-label"><b>A18 Accept invitation</b><span>invited colleague</span><span class="plate-tag">PHASE 1</span></div>
+<div class="plate-label"><b>A18 Accept invitation</b><span>from Zixom SMS</span><span class="plate-tag">PHASE 1</span></div>
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">valid</button>
-  <button type="button" data-state="expired" aria-pressed="false">expired or revoked</button>
+  <button type="button" data-state="expired" aria-pressed="false">link expired</button>
   <button type="button" data-state="mismatch" aria-pressed="false">different number</button>
   <button type="button" data-state="member" aria-pressed="false">already a member</button>
 </div>
@@ -29,24 +29,25 @@
     <div class="status"></div>
     <div class="sheet">
       <div class="navbar">
-        <a class="icon-btn" href="A02-welcome.html" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a><h1>Invitation</h1><span></span>
+        <a class="icon-btn" href="A02-welcome.html" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg></a><h1>Welcome</h1><span></span>
       </div>
       <div class="scroll with-footer">
 
         <div data-when="ready mismatch">
           <div class="invite">
             <span class="company"><svg class="ic" aria-hidden="true"><use href="#ph-buildings"/></svg></span>
-            <h2>Join Shree Packaging Industries</h2>
-            <p>Rakesh Mehta invited you on 21 Nov 2026</p>
+            <h2>Shree Packaging Industries</h2>
+            <p>Zixom Plast added you on 21 Nov 2026</p>
           </div>
           <div class="card-fill" style="margin-top:18px">
             <dl class="kv" style="margin:0">
-              <div><dt>Invited number</dt><dd>+91 97140 22321</dd></div>
+              <div><dt>Your number</dt><dd>+91 97140 22321</dd></div>
               <div><dt>Company</dt><dd>Ahmedabad, ZP-C-0001</dd></div>
-              <div><dt>Valid until</dt><dd>28 Nov 2026</dd></div>
-              <div><dt>You will see</dt><dd>Machines, requests, payments</dd></div>
+              <div><dt>Invited by</dt><dd>Zixom Plast</dd></div>
+              <div><dt>Link valid until</dt><dd>28 Nov 2026</dd></div>
             </dl>
           </div>
+          <label class="check" style="margin-top:16px" data-when="ready"><input type="checkbox" checked><span>I accept the <a href="A11-terms.html" style="color:var(--blue); font-weight:600; text-decoration:none">terms and privacy policy</a></span></label>
           <div class="banner red" style="margin-top:12px" data-when="mismatch"><svg class="ic" aria-hidden="true"><use href="#ph-warning-circle"/></svg>
             <div><b>You are signed in as +91 98220 43120</b>Sign in with +91 97140 22321 to accept.</div></div>
         </div>
@@ -54,8 +55,8 @@
         <div data-when="expired">
           <div class="state" style="padding-top:40px">
             <span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-envelope-simple"/></svg></span>
-            <h3>Invitation no longer valid</h3>
-            <p>Ask Rakesh Mehta for a new one.</p>
+            <h3>This link has expired</h3>
+            <p>Your account is ready. Sign in with your number.</p>
           </div>
         </div>
 
@@ -70,15 +71,14 @@
 
       <div class="footer-bar">
         <div class="stack-sm" data-when="ready">
-          <a class="btn btn-primary" href="A04-verify-otp.html">Accept and continue</a>
-          <a class="btn btn-secondary" href="A02-welcome.html">Decline</a>
+          <a class="btn btn-primary" href="A04-verify-otp.html">Continue</a>
         </div>
         <div class="stack-sm" data-when="mismatch">
           <a class="btn btn-primary" href="A03-sign-in.html">Sign in with +91 97140 22321</a>
         </div>
         <div class="stack-sm" data-when="expired">
-          <a class="btn btn-primary" href="tel:+919825011410"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Contact Rakesh Mehta</a>
-          <a class="btn btn-secondary" href="A05-sign-up.html">Sign up instead</a>
+          <a class="btn btn-primary" href="A03-sign-in.html">Sign in</a>
+          <a class="btn btn-secondary" href="tel:+919991910097"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call Zixom</a>
         </div>
         <a class="btn btn-primary" href="../customer/C101-home.html" data-when="member">Go to Home</a>
       </div>
@@ -88,10 +88,10 @@
 </div>
 
 <section class="plate-info" aria-label="About this screen">
-  <div><h3>What it is</h3><p>Invitation from a colleague to join their company.</p></div>
-  <div><h3>What you can do</h3><ul><li>See company, inviter, invited number and what you will see</li><li>Accept and continue, or Decline</li></ul></div>
-  <div><h3>What happens next</h3><ul><li>Accept: OTP, terms, profile, Home (F11)</li></ul></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Expired, used or revoked: contact the inviter</li><li>Signed in with another number: sign in with the invited one</li><li>Already a member: Go to Home · Spec: section 7, A18 · EC-18</li></ul></div>
+  <div><h3>What it is</h3><p>First sign in from the SMS Zixom sends when it adds a person in the admin dashboard.</p></div>
+  <div><h3>What you can do</h3><ul><li>See company, number and who invited (Zixom Plast)</li><li>Accept the terms (<a href="A11-terms.html">A11</a>) and Continue</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Continue: OTP <a href="A04-verify-otp.html">A04</a>, profile, Home (F11)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Expired link: the account still exists, Sign in normally or call Zixom</li><li>Signed in with another number: sign in with the added one</li><li>Already a member: Go to Home · Spec: section 7, A18 · EC-18</li></ul></div>
 </section>
 
 <script src="../../assets/icons/icons.js"></script>

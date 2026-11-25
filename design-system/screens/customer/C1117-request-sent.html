@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zixom Connect - C1117 Request sent</title>
+<link rel="icon" href="../../assets/brand/zixom-logo-small.png">
+<link rel="stylesheet" href="../../assets/css/zixom.css">
+<style>
+.who{display:flex; align-items:center; gap:12px; padding:14px; border-radius:var(--r-lg); background:#fff; border:1px solid var(--line)}
+.who b{display:block; font-weight:600; font-size:var(--fs-14); color:var(--slate-900)}
+.who span span{display:block; margin-top:2px; font-size:var(--fs-12); color:var(--text-muted)}
+</style>
+</head>
+<body class="plate">
+
+<div class="plate-label"><b>C1117 Request sent</b><span>primary contact only</span><span class="plate-tag">PHASE 1</span></div>
+
+<div class="device">
+  <div class="screen" data-state="ready">
+    <div class="status"></div>
+    <div class="sheet">
+      <div class="navbar">
+        <a class="icon-btn" href="C1105-team.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+        <h1>Request sent</h1><span></span>
+      </div>
+      <div class="scroll with-footer">
+        <div class="state" style="padding:16px 20px 22px">
+          <span class="disc green"><svg class="ic" aria-hidden="true"><use href="#ph-check-circle"/></svg></span>
+          <h3>Request sent</h3><p>Zixom will add them, usually within 1 working day.</p>
+        </div>
+        <div class="who"><span class="avatar" id="initials"></span><span class="grow"><b id="name"></b><span id="detail"></span></span>
+          <span class="tag blue">Requested</span></div>
+
+        <p class="list-title">What happens next</p>
+        <ol class="timeline" style="margin:0 4px">
+          <li class="done"><span class="dot"></span><div><b>Request sent to Zixom</b><span>Today</span></div></li>
+          <li class="now"><span class="dot"></span><div><b id="adds"></b><span>Usually within 1 working day</span></div></li>
+          <li class="todo"><span class="dot"></span><div><b id="signs-in"></b><span>From the SMS Zixom sends</span></div></li>
+        </ol>
+      </div>
+      <div class="footer-bar">
+        <a class="btn btn-primary" href="C1105-team.html">Done</a>
+      </div>
+    </div>
+    <span class="home-indicator"></span>
+  </div>
+</div>
+
+<section class="plate-info" aria-label="About this screen">
+  <div><h3>What it is</h3><p>Confirmation after the primary contact requests a new user in <a href="C1105-team.html">C1105</a>.</p></div>
+  <div><h3>What you can do</h3><ul><li>See who was requested and what happens next</li><li>Done returns to Team members</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>The request goes to Zixom's work queue; it shows as Requested in Team members</li><li>Zixom adds the person and sends app access by SMS; they sign in with OTP (<a href="../access/A18-accept-invitation.html">A18</a>)</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Nobody is added without Zixom; the app never sends an invite itself</li><li>Cancel a pending request from its row in Team members</li><li>Client decision 26 Nov 2026 · Spec: C18, C1117 · F11</li></ul></div>
+</section>
+
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/render.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const company = ZX.data.companies.find((c) => c.id === 'shree');
+  /* not in data.js: the person just requested, the same as C1105 */
+  const REQUESTED = { name: 'Amit Patel', initials: 'AP', mobile: '+91 99251 33876', designation: 'Shift supervisor' };
+  const first = REQUESTED.name.split(' ')[0];
+  $('initials').textContent = REQUESTED.initials;
+  $('name').textContent = REQUESTED.name;
+  $('detail').textContent = `${REQUESTED.designation} · ${REQUESTED.mobile}`;
+  $('adds').textContent = `Zixom adds ${first} to ${company.name}`;
+  $('signs-in').textContent = `${first} signs in`;
+})();
+</script>
+<script src="../../assets/js/ui.js"></script>
+</body>
+</html>

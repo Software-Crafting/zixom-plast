@@ -35,7 +35,8 @@ a.screen-row .mono{color:var(--blue)}
   <section class="docs-section" style="margin-top:0">
     <h2>Every screen in the spec</h2>
     <p>Spec SCT-SP-APP-ZP draft 2, section 18. A screen with a page is a link. Phase 2 screens are specified but not in
-    the first release. Prototype only: HTML, CSS and sample data, nothing here is app code.</p>
+    the first release. Removed screens were dropped by a client decision (README). Prototype only: HTML, CSS and sample
+    data, nothing here is app code.</p>
     <div class="summary" id="summary"></div>
     <div class="segment" role="tablist" aria-label="Role" style="max-width:520px; margin-top:24px" id="roles">
       <button role="tab" aria-selected="true" data-role="all">All</button>
@@ -57,15 +58,16 @@ a.screen-row .mono{color:var(--blue)}
   const all = ZX.modules.flatMap((m) => m.screens.map(([id, name, phase = 1]) => ({ id, name, phase, role: m.role })));
   const built = all.filter((s) => ZX.built.has(s.id)).length;
   const phase1 = all.filter((s) => s.phase === 1).length;
+  const removed = all.filter((s) => s.phase === 'removed').length;
   document.getElementById('summary').innerHTML = [
-    [all.length, 'Screens in the spec'], [phase1, 'In the first release'], [built, 'Pages built'],
+    [all.length, 'Screens listed'], [phase1, 'In the first release'], [built, 'Pages built'], [removed, 'Removed by client'],
   ].map(([n, label]) => `<div class="specimen"><b>${n}</b><span>${label}</span></div>`).join('');
 
   const draw = (role) => {
     document.getElementById('modules').innerHTML = ZX.modules.filter((m) => role === 'all' || m.role === role).map((m) => {
       const rows = m.screens.map(([id, name, phase = 1]) => {
         const href = ZX.built.has(id) && ZX.pagePath(id);
-        const badge = phase === 2 ? tag('Phase 2') : href ? tag('Built', 'green') : '';
+        const badge = phase === 'removed' ? tag('Removed') : phase === 2 ? tag('Phase 2') : href ? tag('Built', 'green') : '';
         const inner = `<span class="mono">${id}</span><span>${esc(name)}</span>${badge}`;
         return href ? `<a class="screen-row" href="${href}">${inner}</a>` : `<div class="screen-row">${inner}</div>`;
       }).join('');

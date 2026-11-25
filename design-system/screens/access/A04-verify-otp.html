@@ -30,7 +30,7 @@
 </div>
 <div class="plate-states"><span>after verify opens</span>
   <button type="button" data-next="customer" aria-pressed="true">customer Home</button>
-  <button type="button" data-next="signup" aria-pressed="false">new sign up, A06</button>
+  <button type="button" data-next="none" aria-pressed="false">no account, A26</button>
   <button type="button" data-next="engineer-first" aria-pressed="false">engineer first time, A17</button>
   <button type="button" data-next="engineer" aria-pressed="false">engineer Today</button>
 </div>
@@ -77,7 +77,7 @@
         </div>
         <div class="banner amber" style="margin-top:16px" data-when="limit">
           <svg class="ic" aria-hidden="true"><use href="#ph-chat-text"/></svg>
-          <div><b>Still no code?</b>SMS can take a few minutes. All 3 resends used.</div>
+          <div><b>Still no code?</b>Check it is the number Zixom registered for you. All 3 resends used.</div>
         </div>
         <a class="btn btn-secondary btn-sm" style="margin-top:10px" href="tel:+919991910097" data-when="limit"><svg class="ic" aria-hidden="true"><use href="#ph-phone"/></svg>Call +91 99919 10097</a>
       </div>
@@ -94,9 +94,9 @@
 </div>
 
 <section class="plate-info" aria-label="About this screen">
-  <div><h3>What it is</h3><p>Six digit code check after sign in, sign up or a number change.</p></div>
+  <div><h3>What it is</h3><p>Six digit code check after sign in or a number change.</p></div>
   <div><h3>What you can do</h3><ul><li>Type or paste the code (iOS autofill); Verify runs on the sixth digit</li><li>Resend after 30 seconds, up to 3 times</li><li>Change number</li></ul></div>
-  <div><h3>What happens next</h3><ul><li>Customer: Home, or A06/A07 for a new sign up</li><li>Engineer: <a href="A17-engineer-first-sign-in.html">A17</a> first time, else Today</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Customer: Home</li><li>Engineer: <a href="A17-engineer-first-sign-in.html">A17</a> first time, else Today</li><li>Number Zixom has not registered: <a href="A26-no-account.html">A26</a></li></ul></div>
   <div><h3>Edge cases and spec</h3><ul><li>5 wrong tries lock 15 minutes <a href="../system/S11-too-many-attempts.html">S11</a></li><li>Code already used, expired, SMS delayed (call support)</li><li>Spec: section 10, A04 · EC-13, EC-14, EC-34</li></ul></div>
 </section>
 
@@ -108,7 +108,7 @@
 (() => {
   const RESEND_SECONDS = 30;
   const NEXT = {
-    customer: '../customer/C101-home.html', signup: 'A06-find-company.html',
+    customer: '../customer/C101-home.html', none: 'A26-no-account.html',
     'engineer-first': 'A17-engineer-first-sign-in.html', engineer: '../engineer/E101-today.html',
   };
   const verify = document.getElementById('verify');
@@ -120,7 +120,7 @@
   nextButtons.forEach((b) => b.addEventListener('click', () => setNext(b.dataset.next)));
   let role = 'customer';
   try { role = sessionStorage.getItem('zx-role') || role; } catch { /* storage blocked */ }
-  setNext(role === 'engineer' ? 'engineer' : role === 'signup' ? 'signup' : 'customer');
+  setNext(NEXT[role] ? role : 'customer');
 
   /* boxes: move forward on input, back on delete, run on the sixth digit */
   const boxes = [...document.querySelectorAll('#otp input')];

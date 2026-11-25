@@ -20,7 +20,7 @@ Then open `http://localhost:8000/` for the screen map, or `/components.html` for
 ## Structure
 
 ```
-index.html              screen map: all 270 spec screens, links to the built ones
+index.html              screen map: every spec screen, links to the built ones, marks removed ones
 components.html         every component, rendered live, with the class to use
 assets/css/zixom.css    the one stylesheet a page links (imports the rest)
   tokens.css            colours, type, radius, shadow, fonts
@@ -131,8 +131,21 @@ Build only what is inside `.screen`, including the tab bar and the overlays.
 - The minimum OS section is ignored.
 - Notifications: push and email.
 - Customer permissions are flat: everyone in a company sees and does everything (pay, approve estimates,
-  add machines). Only the primary contact sees Team members and Change primary contact. No role field.
+  raise service). Only the primary contact sees Team members and Change primary contact. No role field.
 - Demo today is Monday 23 Nov 2026, IST.
+
+## Decisions on top of the spec (26 Nov 2026)
+
+- No customer sign up in the app. Zixom creates the company, its people and machines in the admin dashboard and
+  sends app access by SMS. People sign in with mobile number and OTP only, no passwords.
+- Removed: A05 to A09 (sign up and verification) and C203 Add machine. The screen map lists them as Removed.
+- A number with no account reaches A26 No account for this number after the OTP: Call Zixom, WhatsApp, Try
+  another number. A18 is now the first sign in from Zixom's SMS invite.
+- Only Zixom adds people and machines. The primary contact can only Request a new user (C1105, sent screen
+  C1117) and anyone can Report a missing machine (C204). Both go to Zixom's work queue and show as Requested
+  until Zixom adds them, usually within 1 working day.
+- C205 Scan QR stays: it finds one of your machines (Machines, AMC, raise service). An unknown QR offers Report
+  a missing machine.
 
 ## Licences
 

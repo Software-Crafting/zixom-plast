@@ -38,6 +38,7 @@
   <button type="button" data-state="lowlight" aria-pressed="false">low light</button>
   <button type="button" data-state="scanning" aria-pressed="false" data-open="unknown">not recognised</button>
   <button type="button" data-state="scanning" aria-pressed="false" data-open="other">other product</button>
+  <button type="button" data-state="scanning" aria-pressed="false" data-open="missing">not on your account</button>
   <button type="button" data-state="denied" aria-pressed="false">camera denied</button>
 </div>
 
@@ -45,13 +46,13 @@
   <div class="screen cam" data-state="scanning">
     <div class="status on-dark"></div>
     <div class="cam-top">
-      <a class="icon-btn glass" href="C203-add-machine.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
+      <a class="icon-btn glass" href="C201-machines.html" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ph-arrow-left"/></svg></a>
       <h1>Scan QR</h1>
       <button class="icon-btn glass" type="button" aria-label="Torch" aria-pressed="false" data-when="scanning lowlight" id="torch"><svg class="ic" aria-hidden="true"><use href="#ph-lightning"/></svg></button>
     </div>
 
     <div class="cam-body" data-when="scanning lowlight">
-      <a class="viewfinder" href="C203-add-machine.html" aria-label="QR frame">
+      <a class="viewfinder" href="C202-machine-detail.html" aria-label="QR frame">
         <i></i><i></i><i></i><i></i>
         <svg class="ic ghost" aria-hidden="true"><use href="#ph-qr-code"/></svg>
         <span class="line"></span>
@@ -70,7 +71,7 @@
 
     <div class="cam-bottom">
       <a class="btn btn-primary" href="../system/S07-permission.html" data-when="denied" style="margin-bottom:10px; background:#fff; color:var(--slate-900)">Open Settings</a>
-      <a class="btn btn-secondary" href="C203-add-machine.html" style="background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.22)"><svg class="ic" aria-hidden="true"><use href="#ph-pencil-simple"/></svg>Enter serial manually</a>
+      <a class="btn btn-secondary" href="C201-machines.html" style="background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.22)"><svg class="ic" aria-hidden="true"><use href="#ph-magnifying-glass"/></svg>Search my machines</a>
     </div>
     <span class="home-indicator on-dark"></span>
 
@@ -81,7 +82,7 @@
           <h3 id="unknown-t">We could not read this code</h3><p>Hold steady, about 20 cm away.</p></div>
         <div class="stack-sm" style="margin-top:20px">
           <button class="btn btn-primary" type="button" data-close>Try again</button>
-          <a class="btn btn-secondary" href="C203-add-machine.html">Enter serial manually</a>
+          <a class="btn btn-secondary" href="C201-machines.html">Search my machines</a>
         </div>
       </div>
     </div>
@@ -92,7 +93,18 @@
           <h3 id="other-t">This QR is not for a machine</h3><p>Scan the QR on the machine nameplate.</p></div>
         <div class="stack-sm" style="margin-top:20px">
           <button class="btn btn-primary" type="button" data-close>Scan again</button>
-          <a class="btn btn-secondary" href="C203-add-machine.html">Enter serial manually</a>
+          <a class="btn btn-secondary" href="C201-machines.html">Search my machines</a>
+        </div>
+      </div>
+    </div>
+    <div class="overlay bottom" id="missing" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="missing-t">
+        <span class="grabber"></span>
+        <div class="state" style="padding:4px 0 0"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-factory"/></svg></span>
+          <h3 id="missing-t">Not on your account</h3><p>Only Zixom adds machines. Tell us it is missing.</p></div>
+        <div class="stack-sm" style="margin-top:20px">
+          <a class="btn btn-primary" href="C204-unlisted-machine.html">Report a missing machine</a>
+          <button class="btn btn-secondary" type="button" data-close>Scan again</button>
         </div>
       </div>
     </div>
@@ -100,9 +112,9 @@
 </div>
 
 <section class="plate-info" aria-label="About this screen">
-  <div><h3>What it is</h3><p>Camera view to scan the QR on a machine nameplate.</p></div>
-  <div><h3>What you can do</h3><ul><li>Scan the code (tap the frame here)</li><li>Turn on the torch</li><li>Enter the serial manually</li></ul></div>
-  <div><h3>What happens next</h3><ul><li>A good scan returns to <a href="C203-add-machine.html">C203</a> with the machine found</li></ul></div>
+  <div><h3>What it is</h3><p>Camera view to find one of your machines by the QR on its nameplate. It never adds a machine.</p></div>
+  <div><h3>What you can do</h3><ul><li>Scan the code (tap the frame here)</li><li>Turn on the torch</li><li>Search my machines instead</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>A good scan opens the machine, <a href="C202-machine-detail.html">C202</a> (from Raise service it picks it)</li><li>Not on your account: Report a missing machine, <a href="C204-unlisted-machine.html">C204</a></li></ul></div>
   <div><h3>Edge cases and spec</h3><ul><li>Camera denied hands over to <a href="../system/S07-permission.html">S07</a> (EC-23)</li><li>Not recognised or another product: Try again</li><li>Low light hint</li><li>Spec: C2, C205</li></ul></div>
 </section>
 

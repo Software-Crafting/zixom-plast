@@ -27,9 +27,8 @@
 <div class="plate-label"><b>C1105 Team members</b><span>primary contact only</span><span class="plate-tag">PHASE 1</span></div>
 <div class="plate-states"><span>state</span>
   <button type="button" data-state="ready" aria-pressed="true">ready</button>
-  <button type="button" data-state="ready" aria-pressed="false" data-open="invite">invite</button>
-  <button type="button" data-state="taken" aria-pressed="false" data-open="invite">number in another company</button>
-  <button type="button" data-state="engineer" aria-pressed="false" data-open="invite">engineer number</button>
+  <button type="button" data-state="ready" aria-pressed="false" data-open="request">request a new user</button>
+  <button type="button" data-state="taken" aria-pressed="false" data-open="request">number already on the team</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="cant-disable">disable primary blocked</button>
   <button type="button" data-state="ready" aria-pressed="false" data-open="remove">remove</button>
   <button type="button" data-state="limit" aria-pressed="false">limit of 25</button>
@@ -50,10 +49,10 @@
       <div class="scroll with-footer">
         <div class="offline-strip" style="margin:0 0 12px" data-when="offline"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-wifi-slash"/></svg>You are offline. Updated 11:42 AM.</div>
         <div class="banner amber" data-when="limit" style="margin-bottom:12px"><svg class="ic" aria-hidden="true"><use href="#ph-users"/></svg>
-          <div><b>25 of 25 people</b>Disable or remove someone to invite more.</div></div>
+          <div><b>25 of 25 people</b>Disable or remove someone to request more.</div></div>
 
-        <div data-when="ready taken engineer limit offline">
-          <p class="count-line" data-when="ready taken engineer offline"><span><b id="count"></b> of 25 people</span></p>
+        <div data-when="ready taken limit offline">
+          <p class="count-line" data-when="ready taken offline"><span><b id="count"></b> of 25 people</span></p>
           <div class="list" id="members"></div>
           <div class="list" style="margin-top:16px">
             <a class="list-item" href="C1114-change-primary.html"><span class="disc"><svg class="ic" aria-hidden="true"><use href="#ph-user-circle"/></svg></span><b>Change primary contact</b><span class="end"><svg class="ic" aria-hidden="true"><use href="#ph-caret-right"/></svg></span></a>
@@ -63,8 +62,8 @@
         <div class="stack" data-when="empty">
           <div class="list" id="only-me"></div>
           <div class="prompt">
-            <h3>Invite your colleagues</h3><p>They can raise service, pay and order parts.</p>
-            <button class="btn btn-primary" type="button" data-open="invite"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
+            <h3>Need a colleague added?</h3><p>Zixom adds them, usually within 1 working day.</p>
+            <button class="btn btn-primary" type="button" data-open="request"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Request a new user</button>
           </div>
         </div>
 
@@ -79,9 +78,9 @@
           <span class="code mono">ZC-500</span>
         </div>
       </div>
-      <div class="footer-bar" data-when="ready taken engineer limit offline">
-        <button class="btn btn-primary" type="button" data-open="invite" data-when="ready taken engineer"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
-        <button class="btn btn-primary" type="button" disabled data-when="limit offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Invite person</button>
+      <div class="footer-bar" data-when="ready taken limit offline">
+        <button class="btn btn-primary" type="button" data-open="request" data-when="ready taken"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Request a new user</button>
+        <button class="btn btn-primary" type="button" disabled data-when="limit offline"><svg class="ic" aria-hidden="true"><use href="#ph-plus"/></svg>Request a new user</button>
       </div>
     </div>
     <span class="home-indicator"></span>
@@ -103,12 +102,10 @@
         <button class="cancel" type="button" data-close>Cancel</button>
       </div>
     </div>
-    <div class="overlay bottom" id="act-invited" hidden>
-      <div class="action-sheet" role="dialog" aria-label="Invitation actions">
-        <div class="group"><div class="title" data-name="invited"></div>
-          <button type="button" data-close data-toast="Invite sent again"><svg class="ic" aria-hidden="true"><use href="#ph-arrows-clockwise"/></svg>Resend invite</button>
-          <button type="button" data-close data-toast="Link copied"><svg class="ic" aria-hidden="true"><use href="#ph-share-network"/></svg>Share invite link</button>
-          <button class="destructive" type="button" data-close data-toast="Invite revoked"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Revoke invite</button></div>
+    <div class="overlay bottom" id="act-requested" hidden>
+      <div class="action-sheet" role="dialog" aria-label="Request actions">
+        <div class="group"><div class="title" data-name="requested"></div>
+          <button class="destructive" type="button" data-close data-toast="Request cancelled"><svg class="ic" aria-hidden="true"><use href="#ph-x"/></svg>Cancel request</button></div>
         <button class="cancel" type="button" data-close>Cancel</button>
       </div>
     </div>
@@ -121,24 +118,23 @@
       </div>
     </div>
 
-    <div class="overlay bottom" id="invite" hidden>
-      <div class="bottom-sheet" role="dialog" aria-labelledby="inv-title">
+    <div class="overlay bottom" id="request" hidden>
+      <div class="bottom-sheet" role="dialog" aria-labelledby="req-title">
         <span class="grabber"></span>
-        <div class="head"><h3 id="inv-title">Invite person</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
+        <div class="head"><h3 id="req-title">Request a new user</h3><button class="icon-btn sm" type="button" data-close aria-label="Close"><svg class="ic ic-18" aria-hidden="true"><use href="#ph-x"/></svg></button></div>
         <div class="body">
           <div class="field"><label for="i-name">Full name<span class="req">*</span></label><input class="input" id="i-name" maxlength="60" value="Amit Patel"></div>
           <div class="field" data-when="ready"><label for="i-mobile">Mobile number<span class="req">*</span></label>
             <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile" inputmode="numeric" maxlength="11" value="99251 33876"></div></div>
           <div class="field has-error" data-when="taken"><label for="i-mobile-t">Mobile number<span class="req">*</span></label>
-            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile-t" inputmode="numeric" value="98220 43120" aria-invalid="true" aria-describedby="taken-err"></div>
-            <span class="error-text" id="taken-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number is registered with another company.</span></div>
-          <div class="field has-error" data-when="engineer"><label for="i-mobile-e">Mobile number<span class="req">*</span></label>
-            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile-e" inputmode="numeric" value="99090 33114" aria-invalid="true" aria-describedby="eng-err"></div>
-            <span class="error-text" id="eng-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number belongs to a Zixom engineer.</span></div>
-          <span class="hint">We send an SMS with a link. It expires in 7 days.</span>
+            <div class="input-group"><span class="prefix">+91</span><input class="input" id="i-mobile-t" inputmode="numeric" value="97140 22321" aria-invalid="true" aria-describedby="taken-err"></div>
+            <span class="error-text" id="taken-err"><svg class="ic ic-16" aria-hidden="true"><use href="#ph-warning-circle"/></svg>This number is already on your team.</span></div>
+          <div class="field"><label for="i-role">Designation<span class="req">*</span></label><input class="input" id="i-role" maxlength="40" value="Shift supervisor"></div>
+          <div class="field"><label for="i-email">Email<span class="counter">Optional</span></label><input class="input" id="i-email" type="email" inputmode="email" placeholder="name@company.com"></div>
+          <span class="hint">Zixom adds them, usually within 1 working day.</span>
         </div>
-        <a class="btn btn-primary" href="C1117-invite-sent.html" style="margin-top:18px" data-when="ready">Send invite</a>
-        <button class="btn btn-primary" type="button" style="margin-top:18px" disabled data-when="taken engineer">Send invite</button>
+        <a class="btn btn-primary" href="C1117-request-sent.html" style="margin-top:18px" data-when="ready">Send request</a>
+        <button class="btn btn-primary" type="button" style="margin-top:18px" disabled data-when="taken">Send request</button>
       </div>
     </div>
 
@@ -158,10 +154,10 @@
 </div>
 
 <section class="plate-info" aria-label="About this screen">
-  <div><h3>What it is</h3><p>Everyone in the company with masked mobile and status. Only the primary contact sees it.</p></div>
-  <div><h3>What you can do</h3><ul><li>Invite a person by name and mobile.</li><li>Resend, share or revoke an invite.</li><li>Disable, enable or remove a member.</li><li>Change the primary contact.</li></ul></div>
-  <div><h3>What happens next</h3><ul><li>Send invite opens <a href="C1117-invite-sent.html">C1117</a>; they get an SMS link that expires in 7 days.</li><li>A disabled person is signed out on their next request (<a href="../access/A16-account-suspended.html">A16</a>).</li><li>Change primary contact opens <a href="C1114-change-primary.html">C1114</a>.</li></ul></div>
-  <div><h3>Edge cases and spec</h3><ul><li>Number in another company or of an engineer: blocked, no invite.</li><li>The primary contact can't be disabled.</li><li>25 people at most; Invite is off at the limit.</li><li>Spec: section C11, C1105 · EC-18, EC-19</li></ul></div>
+  <div><h3>What it is</h3><p>Everyone in the company with masked mobile and status, plus pending requests. Only the primary contact sees it.</p></div>
+  <div><h3>What you can do</h3><ul><li>Request a new user: name, mobile, designation, optional email.</li><li>Cancel a pending request.</li><li>Disable, enable or remove a member.</li><li>Change the primary contact.</li></ul></div>
+  <div><h3>What happens next</h3><ul><li>Send request opens <a href="C1117-request-sent.html">C1117</a>; it goes to Zixom's work queue and shows as Requested here.</li><li>Zixom adds the person and sends app access by SMS (<a href="../access/A18-accept-invitation.html">A18</a>).</li><li>A disabled person is signed out on their next request (<a href="../access/A16-account-suspended.html">A16</a>).</li><li>Change primary contact opens <a href="C1114-change-primary.html">C1114</a>.</li></ul></div>
+  <div><h3>Edge cases and spec</h3><ul><li>Only Zixom adds people; nobody joins without Zixom.</li><li>Number already on the team: blocked. Zixom checks other companies and engineers.</li><li>The primary contact can't be disabled.</li><li>25 people at most; requests are off at the limit.</li><li>Spec: section C11, C1105 · EC-18, EC-19</li></ul></div>
 </section>
 
 <script src="../../assets/icons/icons.js"></script>
@@ -173,13 +169,12 @@
   const { data } = ZX;
   const $ = (id) => document.getElementById(id);
   const company = data.companies.find((c) => c.id === 'shree');
-  /* not in data.js: one pending invitation and one disabled member */
+  /* not in data.js: one pending request to Zixom and one disabled member */
   const EXTRA_PEOPLE = [
-    { name: 'Amit Patel', initials: 'AP', mobile: '+91 99251 33876', status: 'invited', invited: '2026-11-20' },
+    { name: 'Amit Patel', initials: 'AP', mobile: '+91 99251 33876', status: 'requested', requested: '2026-11-20' },
     { name: 'Kiran Joshi', initials: 'KJ', mobile: '+91 98794 55120', status: 'disabled' },
   ];
-  const INVITE_DAYS = 7;
-  const STATUS = { active: ['Active', 'green'], invited: ['Invited', 'blue'], disabled: ['Disabled', ''] };
+  const STATUS = { active: ['Active', 'green'], requested: ['Requested', 'blue'], disabled: ['Disabled', ''] };
 
   const people = [
     ...data.users.filter((u) => u.companies.some((c) => c.id === company.id)).map((u) => ({
@@ -188,9 +183,8 @@
   ];
   const mask = (mobile) => mobile.slice(0, 4) + mobile.slice(4).replace(/\d(?=(?:\D*\d){4})/g, '•');
   const sub = (p) => {
-    if (p.status !== 'invited') return mask(p.mobile);
-    const left = INVITE_DAYS + R.daysFromToday(p.invited);
-    return `${mask(p.mobile)} · Expires in ${left} days`;
+    if (p.status !== 'requested') return mask(p.mobile);
+    return `${mask(p.mobile)} · Sent ${R.date(p.requested)}`;
   };
   const menu = (p) => (p.primary ? 'act-primary' : `act-${p.status}`);
   const row = (p) => `<div class="member${p.status === 'disabled' ? ' off' : ''}">
@@ -202,10 +196,10 @@
 
   $('members').innerHTML = people.map(row).join('');
   $('only-me').innerHTML = row(people.find((p) => p.primary));
-  $('count').textContent = people.length;
+  $('count').textContent = people.filter((p) => p.status !== 'requested').length;
 
   const byStatus = { primary: people.find((p) => p.primary), active: people.find((p) => p.status === 'active' && !p.primary),
-    invited: people.find((p) => p.status === 'invited'), disabled: people.find((p) => p.status === 'disabled') };
+    requested: people.find((p) => p.status === 'requested'), disabled: people.find((p) => p.status === 'disabled') };
   document.querySelectorAll('[data-name]').forEach((el) => { el.textContent = byStatus[el.dataset.name].name; });
   document.querySelector('[data-remove]').textContent = `Remove ${byStatus.active.name}?`;
 

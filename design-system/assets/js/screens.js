@@ -1,18 +1,19 @@
 /* Every screen in the spec (section 18), grouped by module.
-   [id, name, phase]. A screen with a built page gets its path in BUILT below. */
+   [id, name, phase]. phase 'removed': dropped by a client decision (README), no page.
+   A screen with a built page gets its path in BUILT below. */
 window.ZX = window.ZX || {};
 
 ZX.modules = [
   { role: 'shared', id: 'A', name: 'Access and account', screens: [
-    ['A01', 'Splash'], ['A02', 'Welcome'], ['A03', 'Sign in'], ['A04', 'Verify OTP'], ['A05', 'Sign up: your details'],
-    ['A06', 'Find your company'], ['A07', 'Verify with machine details'], ['A08', 'Verification pending'],
-    ['A09', 'Verification rejected'], ['A10', 'Complete profile'], ['A11', 'Terms and privacy'], ['A12', 'Company picker'],
+    ['A01', 'Splash'], ['A02', 'Welcome'], ['A03', 'Sign in'], ['A04', 'Verify OTP'], ['A05', 'Sign up: your details', 'removed'],
+    ['A06', 'Find your company', 'removed'], ['A07', 'Verify with machine details', 'removed'],
+    ['A08', 'Verification pending', 'removed'], ['A09', 'Verification rejected', 'removed'], ['A10', 'Complete profile'], ['A11', 'Terms and privacy'], ['A12', 'Company picker'],
     ['A13', 'App lock setup'], ['A14', 'App lock'], ['A15', 'Session expired'], ['A16', 'Account suspended or deactivated'],
     ['A17', 'Engineer first sign in'] ] },
   { role: 'shared', id: 'A2', name: 'Invitations, devices and account changes', screens: [
     ['A18', 'Accept invitation'], ['A19', 'Change mobile number'], ['A20', 'Number linked to two accounts'],
     ['A21', 'Verify email'], ['A22', 'Security alert'], ['A23', 'Device limit reached'], ['A24', 'Account deletion requested'],
-    ['A25', 'Account deleted'] ] },
+    ['A25', 'Account deleted'], ['A26', 'No account for this number'] ] },
   { role: 'shared', id: 'S', name: 'System screens', screens: [
     ['S01', 'Force update'], ['S02', 'Maintenance'], ['S03', 'No internet'], ['S04', 'Generic error'], ['S05', 'Not found'],
     ['S06', 'No access'], ['S07', 'Permission needed'], ['S08', 'Invalid or expired link'], ['S09', 'About and version'] ] },
@@ -23,7 +24,7 @@ ZX.modules = [
 
   { role: 'customer', id: 'C1', name: 'Home and search', screens: [['C101', 'Home'], ['C102', 'Search'], ['C103', 'Alerts list']] },
   { role: 'customer', id: 'C2', name: 'My machines', screens: [
-    ['C201', 'My machines'], ['C202', 'Machine detail'], ['C203', 'Add machine'], ['C204', 'Report an unlisted machine'],
+    ['C201', 'My machines'], ['C202', 'Machine detail'], ['C203', 'Add machine', 'removed'], ['C204', 'Report a missing machine'],
     ['C205', 'Scan QR'], ['C206', 'Edit machine'], ['C207', 'Machine history'], ['C208', 'History entry detail'],
     ['C209', 'Machine transfer or removal'], ['C210', 'Machine QR card', 2] ] },
   { role: 'customer', id: 'C3', name: 'Warranty', screens: [
@@ -79,7 +80,7 @@ ZX.modules = [
   { role: 'customer', id: 'C17', name: 'Document downloads', screens: [['C1701', 'Downloads'], ['C1702', 'Document versions'], ['C1703', 'Share document']] },
   { role: 'customer', id: 'C18', name: 'Profile and account extras', screens: [
     ['C1113', 'Companies'], ['C1114', 'Change primary contact'], ['C1115', 'Data and privacy'], ['C1116', 'About Zixom'],
-    ['C1117', 'Invite sent'] ] },
+    ['C1117', 'Request sent'] ] },
 
   { role: 'engineer', id: 'E1', name: 'Today and duty status', screens: [['E101', 'Today'], ['E102', 'Sync queue'], ['E103', 'Duty status sheet']] },
   { role: 'engineer', id: 'E2', name: 'Assigned tickets', screens: [
@@ -123,16 +124,15 @@ ZX.modules = [
 /* Canonical file name of every screen. Links between pages must use these names.
    A page lives at screens/<folder>/<file>.html, folder from ZX.pagePath below. */
 ZX.files = Object.fromEntries(`
-  A01-splash A02-welcome A03-sign-in A04-verify-otp A05-sign-up A06-find-company A07-verify-machine
-  A08-verification-pending A09-verification-rejected A10-complete-profile A11-terms A12-company-picker
+  A01-splash A02-welcome A03-sign-in A04-verify-otp A10-complete-profile A11-terms A12-company-picker
   A13-app-lock-setup A14-app-lock A15-session-expired A16-account-suspended A17-engineer-first-sign-in
   A18-accept-invitation A19-change-mobile A20-number-on-two-accounts A21-verify-email A22-security-alert
-  A23-device-limit A24-deletion-requested A25-account-deleted
+  A23-device-limit A24-deletion-requested A25-account-deleted A26-no-account
   S01-force-update S02-maintenance S03-no-internet S04-error S05-not-found S06-no-access S07-permission
   S08-invalid-link S09-about S10-storage-full S11-too-many-attempts S12-unsupported-os S13-rooted-warning
   S14-update-available S15-mobile-data S16-wrong-date S17-share-failed S18-opening-link S19-biometric-help
   C101-home C102-search C103-alerts
-  C201-machines C202-machine-detail C203-add-machine C204-unlisted-machine C205-scan-qr C206-edit-machine
+  C201-machines C202-machine-detail C204-unlisted-machine C205-scan-qr C206-edit-machine
   C207-machine-history C208-history-entry C209-transfer-machine C210-machine-qr-card
   C301-warranty C302-warranty-details C303-claim-machine C304-claim-problem C305-claim-evidence C306-claim-site
   C307-claim-review C308-claim C309-extend-warranty C310-appeal-claim
@@ -162,7 +162,7 @@ ZX.files = Object.fromEntries(`
   C1601-dispute C1602-dispute-status C1603-credit-notes C1604-invoice-correction C1605-saved-methods
   C1607-select-invoices C1608-bank-transfer
   C1701-downloads C1702-document-versions C1703-share-document
-  C1113-companies C1114-change-primary C1115-data-privacy C1116-about-zixom C1117-invite-sent
+  C1113-companies C1114-change-primary C1115-data-privacy C1116-about-zixom C1117-request-sent
   E101-today E102-sync-queue E103-duty-status
   E201-jobs E202-job-detail E203-accept-job E204-propose-time E205-start-travel E206-check-in E207-work
   E208-hold E209-customer-unavailable E210-complete-job E211-escalate E212-reassign E213-notes
@@ -189,9 +189,9 @@ ZX.pagePath = (id) => `screens/${FOLDER[id[0]]}/${ZX.files[id]}.html`;
 
 /* screens that have a page, added as each layer is built */
 ZX.built = new Set(`
-  A01 A02 A03 A04 A05 A06 A07 A08 A09 A10 A11 A12 A13 A14 A15 A16 A17 A18 A19 A20 A21 A22 A23 A24 A25
+  A01 A02 A03 A04 A10 A11 A12 A13 A14 A15 A16 A17 A18 A19 A20 A21 A22 A23 A24 A25 A26
   S01 S02 S03 S04 S05 S06 S07 S08 S09 S10 S11 S12 S13 S14 S15 S16 S17 S18 S19
-  C101 C102 C103 C201 C202 C203 C204 C205 C206 C207 C208 C209 C501 C502 C503 C504 C505 C506 C507 C508 C509 C510 C511 C512 C513 C514 C515 C516
+  C101 C102 C103 C201 C202 C204 C205 C206 C207 C208 C209 C501 C502 C503 C504 C505 C506 C507 C508 C509 C510 C511 C512 C513 C514 C515 C516
   C801 C802 C803 C804 C805 C806 C807 C808 C809 C810 C811 C812 C813 C1501 C1502 C1504 C1505 C1506 C1510 C1511
   C1512 C1607 C1608
   C301 C302 C303 C304 C305 C306 C307 C308 C310 C401 C402 C403 C404 C405 C406 C407 C408 C601 C602 C603 C604 C605
