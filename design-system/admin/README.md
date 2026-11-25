@@ -42,6 +42,11 @@ assets/js/admin-shell.js   draws sidebar, top bar, search, bell, Create, health,
 assets/js/admin-ui.js      overlays, menus, toasts, tabs, tables, search, demo states, ZXA.chart
 assets/icons.js            Lucide sprite, built by tools/build-icons.mjs (mobile names plus desktop ones)
 assets/vendor/chart.umd.js Chart.js 4.4.7 (MIT)
+assets/ds/                 select, date picker, calendar, time picker, popover, scroll area and input copied from the
+                           Software Crafting design system (~/git/design-system), rebranded in ds/theme.css; ds-admin.css
+                           matches them to the admin fields; calendar and time picker take today from the demo date
+assets/js/admin-ds.js      turns every native select, date, time and date-time field into those components; the native
+                           element keeps the value, so pages still read and set .value and listen to change
 pages/<module>/<ID>-<slug>.html
 tools/build-index.mjs      writes ZXA.built from pages/ and fails on a file name that does not match the registry
 tools/check-links.mjs      fails on links to unknown or Phase 2 pages and on missing mobile screens

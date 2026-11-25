@@ -1,0 +1,52 @@
+/* Copied from the Software Crafting design system (~/git/design-system, f038e26), rebranded for Zixom:
+   slate primary, Zixom blue accent, slate neutrals, Inter, Varela Round and JetBrains Mono. Light mode only in admin.
+   Brand inputs. This is the only file to edit when rebranding a project.
+   Everything else in the system derives from these values in tokens.css.
+   Each colour is light-dark(light value, dark value): the page follows the system setting, and
+   data-theme="light" or "dark" on <html> (or any wrapper) forces one. Both values must pass the contrast check.
+   After editing, run: npm run check */
+:root {
+  /* Page and raised surfaces: cards, menus, inputs. Dark mode lifts surfaces one step above the page. */
+  --brand-bg: light-dark(#ffffff, #0c0a09);
+  --brand-surface: light-dark(#ffffff, #1c1917);
+
+  /* Primary action colour and the text that sits on it */
+  --brand-primary: light-dark(#263442, #fafaf9);
+  --brand-on-primary: light-dark(#ffffff, #1c1917);
+
+  /* Accent: links, focus rings, highlights */
+  --brand-accent: light-dark(#4064d7, #60a5fa);
+  --brand-on-accent: light-dark(#ffffff, #0c0a09);
+
+  /* Neutrals, a warm taupe scale (shadcn stone) in both modes. Text, secondary text, lines and the muted surface;
+     the rest derives from them. */
+  --brand-neutral: light-dark(#18222d, #fafaf9);
+  --brand-neutral-muted: light-dark(#55626f, #a8a29e);
+  --brand-border: light-dark(#e2e6ea, #2f2a27);
+  --brand-surface-muted: light-dark(#f1f3f5, #292524);
+
+  /* Status */
+  --brand-success: light-dark(#1e7f4b, #4ade80);
+  --brand-warning: light-dark(#a86400, #fbbf24);
+  --brand-danger: light-dark(#c23b3b, #f87171);
+  --brand-info: light-dark(#4064d7, #38bdf8);
+
+  /* Rating stars, need 3:1 against the surface */
+  --brand-rating: light-dark(#d97706, #fbbf24);
+
+  /* Chart series, each needs 3:1 against the surface */
+  --brand-chart-1: light-dark(#1d4ed8, #60a5fa);
+  --brand-chart-2: light-dark(#c2410c, #fb923c);
+  --brand-chart-3: light-dark(#0f766e, #2dd4bf);
+  --brand-chart-4: light-dark(#a21caf, #e879f9);
+  --brand-chart-5: light-dark(#854d0e, #facc15);
+  --brand-chart-6: light-dark(#475569, #94a3b8);
+
+  /* Type: self-hosted Inter ships in base/fonts. Swap the file and @font-face in base.css to change it. */
+  --brand-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --brand-font-display: "Varela Round", "Inter", system-ui, sans-serif;
+  --brand-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Shape: every radius scales from this */
+  --brand-radius: 12px;
+}

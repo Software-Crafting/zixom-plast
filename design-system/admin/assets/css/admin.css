@@ -1,6 +1,17 @@
 /* Zixom Plast admin dashboard. The one stylesheet a page links.
-   Tokens and fonts come from the mobile design system, read only. Everything else is desktop. */
+   Tokens and fonts come from the mobile design system, read only. Select, date, time and popover components are
+   copied from the Software Crafting design system into ../ds and rebranded there. Everything else is desktop. */
 @import url("../../../assets/css/tokens.css");
+@import url("../ds/theme.css");
+@import url("../ds/tokens.css");
+@import url("../ds/scroll-area.css");
+@import url("../ds/input.css");
+@import url("../ds/popover.css");
+@import url("../ds/select.css");
+@import url("../ds/calendar.css");
+@import url("../ds/date-picker.css");
+@import url("../ds/time-picker.css");
+@import url("../ds/ds-admin.css");
 @import url("shell.css");
 @import url("ui.css");
 @import url("forms.css");

@@ -309,4 +309,16 @@
 
   ZXA.ui = { openOverlay, closeOverlay, toast, go, setState, leave };
   setState(ZXA.initialState || document.body.dataset.state || 'ready');
+
+  /* select, date and time fields use the design system components in ../ds (see admin-ds.js); scripts run in order.
+     The calendar's today and the time picker's now are the demo's Monday 23 Nov 2026, 12:00 IST. */
+  window.DS = window.DS || {};
+  window.DS.now = () => new Date(ZX.data.now);
+  ['ds/popover.js', 'ds/scroll-area.js', 'ds/calendar.js', 'ds/date-picker.js', 'ds/time-picker.js', 'ds/select.js', 'js/admin-ds.js']
+    .forEach((file) => {
+      const script = document.createElement('script');
+      script.src = `${ZXA.root}assets/${file}`;
+      script.async = false;
+      document.body.append(script);
+    });
 })();

@@ -1,0 +1,20 @@
+/* Text field plus a calendar popup. Typing an ISO date works as well as picking one. */
+.ds-date-picker { position: relative; width: 100%; max-width: var(--ds-date-picker-width, 320px); }
+.ds-date-picker--range { --ds-date-picker-width: 360px; }
+.ds-date-picker__popup {
+  position: absolute; inset-inline-start: 0; top: calc(100% + var(--space-1)); z-index: var(--z-popover);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-md);
+}
+.ds-date-picker__popup[data-side="top"] { top: auto; bottom: calc(100% + var(--space-1)); }
+/* Open, it lives in the top layer: the script sets left and top beside the field */
+.ds-date-picker__popup[popover] { position: fixed; inset: auto; margin: 0; padding: 0; color: inherit; overflow: visible; }
+/* Read only: the calendar button goes, the field keeps its value for reading and copying */
+.ds-date-picker:has(.ds-input__control[readonly]) [data-ds-date-picker-toggle] { display: none; }
+.ds-date-picker__presets { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-3) var(--space-3); }
+
+/* Enter springs down from the trigger; exit fades. Works on the hidden attribute. */
+/* Open and close both spring: a full spring in, a short soft spring out that starts at once */
+.ds-date-picker__popup { transform-origin: top left; transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-spring) var(--ease-spring), display var(--duration-spring) allow-discrete; }
+.ds-date-picker__popup[data-side="top"] { transform-origin: bottom left; }
+.ds-date-picker__popup[hidden] { opacity: 0; transform: scale(.97); transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-spring-soft), display var(--duration-base) allow-discrete; }
+@starting-style { .ds-date-picker__popup:not([hidden]) { opacity: 0; transform: scale(.97); } }

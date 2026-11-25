@@ -1,0 +1,126 @@
+/* Semantic tokens derived from theme.css. Components use these only, never --brand-* or raw values.
+   Names map one to one to a future React Native theme object: --color-text-muted is color.textMuted. */
+/* Light and dark: :root follows the system setting; data-theme="light" or "dark" forces one, on <html> or on any
+   wrapper. Brand inputs are light-dark() pairs, so every token below resolves for the scheme where it is used.
+   "Toward the surface" mixes use --brand-surface, so tints and hovers stay tints in both modes; "stronger" mixes go
+   toward black in light and white in dark. */
+:root { color-scheme: light dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+
+:root, [data-ds-theme] {
+  /* Surfaces */
+  --color-bg: var(--brand-bg);
+  --color-surface: var(--brand-surface);
+  --color-sunken: var(--brand-surface-muted);
+  --color-hover: color-mix(in srgb, var(--brand-surface-muted) 80%, var(--brand-surface));
+  --color-overlay: light-dark(color-mix(in srgb, var(--brand-neutral) 45%, transparent), color-mix(in srgb, black 65%, transparent));
+
+  /* Text */
+  --color-text: var(--brand-neutral);
+  --color-text-muted: var(--brand-neutral-muted);
+  --color-text-subtle: color-mix(in srgb, var(--brand-neutral-muted) 90%, var(--brand-surface));
+
+  /* Lines. --color-border is decorative; --color-input bounds controls and meets 3:1. */
+  --color-border: var(--brand-border);
+  --color-border-strong: color-mix(in srgb, var(--brand-neutral) 10%, var(--brand-border));
+  --color-input: color-mix(in srgb, var(--brand-neutral) 38%, var(--brand-border));
+
+  /* Primary */
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: color-mix(in srgb, var(--brand-primary) 86%, var(--brand-surface));
+  --color-on-primary: var(--brand-on-primary);
+  --color-primary-soft: color-mix(in srgb, var(--brand-primary) 8%, var(--brand-surface));
+  --color-on-primary-soft: var(--brand-primary);
+
+  /* Accent */
+  --color-accent: var(--brand-accent);
+  --color-accent-hover: color-mix(in srgb, var(--brand-accent) 82%, light-dark(black, white));
+  --color-on-accent: var(--brand-on-accent);
+  --color-accent-soft: color-mix(in srgb, var(--brand-accent) 9%, var(--brand-surface));
+  --color-link: var(--brand-accent);
+  --color-link-hover: color-mix(in srgb, var(--brand-accent) 78%, light-dark(black, white));
+  --color-focus: var(--brand-accent);
+  --color-selection: color-mix(in srgb, var(--brand-accent) 20%, var(--brand-surface));
+
+  /* Status: text or icon, tinted background, border */
+  --color-success: var(--brand-success);
+  --color-success-bg: color-mix(in srgb, var(--brand-success) 8%, var(--brand-surface));
+  --color-success-border: color-mix(in srgb, var(--brand-success) 30%, var(--brand-surface));
+  --color-warning: var(--brand-warning);
+  --color-warning-bg: color-mix(in srgb, var(--brand-warning) 8%, var(--brand-surface));
+  --color-warning-border: color-mix(in srgb, var(--brand-warning) 30%, var(--brand-surface));
+  --color-danger: var(--brand-danger);
+  --color-danger-hover: color-mix(in srgb, var(--brand-danger) 82%, light-dark(black, white));
+  --color-danger-bg: color-mix(in srgb, var(--brand-danger) 7%, var(--brand-surface));
+  --color-danger-border: color-mix(in srgb, var(--brand-danger) 30%, var(--brand-surface));
+  --color-on-danger: light-dark(white, var(--brand-bg));
+  --color-info: var(--brand-info);
+  --color-info-bg: color-mix(in srgb, var(--brand-info) 8%, var(--brand-surface));
+  --color-info-border: color-mix(in srgb, var(--brand-info) 30%, var(--brand-surface));
+
+  --color-rating: var(--brand-rating);
+
+  /* Inverse: a band that stands apart from the page, such as a footer or call to action. Dark in both modes:
+     near black on the light page, a step below the page in dark mode. */
+  --color-inverse: light-dark(color-mix(in srgb, var(--brand-primary) 92%, black), color-mix(in srgb, var(--brand-bg) 55%, black));
+  --color-on-inverse: light-dark(white, var(--brand-neutral));
+  --color-on-inverse-muted: light-dark(color-mix(in srgb, var(--brand-primary) 22%, white), var(--brand-neutral-muted));
+  --color-inverse-border: light-dark(color-mix(in srgb, var(--brand-primary) 70%, white), var(--brand-border));
+
+  /* Charts */
+  --color-chart-1: var(--brand-chart-1);
+  --color-chart-2: var(--brand-chart-2);
+  --color-chart-3: var(--brand-chart-3);
+  --color-chart-4: var(--brand-chart-4);
+  --color-chart-5: var(--brand-chart-5);
+  --color-chart-6: var(--brand-chart-6);
+  --color-chart-grid: var(--color-border);
+
+  /* Space: 4px base */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+
+  /* Radius */
+  --radius-sm: calc(var(--brand-radius) * .5);
+  --radius-md: var(--brand-radius);
+  --radius-lg: calc(var(--brand-radius) * 1.5);
+  --radius-xl: calc(var(--brand-radius) * 2);
+  --radius-full: 999px;
+
+  /* Elevation */
+  /* Shadows are always dark; dark mode needs them deeper to read against dark surfaces */
+  --shadow-sm: 0 1px 2px light-dark(color-mix(in srgb, var(--brand-neutral) 8%, transparent), color-mix(in srgb, black 40%, transparent));
+  --shadow-md: 0 4px 12px light-dark(color-mix(in srgb, var(--brand-neutral) 10%, transparent), color-mix(in srgb, black 45%, transparent)), 0 1px 3px light-dark(color-mix(in srgb, var(--brand-neutral) 6%, transparent), color-mix(in srgb, black 30%, transparent));
+  --shadow-lg: 0 18px 44px light-dark(color-mix(in srgb, var(--brand-neutral) 20%, transparent), color-mix(in srgb, black 60%, transparent)), 0 4px 12px light-dark(color-mix(in srgb, var(--brand-neutral) 8%, transparent), color-mix(in srgb, black 35%, transparent));
+
+  /* Type */
+  --font-sans: var(--brand-font-sans);
+  --font-display: var(--brand-font-display);
+  --font-mono: var(--brand-font-mono);
+  --text-xs: 12px; --text-sm: 14px; --text-md: 16px; --text-lg: 18px; --text-xl: 20px; --text-2xl: 24px;
+  --text-3xl: clamp(26px, 2vw + 20px, 32px);
+  --text-4xl: clamp(30px, 3.2vw + 20px, 44px);
+  --text-5xl: clamp(36px, 5vw + 18px, 64px);
+  --leading-tight: 1.15; --leading-snug: 1.3; --leading-normal: 1.55;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+
+  /* Motion. Springs are sampled damped springs: --ease-spring settles with a small overshoot (about 4%) for things
+     that arrive or move, --ease-spring-soft settles without visible overshoot. Exits are short and ease in. */
+  --duration-fast: 120ms; --duration-base: 200ms; --duration-slow: 320ms; --duration-spring: 480ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in: cubic-bezier(.4, 0, .7, .2);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-spring: linear(0, .016 2.5%, .058 5%, .12 7.5%, .193 10%, .524 20%, .671 25%, .792 30%, .885 35%, .951 40%, .995 45%, 1.022 50%, 1.037 65%, 1);
+  --ease-spring-soft: linear(0, .018 2.5%, .065 5%, .13 7.5%, .524 20%, .658 25%, .765 30%, .846 35%, .905 40%, .946 45%, .995 57.5%, 1);
+
+  /* Controls. Grows to --touch on touch screens, see base.css */
+  --control-sm: 32px; --control-md: 40px; --control-lg: 48px; --touch: 44px;
+
+  /* Layout */
+  --container: 1200px; --container-narrow: 720px;
+  --sidebar: 256px; --topbar: 60px;
+
+  /* Layers */
+  --z-sticky: 20; --z-shell: 40; --z-popover: 60; --z-toast: 90;
+}

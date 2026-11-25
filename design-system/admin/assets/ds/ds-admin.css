@@ -1,0 +1,59 @@
+/* Admin glue for the copied design system components (select, date picker, calendar, time picker, popover,
+   scroll area, input). Their files stay as copied; this file sets the light scheme, the few base rules they
+   expect, and matches their fields to the admin field look (hairline, 12px corners, blue focus ring). */
+:root { color-scheme: light; }
+.ds-icon { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; }
+.ds-icon--sm { width: 16px; height: 16px; stroke-width: 1.75; }
+.ds-sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* fields: same box as .input and .select */
+.ds-select__trigger, .ds-input {
+  min-height: 40px; border: 0; border-radius: 12px; background: var(--field);
+  box-shadow: inset 0 0 0 1px var(--line-strong); font: 400 var(--fs-14) var(--font-body); color: var(--text-strong);
+  transition: box-shadow .2s ease;
+}
+.ds-select__trigger:hover, .ds-input:hover { border: 0; box-shadow: inset 0 0 0 1px var(--slate-300); }
+.ds-select__trigger:focus-visible, .ds-select__trigger[aria-expanded="true"], .ds-input:has(.ds-input__control:focus) {
+  outline: 0; box-shadow: inset 0 0 0 1.5px var(--blue), 0 0 0 4px var(--blue-50);
+}
+.ds-input:has(.ds-input__control:focus-visible) { outline: 0; }
+.ds-select__trigger[aria-invalid="true"], .ds-input:has(.ds-input__control[aria-invalid="true"]) {
+  border: 0; box-shadow: inset 0 0 0 1.5px var(--red), 0 0 0 4px var(--red-50);
+}
+.ds-select__trigger:disabled, .ds-input:has(.ds-input__control:disabled) { border: 0; background: var(--slate-50); box-shadow: inset 0 0 0 1px var(--line); }
+.ds-select--sm .ds-select__trigger, .ds-input--sm { min-height: 32px; border-radius: 10px; font-size: var(--fs-13); }
+.ds-input__control { font: inherit; color: inherit; }
+.ds-select__value[data-placeholder], .ds-input__control::placeholder { color: var(--text-faint); }
+.ds-select.mono .ds-select__value { font-family: var(--font-mono); }
+.ds-date-picker, .ds-time-picker { max-width: none; }
+.ds-date-picker .ds-input__control, .ds-time-picker .ds-input__control { font-variant-numeric: tabular-nums; }
+
+/* compact selects inside toolbars and table footers size to their content */
+.table-foot .ds-select, .toolbar .ds-select, .row > .ds-select, label.row .ds-select { width: auto; min-width: 84px; }
+
+/* popups: admin menu look. The time picker opens in the top layer too (see time-picker.js) */
+.ds-time-picker__popup[popover] { position: fixed; inset: auto; margin: 0; color: inherit; overflow: visible; }
+.ds-select__popup, .ds-date-picker__popup, .ds-time-picker__popup {
+  border: 0; border-radius: 16px; box-shadow: inset 0 0 0 1px var(--line), var(--shadow-lift);
+}
+.ds-select__list { margin: 0; padding: 0; list-style: none; }
+.ds-date-picker .ds-input { padding-inline: 10px 6px; }
+.ds-date-picker .ds-input__control { font-size: var(--fs-13); }
+.ds-select__option { min-height: 36px; border-radius: 10px; font-size: var(--fs-14); color: var(--slate-900); }
+.ds-select__option[data-active] { background: var(--slate-50); }
+.ds-select__check { color: var(--blue); }
+
+/* a date and a time picker side by side stand in for a native date and time field */
+.ds-datetime { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 8px; }
+
+/* the native control a picker stands in for: kept in the page as the value page code reads and sets */
+.ds-native { display: none !important; }
+
+/* buttons the ds scripts draw (time picker Now and Done) take the admin pill buttons */
+.ds-btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 13px; border: 0; border-radius: var(--r-pill);
+  font: 400 var(--fs-13) var(--font-display); cursor: pointer; transition: transform .45s var(--ease), background-color .2s ease, filter .2s ease; }
+.ds-btn:active { transform: scale(.97); }
+.ds-btn--primary { background: linear-gradient(180deg, var(--slate-700), var(--slate-800) 60%); color: #fff; }
+.ds-btn--primary:hover { filter: brightness(1.18); }
+.ds-btn--ghost { background: transparent; color: var(--slate-700); }
+.ds-btn--ghost:hover { background: var(--wash); color: var(--slate-900); }
